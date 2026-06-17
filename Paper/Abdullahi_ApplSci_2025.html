@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Review of Numerical Modeling Methods of Transpiration Cooling Within Aerospace Applications</title>
+    <meta name="keywords" content="transpiration cooling, porous media modeling, local thermal non-equilibrium, local thermal equilibrium, Darcy-Brinkman-Forchheimer, turbulence modeling, RANS / LES / DNS, phase change simulation, two-phase mixture model, hypersonic thermal protection">
+    <meta name="paper-authors" content="Waziri Yasir Abdullahi, Jiancheng Zhao, Guobin Zhao, Wenxiong Xi, Jian Liu">
+    <meta name="paper-journal" content="Applied Sciences, Vol. 15, No. 22, 2025, Article 12257 · DOI: 10.3390/app152212257">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="00_Review">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            height: 96vh;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            overflow: hidden;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            font-variant: small-caps;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Review of Numerical Modeling Methods of Transpiration Cooling Within Aerospace Applications</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Waziri Yasir Abdullahi, Jiancheng Zhao, Guobin Zhao, Wenxiong Xi, Jian Liu</div>
+            <div class="journal">Applied Sciences, Vol. 15, No. 22, 2025, Article 12257 · DOI: 10.3390/app152212257</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 리뷰는 극초음속 선두 가장자리, 로켓 연소실, 터빈 블레이드와 같은 항공우주 고온 부품에 사용되는 <span class="term">발한 냉각</span>(<span class="eng">transpiration cooling</span>)의 <span class="term">수치 모델링 기법</span>(연속체 규모 CFD 기반)을 종합한다. 이 분야를 서로 강하게 결합된 네 가지 모델링 측면으로 정리한다: 다공성 매질 유동(Darcy / Forchheimer / Brinkman 및 이들을 결합한 Darcy-Brinkman-Forchheimer 모델), 열전달(국소 열평형 LTE 대 국소 열비평형 LTNE), 난류(RANS, LES, DNS 및 하이브리드 RANS-LES), 그리고 다상 상변화 물리(분리상 모델 SPM, 이상 혼합 모델 TPMM, 준혼합 모델 SMM). 각 측면은 정확도-비용 절충을 설계자가 선택할 수 있도록 각 모델의 장점·한계·적용 범위를 정리한 비교표로 마무리된다. 리뷰는 선택 지침이 부족한 파편화된 모델링 환경, 약한 다물리 결합(특히 난류-상변화 상호작용), 적층 제조 형상에 대한 고전 균질 다공성 모델의 부적합성을 문제로 지적한다. 결론에서는 결합형 다중 스케일/다물리 프레임워크, 진보된 적층 제조 다공성 재료 모델, 고충실도 설계 시뮬레이션, 엄밀한 검증 및 불확실성 정량화(VV&UQ), 데이터 기반/AI 대리 모델링을 향후 방향으로 제시한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">porous media modeling</span><span class="keyword-chip">local thermal non-equilibrium</span><span class="keyword-chip">local thermal equilibrium</span><span class="keyword-chip">Darcy-Brinkman-Forchheimer</span><span class="keyword-chip">turbulence modeling</span><span class="keyword-chip">RANS / LES / DNS</span><span class="keyword-chip">phase change simulation</span><span class="keyword-chip">two-phase mixture model</span><span class="keyword-chip">hypersonic thermal protection</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 비행체, 로켓 연소실, 가스터빈 블레이드는 극한의 열부하(표면 온도 2000-3500 K 초과)에 직면하여 능동 열보호가 요구된다. 다공성 매질에 냉각제(액체 또는 기체)를 강제 주입하여 내부에서 열을 흡수하고 표면에 단열막을 형성하는 발한 냉각은 매우 효과적이지만, 다공성 매질 유동·열전달·가능한 상변화가 결합되어 모델링이 매우 복잡하다. 본 리뷰의 신규성은 기존의 파편화된 문헌이 결여한, 네 가지 기술 측면으로 구성된 구조화·비판적·항공우주 중심의 수치 모델링 기법 종합에 있다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">2절은 모든 발한 냉각 시뮬레이션의 기반이 되는 다공성 매질 유동 모델을 검토한다: Darcy 법칙, Forchheimer의 2차항 보정, Brinkman의 점성 전단 보정, 그리고 이를 결합한 Darcy-Brinkman-Forchheimer(DBF) 정식화. 1856년 Darcy의 여과 법칙에서 현대 DBF 모델까지의 역사적 발전을 추적하고, 연구자들이 이를 발한 냉각에 어떻게 적용했는지 종합한다. 비교표(표 1)는 각 모델의 핵심 특징, 장점, 한계, 적용 가능 레이놀즈수 범위를 요약한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">3절은 다공성 매질의 두 가지 주요 열전달 모델링 프레임워크를 다룬다: 고체-유체 온도차가 무시할 만하다고 가정하고 단일 에너지 방정식을 사용하는 국소 열평형(LTE) 모델과, 상간 열교환으로 결합된 별도의 유체·고체 에너지 방정식을 푸는 국소 열비평형(LTNE) 모델. 각각의 유효 조건, 지배 방정식, 매개변수 의존성을 검토하고, 정량적 LTE 적용성 기준과 비교표(표 2)를 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('experiment')">
+                <div class="section-title">Experiment — 실험 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">4절은 난류 모델링을 다루며, 이는 본 리뷰에서 '실험/결과' 절에 가장 가까운 부분으로 세 가지 주요 접근(RANS, LES, DNS)과 하이브리드 RANS-LES를 종합한다. 대표적 발한 냉각 연구와 그 유동 영역, 정량적 RANS 예측 오차(표 3)를 보고하며, 난류 모델 선택과 실험 벤치마크 대비 검증이 예측 정확도에 크게 영향함을 강조한다. 비교표(표 4)는 세 접근을 충실도와 계산 비용으로 대조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">5절은 다상 상변화 모델링과 리뷰를 종합하는 VV&UQ 논의를 다룬다. 세 가지 상변화 프레임워크가 비교된다 — 분리상 모델(SPM), 이상 혼합 모델(TPMM), 그리고 최근 개발된 준혼합 모델(SMM) — 모두 두 개의 에너지 방정식을 갖는 LTNE 하에서 정식화된다. 논의는 모델 선택을 절충(계면 선명도, 천이 강건성, 검증 성숙도)으로 규정하여 표 8에 요약하고, 검증·확인·불확실성 정량화가 모든 검토 모델의 신뢰성을 뒷받침함을 강조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 분석된 네 영역(다공성 매질 유동, 열전달, 난류, 다상 물리)에 걸쳐 주목할 만한 진전이 있었으나, 항공우주 시스템의 복잡성 증가로 더 높은 모델링 충실도·효율·예측 능력이 요구된다고 결론짓는다. 차세대 재사용 가능 극초음속 비행체와 고성능 항공우주 엔진을 위해 발한 냉각의 잠재력을 온전히 발휘할 다섯 가지 우선 연구 방향을 제시한다.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {
+            introduction:  "Introduction — 연구 동기",
+            related_works: "Related Works — 관련 연구",
+            method:        "Method — 방법론",
+            experiment:    "Experiment — 실험",
+            discussion:    "Discussion — 논의",
+            conclusion:    "Conclusion — 결론"
+        };
+
+        const FIG_PREFIX = "그림";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "장시간 순항하는 극초음속 비행체(Ma > 5)는 극한의 공력 및 연소 가열에 직면하며, 선두 가장자리와 노즈콘은 수 메가파스칼의 국소 압력에서 2000 K를 초과할 수 있어 구조 건전성을 위협한다.", "figure_refs": []}, {"type": "bullet", "text": "유사한 극한 조건이 현대 로켓 연소실(흔히 3500 K 도달)과 첨단 가스터빈 블레이드(1800 K 초과 작동 환경)에서도 발생하므로 능동 열보호 시스템이 필요하다."}, {"type": "bullet", "text": "<span class=\"term\">발한 냉각</span>은 냉각제(액체 또는 기체)를 다공성 구조에 강제로 통과시키며, 냉각제가 상호 연결된 공극을 침투하면서 내부 대류를 통해 고체 기질로부터 열을 흡수하고 외부로 나와 단열 표면막을 형성한다.", "figure_refs": [1]}, {"type": "bullet", "text": "내부 대류와 외부 막냉각이라는 이중 메커니즘은 최대 1000 MW/m^2의 열유속을 관리할 수 있는 강건한 열보호를 제공한다.", "figure_refs": [1]}, {"type": "bullet", "text": "발한 냉각은 다공성 매질 내 강하게 결합된 유동과 열전달, 그리고 가능한 상변화로 인해 모델링이 본질적으로 매우 복잡하므로, 설계와 해석에 일반적으로 수치 모델링이 요구된다."}, {"type": "bullet", "text": "초기 Darcy 기반 다공성 유동 표현부터 고급 난류 모델(예: LES)과 다상 프레임워크를 사용하는 현대적 접근에 이르기까지 광범위한 모델링 기법이 존재한다."}, {"type": "bullet", "text": "리뷰는 다루고자 하는 연구 공백을 명시한다: 절충 지침이 거의 없는 파편화된 모델 환경(Darcy 대 Forchheimer, LTE 대 LTNE), 모델의 장점·한계·적용 범위에 대한 단일 형식의 직접 비교 부재, 다물리 결합(특히 난류-상변화 상호작용)에 대한 명확한 최신 기술 요약 부재, 적층 제조 형상에 대한 고전 다공성 모델의 부적합성."}, {"type": "bullet", "text": "논문은 네 개의 기술 절로 구성된다 — 2절 다공성 매질 모델링, 3절 열전달 모델, 4절 난류 기법, 5절 다상장 모델링 — 각 절은 비교표로 마무리되며, 6절은 결론과 향후 방향을 제시한다."}, {"type": "bullet", "text": "범위는 의도적으로 연속체 규모(CFD 기반) 수치 기법으로 한정되며, 공극 규모 모델링·순수 해석해·실험 진단은 중요성은 인정하되 망라하지 않는다."}]}, "related_works": {"content": [{"type": "bullet", "text": "다공성 매질의 골격과 공극이 무질서하고 예측 불가능하게 분포하기 때문에 표준 수학 모델로 내부 구조를 특성화하기 어렵다; Darcy 모델은 여전히 다공성 매질 침투 이론의 기반이다.", "figure_refs": [2]}, {"type": "bullet", "text": "Darcy의 경험 법칙은 여과 속도와 수두 구배 사이의 선형 관계를 확립하며, 낮은 레이놀즈수에서 유효하나 관성 및 점성 경계 효과를 무시한다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (1) — Darcy 법칙 (여과 속도)", "latex": "v_{FV} = -k_F\\,\\mathrm{grad}\\,h_1", "description": "여과 속도 $v_{FV}$는 수두 구배 $h_1$에 수리 전도도 $k_F$를 통해 비례하며, 음의 부호는 구배 하강 방향 유동을 나타낸다."}, {"type": "bullet", "text": "Forchheimer는 Darcy 모델이 레이놀즈수 약 10 미만에서만 적용됨을 발견했으며, 그 범위를 넘으면 침투 속도-압력 관계가 포물선형이 되므로 관성 효과를 포착하기 위해 2차 속도항을 추가했다."}, {"type": "formula", "label": "Eq. (3) — Forchheimer 법칙 (2차 보정)", "latex": "-\\mathrm{grad}\\,h_1 = a\\,v_{FV} + b\\,|v_{FV}|\\,v_{FV}", "description": "Darcy 법칙에 2차 속도항($a = 1/k_F$, $b$는 비-Darcy 유동 계수)을 추가하여 중-고 레이놀즈수에서 관성 효과를 반영하나, 여전히 경계 근처 점성 전단은 무시한다."}, {"type": "bullet", "text": "Brinkman은 유동 유체가 조밀한 입자군에 가하는 점성력을 포함하도록 Darcy 법칙을 수정하여 Darcy 항과 Navier-Stokes 항을 결합했으며, 그 결과는 낮은 투과율에서 Stokes형, 높은 투과율에서 Darcy형 방정식에 점근적으로 수렴한다."}, {"type": "formula", "label": "Eq. (10) — Brinkman 결합 방정식", "latex": "\\mathrm{grad}\\,p_{FR} = -\\frac{\\mu_F}{K_S}\\,v_F + \\mu_{FR}\\,\\Delta v_F", "description": "Darcy 저항항과 점성(라플라시안) 항을 통합하여 고체 벽 근처의 점성 경계층을 포착한다; $\\mu_F = n_F \\mu_{FR}$는 공극 유체의 부분 전단 점성이다."}, {"type": "bullet", "text": "연구자들은 이 모델들을 발한 냉각에 적용했다: Ding 등은 약 39 um 공극 질소 유동에 Brinkman-Forchheimer 확장 Darcy 방정식을, 이후 2층 결합 냉각 구조를 사용했고; Xiao 등은 천음속 유동의 다공성 노즈콘에 Darcy-Forchheimer와 LTNE를 적용했으며; Wu 등은 DBF를 사용해 선두/후미 가장자리 냉각제 분포가 블레이드 경계층 발달에 크게 영향함을 보였다."}, {"type": "bullet", "text": "Darcy-Brinkman-Forchheimer 모델이 가장 포괄적이지만, 다수의 계수를 경험적으로 결정하기 어려워 실용적 적용이 제한되며, 이는 이론적 완전성과 산업적 적용성 사이의 괴리를 드러낸다.", "figure_refs": [2]}, {"type": "bullet", "text": "모델 선택 지침: 고속 관성 지배적인 선두 가장자리에는 Forchheimer 모델이 정확도-효율 균형을 최적으로 제공하고; 저속 또는 고다공도 경우 Brinkman 항을 무시하면 경계층 거동을 잘못 예측할 수 있으며; 단순 모델은 예비 설계에 적합하고 전체 DBF는 고충실도 해석에 사용된다(표 1에 요약)."}]}, "method": {"content": [{"type": "bullet", "text": "다공성 매질에는 두 가지 주요 열전달 접근이 사용된다: LTE(단일 에너지 방정식, 무시할 만한 고체-유체 온도차 가정)와 LTNE(상간 열전달을 고려한 두 개의 별도 에너지 방정식)."}, {"type": "bullet", "text": "LTE는 수치적 구현과 해석적 처리가 더 간단하여 널리 사용되며; LTNE는 물리적으로 더 상세하지만 더 복잡하고 최근에야 상당한 연구 관심을 받았다."}, {"type": "bullet", "text": "LTE 하의 연구는 계면 경계 조건(Alazmi와 Vafai는 이것이 속도장에 가장, 온도장에 덜, Nusselt 수에 가장 적게 영향함을 발견), 경계/관성 효과(Vafai와 Tien), 강제 대류의 점성 소산(Hooman과 Gurgenci)을 다뤘다."}, {"type": "formula", "label": "Eq. (11) — 점성 소산 함수 (LTE)", "latex": "\\phi = \\frac{c_1}{S^2}\\left(u^2+v^2\\right) - \\frac{c_1}{S^2}\\left[u\\left(\\frac{\\partial^2 u}{\\partial x^2}+\\frac{\\partial^2 u}{\\partial y^2}\\right)+v\\left(\\frac{\\partial^2 v}{\\partial x^2}+\\frac{\\partial^2 v}{\\partial y^2}\\right)\\right] + c_2\\left[2\\left(\\frac{\\partial u}{\\partial x}\\right)^2+2\\left(\\frac{\\partial v}{\\partial y}\\right)^2+\\left(\\frac{\\partial v}{\\partial x}+\\frac{\\partial u}{\\partial y}\\right)^2\\right]", "description": "다공성 채널의 LTE 강제 대류 해석에 사용되는 점성 소산 함수이며, 이 형태로부터 세 가지 점성 소산 모델 변형이 개발되었다. (2단 수식 영역에서 시각적으로 전사; c1/c2, S 기호는 원문 표기를 따름.)"}, {"type": "bullet", "text": "부분 다공 충전(Mohamad; Shokouhmand 등; Ghazian 등)과 나노유체 사용(Matin과 Pop; Zhang 등; Bhowmick 등; Hassan 등)이 압력 강하를 제한하면서 열전달을 향상하는 LTE 기반 전략으로 검토되었으며, 높은 Darcy 수와 높은 열전도도에서 벽면 근처 다공성 구조가 선호된다."}, {"type": "bullet", "text": "LTNE는 고속 유동처럼 고체-유체 온도차가 큰 경우 필수적이며; Vafai와 Sozen은 LTE가 부정확한 결과를 줄 수 있고, 높은 레이놀즈수·높은 Darcy 수에서 LTE 가정이 무효임을 보였다.", "figure_refs": [3]}, {"type": "bullet", "text": "격자점별 국소 고체-유체 온도차로부터 LTE 적합성 기준을 정의하며, 양호(<1%), 매우 양호(1-5%), 보통(5-10%), 불량(10-15%), 매우 불량(>15%)으로 분류하고 그래프로 도시한다(그림 3).", "figure_refs": [3]}, {"type": "formula", "label": "Eqs. (12)-(13) — LTNE 2-방정식 에너지 모델", "latex": "k_{f,\\mathrm{eff}}\\nabla^2 T_f + h_{sf} a_{sf}\\left(T_s - T_f\\right) = \\rho c_p u\\,\\frac{\\partial T_f}{\\partial x} \\\\ k_{s,\\mathrm{eff}}\\nabla^2 T_s - h_{sf} a_{sf}\\left(T_s - T_f\\right) = 0", "description": "LTNE 모델의 결합된 유체상·고체상 에너지 방정식이며; $h_{sf}$는 간극 열전달 계수, $a_{sf}$는 단위 부피당 계면 면적으로 두 상을 연결한다."}, {"type": "bullet", "text": "LTNE 거동은 유체 전도, 고체 전도, 상간 교환에 의해 지배되며; Nield와 Kuznetsov는 고체-유체 전도도비 KR > 1일 때 열비평형이 강화되고 KR < 1일 때 약화됨을 보였고, 형상(벽 두께, 입자 크기 등)이 핵심 매개변수임을 보였다."}, {"type": "bullet", "text": "표 2는 LTE(단일 방정식, 빠름, 그러나 상간 열전달이 느리거나 발열이 높을 때 부정확)와 LTNE(두 방정식, 저유량·급속 가열·상변화·전도도 차이가 큰 재료에 더 정확하나 계산 비용 높음)를 대조한다."}]}, "experiment": {"content": [{"type": "bullet", "text": "발한 냉각 연구에는 세 가지 주요 난류 접근이 사용된다: 레이놀즈 평균 Navier-Stokes(RANS), 대와류 모사(LES), 직접 수치 모사(DNS)."}, {"type": "bullet", "text": "2-방정식 RANS 모델은 비교적 정확한 온도 분포를 예측하여 흔히 사용된다; 예로 Lv 등은 연소실에 Menter SST 모델을 사용해 결합 구조의 전체 냉각 효과가 30% 향상됨을 보고했고, Wang 등은 초음속 주류와 캐비티 냉각제를 위한 전영역 결합 기법을 개발했다."}, {"type": "bullet", "text": "실험 벤치마크(평판, 터빈 블레이드 캐스케이드)에 대한 RANS 검증이 중요하며, 강한 압력 구배나 유동 곡률 영역에서 난류 모델 선택이 예측에 크게 영향한다.", "figure_refs": []}, {"type": "bullet", "text": "모델 및 유동 영역별 보고된 RANS 예측 오차(표 3): 표준 k-epsilon 약 4.12%(쐐기형 선두 가장자리, 다공도 0.33, 100 um 공극), RNG k-epsilon 약 4.89%(직사각 통로, 다공도 0.111), Wilcox k-omega 약 5.3%(Ma=4 통로, 90-150 um 공극), Menter SST k-omega 약 5.1%(2 mm 공극, T-infinity 700 K)."}, {"type": "bullet", "text": "제5회 AIAA 추진 공력 워크숍(Georgiadis 등)은 평판 표면 온도를 정확히 예측하려면 RANS를 3D 켤레 열전달(CHT)과 긴밀히 결합해야 함을 발견했으며, 이는 단순 단열벽 처리보다 훨씬 우수했다 — 열전달 모델 충실도가 난류 모델만큼 중요하다."}, {"type": "bullet", "text": "LES는 큰 난류 와류를 분해하고 가장 작은 스케일은 모델링한다; 발한 냉각 LES 연구(Brillante 등; Xiao 등; Zhang 등)는 경계층 속도가 실험과 일치했고, 반복되는 약 1.25 ms 와류 주기를 식별했으며, 약 2-3% 이상의 취입비가 유동 박리와 불안정한 냉각제 피복을 유발함을 보였다."}, {"type": "bullet", "text": "하이브리드 RANS-LES 모델(예: DES, DDES, IDDES)은 벽 근처에 RANS를, 벽에서 멀리 LES를 사용하여 LES 비용과 RANS 강건성을 균형 맞춘다; 제5회 AIAA 워크숍은 이러한 스케일 분해 모사가 전통적 RANS보다 열 경계층을 훨씬 잘 예측함을 보였다."}, {"type": "bullet", "text": "DNS는 모델링 가정 없이 모든 난류 스케일을 분해하나 비용이 매우 높다; 발한 냉각 DNS 연구로 Avsarkisov 등(벽 발한이 있는 난류 Poiseuille 유동), Kraheberger 등(Couette 유동, 발한율이 증가하면 난류 강도 감소), Cerminara 등 및 Christopher 등(이산 공극을 통한 압축성/평판 DNS)이 있다."}, {"type": "bullet", "text": "표 4는 RANS(저비용, 강건, 강한 박리/천이에 부정확), LES(고비용, 비정상 유동에 정확), DNS(매우 높은 비용, 최고 충실도, 저 레이놀즈수와 단순 형상에 한정)를 대조한다."}]}, "discussion": {"content": [{"type": "bullet", "text": "다공성 구조 내 상변화 해석은 세 범주로 나뉜다: 분리상 모델(SPM), 이상 혼합 모델(TPMM), 준혼합 모델(SMM); TPMM은 일관된 보존 방정식 형태와 상용 소프트웨어 구현 용이성으로 가장 널리 사용된다."}, {"type": "bullet", "text": "전형적 이상 유동 문제에서 냉각제는 표면 열유속 q 하에서 두께 L의 다공성 매질로 진입하여 열을 흡수하고, 기질은 액체·액체-증기 혼합·증기 영역으로 나뉜다; 세 모델 모두 별도의 유체·고체 에너지 방정식을 갖는 LTNE 하에서 정식화된다.", "figure_refs": [4]}, {"type": "bullet", "text": "SPM(분리상/분리유동 모델)은 기상과 액상에 대해 별도 지배 방정식을 작성하고 계면에서 결합한다; 정확도가 높으나 다수의 결합 비선형 방정식과 흔히 메시 재구성(전단 추적) 또는 보정 방정식이 필요하여 복잡하다. 개선 변형으로 Xin 등의 수정 분리유동 모델과 Wang 등의 OpenFOAM 호환 향상이 있다."}, {"type": "formula", "label": "Table 5 — LTNE-SPM 유체 운동량 (상별 Darcy 형태)", "latex": "u_i = -\\frac{K\\,k_{ri}}{\\mu_i}\\left(\\nabla p_i - \\rho_i g\\right)", "description": "SPM의 상 $i$ 운동량 방정식: 각 상은 고유한 상대 투과율 $k_{ri}$와 점성 $\\mu_i$를 갖는 Darcy형 관계를 따르며; 상별로 별도의 질량·에너지 보존 방정식이 작성되고 단상 영역에서는 단일 상의 방정식 집합으로 축약된다."}, {"type": "bullet", "text": "TPMM(Wang과 Beckermann)은 혼합 변수와 대수 관계를 도입해 SPM의 세 영역을 단일 통합 방정식 집합으로 통합하여 계면 추적을 제거하고 복잡한 천이·다영역 이상 문제의 해를 용이하게 한다."}, {"type": "bullet", "text": "TPMM 엔탈피 방정식은 복잡하고 유효 확산 계수의 불연속으로 비물리적 온도 점프를 야기하는 알려진 문제가 있다; 평활화 함수와 수정 엔탈피 정식화(Dong 등; Ray와 Alomar; Li 등)가 이를 해결하며, LTNE-TPMM 프레임워크(Shi/Su와 Wang; Chen 등)는 초음속 실험 데이터에 대해 검증되었다."}, {"type": "formula", "label": "Table 6 — LTNE-TPMM 혼합 밀도 및 엔탈피", "latex": "\\rho = \\rho_l\\,s + \\rho_\\nu\\,(1-s) \\\\ \\rho h = \\rho_l\\,s\\,h_l + \\rho_\\nu\\,(1-s)\\,h_\\nu", "description": "액체 포화도 $s$로 표현한 혼합 밀도와 엔탈피; TPMM은 주요 변수를 개별 상 매개변수가 아닌 혼합 압력, 혼합 엔탈피, 고체 온도로 재정의한다. (시각적으로 전사; 해당 혼합 관계의 .txt 변환은 심하게 깨졌음.)"}, {"type": "bullet", "text": "SMM(Dong과 Wang)은 공극 내 국소 유체-고체 열전달을 고려하는 최근 모델로, 계면 추적과 단열층의 수치 불확실성을 모두 회피한다; 천이 LTNE-SMM은 압력 제어 냉각제 주입이 낮은 열유속과 고온측 상변화에서만 안정적인 반면, 질량유량 제어 주입은 열 조건과 무관하게 안정적임을 보였다."}, {"type": "bullet", "text": "세 모델 비교(표 8): SPM과 SMM은 실제 물리량을 사용해 밀접하게 일치하는 결과를 주는 반면, TPMM은 의사 물리량을 사용해 특히 유체 온도와 상 분포에서 불일치를 보인다; TPMM은 가장 큰 이상 영역 두께를, SMM은 가장 작은 두께를 예측한다. 모든 모델에 공통된 제약은 상 상호작용을 지배하는 경험적 매개변수의 정밀 결정으로, 광범위한 실험 보정이 필요하다."}, {"type": "bullet", "text": "검증·확인·불확실성 정량화(VV&UQ)는 모든 검토 모델의 신뢰성을 뒷받침한다: 확인은 해의 정확성을 점검하고, 검증은 예측을 고품질 실험 데이터(예: 막냉각 평판에 대한 제5회 AIAA 워크숍 벤치마크)와 비교하며, 불확실성 정량화는 투과율과 간극 열전달 계수 같은 입력에 대한 민감도를 다룬다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "본 논문은 네 가지 주요 영역(다공성 매질 유동, 열전달, 난류, 다상 물리)에 걸친 발한 냉각 수치 모델링 기법의 최신 기술 리뷰를 제시한다."}, {"type": "bullet", "text": "다중 스케일·다물리 모델링이 가장 중요한 과제로 식별된다: 향후 연구는 고급 난류 모델(예: LES)을 LTNE 열전달 및 다상 유동과 결합한 고충실도 프레임워크를 개발하고, 다중 스케일 모델링으로 공극 규모 물리와 부품 규모 성능을 이어야 한다."}, {"type": "bullet", "text": "적층 제조는 고전 균질·등방 모델이 포착할 수 없는 등급화·이방성 구조를 가능케 하므로 진보된 다공성 재료 모델링이 필요하며; 향후 모델은 공극 규모 형상을 직접 포함하거나 균질화 기법을 사용해야 한다."}, {"type": "bullet", "text": "설계용 고충실도 시뮬레이션: 계산 자원 증가로 벽면 분해 LES와 하이브리드 RANS-LES가 산업 설계 프레임워크에서 RANS를 대체하여 비정상 냉각제 제트-경계층 상호작용과 유동 박리를 포착할 수 있어야 한다."}, {"type": "bullet", "text": "검증 및 불확실성 정량화(VV&UQ): 항공우주 관련 고온·고압·고마하수 조건에서 고품질 실험 데이터가 시급히 필요하며, 엄밀한 VV&UQ로 예측 신뢰성을 확립하고 불확실성 여유를 정량화해야 한다."}, {"type": "bullet", "text": "데이터 기반·AI 보조 모델링: 머신러닝과 AI는 고충실도 시뮬레이션이나 실험으로 학습한 계산 비용이 낮은 대리 모델을 향한 유망한 경로로, 설계 주기를 단축하고 대규모 설계 공간 탐색을 가능케 한다."}, {"type": "bullet", "text": "이러한 방향을 다루는 것이 발한 냉각의 잠재력을 온전히 발휘하고 차세대 재사용 가능 극초음속 비행체와 고성능 항공우주 엔진을 실현하는 데 필수적이다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "본 리뷰는 의도적으로 범위를 연속체 규모(CFD 기반) 수치 기법으로 제한하며, 공극 규모 모델링, 순수 해석해, 실험적 진단 기법은 망라하지 않는다.", "source_quote": "Our focus is primarily on continuum-scale numerical methods (CFD-based) for transpiration cooling. We do not provide an exhaustive review of pore-scale modeling techniques, purely analytical solutions, or experimental diagnostic methods, although we acknowledge their critical importance for model development and validation.", "source_section": "introduction"}, {"claim": "검증·확인·불확실성 정량화(VV&UQ) 방법론에 대한 포괄적 평가는 본 리뷰의 범위를 벗어난다.", "source_quote": "While a comprehensive evaluation of VV&UQ methodologies lies beyond the purview of this study, it is imperative to acknowledge that the reliability of any numerical simulation is contingent on this process.", "source_section": "discussion"}], "future_works": [{"claim": "고급 난류 모델(예: LES)을 LTNE 열전달 및 다상 유동과 결합하여 공극 규모 물리와 부품 규모 성능을 잇는 고충실도 다중 스케일·다물리 프레임워크를 개발한다.", "source_quote": "Future efforts need to be directed toward developing high-fidelity frameworks that couple advanced turbulence models, say LES, with a model for LTNE heat transfer and multi-phase flow.", "source_section": "conclusion"}, {"claim": "고전적 균질·등방 가정이 부적합하므로, 등급화·이방성 구조를 갖는 적층 제조 다공성 재료의 유동 및 열 특성을 정확히 포착하는 새로운 모델을 개발한다.", "source_quote": "Future research must develop new models that can accurately capture the flow and thermal characteristics of these complex and engineered materials, potentially by directly incorporating pore-scale geometry or using homogenization techniques.", "source_section": "conclusion"}, {"claim": "계산 자원이 증가함에 따라 산업 설계 프레임워크 내에서 RANS 기반 모델을 벽면 분해 LES 및 하이브리드 RANS-LES 기법으로 대체하여 비정상 냉각제 제트-경계층 상호작용 및 유동 박리를 포착한다.", "source_quote": "As computational resources continue to increase, it will be possible to supplant RANS-based models with wall-resolved LES and hybrid RANS-LES methods within an industrial design framework.", "source_section": "conclusion"}, {"claim": "항공우주 조건(고온·고압·고마하수)에서 복잡한 다물리 모델 검증을 위한 고품질·문서화된 실험 데이터를 더 많이 생산하고 엄밀한 VV&UQ를 적용하여 예측 신뢰성을 확립한다.", "source_quote": "There is an urgent need for more high-quality, well-documented experimental data for the validation of complex multi-physics models under the relevant conditions concerning aerospace test cases, namely at high temperatures, pressures, and Mach numbers.", "source_section": "conclusion"}, {"claim": "고충실도 시뮬레이션이나 실험으로 학습한 계산 비용이 낮은 대리 모델을 머신러닝·AI로 개발하여 설계 주기를 단축하고 방대한 설계 공간을 탐색한다.", "source_quote": "Machine learning and artificial intelligence are promising pathways toward the development of computationally inexpensive surrogate models.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["항공우주 맥락에서 발한 냉각 수치 모델에 대한 체계적·비판적 리뷰가 존재하지 않는다.", "모델링 환경이 파편화되어 있어 다양한 시나리오(예: Darcy 대 Forchheimer, LTE 대 LTNE)에서 정확도-계산비용 절충을 선택할 지침이 거의 없다.", "서로 다른 모델 군의 장점·한계·적용 범위를 단일 형식으로 직접 비교한 자료가 없다.", "다물리 결합, 특히 난류와 상변화 상호작용에 대한 최신 기술 요약이 명확히 정리되어 있지 않다.", "고전적 다공성 매질 모델은 적층 제조로 생성된 새로운 재료 형상을 표현하기에 부적합하다."], "addressed_by_this_work": ["네 가지 기술 모델링 측면(다공성 매질, 열전달, 난류, 다상)으로 구성된 체계적 리뷰를 제공하여 항공우주 중심의 구조화된 리뷰 공백을 메운다.", "각 측면별 비교표(표 1-4, 8)를 제공하여 장점·한계·적용 범위를 요약하고, 정확도-비용 절충에 대한 명시적 선택 지침을 제시한다.", "각 모델 군의 장점·한계·적용 범위를 접근하기 쉬운 단일 표 형식으로 통합한다.", "난류 기법(RANS/LES/DNS/하이브리드)과 다상 상변화 모델을 함께 종합하여 결합에 대한 최신 기술을 부분적으로 요약한다."], "remaining_unresolved": ["강한 다물리 결합(난류 + LTNE + 상변화)은 가장 중요한 미해결 과제로 식별되며 본 리뷰에서 해결되지 않고 향후 고충실도 결합 프레임워크로 미뤄진다.", "적층 제조된 등급화·이방성 다공성 형상을 정확히 표현하는 모델은 아직 존재하지 않으며 향후 연구 과제로 남는다.", "항공우주 관련 조건에 대한 엄밀한 VV&UQ는 여전히 미해결 과제이며, 포괄적 VV&UQ 처리는 명시적으로 본 리뷰 범위를 벗어난다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX} ${item.figure_refs.join(", ")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
