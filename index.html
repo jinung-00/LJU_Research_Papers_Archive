@@ -281,6 +281,40 @@
             font-size: 11px;
         }
 
+        /* Topic filter chips (broader than category; filled style) */
+        .topic-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 32px 0;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .topic-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background: var(--primary);
+            color: white;
+            opacity: 0.5;
+            transition: opacity 0.15s, border-color 0.15s, transform 0.1s;
+            user-select: none;
+        }
+        .topic-chip:hover { transform: translateY(-1px); }
+        .topic-chip.active { opacity: 1; border-color: rgba(0,0,0,0.25); }
+        .topic-chip-count {
+            background: rgba(255,255,255,0.3);
+            padding: 1px 7px;
+            border-radius: 999px;
+            font-size: 11px;
+        }
+
         /* Topic / category section headers */
         .topic-header {
             font-size: 18px;
@@ -313,7 +347,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:05</div>
+            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:13</div>
         </div>
     </header>
 
@@ -328,6 +362,7 @@
             <div class="counts" id="counts"></div>
         </div>
         <div class="tier-filter" id="tier-filter"></div>
+        <div class="topic-filter" id="topic-filter"></div>
         <div class="category-filter" id="category-filter"></div>
     </div>
 
@@ -346,6 +381,7 @@
         };
 
         const CATEGORY_COUNTS = {"02_Numerical": 2};
+        const TOPIC_COUNTS = {"Transpiration_Cooling": 2};
         const TOPIC_ORDER = ["Transpiration_Cooling", "Basic_Theory"];
         const CATEGORY_ORDER = ["00_Review", "01_Fundamentals", "02_Numerical", "03_Experimental", "04_Hybrid", "05_Others"];
         const TOPIC_LABELS = {
@@ -379,6 +415,7 @@
             search: '',
             readFilter: 'all',           // all | read | unread
             tierFilter: new Set(["0","1","2","3","null"]),  // active tier keys (default: all on)
+            topicFilter: new Set(Object.keys(TOPIC_COUNTS)),        // active topics (default: all on)
             categoryFilter: new Set(Object.keys(CATEGORY_COUNTS)),  // active groupKeys (default: all on)
         };
 
@@ -412,11 +449,17 @@
             if (!gk) return true;            // papers without category info always pass
             return state.categoryFilter.has(gk);
         }
+        function matchesTopic(paper) {
+            const tk = paper.topic || "";
+            if (!tk) return true;            // papers without a topic always pass
+            return state.topicFilter.has(tk);
+        }
         function visiblePapers() {
             return PAPERS.filter(p =>
                 matchesSearch(p, state.search) &&
                 matchesRead(p) &&
                 matchesTier(p) &&
+                matchesTopic(p) &&
                 matchesCategory(p)
             );
         }
@@ -523,6 +566,31 @@
             });
         }
 
+        function renderTopicFilter() {
+            const wrap = document.getElementById('topic-filter');
+            wrap.innerHTML = '';
+            const order = TOPIC_ORDER.slice();
+            Object.keys(TOPIC_COUNTS).forEach(k => { if (!order.includes(k)) order.push(k); });
+            order.forEach(key => {
+                const cnt = TOPIC_COUNTS[key] || 0;
+                if (cnt === 0) return;
+                const chip = document.createElement('div');
+                chip.className = 'topic-chip' + (state.topicFilter.has(key) ? ' active' : '');
+                chip.dataset.topic = key;
+                chip.innerHTML = `${TOPIC_LABELS[key] || key} <span class="topic-chip-count">${cnt}</span>`;
+                chip.addEventListener('click', () => {
+                    if (state.topicFilter.has(key)) state.topicFilter.delete(key);
+                    else state.topicFilter.add(key);
+                    if (state.topicFilter.size === 0) {
+                        Object.keys(TOPIC_COUNTS).forEach(k => state.topicFilter.add(k));
+                    }
+                    renderTopicFilter();
+                    render();
+                });
+                wrap.appendChild(chip);
+            });
+        }
+
         function renderCategoryFilter() {
             const wrap = document.getElementById('category-filter');
             wrap.innerHTML = '';
@@ -563,6 +631,7 @@
         });
 
         renderTierFilter();
+        renderTopicFilter();
         renderCategoryFilter();
         render();
     </script>
