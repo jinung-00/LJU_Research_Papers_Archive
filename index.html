@@ -313,7 +313,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:35</div>
+            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:40</div>
         </div>
     </header>
 
@@ -365,6 +365,19 @@
             return p.topic === "Basic_Theory" ? "Basic_Theory" : (p.category || "");
         }
 
+        // Full key lists — the entire taxonomy is shown as filter checkboxes (even keys
+        // with 0 papers), so empty topics/categories are pre-created. Counts default to 0.
+        const TOPIC_KEYS = (() => {
+            const o = TOPIC_ORDER.slice();
+            Object.keys(TOPIC_COUNTS).forEach(k => { if (!o.includes(k)) o.push(k); });
+            return o;
+        })();
+        const CATEGORY_KEYS = (() => {
+            const o = CATEGORY_ORDER.concat(["Basic_Theory"]);
+            Object.keys(CATEGORY_COUNTS).forEach(k => { if (!o.includes(k)) o.push(k); });
+            return o;
+        })();
+
         const KEYWORD_PALETTE = [
             '#FF6B6B', '#4ECDC4', '#FFA94D', '#95E1D3', '#C9B1FF',
             '#FFB4B4', '#6BCF7F', '#FF8FB1', '#5B8DEF', '#F4A261',
@@ -381,8 +394,8 @@
             search: '',
             readFilter: 'all',           // all | read | unread
             tierFilter: new Set(["0","1","2","3","null"]),  // active tier keys (default: all on)
-            topicFilter: new Set(Object.keys(TOPIC_COUNTS)),        // active topics (default: all on)
-            categoryFilter: new Set(Object.keys(CATEGORY_COUNTS)),  // active groupKeys (default: all on)
+            topicFilter: new Set(TOPIC_KEYS),        // active topics (default: all on, incl. empty)
+            categoryFilter: new Set(CATEGORY_KEYS),  // active groupKeys (default: all on, incl. empty)
         };
 
         function isRead(paper) {
@@ -578,17 +591,11 @@
         }
 
         function renderTopicFilter() {
-            const order = TOPIC_ORDER.slice();
-            Object.keys(TOPIC_COUNTS).forEach(k => { if (!order.includes(k)) order.push(k); });
-            const keys = order.filter(k => (TOPIC_COUNTS[k] || 0) > 0);
-            renderCheckGroup('topic-filter', 'Topic', keys, TOPIC_LABELS, TOPIC_COUNTS, state.topicFilter, renderTopicFilter);
+            renderCheckGroup('topic-filter', 'Topic', TOPIC_KEYS, TOPIC_LABELS, TOPIC_COUNTS, state.topicFilter, renderTopicFilter);
         }
 
         function renderCategoryFilter() {
-            const order = CATEGORY_ORDER.concat(["Basic_Theory"]);
-            Object.keys(CATEGORY_COUNTS).forEach(k => { if (!order.includes(k)) order.push(k); });
-            const keys = order.filter(k => (CATEGORY_COUNTS[k] || 0) > 0);
-            renderCheckGroup('category-filter', 'Category', keys, CATEGORY_LABELS, CATEGORY_COUNTS, state.categoryFilter, renderCategoryFilter);
+            renderCheckGroup('category-filter', 'Category', CATEGORY_KEYS, CATEGORY_LABELS, CATEGORY_COUNTS, state.categoryFilter, renderCategoryFilter);
         }
 
         // wire up filter bar
