@@ -142,6 +142,7 @@
             line-height: 1.4;
             color: var(--text);
             margin: 0 0 8px;
+            padding-right: 52px;   /* clear the top-right tier badge */
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -251,7 +252,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>1</strong>편 · 마지막 갱신 2026-06-17 17:34</div>
+            <div class="meta">총 <strong>1</strong>편 · 마지막 갱신 2026-06-17 17:38</div>
         </div>
     </header>
 
@@ -359,9 +360,9 @@
                 : '';
             card.innerHTML = `
                 ${tierBadge}
-                <div class="card-keywords">${kwHtml}</div>
                 <h3 class="card-title">${paper.title}</h3>
                 <p class="card-meta">${paper.authors_short} · ${paper.year || ''} · ${paper.venue || ''}</p>
+                <div class="card-keywords">${kwHtml}</div>
                 <div class="card-footer">
                     <label class="read-check">
                         <input type="checkbox" ${isRead(paper) ? 'checked' : ''}>
