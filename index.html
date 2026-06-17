@@ -247,73 +247,39 @@
         .card-tier-badge.tier-2 { background: #f57c00; }
         .card-tier-badge.tier-3 { background: #757575; }
 
-        /* Category filter chips */
-        .category-filter {
+        /* Topic / Category filter — multi-select checkbox groups */
+        .topic-filter, .category-filter {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            align-items: center;
+            gap: 6px 14px;
             padding: 8px 32px 0;
             max-width: 1280px;
             margin: 0 auto;
         }
-        .cat-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            border: 2px solid transparent;
-            background: var(--primary-light);
-            color: var(--primary);
-            opacity: 0.55;
-            transition: opacity 0.15s, border-color 0.15s, transform 0.1s;
-            user-select: none;
-        }
-        .cat-chip:hover { transform: translateY(-1px); }
-        .cat-chip.active { opacity: 1; border-color: var(--primary); }
-        .cat-chip-count {
-            background: rgba(0,91,150,0.15);
-            padding: 1px 7px;
-            border-radius: 999px;
-            font-size: 11px;
-        }
-
-        /* Topic filter chips (broader than category; filled style) */
-        .topic-filter {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 10px 32px 0;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-        .topic-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 999px;
+        .filter-group-label {
             font-size: 12px;
             font-weight: 700;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-right: 2px;
+        }
+        .filter-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12.5px;
+            color: var(--text);
             cursor: pointer;
-            border: 2px solid transparent;
-            background: var(--primary);
-            color: white;
-            opacity: 0.5;
-            transition: opacity 0.15s, border-color 0.15s, transform 0.1s;
             user-select: none;
         }
-        .topic-chip:hover { transform: translateY(-1px); }
-        .topic-chip.active { opacity: 1; border-color: rgba(0,0,0,0.25); }
-        .topic-chip-count {
-            background: rgba(255,255,255,0.3);
-            padding: 1px 7px;
-            border-radius: 999px;
-            font-size: 11px;
+        .filter-check input {
+            cursor: pointer;
+            accent-color: var(--primary);
+            margin: 0;
         }
+        .filter-check.all { font-weight: 700; color: var(--primary); margin-right: 4px; }
 
         /* Topic / category section headers */
         .topic-header {
@@ -347,7 +313,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:13</div>
+            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:35</div>
         </div>
     </header>
 
@@ -566,54 +532,63 @@
             });
         }
 
-        function renderTopicFilter() {
-            const wrap = document.getElementById('topic-filter');
+        function makeCheck(text, checked, onChange, extraClass) {
+            const label = document.createElement('label');
+            label.className = 'filter-check' + (extraClass ? ' ' + extraClass : '');
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = checked;
+            cb.addEventListener('change', () => onChange(cb.checked));
+            const span = document.createElement('span');
+            span.textContent = text;
+            label.appendChild(cb);
+            label.appendChild(span);
+            return label;
+        }
+
+        // Multi-select checkbox group: a group label, an "전체" (all) toggle, then one
+        // checkbox per key. Empty stateSet = nothing matches (literal — no auto-refill).
+        function renderCheckGroup(wrapId, groupLabel, keys, labelMap, countMap, stateSet, rerenderSelf) {
+            const wrap = document.getElementById(wrapId);
             wrap.innerHTML = '';
-            const order = TOPIC_ORDER.slice();
-            Object.keys(TOPIC_COUNTS).forEach(k => { if (!order.includes(k)) order.push(k); });
-            order.forEach(key => {
-                const cnt = TOPIC_COUNTS[key] || 0;
-                if (cnt === 0) return;
-                const chip = document.createElement('div');
-                chip.className = 'topic-chip' + (state.topicFilter.has(key) ? ' active' : '');
-                chip.dataset.topic = key;
-                chip.innerHTML = `${TOPIC_LABELS[key] || key} <span class="topic-chip-count">${cnt}</span>`;
-                chip.addEventListener('click', () => {
-                    if (state.topicFilter.has(key)) state.topicFilter.delete(key);
-                    else state.topicFilter.add(key);
-                    if (state.topicFilter.size === 0) {
-                        Object.keys(TOPIC_COUNTS).forEach(k => state.topicFilter.add(k));
-                    }
-                    renderTopicFilter();
+            if (keys.length === 0) return;
+            const lab = document.createElement('span');
+            lab.className = 'filter-group-label';
+            lab.textContent = groupLabel;
+            wrap.appendChild(lab);
+
+            const allChecked = keys.every(k => stateSet.has(k));
+            const someChecked = keys.some(k => stateSet.has(k));
+            const allLabel = makeCheck('전체', allChecked, (checked) => {
+                keys.forEach(k => { if (checked) stateSet.add(k); else stateSet.delete(k); });
+                rerenderSelf();
+                render();
+            }, 'all');
+            allLabel.querySelector('input').indeterminate = someChecked && !allChecked;
+            wrap.appendChild(allLabel);
+
+            keys.forEach(key => {
+                const cnt = countMap[key] || 0;
+                wrap.appendChild(makeCheck(`${labelMap[key] || key} (${cnt})`, stateSet.has(key), (checked) => {
+                    if (checked) stateSet.add(key); else stateSet.delete(key);
+                    rerenderSelf();
                     render();
-                });
-                wrap.appendChild(chip);
+                }));
             });
         }
 
+        function renderTopicFilter() {
+            const order = TOPIC_ORDER.slice();
+            Object.keys(TOPIC_COUNTS).forEach(k => { if (!order.includes(k)) order.push(k); });
+            const keys = order.filter(k => (TOPIC_COUNTS[k] || 0) > 0);
+            renderCheckGroup('topic-filter', 'Topic', keys, TOPIC_LABELS, TOPIC_COUNTS, state.topicFilter, renderTopicFilter);
+        }
+
         function renderCategoryFilter() {
-            const wrap = document.getElementById('category-filter');
-            wrap.innerHTML = '';
             const order = CATEGORY_ORDER.concat(["Basic_Theory"]);
             Object.keys(CATEGORY_COUNTS).forEach(k => { if (!order.includes(k)) order.push(k); });
-            order.forEach(key => {
-                const cnt = CATEGORY_COUNTS[key] || 0;
-                if (cnt === 0) return;
-                const chip = document.createElement('div');
-                chip.className = 'cat-chip' + (state.categoryFilter.has(key) ? ' active' : '');
-                chip.dataset.cat = key;
-                chip.innerHTML = `${CATEGORY_LABELS[key] || key} <span class="cat-chip-count">${cnt}</span>`;
-                chip.addEventListener('click', () => {
-                    if (state.categoryFilter.has(key)) state.categoryFilter.delete(key);
-                    else state.categoryFilter.add(key);
-                    if (state.categoryFilter.size === 0) {
-                        Object.keys(CATEGORY_COUNTS).forEach(k => state.categoryFilter.add(k));
-                    }
-                    renderCategoryFilter();
-                    render();
-                });
-                wrap.appendChild(chip);
-            });
+            const keys = order.filter(k => (CATEGORY_COUNTS[k] || 0) > 0);
+            renderCheckGroup('category-filter', 'Category', keys, CATEGORY_LABELS, CATEGORY_COUNTS, state.categoryFilter, renderCategoryFilter);
         }
 
         // wire up filter bar
