@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A Numerical Investigation of Transpiration Cooling with Liquid Coolant Phase Change</title>
+    <meta name="keywords" content="transpiration cooling, porous media, coolant phase change, two-phase mixture model, local thermal non-equilibrium, LTNE, liquid coolant, numerical simulation, boiling heat transfer, capillary diffusion">
+    <meta name="paper-authors" content="J. X. Shi, J. H. Wang">
+    <meta name="paper-journal" content="Transport in Porous Media (Springer), Vol. 87, No. 3, 2011, pp. 703-716 · DOI: 10.1007/s11242-010-9710-9">
+    <meta name="paper-tier" content="2">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            height: 96vh;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            overflow: hidden;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            font-variant: small-caps;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">A Numerical Investigation of Transpiration Cooling with Liquid Coolant Phase Change</div>
+                <span class="tier-badge tier-2">Tier 2 — Standard</span>
+            </div>
+            <div class="authors">J. X. Shi, J. H. Wang</div>
+            <div class="journal">Transport in Porous Media (Springer), Vol. 87, No. 3, 2011, pp. 703-716 · DOI: 10.1007/s11242-010-9710-9</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">Paper Summary</div>
+            <div class="summary">This paper develops a one-dimensional numerical model for <span class="term">transpiration cooling with liquid-coolant phase change</span> inside a porous matrix by coupling the <span class="term">two-phase mixture model (TPMM)</span> with a <span class="term">local thermal non-equilibrium (LTNE)</span> energy formulation, replacing the conventional local-thermal-equilibrium (LTE) assumption. The matrix is divided into sub-cooled liquid, two-phase, and superheated vapor regions, with enthalpy and saturation used in place of fluid temperature so that one set of governing equations spans all three regions. Parametric simulations with pure water as coolant examine how coolant mass flow rate, heat flux, porosity, sphere diameter, solid thermal conductivity, and hot-surface pressure affect temperature and saturation distributions. A key finding is an inverse phenomenon: in the two-phase region the coolant (fluid) temperature can exceed the solid temperature, contrary to single-phase transpiration-cooling studies, and this inversion can only be captured by the LTNE-TPMM. The model also shows that higher hot-surface pressure worsens cooling because the latent heat of vaporization decreases.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">porous media</span><span class="keyword-chip">coolant phase change</span><span class="keyword-chip">two-phase mixture model</span><span class="keyword-chip">local thermal non-equilibrium</span><span class="keyword-chip">LTNE</span><span class="keyword-chip">liquid coolant</span><span class="keyword-chip">numerical simulation</span><span class="keyword-chip">boiling heat transfer</span><span class="keyword-chip">capillary diffusion</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction <span class="click-hint">(click for detail)</span></div>
+                <div class="section-summary">The introduction frames two-phase flow and heat transfer in porous media as a classical topic and reviews how the separate phase model (SPM) gave way to the more convenient two-phase mixture model (TPMM). It notes that transpiration cooling has drawn attention for military and civil applications (scramjet combustors, hypersonic leading edges, turbine blades, rocket nozzles) but that most studies used gaseous coolant, leaving liquid-coolant phase-change effects underexplored, and that the prevailing TPMM relies on a local-thermal-equilibrium assumption of unverified validity for two-phase problems.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works <span class="click-hint">(click for detail)</span></div>
+                <div class="section-summary">Although the paper has no separate related-works section, the introduction surveys the relevant modeling lineage and prior phase-change transpiration-cooling studies. It contrasts the SPM with the TPMM, traces the LTE-based TPMM, and cites application-oriented and phenomenon-specific studies that this work builds on or contrasts against.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method <span class="click-hint">(click for detail)</span></div>
+                <div class="section-summary">The physical model is a one-dimensional porous matrix of thickness L whose upper surface receives heat flux Q while liquid coolant is injected from a reservoir at temperature T_c with mass flow rate m. The formulation couples the TPMM (enthalpy and saturation replacing fluid temperature, so one set of mass, momentum, and fluid-energy equations covers liquid, two-phase, and vapor regions) with an LTNE treatment that adds a separate solid-energy equation and an interfacial convective heat exchange term Q_sf. Constitutive relations (permeability, viscosity, advection correction, capillary/effective diffusion, relative mobilities, boiling source term) close the system, with four energy boundary conditions adapted from Wang and Shi (2008).</div>
+            </div>
+            <div class="section" onclick="openModal('experiment')">
+                <div class="section-title">Experiment <span class="click-hint">(click for detail)</span></div>
+                <div class="section-summary">Numerical experiments use pure water as coolant with saturated-water properties at 373.15 K and 1 atm (Table 2). The 1D domain (porous matrix thickness 10 cm) is discretized into uniform control volumes with staggered grids; grid independence is confirmed across 50, 100, and 200 cells, with 100 cells adopted. Parametric sweeps vary coolant mass flow rate, heat flux, solid thermal conductivity, porosity, sphere diameter, and hot-surface pressure to map temperature and saturation distributions.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion <span class="click-hint">(click for detail)</span></div>
+                <div class="section-summary">The results show that higher coolant mass flow rate delays evaporation, shrinks the two-phase and vapor regions, and lowers hot-surface solid temperature, while higher heat flux expands the two-phase and vapor regions. Higher solid thermal conductivity raises liquid-region temperature but lowers hot-surface temperature. Larger porosity or sphere diameter dilates the two-phase region (via increased capillary diffusion) and raises liquid temperature. The headline discovery is the inverse fluid-solid temperature phenomenon in the two-phase region — captured only by the LTNE-TPMM — and the finding that higher hot-surface pressure worsens cooling through reduced latent heat.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion <span class="click-hint">(click for detail)</span></div>
+                <div class="section-summary">The authors conclude that the new LTNE-TPMM successfully models transpiration cooling with coolant phase change and reveals an inverse fluid-solid temperature phenomenon in the two-phase region that only this model can capture. They report that higher hot-surface pressure degrades cooling and that the two-phase behavior is controllable through porosity, sphere diameter, conductivity, and coolant injection rate.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {
+            introduction:  "Introduction",
+            related_works: "Related Works",
+            method:        "Method",
+            experiment:    "Experiment",
+            discussion:    "Discussion",
+            conclusion:    "Conclusion"
+        };
+
+        const FIG_PREFIX = "Fig";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "When a liquid coolant is injected into a porous matrix and undergoes phase change, the matrix typically separates into three regions: a sub-cooled liquid region, a two-phase region, and a superheated gaseous (vapor) region."}, {"type": "bullet", "text": "The <span class=\"term\">separate phase model (SPM)</span> (Ramesh and Torrance 1990, 1993) writes three series of conservation equations for the three regions coupled through phase-interface boundary conditions, but is difficult in practice due to interface tracking and a large number of coupled nonlinear equations."}, {"type": "bullet", "text": "Wang and Beckermann (1993) introduced the <span class=\"term\">two-phase mixture model (TPMM)</span>, which reduces the number of differential governing equations using only algebraic relationships (no additional assumptions) and avoids interface tracking via an enthalpy method, making it far more convenient than the SPM and widely adopted for two-phase flow problems."}, {"type": "bullet", "text": "Transpiration cooling has attracted numerous investigators as an effective heat-dissipation mechanism, with applications extended to scramjet combustion chambers, leading edges of hypersonic vehicles, first-stage gas-turbine blades, and rocket nozzles."}, {"type": "bullet", "text": "Most prior transpiration-cooling investigations were limited to gaseous coolant; only a few addressed phase-change problems (cooling-process stability by Luikov et al. 1975; temperature and two-phase pressure variations by Naik and Dhir 1982; conductivity and sphere-diameter effects on boiling cooling by Peterson 1997)."}, {"type": "bullet", "text": "The TPMM of Wang and Beckermann (1993) assumes <span class=\"term\">local thermal equilibrium (LTE)</span>, i.e. the fluid coolant is always at the same temperature as the solid matrix across all three regions; the quantitative LTE error was given for single phase (Wang and Wang 2006), but for two-phase problems the suitability of LTE had not been discussed in detail."}, {"type": "bullet", "text": "Liquid water is highlighted (per van Foreest et al. 2009) as offering extremely large latent heat of phase transition, high heat-absorption capacity, small storage space, and low transport power consumption, motivating liquid hydrocarbon and pure water as coolants."}, {"type": "bullet", "text": "This article presents a numerical investigation of transpiration cooling with coolant phase change using the LTNE-TPMM, studying the effects of coolant mass flow rate, porosity, sphere diameter of the porous matrix, and operating pressure on temperature and saturation distributions."}]}, "related_works": {"content": [{"type": "bullet", "text": "Modeling lineage: SPM (Ramesh and Torrance 1990, 1993) -> TPMM (Wang and Beckermann 1993), with the TPMM subsequently used widely for two-phase porous flow (Peterson and Chang 1997; Waite and Amin 1999; Najjari and Ben Nasrallah 2002; Wang 1997; Kazuhisa Yuki et al. 2008)."}, {"type": "bullet", "text": "Phase-change-specific prior work: Luikov et al. (1975a,b) on cooling-process stability, Naik and Dhir (1982) on temperature and two-phase pressure variations, and Peterson (1997) on conductivity and sphere-diameter effects on boiling cooling."}, {"type": "bullet", "text": "Application-context references span scramjet combustion chambers (Sang et al. 1997), hypersonic leading edges (David et al. 1997b), gas-turbine blades (Andoh and Lips 2003; Trevino and Medina 1999), and rocket nozzles (Greuel et al. 2004; Keener et al. 1995; Landis and Bowman 1996)."}, {"type": "bullet", "text": "LTE-error quantification for the single-phase case was provided by Wang and Wang (2006), and boundary-condition treatment for LTNE transpiration-cooling problems was analyzed analytically by Wang and Shi (2008), whose results are adopted here."}, {"type": "bullet", "text": "Constitutive relations are drawn from established porous-media correlations: the Leverett (1985) capillary J-function and the Fatt and Klikoff (1959) relative-permeability relations."}, {"type": "bullet", "text": "The inverse fluid-solid temperature phenomenon in the two-phase region is noted to have also been investigated numerically by Kazuhisa Yuki et al. (2008), positioning this study as both consistent with and extending that observation via the LTNE-TPMM."}, {"type": "bullet", "text": "Single-phase transpiration-cooling studies (Sang et al. 1997; David et al. 1997b; Andoh and Lips 2003; Trevino and Medina 1999; Greuel et al. 2004; Keener et al. 1995; Landis and Bowman 1996; Luikov et al. 1975a,b) established that coolant temperature is always lower than solid temperature, the baseline the present two-phase result inverts."}]}, "method": {"content": [{"type": "bullet", "text": "Geometry: a porous matrix of thickness L with the upper (hot) surface exposed to heat flux Q; liquid coolant is injected from a reservoir at temperature T_c with mass flow rate m, producing three regions (liquid, two-phase, vapor) within the matrix (Fig. 1).", "figure_refs": [1]}, {"type": "bullet", "text": "To avoid interface tracking, the TPMM uses enthalpy H and saturation s in place of fluid temperature; the piecewise relationships among enthalpy, temperature, and saturation across the three regions are tabulated (Table 1)."}, {"type": "bullet", "text": "The LTNE model uses two energy equations — one for the fluid phase and one for the solid phase — with the interfacial convective heat exchange Q_sf added to both, so the heat exchange between fluid and solid (neglected under LTE) is retained."}, {"type": "formula", "label": "Eq. (1) — Mass conservation", "latex": "\\nabla \\cdot (\\rho \\vec{u}) = 0", "description": "Mixture mass conservation in the porous matrix, where rho is the mixture density and u the mixture (Darcy) velocity."}, {"type": "formula", "label": "Eq. (2) — Momentum (Darcy law with gravity)", "latex": "\\vec{u} = -\\frac{K}{\\mu}\\left(\\nabla p - \\rho_k \\vec{g}\\right)", "description": "Darcy-type momentum relation linking velocity to the pressure gradient and gravity through permeability K and mixture viscosity mu; rho_k is the kinetic (buoyancy-corrected) density."}, {"type": "formula", "label": "Eq. (3) — Fluid energy (enthalpy form)", "latex": "\\nabla \\cdot (\\gamma \\vec{u} H) = \\nabla \\cdot (\\Gamma_h \\nabla H) + \\nabla \\cdot \\left( \\frac{K f(s)\\,\\Delta\\rho\\, h_{fg}}{\\nu_v}\\,\\vec{g} \\right) + Q_{sf}", "description": "Fluid-phase energy equation written in enthalpy H with advection correction gamma, effective diffusion coefficient Gamma_h, a gravity/capillary latent-heat transport term involving the hindrance function f(s) and latent heat h_fg, and the interfacial source Q_sf. Transcribed from a region of the PDF where pdfplumber garbled sub/superscripts; signs and grouping reconstructed from context."}, {"type": "formula", "label": "Eq. (4) — Solid energy", "latex": "\\nabla \\cdot (k_{s,eff} \\nabla T_s) = Q_{sf}", "description": "Solid-phase energy equation: conduction through the effective solid conductivity k_{s,eff} balances the interfacial heat exchange Q_sf with the fluid — the term distinguishing LTNE from LTE."}, {"type": "bullet", "text": "Mixture density and momentum are split by saturation: density rho = rho_l s + rho_v (1-s), and mixture mass flux rho u = rho_l u_l + rho_v u_v, so the single mixture variables represent the liquid/vapor blend in the two-phase region."}, {"type": "formula", "label": "Permeability of the porous matrix (Kozeny-Carman form)", "latex": "K = \\frac{d_p^2\\, \\varepsilon^3}{150\\,(1-\\varepsilon)^2}", "description": "Permeability K as a function of sphere/particle diameter d_p and porosity epsilon, the Kozeny-Carman relation used to tie geometry to flow resistance."}, {"type": "bullet", "text": "Closure relations include the advection correction coefficient gamma, the effective diffusion coefficient Gamma_h, the capillary diffusion coefficient D(s), relative mobilities lambda_l(s) and lambda_v(s), and the hindrance function f(s), all expressed in terms of saturation s and the relative permeabilities."}, {"type": "formula", "label": "Relative permeabilities (Fatt and Klikoff 1959)", "latex": "k_{rl} = s^3, \\qquad k_{rv} = (1-s)^3", "description": "Cubic relative-permeability laws for the liquid and vapor phases as functions of liquid saturation s."}, {"type": "formula", "label": "Leverett capillary J-function", "latex": "J(s) = 1.417(1-s) - 2.120(1-s)^2 + 1.263(1-s)^3", "description": "Leverett (1985) J-function setting the capillary pressure dependence on saturation; it drives the capillary diffusion that dominates enthalpy transport in the two-phase region."}, {"type": "formula", "label": "Boiling source term in the two-phase region", "latex": "Q_{boil} = s\\,\\alpha_{sf}\\,\\mu\\,h_{fg}\\left[\\frac{g(\\rho_l-\\rho_v)}{\\sigma}\\right]^{1/2}\\left[\\frac{c_{pf}(T_s-T_{sat})}{0.006\\,h_{fg}\\,Pr_f^{1.7}}\\right]^{1/0.33}", "description": "Rohsenow-type boiling heat-flux source used inside the two-phase region, where Q_sf = Q_boil + (1-s) alpha_sf h_sv (T_s - T_f). Exponents and grouping reconstructed from a heavily garbled PDF region; structure follows the standard nucleate-boiling correlation."}, {"type": "formula", "label": "Volumetric (pore) heat transfer coefficient", "latex": "h_{si} = \\frac{k_i}{d_p}\\left(2.0 + 1.1\\,Pr_i^{1/3}\\,Re_p^{0.6}\\right), \\quad i = v\\ \\text{(vapor)},\\ l\\ \\text{(liquid)}", "description": "Pore-scale interfacial heat transfer coefficient for vapor or liquid, a Nusselt-type correlation in pore Reynolds and Prandtl numbers; the specific surface is alpha_sf = 6(1-epsilon)/d_p."}, {"type": "bullet", "text": "Momentum boundary conditions fix the inlet velocity at y=0 (u = u_in) and the outlet pressure at y=L (p = p_0)."}, {"type": "bullet", "text": "Four energy boundary conditions are required for the second-order 1D energy equations; following Wang and Shi (2008), the hot-surface fluid balance includes convective coolant inflow h_c(T_s - T_c), the inlet enthalpy is set from the injected liquid state, the capillary/gravity latent-heat flux vanishes at the outlet, and the solid conduction flux at the hot surface equals the applied heat flux Q."}]}, "experiment": {"content": [{"type": "bullet", "text": "Coolant is pure water; saturated-water thermal properties at 373.15 K and 1 atm are tabulated (Table 2): liquid/vapor density 1044 / 1.679 kg/m^3, specific heat 4.217e3 / 2.029e3 J/kgK, kinematic viscosity 2.694e-7 / 7.16e-6 m^2/s, thermal conductivity 0.68 / 0.0248 W/mK, interfacial tension 0.0589 N/m, and latent heat of evaporation 2.257e6 J/kg.", "figure_refs": []}, {"type": "bullet", "text": "The domain is divided into uniform control volumes with staggered grids for the velocity control volumes; the porous-matrix thickness used in the calculations is 10 cm."}, {"type": "bullet", "text": "Convergence for p, T_s, and H is judged by the relative change between successive iterations falling below 1e-7, with overall iteration continued until the absolute error is less than 1e-4."}, {"type": "formula", "label": "Convergence criterion", "latex": "\\max\\left( \\frac{|\\psi^{k+1} - \\psi^{k}|}{|\\psi^{k+1}|} \\right) \\le 10^{-7}", "description": "Relative-change convergence test applied to the field variables psi (pressure, solid temperature, and enthalpy) between successive iterations k and k+1."}, {"type": "bullet", "text": "Grid independence is verified with 50, 100, and 200 control volumes; 100 cells are adopted because the maximum change in solid temperature is then less than 1%."}, {"type": "bullet", "text": "Because the effective diffusion coefficient Gamma_h varies sharply near the liquid-to-two-phase transition, under-relaxation is used and Gamma_h at mesh interfaces is evaluated by a harmonic mean for numerical stability."}, {"type": "bullet", "text": "Baseline parametric sweeps: coolant mass flow rates of 0.3, 0.5, 0.8, and 1.0 kg/m^2s at heat flux 1.0e6 J/m^2s, porosity 0.35, and sphere diameter 5e-4 m (Fig. 2).", "figure_refs": [2]}, {"type": "bullet", "text": "Heat-flux sweep at 1.0, 1.5, and 2.0e6 J/m^2s (mass flow 0.5 kg/m^2s, porosity 0.35, sphere diameter 5e-4 m) examines two-phase and vapor region extent (Fig. 3).", "figure_refs": [3]}, {"type": "bullet", "text": "Porosity sweep at 0.3, 0.35, and 0.4 (Fig. 5) and sphere-diameter sweep at 1.0, 1.5, and 10e-4 m (Fig. 6) characterize the effect of matrix geometry on temperature and saturation.", "figure_refs": [5, 6]}, {"type": "bullet", "text": "Pressure sweep at hot-surface absolute pressures of 1.0133e5, 2.455e5, 9.319e5, and 26.40e5 Pa uses pressure-dependent water properties (Table 3: saturation temperatures 373.15-500 K, latent heat dropping from 2.257e6 to 1.825e6 J/kg) to assess cooling under realistic aerodynamic pressures up to ~14e5 Pa (Greuel et al. 2004).", "figure_refs": [9]}]}, "discussion": {"content": [{"type": "bullet", "text": "A higher coolant mass flow rate delays liquid evaporation and reduces the area of the two-phase and vapor regions, so the solid temperature at the hot surface decreases; this trend agrees with Peterson and Chang (1997) and Kazuhisa Yuki et al. (2008) because more heat is required to evaporate the liquid.", "figure_refs": [2]}, {"type": "bullet", "text": "The temperature difference between solid and fluid is pronounced at the hot surface, confirming that the LTNE mode is necessary for accurate estimation (Fig. 2a).", "figure_refs": [2]}, {"type": "bullet", "text": "With increasing heat flux, the two-phase region extends leftward (toward the inlet) and the vapor region grows, as expected (Fig. 3).", "figure_refs": [3]}, {"type": "bullet", "text": "Higher solid thermal conductivity gives a higher temperature in the liquid region but a lower temperature at the hot surface, consistent with single-phase transpiration-cooling studies (Landis and Bowman 1996); its effect on two-phase saturation is not obvious, attributed to conductivity not affecting the volumetric heat transfer coefficients h_sv, h_sl or the effective fluid diffusion coefficient Gamma_h (Fig. 4).", "figure_refs": [4]}, {"type": "bullet", "text": "Increasing porosity or sphere diameter raises liquid temperature, moves the liquid-region interface leftward, and extends the two-phase region; smaller porosity raises effective solid conductivity k_{s,eff} and specific surface alpha_sf, while smaller sphere diameter also raises alpha_sf and the transfer coefficient h_si (Figs. 5, 6).", "figure_refs": [5, 6]}, {"type": "bullet", "text": "In the two-phase region the coolant temperature gradient is always zero and capillarity is the principal driving force of enthalpy transfer; a larger porosity or sphere diameter yields a higher capillary diffusion coefficient and thus a dilated two-phase region (Fig. 7).", "figure_refs": [7]}, {"type": "bullet", "text": "Inverse phenomenon: although single-phase studies established that coolant temperature is always below solid temperature, the computed difference (T_s - T_f) from the Fig. 6a data shows the fluid temperature exceeds the solid temperature at the beginning of the two-phase region, with a larger particle diameter producing a greater temperature difference (Fig. 8).", "figure_refs": [6, 8]}, {"type": "bullet", "text": "The inversion is explained by the boiling heat transfer Q_boil and capillary enthalpy diffusion increasing fluid enthalpy while decreasing solid temperature, so the fluid temperature locally surpasses the solid; it can be captured only by the LTNE-TPMM because LTE forces equal fluid and solid temperatures, and it is consistent with Kazuhisa Yuki et al. (2008)."}, {"type": "bullet", "text": "Under higher hot-surface pressure, although saturation temperature and liquid/vapor specific heats increase, the latent heat decreases (Table 3); the distributions (Fig. 9) show evaporation is suppressed and cooling efficiency is clearly worse, so pressure effects must be included in numerical simulations.", "figure_refs": [9]}]}, "conclusion": {"content": [{"type": "bullet", "text": "A new model, the LTNE-TPMM, is presented to investigate transpiration cooling with coolant phase change, with cooling performance analyzed by numerical calculation."}, {"type": "bullet", "text": "An inverse phenomenon of fluid and solid temperatures (fluid hotter than solid in the two-phase region) may be caused by boiling heat transfer and capillary thermal diffusion, and can be captured only by the LTNE-TPMM presented in this article."}, {"type": "bullet", "text": "In transpiration cooling with coolant phase change, an increase in the hot-surface pressure leads to a worse cooling effect."}, {"type": "bullet", "text": "The liquid temperature, the area of the two-phase region, and the saturation in the two-phase region are controllable by changing porosity, sphere diameter, conductivity of the porous matrix, or the coolant injection rate."}, {"type": "bullet", "text": "The work demonstrates that retaining local thermal non-equilibrium (rather than the conventional LTE assumption) is essential for accurate two-phase transpiration-cooling predictions, since the temperature difference between solid and fluid is significant near the hot surface."}, {"type": "bullet", "text": "The study extends transpiration-cooling analysis from the well-studied single-phase regime to liquid-coolant phase change, providing a unified enthalpy/saturation formulation across liquid, two-phase, and vapor regions."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "The predicted dilation of the two-phase region with larger porosity or sphere diameter (driven by capillary diffusion) is a numerical result that the authors state still requires experimental verification.", "source_quote": "However, it is necessary to verify this phenomenon by experiment in the future.", "source_section": "discussion"}, {"claim": "The inverse temperature phenomenon (fluid temperature exceeding solid temperature in the two-phase region) is shown only numerically and still needs experimental verification or a micro-scale explanation.", "source_quote": "Nevertheless, this phenomenon still need to be verified by experiment or explained from a viewpoint of micro-scale in the future.", "source_section": "discussion"}], "future_works": [{"claim": "Experimentally verify the predicted capillary-driven dilation of the two-phase region with increasing porosity or sphere diameter.", "source_quote": "However, it is necessary to verify this phenomenon by experiment in the future.", "source_section": "discussion"}, {"claim": "Verify the inverse fluid-solid temperature phenomenon by experiment, or explain it from a micro-scale viewpoint.", "source_quote": "Nevertheless, this phenomenon still need to be verified by experiment or explained from a viewpoint of micro-scale in the future.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["For transpiration cooling, most prior studies were limited to gaseous coolant; the influence factors of cooling effect when coolant changes phase from liquid to a two-phase mixture had not been extensively studied.", "The separate phase model (SPM) for phase-change problems is impractical because of interface tracking and a large number of coupled nonlinear equations.", "The existing TPMM (Wang and Beckermann 1993) assumes local thermal equilibrium (LTE), and whether the LTE assumption is suitable for two-phase problems had not been discussed in detail.", "Liquid coolants such as water and liquid hydrocarbon offer large latent heat, yet cooling performance had mainly been discussed for single-phase coolant cases."], "addressed_by_this_work": ["Builds a numerical LTNE-TPMM model for liquid-coolant phase-change transpiration cooling and quantifies the effects of mass flow rate, heat flux, porosity, sphere diameter, thermal conductivity, and pressure on temperature and saturation.", "Adopts the TPMM (with enthalpy/saturation formulation) so the three regions are described by one set of governing equations, avoiding interface tracking and the coupled-equation burden of the SPM.", "Replaces LTE with an LTNE energy formulation (separate fluid and solid energy equations with interfacial heat exchange) and shows it captures an inverse fluid-solid temperature phenomenon in the two-phase region that LTE cannot represent.", "Carries out a numerical investigation specifically for liquid (phase-changing) coolant using pure water, extending analysis beyond the previously well-studied single-phase cases."], "remaining_unresolved": ["Experimental validation of the model's predictions (capillary-driven two-phase region dilation and the inverse temperature phenomenon) is not provided and is left for future work.", "A micro-scale physical explanation of the inverse fluid-solid temperature phenomenon is not given."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "Limitations",
+            future_works:   "Future Works",
+            motivation:     "Motivation Resolution",
+            mot_problems:   "Motivating Problems",
+            mot_addressed:  "Addressed by This Work",
+            mot_remaining:  "Remaining Unresolved"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX} ${item.figure_refs.join(", ")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
