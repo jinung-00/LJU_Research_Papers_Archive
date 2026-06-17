@@ -313,7 +313,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:40</div>
+            <div class="meta">총 <strong>2</strong>편 · 마지막 갱신 2026-06-18 02:49</div>
         </div>
     </header>
 
@@ -365,18 +365,31 @@
             return p.topic === "Basic_Theory" ? "Basic_Theory" : (p.category || "");
         }
 
-        // Full key lists — the entire taxonomy is shown as filter checkboxes (even keys
-        // with 0 papers), so empty topics/categories are pre-created. Counts default to 0.
+        // All topics are shown as single-select radios (even 0-paper ones).
         const TOPIC_KEYS = (() => {
             const o = TOPIC_ORDER.slice();
             Object.keys(TOPIC_COUNTS).forEach(k => { if (!o.includes(k)) o.push(k); });
             return o;
         })();
-        const CATEGORY_KEYS = (() => {
-            const o = CATEGORY_ORDER.concat(["Basic_Theory"]);
-            Object.keys(CATEGORY_COUNTS).forEach(k => { if (!o.includes(k)) o.push(k); });
-            return o;
-        })();
+        // Per-topic sub-categories. A flat topic (empty list) shows no individual
+        // category checkboxes — only the "전체" toggle.
+        const TOPIC_CATEGORIES = {
+            "Transpiration_Cooling": CATEGORY_ORDER,   // 6 sub-categories
+            "Basic_Theory": [],                         // flat — no sub-categories
+        };
+        function categoriesForTopic(topic) {
+            if (TOPIC_CATEGORIES[topic]) return TOPIC_CATEGORIES[topic];
+            // unknown topic — derive distinct categories present in its papers
+            const s = [];
+            PAPERS.forEach(p => { if (p.topic === topic && p.category && !s.includes(p.category)) s.push(p.category); });
+            return s;
+        }
+        // Category filter keys for a topic: its sub-categories, or — for a flat topic —
+        // the single groupKey (the topic itself), toggled by the lone "전체" box.
+        function categoryKeysForTopic(topic) {
+            const cats = categoriesForTopic(topic);
+            return cats.length ? cats : [topic];
+        }
 
         const KEYWORD_PALETTE = [
             '#FF6B6B', '#4ECDC4', '#FFA94D', '#95E1D3', '#C9B1FF',
@@ -394,9 +407,15 @@
             search: '',
             readFilter: 'all',           // all | read | unread
             tierFilter: new Set(["0","1","2","3","null"]),  // active tier keys (default: all on)
-            topicFilter: new Set(TOPIC_KEYS),        // active topics (default: all on, incl. empty)
-            categoryFilter: new Set(CATEGORY_KEYS),  // active groupKeys (default: all on, incl. empty)
+            selectedTopic: TOPIC_KEYS[0] || '',   // single-select (radio)
+            categoryFilter: new Set(),            // active category keys for the selected topic
         };
+        // Switch the active topic and reset its Category filter to all-on.
+        function selectTopic(topic) {
+            state.selectedTopic = topic;
+            state.categoryFilter = new Set(categoryKeysForTopic(topic));
+        }
+        selectTopic(state.selectedTopic);
 
         function isRead(paper) {
             return localStorage.getItem('read:' + paper.url) === '1';
@@ -423,15 +442,13 @@
             const key = paper.tier === null || paper.tier === undefined ? "null" : String(paper.tier);
             return state.tierFilter.has(key);
         }
-        function matchesCategory(paper) {
-            const gk = groupKey(paper);
-            if (!gk) return true;            // papers without category info always pass
-            return state.categoryFilter.has(gk);
-        }
         function matchesTopic(paper) {
-            const tk = paper.topic || "";
-            if (!tk) return true;            // papers without a topic always pass
-            return state.topicFilter.has(tk);
+            return (paper.topic || "") === state.selectedTopic;   // single-select
+        }
+        function matchesCategory(paper) {
+            // Within the selected topic: a paper's groupKey must be among the checked
+            // category keys (for a flat topic that key is the topic itself).
+            return state.categoryFilter.has(groupKey(paper));
         }
         function visiblePapers() {
             return PAPERS.filter(p =>
@@ -559,43 +576,72 @@
             return label;
         }
 
-        // Multi-select checkbox group: a group label, an "전체" (all) toggle, then one
-        // checkbox per key. Empty stateSet = nothing matches (literal — no auto-refill).
-        function renderCheckGroup(wrapId, groupLabel, keys, labelMap, countMap, stateSet, rerenderSelf) {
-            const wrap = document.getElementById(wrapId);
+        function makeRadio(name, text, checked, onChange) {
+            const label = document.createElement('label');
+            label.className = 'filter-check';
+            const r = document.createElement('input');
+            r.type = 'radio';
+            r.name = name;
+            r.checked = checked;
+            r.addEventListener('change', () => { if (r.checked) onChange(); });
+            const span = document.createElement('span');
+            span.textContent = text;
+            label.appendChild(r);
+            label.appendChild(span);
+            return label;
+        }
+
+        // Topic — single-select radios (all topics shown, even 0-paper). Selecting a
+        // topic rebuilds the dependent Category controls and resets them to all-on.
+        function renderTopicFilter() {
+            const wrap = document.getElementById('topic-filter');
             wrap.innerHTML = '';
-            if (keys.length === 0) return;
             const lab = document.createElement('span');
             lab.className = 'filter-group-label';
-            lab.textContent = groupLabel;
+            lab.textContent = 'Topic';
+            wrap.appendChild(lab);
+            TOPIC_KEYS.forEach(key => {
+                const cnt = TOPIC_COUNTS[key] || 0;
+                wrap.appendChild(makeRadio('topic-radio', `${TOPIC_LABELS[key] || key} (${cnt})`,
+                    state.selectedTopic === key, () => {
+                        selectTopic(key);
+                        renderTopicFilter();
+                        renderCategoryFilter();
+                        render();
+                    }));
+            });
+        }
+
+        // Category — depends on the selected topic. A topic with sub-categories shows
+        // "전체" + one checkbox per sub-category; a flat topic shows only "전체".
+        function renderCategoryFilter() {
+            const wrap = document.getElementById('category-filter');
+            wrap.innerHTML = '';
+            const lab = document.createElement('span');
+            lab.className = 'filter-group-label';
+            lab.textContent = 'Category';
             wrap.appendChild(lab);
 
-            const allChecked = keys.every(k => stateSet.has(k));
-            const someChecked = keys.some(k => stateSet.has(k));
+            const cats = categoriesForTopic(state.selectedTopic);
+            const allKeys = categoryKeysForTopic(state.selectedTopic);
+            const allChecked = allKeys.every(k => state.categoryFilter.has(k));
+            const someChecked = allKeys.some(k => state.categoryFilter.has(k));
             const allLabel = makeCheck('전체', allChecked, (checked) => {
-                keys.forEach(k => { if (checked) stateSet.add(k); else stateSet.delete(k); });
-                rerenderSelf();
+                allKeys.forEach(k => { if (checked) state.categoryFilter.add(k); else state.categoryFilter.delete(k); });
+                renderCategoryFilter();
                 render();
             }, 'all');
             allLabel.querySelector('input').indeterminate = someChecked && !allChecked;
             wrap.appendChild(allLabel);
 
-            keys.forEach(key => {
-                const cnt = countMap[key] || 0;
-                wrap.appendChild(makeCheck(`${labelMap[key] || key} (${cnt})`, stateSet.has(key), (checked) => {
-                    if (checked) stateSet.add(key); else stateSet.delete(key);
-                    rerenderSelf();
+            cats.forEach(key => {
+                const cnt = CATEGORY_COUNTS[key] || 0;
+                wrap.appendChild(makeCheck(`${CATEGORY_LABELS[key] || key} (${cnt})`, state.categoryFilter.has(key), (checked) => {
+                    if (checked) state.categoryFilter.add(key); else state.categoryFilter.delete(key);
+                    renderCategoryFilter();
                     render();
                 }));
             });
-        }
-
-        function renderTopicFilter() {
-            renderCheckGroup('topic-filter', 'Topic', TOPIC_KEYS, TOPIC_LABELS, TOPIC_COUNTS, state.topicFilter, renderTopicFilter);
-        }
-
-        function renderCategoryFilter() {
-            renderCheckGroup('category-filter', 'Category', CATEGORY_KEYS, CATEGORY_LABELS, CATEGORY_COUNTS, state.categoryFilter, renderCategoryFilter);
         }
 
         // wire up filter bar
