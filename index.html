@@ -114,6 +114,7 @@
             transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
             position: relative;
             min-height: 180px;
+            cursor: pointer;
         }
         .card:hover {
             transform: translateY(-3px);
@@ -252,7 +253,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>1</strong>편 · 마지막 갱신 2026-06-17 16:11</div>
+            <div class="meta">총 <strong>1</strong>편 · 마지막 갱신 2026-06-17 16:18</div>
         </div>
     </header>
 
@@ -373,6 +374,13 @@
             `;
             const cb = card.querySelector('input');
             cb.addEventListener('change', () => { setRead(paper, cb.checked); render(); });
+            // Clicking the card (anywhere except the new-tab "열기" button or the
+            // read checkbox/label) navigates in the SAME window — browser Back
+            // then returns to this index.
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.open-btn') || e.target.closest('.read-check')) return;
+                window.location.href = paper.url;
+            });
             return card;
         }
 
