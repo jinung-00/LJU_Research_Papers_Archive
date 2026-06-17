@@ -1,54 +1,420 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LJU Research Papers Archive</title>
-  <style>
-    :root { color-scheme: light dark; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; line-height: 1.6;
-    }
-    header { border-bottom: 1px solid #8884; padding-bottom: 1rem; margin-bottom: 1.5rem; }
-    h1 { margin: 0 0 .25rem; font-size: 1.6rem; }
-    .sub { color: #8a8a8a; font-size: .95rem; }
-    #search { width: 100%; padding: .6rem .8rem; font-size: 1rem; margin: 1rem 0;
-      border: 1px solid #8886; border-radius: 8px; box-sizing: border-box; }
-    .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
-    .chip { font-size: .8rem; padding: .2rem .6rem; border: 1px solid #8886; border-radius: 999px; cursor: pointer; }
-    ul#papers { list-style: none; padding: 0; }
-    ul#papers li { padding: .6rem 0; border-bottom: 1px solid #8882; }
-    .empty { color: #8a8a8a; font-style: italic; padding: 2rem 0; text-align: center; }
-    footer { margin-top: 2rem; font-size: .8rem; color: #8a8a8a; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LJU Research Papers Archive</title>
+    <style>
+        :root {
+            --primary: #005b96;
+            --primary-light: #e8f1f9;
+            --bg: #ffffff;
+            --surface: #fafbfc;
+            --border: #e1e5e8;
+            --text: #1f2328;
+            --text-soft: #656d76;
+            --text-muted: #8b949e;
+            --read-fade: 0.55;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,91,150,0.10);
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--surface);
+            color: var(--text);
+            line-height: 1.55;
+            min-height: 100vh;
+        }
+        a { color: inherit; text-decoration: none; }
+
+        /* Header */
+        header.hero {
+            background: linear-gradient(135deg, #005b96 0%, #0086d6 100%);
+            color: white;
+            padding: 36px 32px 28px;
+        }
+        .hero-inner { max-width: 1280px; margin: 0 auto; }
+        .hero h1 { margin: 0 0 8px; font-size: 32px; font-weight: 700; letter-spacing: -0.3px; }
+        .hero .meta { opacity: 0.92; font-size: 14px; }
+
+        /* Sticky filter bar */
+        .filterbar {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            z-index: 50;
+            padding: 14px 32px;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+        }
+        .filterbar-inner {
+            max-width: 1280px; margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(240px, 1fr) auto auto;
+            gap: 14px;
+            align-items: center;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23656d76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>') no-repeat 12px center;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,91,150,0.12);
+        }
+        .read-toggle {
+            display: inline-flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .read-toggle button {
+            padding: 9px 14px;
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-soft);
+            font-family: inherit;
+            transition: background 0.15s, color 0.15s;
+        }
+        .read-toggle button:hover { background: white; color: var(--text); }
+        .read-toggle button.active { background: var(--primary); color: white; }
+        .counts { font-size: 13px; color: var(--text-soft); white-space: nowrap; }
+        .counts strong { color: var(--text); }
+
+        /* Grid */
+        main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 32px 60px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+            position: relative;
+            min-height: 180px;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+        .card.read { opacity: var(--read-fade); }
+        .card.read:hover { opacity: 1; }
+        .card-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+        .card-keyword {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 10.5px;
+            font-weight: 500;
+            border-radius: 4px;
+            color: white;
+            letter-spacing: 0.1px;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: var(--text);
+            margin: 0 0 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-meta {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin: 0 0 14px;
+            line-height: 1.45;
+        }
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        .read-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-soft);
+            cursor: pointer;
+            user-select: none;
+        }
+        .read-check input { cursor: pointer; accent-color: var(--primary); }
+        .open-btn {
+            padding: 6px 14px;
+            background: var(--primary);
+            color: white;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+        .open-btn:hover { background: #00477a; }
+
+        .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* Tier filter chips */
+        .tier-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 32px 0;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .tier-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0.45;
+            transition: opacity 0.15s, border-color 0.15s, transform 0.1s;
+            user-select: none;
+            color: white;
+        }
+        .tier-chip:hover { transform: translateY(-1px); }
+        .tier-chip.active { opacity: 1; border-color: rgba(0,0,0,0.25); }
+        .tier-chip .tier-count {
+            background: rgba(255,255,255,0.3);
+            padding: 1px 7px;
+            border-radius: 999px;
+            font-size: 11px;
+        }
+        .tier-chip.tier-1 { background: #d32f2f; }
+        .tier-chip.tier-2 { background: #f57c00; }
+        .tier-chip.tier-3 { background: #757575; }
+        .tier-chip.tier-null { background: #b0bec5; color: #222; }
+        .tier-chip.tier-null .tier-count { background: rgba(0,0,0,0.15); }
+
+        /* Card tier badge */
+        .card-tier-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 3px 9px;
+            border-radius: 10px;
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+        }
+        .card-tier-badge.tier-1 { background: #d32f2f; }
+        .card-tier-badge.tier-2 { background: #f57c00; }
+        .card-tier-badge.tier-3 { background: #757575; }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>LJU Research Papers Archive</h1>
-    <div class="sub">Curated paper summaries · maintained by ARCHI</div>
-  </header>
+    <header class="hero">
+        <div class="hero-inner">
+            <h1>LJU Research Papers Archive</h1>
+            <div class="meta">총 <strong>1</strong>편 · 마지막 갱신 2026-06-17 16:11</div>
+        </div>
+    </header>
 
-  <input id="search" type="search" placeholder="Search papers by title, author, keyword…" disabled>
-  <div class="chips" id="chips"><!-- keyword chips: regenerated by index-rebuild --></div>
+    <div class="filterbar">
+        <div class="filterbar-inner">
+            <input id="search" class="search-input" type="text" placeholder="제목·저자·연도·키워드로 검색...">
+            <div class="read-toggle" role="tablist">
+                <button data-filter="all" class="active">전체</button>
+                <button data-filter="unread">미읽음</button>
+                <button data-filter="read">읽음</button>
+            </div>
+            <div class="counts" id="counts"></div>
+        </div>
+        <div class="tier-filter" id="tier-filter"></div>
+    </div>
 
-  <ul id="papers"></ul>
-  <div class="empty" id="empty">No papers published yet. ARCHI will add summaries here.</div>
+    <main>
+        <div class="grid" id="grid"></div>
+    </main>
 
-  <footer>
-    Auto-generated index — regenerated by ARCHI's <code>index-rebuild</code> skill.
-  </footer>
+    <script>
+        const PAPERS = [{"title": "A Numerical Investigation of Transpiration Cooling with Liquid Coolant Phase Change", "authors": "J. X. Shi, J. H. Wang", "authors_short": "J. X. Shi, J. H. Wang", "journal": "Transport in Porous Media, Vol. 87, No. 3, 2011, pp. 703-716 · DOI: 10.1007/s11242-010-9710-9 · ISSN 0169-3913", "year": "2011", "venue": "Transport in Porous Media", "keywords": ["transpiration cooling", "coolant phase change", "porous media", "two-phase mixture model (TPMM)", "local thermal non-equilibrium (LTNE)", "liquid coolant", "numerical simulation", "porous matrix heat and mass transfer", "capillary diffusion", "boiling heat transfer"], "stem": "Shi_TIPM_2011", "tier": 3, "url": "Paper/Shi_TIPM_2011.html"}];
+        const TIER_COUNTS = {"0": 0, "1": 0, "2": 0, "3": 1, "null": 0};
+        const TIER_LABELS = {
+            "1": "Tier 1 — 최상위",
+            "2": "Tier 2 — 일반",
+            "3": "Tier 3 — 미등록",
+            "null": "Tier 미지정"
+        };
 
-  <script>
-    // Placeholder. The index-rebuild skill will replace this with a real
-    // paper list (built from each Paper/{paper_id}.html's <meta keywords>),
-    // wire up the search box, and render keyword chips + read-tracking.
-    (function () {
-      const papers = []; // filled by index-rebuild
-      const list = document.getElementById('papers');
-      const empty = document.getElementById('empty');
-      if (papers.length) { empty.style.display = 'none'; }
-    })();
-  </script>
+        const KEYWORD_PALETTE = [
+            '#FF6B6B', '#4ECDC4', '#FFA94D', '#95E1D3', '#C9B1FF',
+            '#FFB4B4', '#6BCF7F', '#FF8FB1', '#5B8DEF', '#F4A261',
+            '#A8DADC', '#E29578', '#90BE6D', '#F9C74F', '#577590'
+        ];
+        function keywordColor(kw) {
+            let h = 0;
+            const k = kw.toLowerCase();
+            for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) | 0;
+            return KEYWORD_PALETTE[Math.abs(h) % KEYWORD_PALETTE.length];
+        }
+
+        const state = {
+            search: '',
+            readFilter: 'all',           // all | read | unread
+            tierFilter: new Set(["0","1","2","3","null"]),  // active tier keys (default: all on)
+        };
+
+        function isRead(paper) {
+            return localStorage.getItem('read:' + paper.url) === '1';
+        }
+        function setRead(paper, val) {
+            if (val) localStorage.setItem('read:' + paper.url, '1');
+            else localStorage.removeItem('read:' + paper.url);
+        }
+
+        function matchesSearch(paper, q) {
+            if (!q) return true;
+            const kwText = (paper.keywords || []).join(' ');
+            const t = (paper.title + ' ' + paper.authors + ' ' + paper.year + ' '
+                       + paper.venue + ' ' + paper.stem + ' ' + kwText).toLowerCase();
+            return q.toLowerCase().split(/\s+/).every(token => t.includes(token));
+        }
+        function matchesRead(paper) {
+            if (state.readFilter === 'all') return true;
+            const r = isRead(paper);
+            return state.readFilter === 'read' ? r : !r;
+        }
+        function matchesTier(paper) {
+            const key = paper.tier === null || paper.tier === undefined ? "null" : String(paper.tier);
+            return state.tierFilter.has(key);
+        }
+        function visiblePapers() {
+            return PAPERS.filter(p =>
+                matchesSearch(p, state.search) &&
+                matchesRead(p) &&
+                matchesTier(p)
+            );
+        }
+
+        function render() {
+            const grid = document.getElementById('grid');
+            const visible = visiblePapers();
+            grid.innerHTML = '';
+            if (visible.length === 0) {
+                grid.innerHTML = '<div class="empty">조건에 맞는 논문이 없어요.</div>';
+            } else {
+                visible.forEach(p => grid.appendChild(makeCard(p)));
+            }
+            const total = PAPERS.length;
+            const readCnt = PAPERS.filter(isRead).length;
+            document.getElementById('counts').innerHTML =
+                `<strong>${visible.length}</strong> / ${total} · 읽음 ${readCnt}`;
+        }
+
+        function makeCard(paper) {
+            const card = document.createElement('div');
+            card.className = 'card' + (isRead(paper) ? ' read' : '');
+            const kws = paper.keywords || [];
+            const kwHtml = kws.map(k =>
+                `<span class="card-keyword" style="background:${keywordColor(k)}">${k}</span>`
+            ).join('');
+            const tierBadge = (paper.tier !== null && paper.tier !== undefined)
+                ? `<span class="card-tier-badge tier-${paper.tier}">T${paper.tier}</span>`
+                : '';
+            card.innerHTML = `
+                ${tierBadge}
+                <div class="card-keywords">${kwHtml}</div>
+                <h3 class="card-title">${paper.title}</h3>
+                <p class="card-meta">${paper.authors_short} · ${paper.year || ''} · ${paper.venue || ''}</p>
+                <div class="card-footer">
+                    <label class="read-check">
+                        <input type="checkbox" ${isRead(paper) ? 'checked' : ''}>
+                        <span>읽음</span>
+                    </label>
+                    <a class="open-btn" href="${paper.url}" target="_blank" rel="noopener">열기 →</a>
+                </div>
+            `;
+            const cb = card.querySelector('input');
+            cb.addEventListener('change', () => { setRead(paper, cb.checked); render(); });
+            return card;
+        }
+
+        function renderTierFilter() {
+            const wrap = document.getElementById('tier-filter');
+            wrap.innerHTML = '';
+            ["0","1","2","3","null"].forEach(key => {
+                const cnt = TIER_COUNTS[key] || 0;
+                if (cnt === 0) return;
+                const chip = document.createElement('div');
+                chip.className = 'tier-chip tier-' + key + (state.tierFilter.has(key) ? ' active' : '');
+                chip.dataset.tier = key;
+                chip.innerHTML = `${TIER_LABELS[key]} <span class="tier-count">${cnt}</span>`;
+                chip.addEventListener('click', () => {
+                    if (state.tierFilter.has(key)) state.tierFilter.delete(key);
+                    else state.tierFilter.add(key);
+                    if (state.tierFilter.size === 0) {
+                        ["0","1","2","3","null"].forEach(k => state.tierFilter.add(k));
+                    }
+                    renderTierFilter();
+                    render();
+                });
+                wrap.appendChild(chip);
+            });
+        }
+
+        // wire up filter bar
+        document.getElementById('search').addEventListener('input', e => {
+            state.search = e.target.value;
+            render();
+        });
+        document.querySelectorAll('.read-toggle button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.read-toggle button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.readFilter = btn.dataset.filter;
+                render();
+            });
+        });
+
+        renderTierFilter();
+        render();
+    </script>
 </body>
 </html>
