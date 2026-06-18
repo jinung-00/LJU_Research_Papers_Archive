@@ -25,11 +25,11 @@
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Noto Sans KR', 'Arial', sans-serif;
-            margin: 0; padding: 0;
+            margin: 0; padding: 0 0 24px;
             background: #f5f5f5;
             color: #333;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
         }
         .slide {
             width: min(1280px, 98vw);
@@ -39,6 +39,7 @@
             display: grid;
             grid-template-rows: auto auto 1fr;
             overflow: hidden;
+            flex-shrink: 0;
         }
         .header {
             background: #005b96;
@@ -306,11 +307,14 @@
             padding-bottom: 4px;
         }
         details.references {
-            margin-top: 18px;
+            width: min(1244px, calc(98vw - 36px));
+            margin: 14px auto 0;
+            box-sizing: border-box;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 10px 16px;
-            background: #fafbfc;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         details.references > summary {
             cursor: pointer;
@@ -378,12 +382,12 @@
                 <div class="section-summary">본 연구는 제작된 Hastelloy X 다공성 시편을 이용해 유동 영역, 유동 불안정성, 열보호, 냉각 성능의 관점에서 transpiration cooling을 실험적으로 분석하였다. 재현 가능한 제작 레시피, 수치적으로 검증된 화염 열유속계, 네 가지 유동 영역의 식별, 새로운 cooling performance factor가 핵심 기여이다. 모든 특성을 종합한 결과 phase-change 영역이 transpiration cooling 운용에 최적임을 확인하였다.</div>
             </div>
         </div>
-
-        <details class="references">
-            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 30</span></summary>
-            <ol class="ref-list"><li>S. Zhang, X. Li, J. Zuo, J. Qin, K. Cheng, Y. Feng, W. Bao, Research progress on active thermal protection for hypersonic vehicles, Progress in Aerospace Sciences, 2020</li><li>O. Uyanna, H. Najafi, Thermal protection systems for space vehicles: a review on technology development, current challenges and future prospects, Acta Astronautica, 2020</li><li>A. van Foreest, M. Sippel, A. Gulhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophysics and Heat Transfer, 2009</li><li>L. Shen, J. Wang, W. Dong, J. Pu, J. Peng, D. Qu, L. Chen, An experimental investigation on transpiration cooling with phase change under supersonic condition, Applied Thermal Engineering, 2016</li><li>Y. Luan, F. He, J. Wang, Y. Wu, G. Zhu, An experimental investigation on instability of transpiration cooling with phase change, Int. J. Thermal Sciences, 2020</li><li>G. Huang, Y. Zhu, Z. Liao, X.L. Ouyang, P.X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat and Mass Transfer, 2017</li><li>X. Li, Z. Liao, H. Li, P. Jiang, R. Xu, Phase-change transpiration cooling in heterogeneous composite porous plates: heat transfer characteristics and their prediction, Int. J. Heat and Mass Transfer, 2024</li><li>L.E. O'Neill, I. Mudawar, Review of two-phase flow instabilities in macro- and micro-channel systems, Int. J. Heat and Mass Transfer, 2020</li><li>M. Ledinegg, Instability of flow during natural and forced circulation, 1938</li><li>H.W. Coleman, W.G. Steele, Experimentation, Validation, and Uncertainty Analysis for Engineers, 3rd ed., Wiley, 2009</li></ol>
-        </details>
     </div>
+
+    <details class="references">
+        <summary>References — 참고문헌 <span class="ref-count">key 10 / total 30</span></summary>
+        <ol class="ref-list"><li>S. Zhang, X. Li, J. Zuo, J. Qin, K. Cheng, Y. Feng, W. Bao, Research progress on active thermal protection for hypersonic vehicles, Progress in Aerospace Sciences, 2020</li><li>O. Uyanna, H. Najafi, Thermal protection systems for space vehicles: a review on technology development, current challenges and future prospects, Acta Astronautica, 2020</li><li>A. van Foreest, M. Sippel, A. Gulhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophysics and Heat Transfer, 2009</li><li>L. Shen, J. Wang, W. Dong, J. Pu, J. Peng, D. Qu, L. Chen, An experimental investigation on transpiration cooling with phase change under supersonic condition, Applied Thermal Engineering, 2016</li><li>Y. Luan, F. He, J. Wang, Y. Wu, G. Zhu, An experimental investigation on instability of transpiration cooling with phase change, Int. J. Thermal Sciences, 2020</li><li>G. Huang, Y. Zhu, Z. Liao, X.L. Ouyang, P.X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat and Mass Transfer, 2017</li><li>X. Li, Z. Liao, H. Li, P. Jiang, R. Xu, Phase-change transpiration cooling in heterogeneous composite porous plates: heat transfer characteristics and their prediction, Int. J. Heat and Mass Transfer, 2024</li><li>L.E. O'Neill, I. Mudawar, Review of two-phase flow instabilities in macro- and micro-channel systems, Int. J. Heat and Mass Transfer, 2020</li><li>M. Ledinegg, Instability of flow during natural and forced circulation, 1938</li><li>H.W. Coleman, W.G. Steele, Experimentation, Validation, and Uncertainty Analysis for Engineers, 3rd ed., Wiley, 2009</li></ol>
+    </details>
 
     <!-- Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
