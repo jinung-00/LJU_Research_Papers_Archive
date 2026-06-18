@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Phase-change transpiration cooling in heterogeneous composite porous plates: Heat transfer characteristics and their prediction</title>
+    <meta name="keywords" content="transpiration cooling, phase change, ceramic matrix composites, heterogeneous porous media, C/C-SiC, micro-CT, vapor blockage, local hot spots, heterogeneous pore model, thermal protection">
+    <meta name="paper-authors" content="Xiaoyang Li, Zhiyuan Liao, Hao Li, Peixue Jiang, Ruina Xu">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 224, 2024, Art. 125290 · DOI: 10.1016/j.ijheatmasstransfer.2024.125290">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="04_Hybrid">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Phase-change transpiration cooling in heterogeneous composite porous plates: Heat transfer characteristics and their prediction</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Xiaoyang Li, Zhiyuan Liao, Hao Li, Peixue Jiang, Ruina Xu</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 224, 2024, Art. 125290 · DOI: 10.1016/j.ijheatmasstransfer.2024.125290</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 연구는 <span class="term">이질(heterogeneous) C/C-SiC 세라믹 기지 복합재(CMC)</span> 다공성 판에서의 <span class="term">상변화 증산냉각</span>을 조사한다. 불규칙·층상·이방성 기공 구조(낮은 열전도도, 낮은 투과율)는 액체 물 냉각의 타당성과 메커니즘을 불분명하게 만든다. Ma 3, 총온도 450-550 K의 초음속 풍동 실험은 CMC 증산냉각이 효과적이나 기공 분포를 따르는 매우 불균일하고 시료별로 다른 표면 온도를 만들며, 심한 상류 <span class="term">증기 차단(vapor blockage)</span>과 지속적 국소 핫스팟을 보임을 밝힌다. 저자들은 micro-CT 스캔 슬라이스로부터 국소 투과율을 부여하는 새로운 <span class="term">이질 기공 모델</span>(대/중/소 기공 영역, 투과율 비 148.13:12.17:1)을 개발하여 균질 모델 대비 최대 예측 오차를 6.3 K 미만으로 줄인다. 이질 구조가 냉각재 유량의 2자릿수 변동을 일으켜 유리한 채널에 냉각재를 집중시키고 고온 영역을 결핍시킴을 보이며, CMC의 잠열 활용(상변화 질량비 4.1% 대 금속 14.5%)과 전체 효율은 금속보다 낮지만 더 높은 온도 한계가 T_inf=3000 K에서 열유속을 최대 51% 줄여, 기공 균일성과 투과율을 개선하면 경량 고온 열 보호가 가능함을 시사한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">phase change</span><span class="keyword-chip">ceramic matrix composites</span><span class="keyword-chip">heterogeneous porous media</span><span class="keyword-chip">C/C-SiC</span><span class="keyword-chip">micro-CT</span><span class="keyword-chip">vapor blockage</span><span class="keyword-chip">local hot spots</span><span class="keyword-chip">heterogeneous pore model</span><span class="keyword-chip">thermal protection</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 최대 온도가 3000 K를 초과하는 극초음속 열 보호를 위해, 증산냉각의 높은 냉각 용량과 낮은 냉각재 소비를 다공성 CMC의 낮은 무게와 높은 내열성과 결합함으로써 CMC 증산냉각을 동기화한다. 금속과 CMC 다공성 재료의 기체 냉각재 증산냉각(Liu, Xu/Ma, Min/Huang, Langener/Prokein, Konig, Bohrk)과 액체/상변화 증산냉각(Foreest, Huang, Luan, Reimer, Zhang)을 개관한다. 그런 다음 CMC 기공이 불규칙·층상·이방성·비균일하여 금속 증산냉각 법칙이 적용되지 않고, 이질 기공의 상변화 메커니즘이 불분명하며 예측이 어렵고, 기존 균질 모델이 크게 오차를 낸다는 점을 규명하여 — 이질 기공 실험·모델링 연구를 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론에 내재된 관련 연구는 금속과 CMC 다공성 매질의 기체 냉각재 증산냉각, 액체/상변화 증산냉각과 그 증기 차단/진동 현상, CMC 고유 유동/투과 및 비행 연구에 걸친다. 반복되는 공백은 CMC 기공 이질성(불규칙·층상·이방성·낮은 전도도/투과율)이 금속 기반 법칙을 깨뜨리며, 그러한 이질 기공의 상변화 거동이 잘 이해되지 않고 균질 모델로 잘 예측되지 않는다는 점이다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">방법론은 니들펀치 C/C-SiC 판(50x20 mm, 두께 7 mm; 평균 기공 17.3 µm, 다공도 ~19.4%, 이방성 투과율·전도도)에 대한 Ma 3, 총온도 450-550 K 초음속 풍동 실험과 ANSYS Fluent의 2차원 수치 모델을 결합한다. 시뮬레이션은 수정 Lee 상변화 모델을 갖는 VOF 이상 정식화, Brinkman-Forchheimer 확장 Darcy 운동량 방정식, 국소 열평형 에너지 방정식, 주류의 k-오메가 난류 모델을 사용한다. 핵심 혁신은 micro-CT 슬라이스 스캔으로 국소 투과율을 설정하는 이질 기공 모델로, 모세관 K~epsilon*d^2 모델에서 도출한 투과율 비 148.13:12.17:1로 대/중/소 기공 영역을 부여하며 실험 대비 6.3 K 이내로 검증된다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실험은 CMC 상변화 증산냉각이 효과적이나 기공 분포를 반영하는 매우 불균일하고 시료별로 다른 온도 분포를 낳음을 보인다: 냉각 시 최대 온도가 30-50 K 떨어지고, 저온 영역은 큰 관통홀(고투과율) 영역과 정렬되며, 분사비를 높여도 냉각이 이미 충분한 곳에 냉각재가 집중되어 고온 영역을 거의 냉각하지 못한다. 이질 기공 시뮬레이션이 이를 재현하여 2자릿수 냉각재 유량 변동, 심한 상류 증기 차단, 전단부 냉각 열화를 드러낸다. 소결 금속 대비 C/C-SiC는 더 불균일한 온도와 더 낮은 잠열 활용(상변화 질량비 4.1% 대 14.5%)을 보이나, 더 높은 주류 온도에서는 잠열 활용과 효율이 향상되고(T_inf=1500 K에서 평균 효율 0.70), 더 높은 재료 온도 한계가 T_inf=3000 K에서 열유속을 최대 51% 줄인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">토의는 불균일 냉각을 이질 기공 구조에 귀속한다: 큰 기공 고투과율 채널이 대부분의 냉각재를 끌어들이는 반면 소기공 영역은 결핍되고, 증기 차단(증기 유동 저항이 액체를 크게 초과)이 유량 차이를 증폭하여 냉각재를 하류에 집중시키고 제거하기 어려운 상류 핫스팟을 남긴다. 더 낮은 CMC 열전도도와 투과율이 내부 압력/포화온도를 높이고 금속 대비 잠열 활용을 줄인다. 저자들은 전단부 다공도/투과율 증가와 기공 균일성 개선을 권장하며, 높은 주류 온도에서 잠열 활용이 향상됨을 언급하고 SiO2-수증기 반응을 미해결 우려로 남긴다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 초음속 풍동 실험과 새로운 이질 기공 모델로부터, C/C-SiC CMC를 상변화 증산냉각에 사용할 수 있음을, 이질 기공 구조가 불균일 온도·증기 차단·낮은 잠열 활용을 만드는 결정적 인자임을, 국소 투과율 이질 모델이 예측 정확도를 크게 높임을, 상변화 증산냉각과 CMC의 결합이 기공 균일성과 투과율을 개선하면 3000 K까지 경량 열 보호(열유속 51% 감소)를 약속함을 결론짓는다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 39</span></summary>
+            <ol class="ref-list"><li>A. Van Foreest, M. Sippel, A. Gulhan, B. Esser, B.C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophys. Heat Trans. 23 (4) (2009) 693-702</li><li>G. Huang, Y.H. Zhu, Z.Y. Liao, X.L. Ouyang, P.X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transf. 114 (2017) 1201-1213</li><li>Y. Luan et al., An experimental investigation on instability of transpiration cooling with phase change (capillary-force / phase-change coupling causing oscillations)</li><li>T. Reimer et al., transpiration cooling tests using liquid water with C/C, C/C-SiC and alumina fiber composites at 1 MW/m2 (fiber-orientation effects on flow and cooling)</li><li>Konig et al., influence of a non-uniform C/C porous structure on transpiration cooling (non-uniform outflow distribution affecting cooling-efficiency uniformity)</li><li>Bohrk et al., transpiration cooling on a C/C panel carried by the SHEFEX II vehicle (Mach 10.2, max cooling efficiency ~58%)</li><li>Langener et al. and Prokein et al., permeation and flow characteristics of C/C composite porous media and supersonic transpiration-cooling efficiency with different gases</li><li>Lee's phase-change model and a modified mass-transfer-coefficient form used for the volume-of-fluid phase-change source term in the heterogeneous simulation</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "열 보호는 앞전과 스크램제트 엔진이 3000 K를 초과하는 최대 온도를 겪는 극초음속 비행체에 필수적이다; 증산냉각은 높은 냉각 용량과 낮은 냉각재 소비를 제공하고, 다공성 CMC는 낮은 무게와 높은 내열성을 더해 3000 K를 넘는 보호를 가능케 한다."}, {"type": "bullet", "text": "금속 다공성 재료의 기존 기체 냉각재 증산냉각(Liu: 냉각 효율이 입자 직경·전도도·비열과 연관; Xu/Ma: 다공도가 결정적; Min/Huang: 기계적 강도를 위한 AM 재료; Huang/Jiang: 경사 충격파가 효율 감소)이 기준 메커니즘을 확립했다."}, {"type": "bullet", "text": "액체 냉각재 연구(Foreest: 액체 물이 질소보다 훨씬 효율적이고 냉각재 적음; Huang: 증기 차단·지연·온도 진동; Luan: 모세관력과 상변화 결합에 의한 진동; Wu/Hu: 증기 차단 완화를 위한 경사 다공도와 분할 저장조)가 상변화 증산냉각을 틀지었다."}, {"type": "bullet", "text": "CMC(C/C, C/SiC)는 기계적으로 보강된 섬유에 세라믹 기지를 더한 것으로; 기지 내부와 섬유 사이에 기공이 형성되어 불규칙·층상/줄무늬이며, 열전도도와 투과율에 큰 이방성을 주어 내부 유동/열전달이 규칙적 금속 다공성 매질보다 훨씬 복잡하다."}, {"type": "bullet", "text": "기존 CMC 증산냉각 연구는 주로 기체 냉각재에 초점(Li: 복잡한 기공 구조; Zhang: 최적화된 저밀도 고투과율 C/SiC; Langener/Prokein: 다양한 기체로 투과와 효율; Konig: 비균일 C/C 구조가 비균일 유출 유발; Bohrk: SHEFEX II 비행, Mach 10.2에서 ~58% 효율)을 맞췄다."}, {"type": "bullet", "text": "상변화 CMC 증산냉각에 대해 기존 연구는 주로 냉각 효과를 검증했다; 불안정한 상변화 과정은 예측·제어가 어렵고, 복잡한 이질 기공 구조가 상변화 불안정성을 악화시킬 수 있어 이질 기공에서의 메커니즘이 불분명했다."}, {"type": "bullet", "text": "따라서 본 연구는 초음속 풍동에서 이질 C/C-SiC 판의 상변화 증산냉각을 실험적으로 조사하고, 이질 기공 구조가 표면 온도와 국소 핫스팟에 미치는 영향을 분석하며, CMC 대 소결 금속 판을 비교하고, CMC 기공 특성을 고려한 새로운 이질 기공 수치 방법을 개발한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "금속 기체 냉각재 갈래: Liu 등은 냉각 효율을 입자 직경·전도도·냉각재 비열에 연결; Xu 등과 Ma 등은 다공도가 결정적 인자임을 발견; Min/Huang은 기계적 강도를 위해 AM 재료를 사용했다."}, {"type": "bullet", "text": "액체/상변화 갈래: Foreest 등은 액체 물이 적은 냉각재로 질소를 크게 능가함을 보였고; Huang 등은 증기 차단·냉각 지연·온도 진동을 체계적으로 분석; Luan 등은 진동을 모세관력과 상변화의 결합으로 귀속; Wu/Hu는 증기 차단 완화를 위해 경사 다공도와 분할 저장조를 제안했다."}, {"type": "bullet", "text": "CMC 구조/투과 갈래: Li 등은 복잡한 CMC 기공 구조(번들 간 챔버, 채널, 미세 균열)를 입증; Zhang 등은 저밀도 고투과율 C/SiC를 최적화; Langener 등과 Prokein 등은 C/C 투과와 다양한 기체로 초음속 증산냉각 효율을 측정했다."}, {"type": "bullet", "text": "CMC 비균일성·비행 갈래: Konig 등은 비균일 C/C 구조가 냉각 효율 균일성을 저하시키는 비균일 유출을 유발함을 보였고; Bohrk 등은 SHEFEX II에서 C/C 증산냉각 패널을 Mach 10.2까지 비행시켜 ~58% 최대 효율로 적용 타당성을 입증했다."}, {"type": "bullet", "text": "CMC 액체 상변화 갈래: Reimer 등은 C/C로 상변화 냉각을 시험(결빙 문제, 초기 효과 미흡)했고 이후 C/C, C/C-SiC, 알루미나 섬유 복합재를 1 MW/m2에서 시험(섬유 배향 효과); Zhang 등은 C/SiC(기공 ~8 및 ~120 µm, ~10% 다공도)를 가공해 양호한 산소-아세틸렌 냉각을 얻었다."}, {"type": "bullet", "text": "규명된 공백: 기존 연구는 주로 냉각 효과를 검증했다; 이질 CMC 기공에서 상변화 증산냉각의 타당성과 메커니즘이 불분명했고 균질 수치 모델이 부정확하여, 실험과 이질 모델 연구를 동기화했다."}]}, "method": {"content": [{"type": "bullet", "text": "재료 특성화: 니들펀치 C/C-SiC 시료(밀도 ~2.0 g/cm3, 상부 50x20 mm, 두께 7 mm)는 평균 기공 직경 17.3 µm와 다공도 ~19.4%를 가지며, 이방성 투과율(직물층 수직 1.86e-14 m2, 평행 1.09e-12 m2)과 이방성 전도도(평행 13.4 W/m/K, 수직 3.6 W/m/K, 소결 청동의 &lt;1/10)를 갖는다.", "figure_refs": [1, 2, 3]}, {"type": "bullet", "text": "실험 시스템: Ma 3 초음속 풍동(총압 0.46 MPa)에 전기 히터로 조절된 건조 공기; 냉각수를 기어 펌프로 다공성 판을 통해 공급; 표면 온도는 FLIR A310 적외선 카메라(2% 정확도, T형 열전대로 ±2 K 이내 보정)로 측정하여 최대 냉각 효율 불확실도 ±5.37%를 준다.", "figure_refs": [4]}, {"type": "formula", "label": "식 (1)-(2) — 분사비 및 냉각 효율", "latex": "F = \\frac{\\rho_c u_c}{\\rho_\\infty u_\\infty}, \\qquad \\eta = \\frac{T_r - T_w}{T_r - T_c}", "description": "분사비 $F$는 냉각재 대 주류의 단위 면적당 질량 플럭스 비이고; 냉각 효율 $\\eta$는 주류 회복 온도 $T_r$, 벽 온도 $T_w$, 냉각재 입구 온도 $T_c$를 사용한 무차원 벽 온도이다."}, {"type": "bullet", "text": "수치 모델: Ma 3, 총온도 500 K의 2D 영역(주류, 다공성 판, 압력 챔버)에 단열 측벽과 다공성 표면 근처를 정련한 약 350,000개 구조 사각 셀; 수정 Lee 상변화 소스항(질량 전달 계수 C=10 1/s, 계면-포화 온도차가 ±1 K 이내가 되도록 조정)을 갖는 VOF 이상 모델을 ANSYS Fluent 18.0에서 UDF로 푼다.", "figure_refs": [7]}, {"type": "formula", "label": "식 (8) — 다공성 영역의 Brinkman-Forchheimer 확장 Darcy 운동량", "latex": "\\nabla\\cdot\\!\\left(\\frac{\\rho_m\\,\\vec{u}\\vec{u}}{\\varepsilon^2}\\right) = -\\nabla P + \\nabla\\cdot\\tau_{eff} + \\rho_m\\vec{g} - \\frac{\\mu}{K}\\,\\vec{u}", "description": "다공성 영역의 냉각재 유동은 Brinkman-Forchheimer 확장 Darcy 방정식을 따르며, $\\varepsilon$은 다공도, $K$는 투과율, $\\mu$는 점성, $\\tau_{eff}$는 유효 응력이다; 국소 열평형 에너지 방정식과 $k$-$\\omega$ 난류 모델이 주류를 닫는다."}, {"type": "bullet", "text": "이질 기공 모델: 주류 방향 0.5 mm마다(4.5 µm 정확도) micro-CT 슬라이스가 대(빨강)·소(회색)·중간(파랑) 기공 영역을 분해한다; 1.5-4.5 µm 기공(~7.6%)은 3 µm로 표현하고 1.5 µm 미만 기공은 무시하며, 각 격자 셀의 기공을 등직경 평행 모세관으로 처리한다.", "figure_refs": [8, 9]}, {"type": "formula", "label": "식 (15) — 이질 영역의 모세관 모델 투과율 비", "latex": "K \\sim \\varepsilon\\,d^2 \\;\\Rightarrow\\; K_{large} : K_{middle} : K_{small} = 148.13 : 12.17 : 1", "description": "모세관 모델에서 투과율은 다공도와 기공 직경 제곱의 곱에 비례하여 국소 투과율 부여에 쓰이는 대:중:소 기공 영역 투과율 비를 준다; 3D 이질 투과율은 전체 투과율을 실험과 일관되게 유지하면서 주류 수직 방향으로 평균하여 2D 분포로 만든다."}, {"type": "bullet", "text": "검증 및 균질 비교: 격자 독립성으로 353,000셀 선택(529,000 대비 오차 &lt;0.5%); 이질 기공 모델은 C/C-SiC 표면 온도를 최대 6.3 K 오차 이내로 일치시켜 균질 모델보다 훨씬 우수하며, 정확한 CMC 예측에 이질 모델이 필요함을 확인한다.", "figure_refs": [10]}]}, "results": {"content": [{"type": "bullet", "text": "실험 온도 맵(T_inf=500 K, Ma 3): 냉각 없이는 표면이 균일하게 ~460 K이고; 0.07% 분사에서 최대치가 410-420 K(40-50 K 낮음)로 떨어지나 추가 분사는 최대치를 거의 줄이지 못한다; 저온 영역은 큰 관통홀 집중(더 높은 투과율)의 빨간 원과 일치하여 온도가 기공 분포를 따름을 확인한다.", "figure_refs": [5]}, {"type": "bullet", "text": "분사비와 주류 온도 효과: 최대 온도가 주류 온도에 걸쳐 30-50 K 떨어졌고(높은 T_inf에서 더); T_inf=550 K, F=0.47%에서 최대 표면 온도는 457 K로 대부분 영역이 400 K 미만이었다; 고/저온 위치는 고유 기공 구조로 고정되어 조건에 따라 거의 이동하지 않았고, 추가 냉각재는 대부분 이미 냉각된 영역으로 갔다(비효율적 사용).", "figure_refs": [6]}, {"type": "bullet", "text": "시뮬레이션 유동 이질성(T_inf=500 K, F=0.07%): 균질 구조에서는 액상 분포와 유선이 균일하나, 이질 구조에서는 액상이 불균일하고 유선이 소수의 유리한(큰 기공, 고투과율) 채널에 집중되며, 저플럭스 소기공 영역은 더 높은 온도와 빠른 상변화에 도달하고 증기 차단이 더 많은 냉각재를 유리한 채널로 유도한다.", "figure_refs": [11]}, {"type": "bullet", "text": "냉각재 질량 플럭스 변동: 표면 냉각재 유량이 영역 간 2자릿수로 변하여 유리한 채널에서 정점에 이르고 나머지(특히 상류)를 결핍시킨다; 냉각재가 주로 소수의 유리한 채널로 빠져나가고 다른 영역은 충분과 거리가 멀어 불균일 온도와 국소 냉각 열화를 초래한다.", "figure_refs": [12]}, {"type": "bullet", "text": "상류 증기 차단과 전단부 열화: 이질 구조에서 상류 압력이 더 높아(균질의 균일 압력 대비) 심한 상류 증기 차단을 나타낸다; 얇은 상류 기막은 높은 온도와 빠른 상변화를 일으키고, 큰 증기 생성이 유동 저항을 높이며, 전단부 냉각 효율은 분사가 늘어도 낮게 유지된다.", "figure_refs": [13, 14]}, {"type": "bullet", "text": "소결 금속과 비교: C/C-SiC 판은 90/200 µm 소결 청동보다 더 불균일한 표면 온도와 국소 고온 영역을 보인다; 낮은 CMC 전도도는 내부로의 열전달을 방해(더 낮은 내부 온도)하고 낮은 투과율은 내부 압력과 포화온도를 높여, 상변화가 덜 완전하고(C/C-SiC 상변화 질량비 4.1% 대 금속 14.5%) 잠열 활용과 전체 효율이 더 낮다.", "figure_refs": [15, 16]}, {"type": "bullet", "text": "고온 전망: T_inf=1500 K에서 표면이 상류 860 K에서 하류 ~500 K로 떨어지며 평균 효율 0.70(높은 T_inf가 잠열을 더 잘 활용); 증산 기막이 경계층을 두껍게 하여 평균 판 열유속을 90% 줄였다(전단부에서 가장 강하게); C/C-SiC 최대 작동 온도(~1650 °C)는 금속보다 &gt;=500 K 높고, T_inf=3000 K에서 높아진 온도 한계가 열유속을 최대 51% 줄인다.", "figure_refs": [17, 18]}]}, "discussion": {"content": [{"type": "bullet", "text": "불균일성의 근본 원인: 큰 기공의 잘 연결된 영역은 더 높은 투과율을 가져 유리한 냉각재 채널을 형성하고, 소/적은 기공 영역은 더 낮은 냉각재 플럭스·더 높은 온도·빠른 상변화를 받는다; 그 결과 증기 차단(증기 저항 &gt;&gt; 액체)이 더 많은 냉각재를 유리한 채널로 밀어낸다.", "figure_refs": [11, 12]}, {"type": "bullet", "text": "상류 차단 메커니즘: 얇은 상류 기막이 높은 온도와 빠른 상변화를 일으키고, 큰 상류 증기 생성이 국소 유동 저항과 압력을 급격히 높이며, 이질 기공 분포가 국소 차단을 악화시켜 유입 냉각재가 전단부를 우회해 하류 유리한 채널로 향한다.", "figure_refs": [13]}, {"type": "bullet", "text": "전단부 열화는 지속적이다: 저투과율 차단 상류에 보충 냉각재가 거의 도달하지 못해 분사비를 높여도 전단부 냉각 효율이 거의 향상되지 않으며, 이질 판에서 상류 증기 차단 제거를 특히 어렵게 만든다.", "figure_refs": [14]}, {"type": "bullet", "text": "효율 포화: 주류 조건마다 상한이 있다(평균 효율이 F=0.07%에서 0.25%로 ~0.03-0.04만 향상 후 0.47%로 ~0.01), 추가 냉각재가 저온 영역을 과공급하는 반면 고온 영역은 거의 보충되지 않기 때문이다."}, {"type": "bullet", "text": "금속 대비 재료 물성 효과: 더 낮은 C/C-SiC 전도도가 내부를 더 시원하게(열 유입이 어려움) 유지하고 더 낮은 투과율이 내부 압력과 포화온도를 높여, 상변화가 덜 완전하고(상변화 질량비 4.1% 대 14.5%) 잠열 활용/전체 효율이 더 낮다; 권장 해법은 공정을 통한 더 낮고 더 균일한 투과율이다.", "figure_refs": [16]}, {"type": "bullet", "text": "권장사항과 미해결 우려: 기공 분포를 제어해 전단부 다공도/투과율을 높이고 마이크론 기공 균일성을 개선; 높은 주류 온도가 잠열을 더 잘 활용하고(1500 K에서 효율 0.70) 더 높은 재료 한계가 3000 K에서 열유속을 최대 51% 줄이나, SiO2 막의 수증기 반응(산화 저항과 기계적 물성 약화)은 추가 연구가 필요하다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "CMC 다공성 재료는 상변화 증산냉각에 사용될 수 있다; 이질 기공 구조는 불균일 온도 분포와 악화된 증기 차단을 유발하는 결정적 인자이며, 낮은 열전도도와 낮은 투과율이 CMC의 잠열 활용과 전체 냉각 효율을 금속보다 낮게 만든다."}, {"type": "bullet", "text": "정확한 시뮬레이션을 위해 이질성의 영향을 고려해야 한다: 국소 투과율 변화를 갖는 새로운 이질 기공 모델을 개발하여 증산냉각 표면을 따른 온도 예측 정확도를 크게 향상했다(최대 오차 &lt;6.3 K)."}, {"type": "bullet", "text": "상변화 증산냉각과 CMC의 결합은 온도가 3000 K에 이르는 곳에서 효과적 경량 열 보호를 달성할 것으로 기대된다; 복합재가 온도 저항 한계를 높여 열유속을 51% 줄였고, 기공 균일성과 투과율 개선이 더 높은 효율과 온도 균일성으로 가는 길이다."}, {"type": "bullet", "text": "정량적으로 냉각 시 최대 표면 온도가 30-50 K 떨어졌고, 냉각재 유량이 이질 표면에 걸쳐 2자릿수로 변했으며, 상변화 질량비는 4.1%(금속 14.5% 대비)에 불과했고, 증산 기막이 T_inf=1500 K에서 평균 판 열유속을 90% 줄였다."}, {"type": "bullet", "text": "공학적 지침: 기공 분포를 제어해 전단부 다공도와 투과율을 높여 약냉각 상류로의 냉각재 공급을 강화하고, 더 나은 냉각과 온도 균일성을 위해 공정을 조정해 더 낮고 더 균일한 투과율을 달성하라."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "이질 판에서는 큰 투과율 차이로 인해 보충 냉각재가 차단된 전단부에 도달하기보다 저저항 하류 유리한 채널로 빠져나가므로 상류 증기 차단 제거가 더 어렵다.", "source_quote": "Compared to the front end with low permeability and a blockage, the supplementary coolant encountered less resistance in the downstream favorable channels. Consequently, eliminating the upstream vapor blockage was more challenging for heterogeneous porous plates.", "source_section": "discussion"}, {"claim": "각 주류 조건마다 냉각 성능에 상한이 있어, 특정 분사비를 넘으면 냉각재가 저온 영역을 과공급하는 반면 고온 영역은 거의 보충되지 않아 효율이 향상되지 않는다.", "source_quote": "there was an upper limit to the cooling performance under each main stream condition... The coolant in the high-temperature area was hardly replenished, whereas the coolant in the low-temperature area was excessively supplied and the heat exchange improvement was limited. Therefore, the efficiency was not significantly enhanced.", "source_section": "discussion"}, {"claim": "C/C-SiC의 보호 SiO2 막은 고온에서 수증기와 반응해 산화 방지 보호와 기계적 물성을 약화시킬 수 있으며, 구체적 영향은 추가 연구가 필요하다.", "source_quote": "the SiO2 film could react with water vapor at high temperatures, weakening the antioxidant protection and reducing the mechanical properties, the specific effects of which require further study.", "source_section": "discussion"}], "future_works": [{"claim": "CMC의 기공 균일성과 투과율을 개선(예: 공정 기술을 조정해 마이크론 크기 기공의 수와 균일성을 증가)하면 냉각 효율과 온도 균일성이 향상되어야 한다.", "source_quote": "In the future, improving the pore uniformity and permeability can contribute to enhancing the efficiency and temperature uniformity.", "source_section": "conclusion"}, {"claim": "전단부의 다공도와 투과율을 높이도록 기공 분포를 제어하여 약냉각 영역으로의 냉각재 보충을 강화하는 것이 권장된다.", "source_quote": "the pore distribution can be controlled to increase the porosity and permeability at the front end, and enhance coolant supplement to weak cooling area.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["CMC(C/C, C/C-SiC)는 경량·고내열이지만, 불규칙·층상·이방성·비균일 기공 구조 때문에 내부 유동과 열전달이 규칙적 금속 다공성 재료보다 훨씬 복잡하다.", "CMC 다공성 재료의 상변화 증산냉각에 관한 기존 연구는 주로 냉각 효과를 검증했고, 이질 CMC 기공 구조에서의 타당성과 메커니즘은 불분명한 채로 남았으며, 불안정한 상변화 과정은 예측·제어가 어렵다.", "기존 균질 기공 수치 시뮬레이션 방법은 CMC 재료에 대해 큰 오차를 가져 더 이상 적용할 수 없으므로, 기공 이질성을 고려한 정확한 예측 방법이 부재했다."], "addressed_by_this_work": ["C/C-SiC 판에 대한 초음속 풍동 실험(Ma 3, 450-550 K)으로 CMC 다공성 재료를 상변화 증산냉각에 사용할 수 있음을 입증하고, 이질 기공 구조가 불균일 온도·증기 차단·국소 핫스팟을 어떻게 유발하는지 정량화한다.", "이질 구조의 영향을 특성화: micro-CT로 분해한 기공 분포가 시료별 온도 맵, 2자릿수 냉각재 유량 변동, 더 낮은 잠열 활용(상변화 질량비 4.1% 대 금속 14.5%)을 설명한다.", "micro-CT 슬라이스로부터 국소 투과율을 부여하는 새로운 이질 기공 모델(대:중:소 = 148.13:12.17:1)을 개발하여 최대 온도 예측 오차를 6.3 K 미만으로 줄여 균질 모델보다 훨씬 정확하다."], "remaining_unresolved": ["보충 냉각재가 하류 유리한 채널로 우선적으로 빠져나가 전단부 핫스팟을 남기므로, 이질 판에서 상류 증기 차단은 여전히 제거하기 어렵다.", "냉각 효율이 주류 조건마다 상한에 포화되고 낮은 CMC 투과율/열전도도가 잠열 활용과 전체 효율을 금속 아래로 유지한다; 개선된 기공 균일성/투과율이 필요하나 아직 실현되지 않았다.", "보호 SiO2 막과 수증기 간 고온 반응(산화 저항과 기계적 물성 약화)이 지적되었으나 구체적 영향은 추가 연구가 필요하다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
