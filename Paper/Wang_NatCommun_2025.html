@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Mitigating hypersonic heat barrier via direct cooling enhanced by leidenfrost inhibition</title>
+    <meta name="keywords" content="direct liquid cooling, Leidenfrost inhibition, structured thermal armor, hypersonic thermal protection, two-phase boiling heat transfer, jet cooling, spray cooling, nano-micro structured surface, heat barrier, transpiration cooling (comparison)">
+    <meta name="paper-authors" content="Ji-Xiang Wang, Mingliang Zhong, Jia-Xin Li, Shaolong Wang, Jiang Bian, Yufeng Mao, Hongmei Wang">
+    <meta name="paper-journal" content="Nature Communications, Vol. 16, 2025, Art. 6931 · DOI: 10.1038/s41467-025-62120-2">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Mitigating hypersonic heat barrier via direct cooling enhanced by leidenfrost inhibition</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Ji-Xiang Wang, Mingliang Zhong, Jia-Xin Li, Shaolong Wang, Jiang Bian, Yufeng Mao, Hongmei Wang</div>
+            <div class="journal">Nature Communications, Vol. 16, 2025, Art. 6931 · DOI: 10.1038/s41467-025-62120-2</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 논문은 극초음속 열 장벽(heat barrier)을 완화하기 위한 <span class="term">직접 액체 냉각</span> 방식을 제안하며, 기존의 간접 능동 냉각법인 재생 냉각·막 냉각·<span class="term">증산냉각</span>을 복잡하고 비효율적이라고 명시적으로 규정한 뒤 근본적으로 다른 대안을 제시한다. 핵심 수단은 마이크로 기둥(micro-pillar) 금속 기판에 초친수성 SiO$_2$ 나노섬유 멤브레인을 매립한 섬유-금속 나노/마이크로 <span class="term">구조화 열 장갑(STA)</span>으로, <span class="term">라이덴프로스트 점(Leidenfrost point)</span>을 1000 °C 이상으로 끌어올려 충돌하는 물 제트가 액적으로 튕겨 나가는 대신 표면을 적셔 효율적인 핵비등/이상(two-phase) 냉각을 지속하도록 만든다. 지상 부탄(~1400 °C) 및 아세틸렌(&gt;3000 °C) 화염 실험에서, 맨 마이크로 기둥 기판은 붕괴하는 조건에서도 STA는 구조 건전성과 융점 미만의 안정 온도(예: 스테인리스강 둔두체에서 T가 1200 °C 미만)를 유지하며 최대 7.16 MW/m$^2$의 열유속을 달성한다. 이 논문의 주 기여는 직접(비증산) 냉각 전략이고 다공성 증산냉각에 반대 논거를 펴므로, 핵심 증산냉각 범주가 아닌 05_Others로 분류한다.</div>
+            <div class="keywords"><span class="keyword-chip">direct liquid cooling</span><span class="keyword-chip">Leidenfrost inhibition</span><span class="keyword-chip">structured thermal armor</span><span class="keyword-chip">hypersonic thermal protection</span><span class="keyword-chip">two-phase boiling heat transfer</span><span class="keyword-chip">jet cooling</span><span class="keyword-chip">spray cooling</span><span class="keyword-chip">nano-micro structured surface</span><span class="keyword-chip">heat barrier</span><span class="keyword-chip">transpiration cooling (comparison)</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 극초음속 열 장벽을 지속 비행을 가로막는 미해결 난제로 규정하며, Ma&gt;5에서 정체점 온도가 1300 °C를 넘고 Ma 7에서 ~2500 °C로 지수적으로 상승하며 Columbia 재진입 실패 같은 사례를 언급한다. 수동(소실형 차폐, 단열재, 복합재, 에어로젤) 및 능동(재생·막·증산) 열 보호 전략을 검토하면서, 소실형은 재사용성을 희생하고 현재의 모든 능동법은 무겁고 복잡한 구조·낮은 효율·냉각재 낭비·연료 코킹/침적을 갖는 단지 간접 냉각이라고 주장한다. 이어 직접 액체 상변화 냉각이 보통 불가능하다고 여겨지는 이유(~150 °C 이상에서 라이덴프로스트 효과가 표면을 단열)를 설명하고, 라이덴프로스트 점을 끌어올리는 구조화 열 장갑(STA)을 본 논문이 개발하는 핵심 경로로 자리매김한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">관련 연구는 서론과 토의에 엮여 두 갈래로 정리된다. 하나는 논문이 대조하는 확립된 열 보호 전략(수동 소실형/단열 재료와 증산냉각을 포함한 세 가지 간접 능동법)이고, 다른 하나는 라이덴프로스트 효과가 주된 장애인 직접 상변화 냉각 문헌(분무·마이크로채널·제트)이다. 핵심 선행 연구는 라이덴프로스트 점을 끌어올린 Jiang 등의 구조화 열 장갑으로, 본 논문이 이를 확장하고 정량적으로 벤치마킹한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">방법론은 실험·재료 중심이다. STA는 금속 마이크로 기둥 기판(기둥 폭·간격 300 µm, 높이 650 µm, 기둥 사이 U자 구조와 거친 표면)에 전기방사된 초친수성 SiO2 나노섬유 멤브레인(평균 기공 ~5.4 µm, 섬유 200-300 nm, 두께 ~100 µm)을 매립한 다중 텍스처 복합체다. 두 가지 지상 플랫폼이 공력 가열을 모사한다: 작은 기판에 대한 부탄 화염총(~1400 °C)과 120 mm 스테인리스강 둔두체에 대한 아세틸렌 화염(3050-3150 °C)으로, 모두 탈이온수 제트로 냉각하며 열전대·고속 촬영·수집-저울 방식으로 냉각재 질량 유량과 열유속을 도출한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실험은 라이덴프로스트 지배 실패와 STA 지원 지속 냉각을 대조한다. 부탄 화염 아래 맨 마이크로 기둥 기판은 ~600 °C에 머물며 튕기는 액적(라이덴프로스트)을 흘리고 제트 냉각에도 붕괴하지만, STA는 즉각적 젖음과 즉시 온도 강하를 겪어 109-110 °C 부근에서 안정되며 2.0 ± 0.1 MW/m2의 열유속을 보인다. 9회 부탄 사이클(이중 화염과 재 오염 포함)이 내구성을 확인하고, 3000 °C를 넘는 아세틸렌 실험은 스테인리스강 둔두체에서 TB2를 1200 °C 미만(1회차)·1000 °C 바로 위(2회차)로 유지하여 2.99·7.16 MW/m2 열유속(벤치마크 대비 258% 증가)을 내며 마이크로 기둥은 2회차 후에도 크기가 변하지 않는다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">토의는 STA가 라이덴프로스트 유발 무효 냉각(및 궁극적 붕괴)을 3000 °C를 넘는 아세틸렌 화염 아래에서도 구조 건전성을 보존하는 지속 냉각으로 전환하며, 달성 열유속이 전통적 지상 공력 가열 실험과 비견되어 실용 가치를 입증한다고 주장한다. 비행체 전방부에 다수의 작은 SiO2 멤브레인을 매립해 분무로 냉각하는 확장 설계를 제시한 뒤, 한계 — 대기압 시험, 불충분한 해리 산소, 불완전한 열유속 범위, 노출 후 큰 기계적 물성 변화, 둔두(예리한 앞전 아님) 형상만의 입증 — 를 솔직히 나열하며 진공·고고도 시험을 요청한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 개발한 둔두형 나노/마이크로 STA를 이용한 직접 액체 냉각 방식이 라이덴프로스트 점을 끌어올리고 3000 °C를 넘는 화염 온도에서 효율적 이상 냉각을 지속함으로써, 높은 재사용성과 최대 7.16 MW/m2 열유속으로 극초음속 열 보호를 혁신할 수 있다고 결론짓는다. STA를 간접 능동법(증산냉각 포함)의 재사용 가능·경량 대안으로 자리매김하며, 실제 비행 적용 전 향후 과제 여섯 가지를 제시한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 6 / total 53</span></summary>
+            <ol class="ref-list"><li>G. Jiang et al., a fiber-metal-based structured thermal armor (STA) elevating the Leidenfrost point above 1000 °C, (the prior STA work this paper builds on and benchmarks against)</li><li>A. Van Foreest, M. Sippel, A. Gulhan, B. Esser, et al., Transpiration cooling using liquid water, J. Thermophys. Heat Transf. 23 (4) (2009) 693-702</li><li>T. Reimer, M. Kuhn, A. Gulhan, B. Esser, et al., Transpiration cooling tests of porous CMC in hypersonic flow (representative indirect transpiration-cooling reference)</li><li>Leidenfrost-effect literature on the vapor-film insulation onset above ~150 °C limiting direct-contact liquid cooling</li><li>Spray cooling references proposed as the scalable direct-cooling route for large frontal areas of hypersonic vehicles</li><li>Microchannel cooling and jet cooling references as alternative direct liquid-cooling strategies considered against the Leidenfrost barrier</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "열 장벽은 마하수 5 이상에서 극초음속 비행체가 겪는 극심한 공력 가열로, Ma 5 이상에서 노즈 정체점 온도가 1300 °C를 초과하고 Ma 7에서 ~2500 °C로 지수적으로 상승하며 스크램제트/연소실은 2000 °C를 넘어 현재 항공 재료의 장기 내구 한계를 크게 벗어난다.", "figure_refs": [1]}, {"type": "bullet", "text": "NASA X-43(~Ma 9.6, 10초)와 Boeing X-51 Waverider(Ma 5.1, ~210초) 같은 이정표에도 불구하고, 극한 온도가 붕괴를 쉽게 유발하기 때문에 어떤 비행체도 지속적 극초음속 비행을 달성하지 못했으며 우주왕복선 Columbia 재진입 실패가 그 예이다."}, {"type": "bullet", "text": "수동 열 보호(소실형 차폐, 단열/내열 재료, 복합재, 에어로젤)는 1960년대에 고안된 소실형 차폐가 주도하지만, 재사용성·기동성·경제성이 우선시되면서 소실은 점점 불리해지고 있다."}, {"type": "bullet", "text": "능동 냉각 전략 — 재생 냉각, 막 냉각, 증산냉각 — 은 더 유망하다고 여겨지나 간접 냉각법으로 분류되며 무겁고 복잡한 냉각 구조, 낮은 냉각 효율, 냉각재 낭비, 연료 코킹, 침적의 결함을 갖는다. 이것이 본 논문이 직접법을 제안하며 공략하는 명시적 공백이다."}, {"type": "bullet", "text": "직접 액체 상변화 냉각(분무·마이크로채널·제트)은 라이덴프로스트 효과 때문에 그러한 극한 조건에서 불가능하다고 여겨진다. ~150 °C 이상의 표면에 액체가 닿으면 차가운 액체와 뜨거운 표면 사이에 연속 증기막이 형성되어 열 방출을 방해하고 냉각 효율을 급감시킨다."}, {"type": "bullet", "text": "따라서 라이덴프로스트 점을 지연(상승)시키는 것이 지속적 극초음속 비행을 위한 직접 냉각의 열쇠이며, Jiang 등은 최근 라이덴프로스트 점을 1000 °C 이상으로 올리는 섬유-금속 구조화 열 장갑(STA)을 보고했으나 현실적 조건에서의 후속 입증은 없었다."}, {"type": "bullet", "text": "본 연구는 STA를 더 거친 마이크로 기둥 구조(액체 확산과 핵비등 열전달 향상)로 최적화하고, 둔두 구조에 대해 3000 °C를 넘는 지상 공력 가열 모사를 사용하여 항공우주 열 보호에서의 재료 이점을 내구·내성·사이클·기계적 시험과 함께 실험적으로 입증한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "수동 전략 문헌: 소실형 차폐(가장 성숙, 1960년대 기원), 단열 재료, 내열 복합재, 에어로젤 — 배경이자 재사용성 한계가 능동 대안을 동기화하는 기준선으로 인용된다."}, {"type": "bullet", "text": "간접 능동 냉각 문헌: 재생 냉각, 막 냉각, 증산냉각이 능동 TPS의 최신 기술로 검토되나 무겁고 복잡한 구조, 낮은 효율, 냉각재 낭비, 연료 코킹/침적으로 함께 비판되어 직접 접근을 정당화하는 대조를 형성한다."}, {"type": "bullet", "text": "직접 상변화 냉각 문헌: 분무·마이크로채널·제트 냉각이 라이덴프로스트 효과로 극한 온도에서 보통 배제되는 직접 액체 냉각 전략으로 인용되며, 이후 분무 냉각은 넓은 비행체 전방 면적을 위한 확장 경로로 재조명된다."}, {"type": "bullet", "text": "라이덴프로스트 효과 배경: ~150 °C 이상에서의 단열 증기막 개시가 반복되는 물리적 장애이며, 표면 에너지·젖음성·핵생성 자리 밀도를 높이는 표면 공학 접근이 이를 지연시키는 방법으로 인용된다."}, {"type": "bullet", "text": "핵심 선행 연구 — Jiang 등의 섬유-금속 STA: 라이덴프로스트 점을 1000 °C 이상으로 올리는 하이브리드 나노/마이크로 구조 표면으로 TPS 잠재력을 가지며, 본 논문은 이를 직접 토대로 삼아 기둥 거칠기와 높이를 최적화하고 달성 열유속을 Jiang 등의 값에 반복 벤치마킹한다."}, {"type": "bullet", "text": "인용된 인접 응용 맥락에는 유사한 단열/내열 재료에 관심 있는 분야로서 고온 배터리 열 관리와 전자 열 관리(열 폭주 방지)가 포함되어, 연구된 재료의 폭넓은 관련성을 강조한다."}]}, "method": {"content": [{"type": "bullet", "text": "STA 구조: 두 개의 열전대 구멍과 돌출 고정 모서리를 가진 금속 기반 마이크로 기둥 기판(길이:폭:두께 = 25 mm:25 mm:2 mm)에 초친수성 다공성 섬유 멤브레인을 매립; SEM으로 기둥 폭 a = 300 µm, 간격 b = 300 µm와 기둥 사이 U자 구조를 확인한다.", "figure_refs": [2]}, {"type": "bullet", "text": "선행 연구 대비 표면 최적화: 기둥 표면을 더 거칠게(Rmax = 2.13 µm, Ra = 0.158 µm) 만들어 표면 에너지와 젖음성을 높이고 나노 규모 핵생성 자리를 늘리며, 기둥 높이(650 µm 대 Jiang 등의 400 µm)로 더 넓은 증기 전달 채널과 더 큰 고체-액체 접촉을 형성해 비등 열전달을 강화한다.", "figure_refs": [2]}, {"type": "bullet", "text": "멤브레인 제작: SiO2 나노섬유 멤브레인(평균 기공 ~5.4 µm, 섬유 200-300 nm)은 PVA 전구체(12 wt%)와 테트라에톡시실란 실란 졸(몰비 TEOS:H3PO4:H2O = 1:0.01:10) 혼합액을 18 kV에서 18G 바늘로 전기방사하여 80 °C 2시간 건조, 600 °C 2시간 소성으로 만들고, 사각 구멍 몰드와 가압으로 마이크로 기둥 기판에 매립한다.", "figure_refs": [2]}, {"type": "bullet", "text": "부탄 화염 플랫폼: 부탄 화염총(~1400 °C, 극초음속 공력 가열 모사에 충분)을 STA 전면(정체점 역할)에서 90 ± 1 mm에 두고, 뒷면에 27G 바늘 탈이온수 제트 5 mL/min을 가한다; 두 개의 열전대가 온도를 기록하고 운모 시트가 배선을 보호하며 고속 카메라가 액체-고체 동역학을 포착한다.", "figure_refs": [3]}, {"type": "bullet", "text": "열유속 산정(부탄): 이상 냉각에 사용된 물 질량은 전자저울 위 수집된 낙하 액체 질량에서 도출하고, 열적 안정 열유속은 잠열항과 현열항을 결합한다.", "figure_refs": [3]}, {"type": "formula", "label": "이상 제트 냉각으로부터의 열유속 (부탄 플랫폼)", "latex": "q = \\frac{h_{lv}\\,m'_{l\\to v}}{A} + c\\,m'_{l\\to v}\\,\\Delta T", "description": "열적 안정 열유속은 잠열항($h_{lv}$ = 물의 잠열, $m'_{l\\to v}$ = STA 면적 $A$에 대한 액-기 질량률)과 현열항($c$ = 물의 비열, $\\Delta T$ = 실온과 물 포화온도의 차)을 결합하며, 약 2.0 ± 0.1 MW/m$^2$로 평가되어 선행 STA 연구와 본질적으로 일치한다."}, {"type": "bullet", "text": "아세틸렌 화염 플랫폼: 중성 아세틸렌 화염(3050-3150 °C)이 20 mm × 20 mm STA를 매립한 직경 120 mm·두께 14 mm 스테인리스강 둔두체를 가열한다; 열전대 TB1-TB5를 중심선과 STA 근처에 배치하고 탈이온수 제트(8 또는 16 mL/min)를 30°로 충돌시키며 알루미노실리케이트 세라믹 섬유로 고정구를 단열한다.", "figure_refs": [7, 8]}, {"type": "formula", "label": "정상 상태 전도로부터의 열유속 (아세틸렌 둔두체 플랫폼)", "latex": "q = \\lambda_{ss}\\,\\frac{T_{B2} - T_{B1}}{\\ell_{B1\\text{-}B2}}", "description": "둔두체에서는 스테인리스강 열전도도 $\\lambda_{ss}=27.5\\,\\mathrm{W/(m\\cdot K)}$와 거리 $\\ell_{B1\\text{-}B2}$만큼 떨어진 열전대 TB1, TB2의 측정 온도차를 이용한 1차원 푸리에 전도에서 열유속을 얻는다; 예컨대 327 °C 차이는 2.99 MW/m$^2$, 781 °C 차이는 7.16 MW/m$^2$를 준다."}, {"type": "bullet", "text": "시험 프로그램: 일회성 부탄 실험으로 맨 마이크로 기둥 기판과 완전한 STA를 비교; 9회 연속 부탄 사이클(7번째 사이클부터 이중 화염, 방진 시험 포함)로 내구성을 평가; 대조군으로 매끈한 표면 대체 기판을 시험; 2회차 아세틸렌 둔두체 실험(~400초와 2회차)으로 고온 성능과 재사용성을 평가한다."}]}, "results": {"content": [{"type": "bullet", "text": "맨 마이크로 기둥 기판(부탄): 제트 냉각을 시작해도 온도가 빠르게 상승하여 붕괴할 때까지 ~600 °C(융점 범위)에 머물렀는데, 이는 액체가 젖지 않고 충돌해 액적으로 부서져 튕겨 나가는 라이덴프로스트 현상 때문이며, 전통적 직접 액체 냉각이 초과열 상태에서 실패함을 보여준다.", "figure_refs": [4]}, {"type": "bullet", "text": "STA(부탄): 동일 조건에서 즉각적 온도 강하를 겪었고, 전면이 부탄 화염 속에 있는 동안에도 큰 젖음 냉각면이 109 °C 부근으로 유지되었다; 26초에 운모 시트가 발화(발화점 800 °C 이상)하여 초고온 전면 온도를 입증한다.", "figure_refs": [4]}, {"type": "bullet", "text": "멤브레인 역할과 견고성: SiO2 나노섬유 멤브레인은 연속 제트 충격으로 t = 17.74초에 파손되기 시작했으나 해당 위치가 이미 라이덴프로스트 점보다 훨씬 낮았으므로 냉각 효율은 영향받지 않았다; 안정 상태 열유속은 2.0 ± 0.1 MW/m2로 선행 STA 연구와 사실상 동등하다.", "figure_refs": [4]}, {"type": "bullet", "text": "사이클 내구성(9회 부탄 사이클): 제트를 멤브레인 모서리 영역에 두면 내구성이 향상되었고, 2-6회 사이클에서 제트 위치 변경 없이 110 °C 부근의 지속 냉각이 달성되었으며, 7번째부터 이중 화염도 지속 냉각을 주었고, 8/9번째 시험에서 재 층(방진)을 견뎠다; 이중 화염 열유속이 단일 화염보다 높았으나 뚜렷한 온도 상승이 없어 냉각 용량이 아직 한계에 이르지 않았음을 시사한다.", "figure_refs": [5]}, {"type": "bullet", "text": "매끈한 표면 대조군: 매끈한 표면과 멤브레인이 있는 매끈한 표면 모두 부탄 화염에서 붕괴하고 비젖음 라이덴프로스트 액적 튕김을 보여, 멤브레인 고정자이자 열전달 다리로 기능하는 마이크로 기둥의 대체 불가한 역할을 확인한다.", "figure_refs": [6]}, {"type": "bullet", "text": "아세틸렌 둔두체, 1회차(~400초, 8 mL/min 제트 30°): 전 과정에서 구조 건전성이 유지되었고, 제트 냉각 아래 모든 온도가 안정되어 화염에 가장 가까운 TB2가 1200 °C 미만(융점 훨씬 아래)을 유지했으며, ~327 °C의 TB1-TB2 차이가 2.99 MW/m2 열유속(벤치마크 대비 거의 50% 상회)을 주고, 30° 충돌각 덕분에 멤브레인이 온전히 유지되었다.", "figure_refs": [8]}, {"type": "bullet", "text": "아세틸렌 둔두체, 2회차(16 mL/min 제트): 새로 삽입한 멤브레인으로 TB2를 1000 °C 바로 위로 유지했고, ~781 °C의 안정 TB1-TB2 차이가 7.16 MW/m2 열유속(벤치마크 대비 258% 증가)을 냈다; SEM은 2회차 후에도 마이크로 기둥이 원래 치수를 유지함을 보여 높은 재사용성을 보장한다.", "figure_refs": [8]}]}, "discussion": {"content": [{"type": "bullet", "text": "핵심 주장: 붕괴로 끝나는 기존 라이덴프로스트 유발 무효 냉각을 3000 °C를 넘는 아세틸렌 화염 아래에서도 구조 건전성을 유지하는 지속 냉각으로 전환할 수 있으며, 달성 열유속(7.16 MW/m2)은 전통적 지상 극초음속 공력 가열 실험과 비견되어 실용 가치를 입증한다."}, {"type": "bullet", "text": "확장 설계 개념: 비행체 전방부 내부 표면에 다수의 작은 SiO2 나노섬유 멤브레인을 통합하고, 넓은 전방 냉각 면적에는 분무 냉각을 사용해 단일 멤브레인 제트 냉각을 대체한다.", "figure_refs": []}, {"type": "bullet", "text": "재료 실용성: 경제적인 430 스테인리스강 둔두체는 융점이 더 높은 더 보편적인 티타늄 합금 기체 외피 재료로 안전하게 대체될 수 있어 적용성을 넓힌다."}, {"type": "bullet", "text": "한계 1 — 압력: 극초음속 비행의 훨씬 낮은 압력 대비 대기압 실험은 상변화 거동과 구조 건전성을 바꿀 수 있어 실제 비행에서 다른 결과를 낳을 수 있다."}, {"type": "bullet", "text": "한계 2 — 화학: 실험 장치는 재진입/극초음속 비행의 높은 해리 산소 수준을 재현하지 못하는데, 이는 표면 산화와 열전달에 결정적이어서 실험-비행 상관을 제한한다; 실현된 열유속도 비행 전 범위(고도·속도·받음각·형상)를 포괄하지 못한다."}, {"type": "bullet", "text": "한계 3 — 역학과 형상: STA의 노출 후 기계적 물성이 크게 변하며(조성·온도·지속시간에 따른 개선 또는 열화), 유효성은 둔두 형상(평판, 둔두체)에서만 입증되어 예리한 앞전은 미해결로 남는다; 진공·고고도 시험이 시급하다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "둔두형 나노/마이크로 STA를 이용한 직접 냉각 방식이 극초음속 열 장벽 완화를 위해 제안되며, 극초음속 열 보호의 현 간접 최신 기술을 뛰어넘는 혁신으로 제시된다."}, {"type": "bullet", "text": "라이덴프로스트 점을 1000 °C 이상으로 끌어올림으로써 STA는 라이덴프로스트 유발 액적 튕김과 붕괴를 지속적 핵비등/이상 냉각으로 전환하여, 3000 °C를 넘는 아세틸렌 화염 아래에서도 구조 건전성을 유지한다."}, {"type": "bullet", "text": "입증된 성능: 안정적 융점 미만 온도(두 차례 아세틸렌에서 TB2 1200 °C 미만·~1000 °C), 2.0·2.99·7.16 MW/m2 열유속, 2회차 후에도 변하지 않은 마이크로 기둥으로 이중 화염·재 오염 조건을 포함한 9회 부탄 사이클에 걸쳐 높은 재사용성과 내구성을 입증한다."}, {"type": "bullet", "text": "이 연구는 비판한 간접 능동법(재생·막·증산냉각)에 대한 효율적·재사용 가능·경량 열 보호 대안으로 명시적으로 제시되므로, 증산냉각 기여가 아닌 기타/경쟁 냉각법으로 여기에 분류된다."}, {"type": "bullet", "text": "여섯 측면(저압 거동, 해리 산소, 전 열유속 범위, 기계적 물성 변화, 예리한 앞전 통합, 확장 가능한 분무 냉각 배치)이 향후 연구로 표시되며, 실용 적용 전 지상 진공 및 실제 고고도 시험이 요구된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "실험은 대기압에서 수행되었으나 극초음속 비행은 훨씬 낮은 압력에서 일어나므로, 실제 비행에서 상변화 거동과 재료 건전성이 달라질 수 있다.", "source_quote": "Firstly, the experiments were conducted at atmospheric pressure, whereas hypersonic flight typically occurs at much lower pressures. This discrepancy could influence the behavior of phase change phenomena and the structural integrity of the materials being tested, potentially leading to different results under actual flight conditions.", "source_section": "discussion"}, {"claim": "실험 장치는 대기권 재진입/극초음속 비행에서 나타나는 높은 해리 산소(dissociated oxygen) 수준을 재현하지 못해, 실험 결과가 실제 재료 거동으로 얼마나 연결되는지 제한한다.", "source_quote": "it falls short of replicating the high levels observed during atmospheric re-entry or hypersonic flight. Dissociated oxygen plays a critical role in the chemical and thermal responses of materials... The lack of dissociated oxygen in the experimental conditions may limit the direct correlation between laboratory results and real-world performance.", "source_section": "discussion"}, {"claim": "시험된 열유속은 극초음속 비행 조건의 전 범위(고도, 속도, 받음각, 형상 변화)를 포괄하지 못한다.", "source_quote": "the heat fluxes observed in this study, while representative of certain flight conditions, do not encompass the full range of conditions encountered during a hypersonic flight.", "source_section": "discussion"}, {"claim": "STA의 기계적 물성은 화염 노출 후 크게 변하며, 재료·온도 의존적인 개선 또는 열화가 완전히 규명되지 않았다.", "source_quote": "Despite the preservation of geometry and mass after exposure to butane and acetylene flames, the mechanical properties of the STA undergo significant alterations.", "source_section": "discussion"}, {"claim": "유효성은 둔두 형상(평판, 둔두체)에 대해서만 입증되었고, 극초음속 예리한 앞전(sharp leading edge)에서의 성능은 다루어지지 않았다.", "source_quote": "this paper only demonstrates the effectiveness of the STA in blunt geometries, such as flat plates and blunt bodies. The performance of the STA when integrated into hypersonic sharp leading edges remains unaddressed.", "source_section": "discussion"}], "future_works": [{"claim": "향후 연구는 극초음속 비행체 설계에서 이 직접 냉각 방식의 확장성과 효율에 대한 보다 엄밀한 기술적 정당화와 정량 분석을 제공해야 한다.", "source_quote": "Future investigations should concentrate on providing more rigorous technical justifications and detailed quantitative analyses regarding the scalability and efficiency of this cooling approach in hypersonic vehicle design.", "source_section": "discussion"}, {"claim": "비행체 전방부 내부 표면에 다수의 작은 SiO2 나노섬유 멤브레인을 매립하는 분무 냉각(spray cooling)이 극초음속 비행체의 넓은 전방 면적을 위한 확장 가능한 냉각법으로 제안된다.", "source_quote": "This sketch advocates for the incorporation of multiple small SiO2 nanofibrous membranes into the internal surface of the forefront of hypersonic vehicles. Given its substantial cooling area, spray cooling technology is proposed as an effective cooling method.", "source_section": "discussion"}, {"claim": "명시된 한계를 극복하기 위해 실제 적용 전에 더 많은 지상 진공 실험과 실제 고고도 시험이 시급히 요구된다.", "source_quote": "To overcome these above limitations, more ground-based vacuum experiments and real high-altitude tests are urgently required for its actual application.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["극초음속 열 장벽은 여전히 해결되지 않아 지속적 극초음속 비행을 가로막으며, 기존 수동(소실형 ablative) 전략은 극초음속 비행체에 점점 더 요구되는 재사용성·기동성·경제성을 희생시킨다.", "현재의 능동 냉각법(재생·막·증산냉각)은 모두 간접 냉각에 불과하여 무겁고 복잡한 냉각 구조, 낮은 냉각 효율, 냉각재 낭비, 연료 코킹, 침적 등의 결함이 있다.", "직접 액체 상변화 냉각(분무·마이크로채널·제트)은 ~150 °C 이상에서 단열 증기막을 형성해 냉각 효율을 급감시키는 라이덴프로스트 효과 때문에 그러한 극한 온도에서 보통 불가능하다고 여겨진다.", "라이덴프로스트 점을 끌어올린다고 보고된 Jiang 등의 기존 구조화 열 장갑(STA)은 대표적 둔두 구조에서 현실적인 &gt;3000 °C 공력 가열 조건으로 입증한 후속 연구가 없었다."], "addressed_by_this_work": ["최적화된 섬유-금속 나노/마이크로 STA 기반 직접 액체 냉각 시스템을 제안하고, &gt;3000 °C 화염 아래에서도 구조 건전성과 융점 미만 온도를 유지함을 실험적으로 보여 재사용 가능·경량 열 보호 경로를 제시한다.", "라이덴프로스트 점을 1000 °C 이상으로 끌어올림으로써 STA는 라이덴프로스트 유발 무효 냉각(액적 튕김, 붕괴)을 지속적 핵비등/이상 냉각으로 전환하여 간접법의 결함에 직접 대응한다.", "직접 냉각에 대한 라이덴프로스트 장애를 더 거친 마이크로 기둥(높은 표면 에너지/젖음성, 더 많은 핵생성 자리)과, 액체 확산 및 이상 비등을 촉진하는 매립 초친수성 SiO2 나노섬유 멤브레인으로 극복한다.", "평판과 스테인리스강 둔두체에 대한 부탄·아세틸렌 화염 실험과 사이클/내구 시험으로 대표 조건에서 STA를 입증하여 최대 7.16 MW/m2 열유속과 높은 재사용성을 달성한다."], "remaining_unresolved": ["실제 극초음속 비행/재진입의 저압 및 높은 해리 산소 수준에서의 검증은 여전히 부재하다(대기압·산소 결핍 실험실 한정).", "비행 열유속의 전 범위와 열 노출 후 STA의 장기 기계적 물성 변화는 규명되지 않은 채 남아 있다.", "둔두 형상만이 아닌 극초음속 예리한 앞전에서의 성능은 아직 입증되지 않았고, 엄밀한 정량적 확장성/효율 분석은 향후 과제로 남았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
