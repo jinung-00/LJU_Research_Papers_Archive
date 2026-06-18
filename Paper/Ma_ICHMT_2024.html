@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Effect of pore plugging on transpiration cooling performance implemented with perforated flat plates</title>
+    <meta name="keywords" content="transpiration cooling, perforated flat plate, pore plugging, dust deposition, random plugging, plugging ratio, turbine blades, additive manufacturing, injection ratio, cooling efficiency">
+    <meta name="paper-authors" content="Hongfei Ma, Lianfeng Yang, Yigang Luan, Haiou Sun, Franco Magagnato">
+    <meta name="paper-journal" content="International Communications in Heat and Mass Transfer, Vol. 159, 2024, Art. 108248 · DOI: 10.1016/j.icheatmasstransfer.2024.108248">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Effect of pore plugging on transpiration cooling performance implemented with perforated flat plates</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Hongfei Ma, Lianfeng Yang, Yigang Luan, Haiou Sun, Franco Magagnato</div>
+            <div class="journal">International Communications in Heat and Mass Transfer, Vol. 159, 2024, Art. 108248 · DOI: 10.1016/j.icheatmasstransfer.2024.108248</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 수치 연구는 <span class="term">기공 막힘(pore plugging)</span>(먼지 퇴적 또는 열차폐 코팅 박리에 의한)이 0.5 mm 직선 구멍(5행 × 21열)을 가진 적층 제조(Inconel 718) <span class="term">천공 평판(perforated flat plate)</span>의 증산냉각을 어떻게 저하시키는지 조사하며, ANSYS Fluent(SST k-omega)에서 단상 압축성 이상기체 냉각제로 켤레 열전달로 모델링한다. Fluent TUI 무작위 막힘 방법(네 가지 막힘 비율 PR=0.2-0.8, 각 5개 무작위 분포의 160개 사례)을 사용하여, 두 가지 경계 유형 — 일정 냉각제 질량유량(주입비 F)과 일정 펌프 파워(입구 압력 PF) — 하에서 막힘 비율과 영역의 영향을 분석한다. 일정 질량유량에서는 저주입비일 때 막힘 비율이 증가할수록 전체 냉각 성능이 개선되지만(출구 면적 감소가 냉각제 출구 속도와 기막 두께를 높임) 고주입비에서는 감소한다. 일정 펌프 파워에서는 막힘 비율이 높을수록 유동 손실 계수가 증가하고 실제 냉각제 유량이 줄어 효율이 단조 감소한다. 냉각 효율은 고정 막힘 비율에서 막힌 구멍의 분포에 매우 민감하며 — 냉각제가 충분할 때 막힌 영역이 선단(leading edge)에서 멀수록 효율 감소가 작다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">perforated flat plate</span><span class="keyword-chip">pore plugging</span><span class="keyword-chip">dust deposition</span><span class="keyword-chip">random plugging</span><span class="keyword-chip">plugging ratio</span><span class="keyword-chip">turbine blades</span><span class="keyword-chip">additive manufacturing</span><span class="keyword-chip">injection ratio</span><span class="keyword-chip">cooling efficiency</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 증산냉각을 극초음속 노즈콘, 연소실 지지판, 터빈 블레이드를 위한 효율적 기술로 제시하며, 냉각제가 조밀한 미세 기공을 통해 균일하고 안정적인 막을 형성하여 막냉각보다 적은 냉각제로 고온 부품을 보호함을 설명한다. 실험·수치 열전달 연구(액체 물 상변화, 격자 볼츠만 선단, 효출 대 증산 블레이드 시험, 구배 기공률, AM 격벽 평판, 비균일 기공률)를 검토한 뒤, 터빈 블레이드 적용의 핵심 장애물로 전환한다: 외부 먼지 퇴적이나 열차폐 코팅 박리로 쉽게 막히는 작은 기공으로, 그 냉각 성능 영향은 막힘 구성, 방향, 위치, 기막 구멍 형상에 의존한다. 대체로 막냉각에 집중된 막힘 문헌을 검토하며, 주입비와 펌프 파워 하에서 증산냉각의 기공 막힘을 각각 연구하거나 막힌 영역 영향을 정량화한 연구가 드묾을 확인한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론에서 검토된 관련 연구는 증산냉각 열전달 연구(상변화, 격자 볼츠만, 효출 대 증산, 구배/비균일 기공률, AM 평판), 막냉각 기공 막힘 연구(지배적 기존 막힘 문헌), 증산냉각 막힘 연구(합성곱 모델링)에 걸친다. 반복되는 공백은 증산냉각의 기공 막힘이 주입비와 펌프 파워 하에서 각각 연구된 경우가 드물고 막힌 영역 영향이 정량적으로 분석되지 않은 점이다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">모델은 D=0.5 mm 직선 구멍 nj=5행 × ni=21열(간격 2D, 평판 44D 길이 × 12D 폭 × 6D 두께)을 가진 천공 평판으로, 고온 주류·냉각제·직선 구멍 채널 유체 영역과 Inconel-718 고체 영역(전도도 ~11 W/(m K))을 포함하며, ANSYS Fluent에서 SST k-omega 모델로 정상상태 RANS 켤레 열전달로 풀이한다. 주류(20 m/s, 373 K)와 냉각제(293 K, 압축성 이상기체)는 유체-고체 계면에서 결합되고, SST k-omega 모델은 375만 셀(y+&lt;1)을 선택하는 격자 독립성으로 검증된다. 정밀 제어 가능한 무작위 막힘을 위해 각 직선 구멍 출구가 독립적으로 명명되어 Fluent TUI 스크립트가 출구를 불투과 벽(막힘)과 내부 표면(개방) 사이에서 전환할 수 있고, 무작위 함수가 분포를 생성하여 160개 사례(네 막힘 비율 PR=0.2-0.8, 각 5개 무작위 분포)를 주며, 각 사례는 잔차 1e-6 미만까지 1000회 반복으로 수행된다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">일정 냉각제 질량유량 하에서 막힘은 저주입비일 때 실제로 유익하다: 기공을 막으면 총 출구 면적이 줄어 미막힘 기공의 출구 속도가 높아지고 열 경계층이 두꺼워진다(PR=0.4, F=7%에서 최대 효율 이득 Delta_eta_max = 5.28%). 반면 고주입비(F=15%)에서는 줄어든 막 피복이 효율을 낮춘다(PR=0.8에서 Delta_eta_min = -24.41%). 냉각 효율은 동일 막힘 비율에서 막힌 구멍 분포에 매우 민감하다 — 선단 막힘(Case3)은 고유량에서 최저 효율을 주나 저유량에서 주류 침입을 억제하며, 평판 막힘이 증가할수록 최대 국소 효율 차이 영역이 선단에서 중앙으로 이동한다. 일정 펌프 파워 하에서는 막힘 비율이 높을수록 유동 손실 계수(PR 0.2에서 0.8로 phi_m 0.1에서 ~0.75)가 증가하고 실제 냉각제 유량이 줄어 효율이 PR에 따라 단조 감소한다(예: PF=15%, PR 0.4에서 0.8로 효율 83.41%에서 49.4% 하락). 영역별로 냉각제가 충분할 때 선단 막힘은 해롭고 후단 막힘은 유익하며, 고 F/PF에서 막냉각이 지배적이다(점유율 60%에서 ~70%로 상승).</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논의는 막힘이 성능을 변화시키는 이중 메커니즘을 설명한다. 저냉각제 유량에서 기공을 막으면 총 출구 면적이 줄고 미막힘 기공의 출구 속도가 높아져 내부 대류 열전달과 열 경계층 두께를 증가시킨다(유익). 반면 고유량 또는 일정 펌프 파워에서는 증가한 유동 저항이 냉각제 유입을 줄이고 막을 얇게 한다(해로움). 막힌 영역이 중요한 이유 — 선단 막힘은 고압 구배 주류 침입을 억제하고 저펌프 압력에서 냉각제가 저압 후단 채널에서 스며 나오게 하는 반면, 후단 막힘은 선단을 굶긴다 — 를 명확히 하며, 임계 막힘 확률을 넘으면 블레이드 열보호가 실패하여 점검과 교체가 필요함을 경고한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">무작위 기공 막힘 하에서 냉각 효과의 차이가 증가하고 냉각 효율의 막힘 비율 민감도가 냉각제 주입비와 함께 커진다. 일정 냉각제 질량유량에서 기공 막힘은 저주입비일 때 전체 냉각에 유익하지만(PR=0.4에서 Delta_eta_max = 5.28%, PR=0.8에서 +6.25%) 고주입비에서는 해롭다(F=15%에서 Delta_eta_min = -24.41%). 일정 펌프 파워에서는 유동 손실이 커지면서 평균 효율이 막힘 비율과 함께 단조 감소하며, 단순히 펌프 파워를 높이는 것만으로는 냉각 이득을 최대화하지 못한다. 영역 막힘이 중요하다: 선단(전방) 막힘은 고주입비에서 최악이고 저 F에서는 내부 냉각이 지배적이며, F가 7-15%로 증가할수록 막냉각 점유율이 60%에서 ~70%로 상승하고, 막힌 영역이 후단에 가까울수록 단열 막 효율이 높다(F=7%에서 전체 효율이 미막힘보다 11.2% 높음).</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 23</span></summary>
+            <ol class="ref-list"><li>G. Huang, Z. Min, L. Yang, P.-X. Jiang, M. Chyu, Transpiration cooling for additive manufactured porous plates with partition walls, Int. J. Heat Mass Transf., 2018</li><li>L. Yang, Z. Min, S.N. Parbat, M.K. Chyu, Effect of pore plugging on transpiration cooling with additive manufacturable perforate holes, Turbo Expo GT2018-75310, 2018</li><li>L. Yang, W. Chen, M.K. Chyu, A convolution modeling method for pore plugging impact on transpiration cooling configurations perforated by straight holes, Int. J. Heat Mass Transf., 2018</li><li>Y. Yang, J. Mao, P. Chen, H. Zhang, H. Tang, Numerical investigation on transpiration cooling performance with different porosities and mainstream pressure gradients, Int. J. Therm. Sci., 2023</li><li>G. Huang, L. He, Influence of inhomogeneous porosity on effusion cooling, Int. J. Heat Mass Transf., 2019</li><li>X. Chen, Y. Wang, Y. Long, S. Weng, Effect of partial plugging on flow and heat transfer of film cooling with cylindrical and fan-shaped holes, Int. J. Therm. Sci., 2021</li><li>C.A. Whitfield, R.P. Schroeder, K.A. Thole, S.D. Lewis, Plugging effects from simulated thermal barrier coatings for cylindrical and shaped cooling holes, ASME Turbo Expo, 2014</li><li>F.-Q. Wang, J. Pu, J.-H. Wang, W.-D. Xia, Numerical investigation of effects of plugging, inclination angle, and hole-size on film cooling effectiveness at concave surface, J. Turbomach., 2021</li><li>A. van Foreest, M. Sippel, A. Gulhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophys. Heat Transf., 2009</li><li>J. Sweet, E. Roth, M. Moss, Thermal conductivity of Inconel 718 and 304 stainless steel, Int. J. Thermophys., 1987 (solid property source)</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "효율적 냉각 기술인 증산냉각은 주로 극초음속 비행체 노즈콘, 연소실 지지판, 터빈 블레이드에 사용되며, 조밀한 미세 기공 구조를 통해 고온 표면에 균일하고 안정적인 막을 형성하고, 균일한 냉각제 분포로 인해 기존 막냉각보다 적은 냉각제를 사용한다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "선행 열전달 연구: Van Foreest(상변화 액체 물, 소량의 물로 2000 K에서 ~300 K로 감소), Zhang &amp; Wang(역제트가 있는 격자 볼츠만 선단), Kim(효출 대 증산 단일 블레이드, 증산 효율이 내부 및 효출 냉각보다 각각 34%와 25% 높음), Zhang et al.(2-3% 초과 송풍비가 유동 분리/피복 불안정 유발)."}, {"type": "bullet", "text": "다공질 매질 및 AM 연구: Cheng et al.(국소 냉각제 분포와 효율을 개선하는 구배 기공률), Huang et al.(효율을 유지하며 인장강도를 높이는 격벽 AM 직선 구멍 평판), Yang et al.(흐름 경로를 따른 최적화 기공률 분포가 온도 비균일성을 완화), Huang et al.(비균일 기공 크기가 외부 막에 영향을 주나 고체 매트릭스 열전도로 인해 전체 효율에는 거의 영향 없음)."}, {"type": "bullet", "text": "적용 장애물: 증산냉각은 높은 성능을 갖지만, 작은 기공 크기로 인해 외부 먼지가 쉽게 퇴적하여 블레이드 수명을 심각하게 손상시키는 국소 기공 막힘을 일으키고, 열차폐 코팅 박리도 막힘을 유발한다. 냉각 성능 변화는 막힘 구성(반구형, 사면체), 방향, 위치, 기막 구멍 형상에 의존한다."}, {"type": "bullet", "text": "막냉각 막힘 문헌: Wang et al.(표면 퇴적과 국소 막힘, 독립 막힘 모델이 저송풍비에서 송풍비에 따라 감소하고 고송풍비에서 반대), Chen et al.(대와류 모사, 심각한 막힘에서 원통형/팬형 측방 효율 97%와 27% 감소), Zhang et al.(원통형 최악, 고송풍비에서 팬형 최고 내막힘성), Wang et al.(막힘이 침투를 강화하나 피복과 평균 효율을 줄임, 고송풍비에서 악화)."}, {"type": "bullet", "text": "증산냉각 막힘 공백: Yang et al.은 합성곱 모델로 국소 냉각 효과를 예측하여, 전체 막힘률이 주된 파라미터이나 모든 위치의 냉각 효과를 단독으로 나타내지는 않으며 상류 영역이 더 민감하고 막힘률에 따라 확률성이 증가함을 발견했다. 주입비와 펌프 파워 하에서 증산냉각의 기공 막힘을 각각 연구하거나 막힌 영역 영향을 정량화한 연구는 드물다."}, {"type": "bullet", "text": "본 논문은 막힘 비율이 전체 냉각 효율에 미치는 영향을 주입비와 펌프 파워 하에서 각각, 동일 막힘 비율에서 막힘 분포가 국소 효율에 미치는 영향, 고정 총 막힘 비율에서 전/중/후 영역 효율 차이, 그리고 서로 다른 조건 하 내부 대 외부 냉각 비율을 상세히 분석하여 무작위 기공 막힘에 대한 참고를 제공한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "증산 열전달 계열: Van Foreest(상변화 액체 물), Zhang &amp; Wang(격자 볼츠만 선단 결합 냉각), Kim(효출 대 증산 단일 블레이드), Zhang et al.(벽 송풍과 공간적 비균일 주입 유동 구조)."}, {"type": "bullet", "text": "기공률/AM 계열: Cheng et al.(국소 분포와 효율을 개선하는 구배 다공질 매질), Huang et al.(AM 격벽 평판), Yang et al.(기공률과 주류 압력구배가 균일성에 미치는 영향), Huang &amp; He(효출 냉각의 비균일 기공률, 고체 전도로 인해 전체 효율에 거의 영향 없음)."}, {"type": "bullet", "text": "막냉각 막힘 계열(구성/형상): Tian et al.(미스트 주입 유무의 막힘 구성), K.N. Huang et al.(불완전 구멍 막냉각), Zhang et al.(원통형/복합/팬형 구멍 부분 막힘; 원통형 최악, 팬형 최고 내막힘성), Chen et al.(심각한 막힘에서 원통형 및 팬형 측방 효율의 대와류 모사)."}, {"type": "bullet", "text": "막냉각 막힘 계열(퇴적/방향): Wang et al.(표면 퇴적과 구멍 막힘 결합), Whitfield et al.(원통형 및 형상 구멍의 모사 열차폐 코팅 막힘), Wang et al.(구형 막힘 구성), Wang et al.(오목면 막냉각의 막힘, 경사각, 구멍 크기)."}, {"type": "bullet", "text": "증산냉각 막힘 계열: Yang et al.(직선 구멍 증산 구성의 기공 막힘 영향에 대한 합성곱 모델링 방법)과 Yang et al.(AM 천공 구멍 증산냉각의 기공 막힘 효과)로, 상류 영역이 더 민감하고 막힘률에 따라 확률성이 증가함을 발견했다."}, {"type": "bullet", "text": "검증/물성 참고문헌: Huang et al.의 AM 직선 구멍 격벽 평판이 천공 평판 기반을 제공하고, Sweet et al.의 Inconel 718 전도도(~11 W/(m K))가 고체 물성을 공급하며, SST k-omega 모델은 격자 독립성 및 난류 모델 검증으로 검증된다(그림 4)."}]}, "method": {"content": [{"type": "bullet", "text": "기하: 기공 직경 D=0.5 mm의 직선 구멍 nj=5행 × ni=21열, X와 Y 방향 기공 간격 2D, 평판 길이 44D, 폭 12D, 두께 6D를 가진 천공 평판; 계산 영역은 고온 주류·냉각제·직선 구멍 영역과 고체 영역으로 구성된다.", "figure_refs": [1, 2]}, {"type": "formula", "label": "식 (1) — 냉각제 주입비 F", "latex": "F=\\frac{\\rho_c v_c}{\\rho_\\infty v_\\infty}", "description": "냉각제 주입비 $F$는 냉각제 대 주류 질량유속비로, 냉각제 밀도 $\\rho_c$와 평균 표면 속도 $v_c$를 주류 밀도 $\\rho_\\infty$와 속도 $v_\\infty$로 나눈 값이다."}, {"type": "formula", "label": "식 (2)-(4) — 정상상태 RANS 켤레 지배 방정식", "latex": "\\frac{\\partial}{\\partial x_i}(\\rho u_i)=0, \\qquad \\frac{\\partial(\\rho u_i u_j)}{\\partial x_i}=-\\frac{\\partial P}{\\partial x_i}+\\frac{\\partial \\tau_{ij}}{\\partial x_j}, \\qquad \\frac{\\partial}{\\partial x_i}\\big(u_i(\\rho E+P)\\big)=\\nabla\\!\\left(\\lambda\\frac{\\partial T}{\\partial x_i}+u_j \\tau_{ij}\\right)", "description": "ANSYS Fluent에서 풀이되는 정상상태 레이놀즈 평균 연속·운동량·에너지 방정식으로 $E=h+u^2/2-P/\\rho$이다. 고체 매트릭스는 푸리에 전도(식 4에서 $u_i=0$)를 사용하고 기체는 이상기체 법칙을 따르며, SST k-omega 난류 모델을 사용한다."}, {"type": "formula", "label": "식 (5) — 냉각 효율 eta", "latex": "\\eta=\\frac{T_\\infty - T_w}{T_\\infty - T_c}", "description": "증산 냉각 효율 $\\eta$는 주류 $T_\\infty$, 벽 $T_w$, 냉각제 $T_c$ 온도를 사용한 무차원 벽 온도이다."}, {"type": "bullet", "text": "경계조건(표 1): 주류 입구 속도 20 m/s, 총온도 373 K, 난류 강도 5%; 출구 정압 101,325 Pa; 냉각제 입구 총온도 293 K, F 및 PF 사례 3/7/11/15%; 유체-고체 계면을 제외한 모든 벽은 단열 무미끄럼; 주류와 냉각제는 압축성 이상기체이고 평판 물성은 Inconel 718(k ~ 11 W/(m K))이다."}, {"type": "bullet", "text": "검증 및 메시: SST k-omega 모델이 천공 평판 증산냉각을 잘 모사하며(그림 4), 주류와 직선 구멍 채널의 근벽 정밀화를 갖는 정렬 ICEM 메시 1.24/3.75/6.41백만 육면체 요소를 격자 독립성으로 시험하여 375만 요소(y+ &lt; 1)를 선택한다.", "figure_refs": [3, 4]}, {"type": "bullet", "text": "무작위 막힘 제어 방법: 모든 기공에 대해 별도 계산 영역을 나누어 각 직선 구멍 출구를 별도 ID로 독립적으로 명명한다. Fluent TUI 스크립트가 막힌 기공의 출구를 불투과 벽으로, 개방 기공의 출구를 운동량/열을 전달하는 내부 표면으로 전환하며, 무작위 함수가 동일 막힘률에서 무작위 막힘 분포를 생성한다.", "figure_refs": [5, 6]}, {"type": "bullet", "text": "사례 행렬 및 솔버: 네 막힘 비율(PR=0.2, 0.4, 0.6, 0.8) 각 5개 무작위 분포로 160개 사례를 준다. 각 사례는 1000회 반복(연속 잔차 1e-6 미만)으로 수행되어 다음 전에 자동 저장되며, 일정 냉각제 질량유량 입구(주입비 F) 또는 일정 펌프 압력 입구(PF, F=3/7/11/15%의 미막힘 평판에서 얻은 총 냉각제 입구 압력) 하에서 수행된다."}]}, "results": {"content": [{"type": "bullet", "text": "주입비 + 전역 막힘: 저냉각제 질량유량(F=3%, 7%)에서 평균 효율은 막힘 비율과 함께 증가하는데, 줄어든 출구 면적이 미막힘 기공 출구 속도와 기막 두께를 높이기 때문이다. 고질량유량(F=15%)에서는 외부 막냉각이 지배적이고 막힌 구멍이 많을수록 막이 얇아져 효율이 막힘 비율과 함께 감소한다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "막힘 이득/손실 크기: 기공 막힘은 대부분의 저주입 사례에서 성능을 개선한다 — PR=0.2에서 Delta_eta_max = 4%, PR=0.4에서 5.28%(F=7%에서 최대), PR=0.8 저유량에서 +6.25% — 그러나 F=15%에서는 해로워 Delta_eta = -8.39%(PR=0.6)와 -24.41%(PR=0.8)이다. 따라서 효율은 냉각제 주입비에 더 민감하다.", "figure_refs": [9, 10]}, {"type": "bullet", "text": "고정 PR에서 분포 민감도: PR=0.2에서 Case3(선단 영역, 2-5열의 막힘)은 최소 효율을, Case5(후단 막힘)는 최대 효율을 주므로, 막힌 영역 위치가 전체 효율에 강하게 영향을 준다. 큰 국소 차이 영역은 냉각제 유량이 증가할수록 줄어들어 전방 1/3에 집중된다.", "figure_refs": [11]}, {"type": "bullet", "text": "국소 차이 영역 이동: 평판 막힘 비율이 0.6으로 상승하면 최대 국소 효율 차이 영역이 중앙으로 이동하고(Case13 대 Case14가 거기서 차이), PR=0.8에서 미막힘 구멍 분포(Case17의 전방/중앙 집중 대 Case18의 분산)가 평균 효율에 강하게 영향을 준다.", "figure_refs": [11]}, {"type": "formula", "label": "식 (6) — 냉각제 질량유량 손실 계수 phi_m", "latex": "\\phi_m=\\frac{m_{unblocked}-m_{blocked}}{m_{unblocked}}", "description": "질량유량 손실 계수 $\\phi_m$는 PR=0에서의 냉각제 입구 질량유량($m_{unblocked}$)을 막힘 하의 값($m_{blocked}$)과 비교하며, 막힘 비율이 0.2에서 0.8로 증가하면 약 0.1에서 0.75로 상승한다(일정 펌프 파워)."}, {"type": "bullet", "text": "펌프 파워 + 전역 막힘: 일정 펌프 압력 하에서 평균 효율은 막힘 비율과 함께 단조 감소하는데, 증가한 유동 저항이 실제 냉각제 유량을 줄이기 때문이다(예: PF=3%: PR=0.2에서 40.89%에서 PR=0.8에서 17.58%로). PF=15%에서 PR이 0.4에서 0.8로 상승하면 효율이 83.41%에서 49.4%로 하락한다(질량유량 경계 하 85.81%에서 62.92% 대비). 단순히 펌프 파워를 높이는 것만으로는 냉각 이득을 최대화하지 못한다.", "figure_refs": [12, 13, 14, 15]}, {"type": "bullet", "text": "펌프 파워 분포 효과: 저 PF=3%에서 막힌 영역 분포가 큰 phi_m 차이를 유발한다(Case3 선단 막힘은 선단의 주류 침입을 약화시키고 냉각제가 후단 채널에서 스며 나오게 하여 Case5 후단 막힘보다 높은 효율을 줌). 그러나 PF가 상승하면 각 사례의 phi_m이 안정화되고 추세가 질량유량 경계 결과와 일치한다.", "figure_refs": [13, 14, 15, 16]}, {"type": "bullet", "text": "국소 영역 막힘과 내부/외부 분리: PR=0.2에서 평판을 전/중/후 영역으로 나누면, 선단(Case21) 막힘은 고주입비에서 해롭지만 전방 영역 막힘은 저유량에서 주류 침입을 억제하고, 후단(Case23) 막힘은 냉각제가 충분할 때 효율에 유익하다. 단열 막 효율(eta_aw)과 내부 효율(eta_int = eta - eta_aw)의 수치적 분리는 고 F/PF에서 막냉각이 지배적임(점유율 60%에서 ~70%로 상승)을 보이며, F=7%에서 전체 효율이 미막힘보다 최대 11.2% 높다.", "figure_refs": [16, 17, 18, 19, 20, 21]}]}, "discussion": {"content": [{"type": "bullet", "text": "저유량에서 막힘이 도움이 되는 이유: 저냉각제 질량유량에서 효율은 기막 두께에 민감하다. 일부 기공을 막으면 총 출구 면적이 줄어 미막힘 기공을 통한 출구 속도가 높아지고, 이는 열 경계층을 두껍게 하여 주류 열유속과의 접촉을 줄이고 전체 효율을 개선한다.", "figure_refs": [10]}, {"type": "bullet", "text": "고유량에서 막힘이 해로운 이유: 냉각제가 충분할 때 외부 막냉각이 지배적이다. 막힌 구멍이 많을수록 막 피복 면적과 두께가 줄고 고온 열유속을 차단하는 능력이 약화되어 효율이 낮아지며, 높은 막힘 비율은 미막힘 구멍의 출구 속도를 높여 전체 막의 안정성을 파괴한다."}, {"type": "bullet", "text": "펌프 파워 저항 메커니즘: 일정 펌프 파워 하에서 높은 막힘 비율은 유동 저항 손실을 증가시켜 냉각제 유입 유량을 급격히 줄이며, 이는 내부 대류 열전달 강도와 외부 경계층 두께를 모두 줄여 전체 냉각 성능을 심각하게 저하시킨다.", "figure_refs": [15]}, {"type": "bullet", "text": "선단 막힘 물리: 저펌프 압력에서 냉각 챔버 압력은 작고 선단 주류 압력 구배는 높으므로 냉각제가 후단 구멍에서 더 쉽게 스며 나온다. 선단 막힘(Case3)은 선단 채널로의 주류 침입을 약화시키고 냉각제가 후단에서 흘러나와 막을 형성하게 하여 최고 효율을 주는 반면, 후단 막힘(Case5)은 선단을 굶긴다.", "figure_refs": [13, 19, 20]}, {"type": "bullet", "text": "내부 대 외부 균형: 수치적 분리는 고 F/PF에서 막냉각이 지배적(점유율 60%에서 ~70%)이고 막힘이 선단에서 멀수록 단열 막 효율이 높음을, 저조건에서는 내부 냉각이 지배적이고 선단 막힘이 최악임을 보인다. 미막힘 구멍의 mhole/mc 분포가 영역 효율 차이를 설명한다.", "figure_refs": [18, 19, 20, 21]}, {"type": "bullet", "text": "임계 실패와 유지보수: 전체 막힘 확률이 일정 임계값에 도달하면 열보호 기능이 무력화되고 블레이드가 침식 손상에 매우 취약해져 안전 운전을 위협하므로, 터빈 블레이드의 적시 점검과 교체가 필수적이다. 단순히 펌프 파워를 높이는 것만으로는 냉각 이득을 최대화하지 못한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "냉각제 주입비가 증가함에 따라 무작위 막힘 하의 냉각 효과 차이가 증가하고 냉각 효율의 막힘 비율 민감도가 강화된다. 일정 질량유량에서 막힘은 저주입비에서 유익하고 고주입비에서 반대이다."}, {"type": "bullet", "text": "PR=0.2와 0.4에서 기공 막힘은 전체 냉각 성능을 강화할 수 있다(Delta_eta_max = 5.28%). 더 높은 PR에서도 저주입비에서 효율이 여전히 개선되지만(Delta_eta_max = 6.25%), 고주입비(F=15%)에서는 미막힘보다 현저히 낮다(Delta_eta_min = -24.41%). 막힌 평판의 평균 효율은 냉각제 주입비에 더 민감하다."}, {"type": "bullet", "text": "냉각제 펌프 압력(PF)이 일정할 때, 총 냉각제 유동 손실이 증가하면서 평균 효율이 막힘 비율과 함께 단조 감소하고, PF가 증가할수록 효율 이득이 감소한다. 단순히 냉각 펌프 파워를 높이는 것만으로는 냉각 이득을 최대화하지 못한다."}, {"type": "bullet", "text": "영역 막힘: Case22(중앙)는 F=3%에서 내부 냉각이 지배적이며 최악이고, 선단 막힘(Case21)은 F가 7%에서 15%로 증가할수록 최악이다. 막냉각 점유율은 60%에서 ~70%로 상승하고, 막힌 영역이 후단에 가까울수록 단열 막 효율이 높으며, F=7%에서 전체 효율이 미막힘보다 11.2% 높다."}, {"type": "bullet", "text": "정밀하게 제어 가능한 무작위 막힘 방법론(Fluent TUI 스크립트로 전환되는 구멍별 독립 명명 출구, 160개 사례, SST k-omega 검증)은 기존 다공질 매질 막힘 모델의 예측 불가능성을 극복하고 전역 및 영역 막힘 효과를 재현 가능하게 정량화한다."}, {"type": "bullet", "text": "임계 막힘 확률을 넘으면 블레이드 열보호가 무력화되고 펌프 파워 증가만으로는 냉각 이득을 최대화하지 못하므로, 본 결과는 먼지 퇴적 위험을 평가하는 참고를 제공하고 증산냉각 터빈 블레이드의 적시 점검과 교체를 동기 부여한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [], "future_works": [{"claim": "전체 막힘 확률이 열보호 기능을 무력화하는 임계값에 도달하면 터빈 블레이드의 적시 점검과 교체가 필수적이다.", "source_quote": "Therefore, timely inspection and replacement of turbine blades are imperative.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["증산냉각은 높은 냉각 성능을 갖지만 작은 기공 크기로 인해 외부 먼지가 블레이드 표면에 쉽게 퇴적하여 국소 기공 막힘을 일으켜 블레이드 수명을 심각하게 손상시키므로 실제 터빈 블레이드에 적용하기 어렵고, 열차폐 코팅 박리도 막힘을 유발한다.", "기존 다공질 매질 모델에서 기공 막힘은 예측하기 어려우므로, 정밀하게 제어 가능한 다공질 구조의 계산 모델을 구축하는 것이 필수적이다.", "기존 구멍 막힘 연구는 주로 막냉각에 집중되어 있으며, 주입비와 펌프 파워 각각에 대해 증산냉각의 기공 막힘 영향을 조사하거나 막힌 영역의 영향을 정량적으로 분석한 연구는 드물다."], "addressed_by_this_work": ["구멍별로 독립적으로 명명된 출구와 Fluent TUI 무작위 막힘 스크립트를 갖는 정밀 제어 가능한 직선 구멍(0.5 mm) 천공 평판 모델을 구축하여, 네 가지 비율(160개 사례)에서 재현 가능한 무작위 막힘을 가능하게 함으로써 기존 다공질 매질 막힘의 예측 불가능성을 극복한다.", "막힘 비율이 전체 냉각 효율에 미치는 영향을 일정 냉각제 주입비와 일정 펌프 파워 하에서 각각 분석하고, 동일 막힘 비율에서 막힘 분포가 국소 효율에 미치는 영향도 분석하여, 증산냉각 특정 공백을 직접 메운다.", "전/중/후 영역 막힘 효과와 내부 대 외부 냉각 비율을 정량화(단열 막 대 내부 전도-대류의 수치적 분리)하여, 선단 막힘이 주류 침입을 억제할 수 있고 후단 저비율 막힘이 효율에 유익함을 보인다."], "remaining_unresolved": ["전체 막힘 확률이 일정 임계값에 도달하면 터빈 블레이드의 열보호 기능이 무력화되고 침식 손상에 매우 취약해지므로, 막힘을 완전히 완화할 수 없고 적시 점검/교체가 필요하다.", "냉각 펌프 파워를 단순히 증가시키는 것만으로는 냉각 이득을 최대화하지 못하므로, 막힘에 대한 펌프 파워 보상은 일반적 해법이 아닌 수확체감적이고 사례 의존적 이득을 갖는다.", "본 연구는 평판에서 단상 기체 냉각제로 무작위/영역 막힘을 수치적으로 모델링하며, 실시간 퇴적 동역학, 상변화 냉각제, 완전한 터빈 블레이드 형상은 다루지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
