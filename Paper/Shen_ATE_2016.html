@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>An experimental investigation on transpiration cooling with phase change under supersonic condition</title>
+    <meta name="keywords" content="transpiration cooling, phase change, supersonic experiment, nose cone, zirconia TBC, arc-heated wind tunnel, cooling effectiveness, liquid coolant, thermal protection, experimental">
+    <meta name="paper-authors" content="Lin Shen, Jianhua Wang, Wenjie Dong, Jian Pu, Jinlong Peng, Dejun Qu, Lianzhong Chen">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 105, 2016, pp. 549-556 · DOI: 10.1016/j.applthermaleng.2016.03.039">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">An experimental investigation on transpiration cooling with phase change under supersonic condition</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Lin Shen, Jianhua Wang, Wenjie Dong, Jian Pu, Jinlong Peng, Dejun Qu, Lianzhong Chen</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 105, 2016, pp. 549-556 · DOI: 10.1016/j.applthermaleng.2016.03.039</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 초음속 자유류(마하 4.2, 비엔탈피 2700 kJ/kg, 질량유량 645 g/s) 하에서 쐐기형 노즈콘에 대한 <span class="term">상변화 물 냉각제 증산냉각</span> 아크 가열 풍동 실험을 보고한다. 시편은 소결 Ni-Cr 다공질 선단(다공도 0.33, 투과도 $7.5\times10^{-14}$ m$^2$)과 지르코니아 열차폐 코팅(TBC)으로 보호된 불투과 합금 본체를 결합한다; 냉각제는 과냉·삭마를 피하기 위해 정량 펌프로 공급되고, 표면 온도는 적외선 열화상 시스템으로 측정된다. 실험은 액체 물 증산냉각이 매우 효과적임을 입증하며(정체점이 1.55% 주입비에서 ~2300 K에서 ~700 K로 냉각, 4% 질소 기체 기준의 2100-&gt;1500 K 대비), 여러 현상을 드러낸다: 저압/저온 환경에서의 얼음 수염 형성, 저전도 TBC에 의한 열평형 이력현상, 그리고 고압 정체 영역에서 가장 낮은 비균일 냉각 효과 분포다. 필요 물 질량유량의 단순 잠열 기반 수치 추정이 도입되어 7-12% 과소평가함이 드러난다(주로 무시된 기공 내 대류 때문).</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">phase change</span><span class="keyword-chip">supersonic experiment</span><span class="keyword-chip">nose cone</span><span class="keyword-chip">zirconia TBC</span><span class="keyword-chip">arc-heated wind tunnel</span><span class="keyword-chip">cooling effectiveness</span><span class="keyword-chip">liquid coolant</span><span class="keyword-chip">thermal protection</span><span class="keyword-chip">experimental</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 비행체는 모든 재료 한계를 초과하는 극히 높은 공력 가열 부하(스크램제트 선단·노즈캡에서 1000 MW/m^2 초과; 비냉각 표면 5000 C 초과)에 직면하여 효과적인 능동 열보호 기술을 요구한다. 능동 TPT 중 증산냉각이 가장 효과적이며 로켓 노즐·재진입 비행체·터빈 블레이드의 유력 후보다. 서론은 흡열 지배 기체 냉각을 잠열 지배 액체 상변화 냉각과 대비하고, (대부분 실제 비행보다 훨씬 완만한 조건을 쓴) 선행 기체·액체 실험을 개관하며, 현실적 노즈콘에 대한 초음속 물 상변화 실험을 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">관련 연구는 기체 냉각제 실험(Langener, Otsu, Liu), 액체 냉각제 실험(Wang, Foreest, Zhao), 수치/이론 상변화 모델(Shi-Wang, He 등), 다공질 매트릭스(Ashby 셀룰러 솔리드) 및 지르코니아 TBC(Cao, Miller)의 재료 문헌을 아우른다. 이는 액체 물 냉각이 기체 냉각을 능가하며 챔버 상태 제어가 핵심 운용 과제임을 확립한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실험은 아크 히터에서 진공 시스템까지 여섯 구역을 갖는 CAAA FD04 아크 가열 풍동(최대 30 MW, 25 MJ/kg, 마하 최대 10, 최대 2000 s 운전)을 사용한다. 시편은 쐐기형 노즈콘이다: 자체 제작 소결 Ni-Cr 다공질 선단(외경 3 mm, 84x70 mm 증산 면적, 다공도 0.33, 투과도 7.5e-14 m^2)과 지르코니아 TBC를 분사한 불투과 합금 본체. 진단은 적외선 열화상 시스템(ITIS), 단색 온도계, 챔버 열전대, 압력 변환기를 포함하며; 정량 주입 펌프(최대 2 MPa)가 물 질량유량을 설정한다. 압축 시험이 다공질 재료의 75 MPa 허용 압력을 확정한다(133 kPa 정체 압력보다 훨씬 높음). 두 풍동 상태가 사용되며, 고엔탈피 상태 2(2700 kJ/kg, 2310 K, 정체 133 kPa)가 TPS 평가에 쓰인다. 냉각 효과와 주입비가 정의되고, 불확도 해석이 3.25%와 2.79% 미만의 오차를 준다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고엔탈피 상태 2에서 주입비 2.33%, 1.94%, 1.55% 시험은 물 상변화 증산냉각이 매우 효과적임을 보인다: 평균 냉각 효과가 0.77을 초과하고, 역방향 냉각제 유동이 활 충격파를 선단에서 밀어내며, 증발한 냉각제가 보호 기체막을 형성한다. 냉각 효과는 고압 정체 영역에서 표면을 따라 빠르게 증가하고 주입비에 따라 상승한다(1.94%와 2.33% 사이에서 더 강하게). 챔버 측정은 챔버 온도가 비등 온도 미만으로 유지되어 상변화가 다공질 매트릭스 내부에서 일어남을 확인한다. 잠열 기반 추정은 측정값 15, 10 g/s 대비 13.92, 8.84 g/s의 물 유량을 주며(7.2%, 11.6% 과소평가), 무시된 대류에 기인한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실험은 액체 물 증산냉각의 기체 냉각 대비 우수성을 확인하고 실용적 제어 문제를 부각한다: 증발 시 급격한 밀도 변화가 챔버 압력 변동을 구동하므로 과냉과 삭마를 피하려면 일정 질량유량 주입에 더해 챔버 온도/압력 조절이 필요하다. 비균일 효과(고압 정체점에서 최저)는 냉각을 국소 냉각제 구동력과 연결하며, TBC의 저전도는 열평형 이력현상을 도입한다. 저정온 하류 영역의 얼음 형성은 실제 비행 설계 우려로 표시된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">마하 4.2, 2700 kJ/kg의 아크 가열 풍동 실험은 상변화 물 냉각제 증산냉각이 쐐기형 노즈콘에서 극히 효과적임을 입증했다(평균 효과 0.77 초과, 1.55% 주입에서 정체점 ~700 K로 냉각). 냉각은 비균일하며 고압 정체 영역에서 최저다; 과냉과 삭마는 냉각제 유량 조정 및 챔버 온도·압력 제어로 해결할 수 있다; 지르코니아 TBC가 불투과 본체를 훌륭히 보호한다; 그리고 필요 물 질량유량의 잠열 기반 수치 추정이 도입되며, 주로 무시된 기공 내 및 물-합금 대류 때문에 과소평가한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 28</span></summary>
+            <ol class="ref-list"><li>J.X. Shi, J.H. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transp. Porous Media 87(3), 703-716, 2011</li><li>F. He, J.H. Wang, L.C. Xu, X.C. Wang, Modeling and simulation of transpiration cooling with phase change, Appl. Therm. Eng. 58(1-2), 173-180, 2013</li><li>A.V. Foreest, M. Sippel, A. Gulhan et al., Transpiration cooling using liquid water, J. Thermophys. Heat Transfer 23(4), 693-702, 2009</li><li>J.H. Wang, L.J. Zhao, X.C. Wang, J. Ma, J. Lin, An experimental investigation on transpiration cooling of wedge shaped nose cone with liquid coolant, Int. J. Heat Mass Transf. 75, 442-449, 2014</li><li>L.J. Zhao, J.H. Wang, J. Ma et al., An experimental investigation on transpiration cooling under supersonic condition using a nose cone model, Int. J. Therm. Sci. 84, 207-213, 2014</li><li>T. Langener, J.V. Wolfersdorf, J. Steelant, Experimental investigations on transpiration cooling for scramjet applications using different coolants, AIAA J. 49(7), 1409-1419, 2011</li><li>J.H. Wang, J. Messner, H. Stetter, An experimental investigation of transpiration cooling Part I/II, Int. J. Rotating Mach., 2003/2004</li><li>M.F. Ashby, R.F. Mehl Medalist, The mechanical properties of cellular solids, Metall. Trans. A 14(9), 1755-1769, 1983</li><li>X.Q. Cao, R. Vassen, D. Stoever, Ceramic materials for thermal barrier coatings, J. Eur. Ceram. Soc. 24(1), 1-10, 2004</li><li>Y.Q. Liu, P.X. Jiang, Y.B. Xiong, Y.P. Wang, Experimental and numerical investigation of transpiration cooling for sintered porous flat plates, Appl. Therm. Eng. 50(1), 997-1007, 2013</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "극초음속 비행체는 특히 예리한 모서리에서 극히 높은 공력 가열에 직면한다; Choi 등에 따르면 마하 10 스크램제트 선단은 1053 MW/m$^2$에 이를 수 있고 노즈캡 정체점은 1400 MW/m$^2$를 초과할 수 있으며, 비냉각 표면은 5000 C를 초과할 수 있다 — 모든 재료 한계를 크게 넘어선다."}, {"type": "bullet", "text": "능동 TPT(대류·막·증산냉각) 중 <span class=\"term\">증산냉각</span>은 고온 구조를 능동 보호하는 데 가장 효과적임이 입증되며, 로켓 노즐·재진입 비행체·가스터빈 블레이드 냉각의 유력 수단이다."}, {"type": "bullet", "text": "냉각제 종류에 따라 연구는 <span class=\"term\">흡열 지배 기체 냉각</span>과 <span class=\"term\">잠열 지배 액체 상변화 냉각</span>으로 나뉜다; 기체 연구(Langener 등, Otsu 등, Liu 등)는 소량의 기체 주입도 열전달을 급격히 줄이지만 그 이점이 주입율 상승에 따라 포화됨을 보인다."}, {"type": "bullet", "text": "액체 상변화 냉각은 훨씬 효과적이다: Wang 등은 동일 주입율에서 액체 증발 냉각이 (특히 선단에서) 기체 냉각을 크게 능가함을 보였고, Foreest 등은 정체점을 다공질 재료 허용 온도보다 훨씬 낮은 500 K로 냉각했다."}, {"type": "bullet", "text": "제어 난제는 증발 시 액체 냉각제의 급격한 밀도 변화가 큰 압력 변동을 일으켜 시스템 운용이 어렵다는 점이다; Wang 등은 평균 효과를 높게 유지하면서 액체 수송 구동력을 최소화하는 최적 주입비를 찾았고, Zhao 등은 주입율 조정으로 온도 제어를 입증했다."}, {"type": "bullet", "text": "연료 냉각 방식은 흡열 능력이 제한적이고 핵심 외부 구조(노즈콘, 날개/방향타 선단)에 비용이 크므로 물 냉각제 증산냉각이 가장 유망한 TPT 중 하나가 되고 있다 — 그러나 선행 관련 실험은 실제 극초음속 비행보다 훨씬 완만한 조건에서 이루어졌다."}, {"type": "bullet", "text": "따라서 본 논문은 소결 다공질 재료와 지르코니아-TBC 코팅 불투과 합금으로 만든 쐐기형 노즈콘의 물 상변화 증산냉각에 대한 초음속(마하 4.2, 2700 kJ/kg) 아크 가열 풍동 실험을 제시하며, 실용성 검증과 설계자에게 포괄적 참고 제공을 목표로 한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "기체 냉각제 증산 실험: Langener 등(스크램제트용 공기/아르곤/헬륨, 비열과 질량유량이 효율을 지배함을 발견), Otsu 등(소량 기체 분사가 포화되는 이점과 함께 열전달을 크게 감소), Liu 등(노즈콘과 평판, 효과가 빠르게 상승 후 포화)."}, {"type": "bullet", "text": "액체 냉각제 증산 실험: Wang 등(동일 주입율에서 액체 증발이 기체 냉각을 크게 능가), Foreest 등(91% Al$_2$O$_3$ 원뿔을 500 K로 냉각), Zhao 등(CAAA 아크 가열 초음속 자유제트의 쐐기형 노즈콘, 마하 2, 주입율에 의한 표면 온도 제어 입증)."}, {"type": "bullet", "text": "수치/이론 상변화 선구: Shi와 Wang의 수치 LTNE형 상변화 증산냉각 모델과 He 등의 상변화 증산냉각 모델링/시뮬레이션이 모델링 맥락을 제공하며, Wang과 Shi의 해석해 연구가 여기 사용된 냉각 효과 정의를 뒷받침한다."}, {"type": "bullet", "text": "재료 맥락: 다공질 매트릭스 기계적 응답은 Ashby와 Medalist의 셀룰러 솔리드 틀(최대 ~75 MPa 선형 탄성 영역)로 해석되고, 지르코니아 TBC는 Cao 등과 Miller(고융점, 저열전도)에 근거한다."}, {"type": "bullet", "text": "비교 효과 기준: Eckert와 Livingood, Laganelli의 대류·막·증산냉각 비교가 증산냉각을 가장 효과적인 능동 방법으로 확립하며, 이 실험이 초음속 조건에서 검증하는 전제다."}, {"type": "bullet", "text": "냉각 효과 지표 $\\eta=(T_0-T_w)/(T_0-T_c)$와 주입비 $F=\\dot m_c/\\dot m_\\infty$는 선행 USTC 증산냉각 실험(Wang 등)을 따른다."}]}, "method": {"content": [{"type": "bullet", "text": "설비: CAAA FD04 아크 가열 풍동은 아크 가열·혼합·노즐·시험 챔버·디퓨저·열교환기·진공 구역으로 구성된다; 최대 30 MW 전력, 25 MJ/kg 기체 엔탈피, 마하 최대 10, 최대 2000 s 운전 시간에 이른다. 진공(최대 ~2 kPa까지)이 높은 마하수에 필요한 압력차를 만든다.", "figure_refs": [1]}, {"type": "bullet", "text": "시편: 두 부분으로 된 쐐기형 노즈콘 — 자체 제작 <span class=\"term\">소결 Ni-Cr 다공질</span> 선단(합금 73.46%Ni/17.3%Cr/7.5%Fe/1.7%Si/0.04%C, 평균 입경 ~100 $\\mu$m, 외경 3 mm, 84 mm x 70 mm 증산 면적, 다공도 0.33, 투과도 $7.5\\times10^{-14}$ m$^2$), 그리고 고융점·저전도 때문에 <span class=\"term\">지르코니아 TBC</span>를 분사한 불투과 합금 본체.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "진단: 적외선 열화상 시스템(ITIS, ±1% RFS)이 표면 온도를 매핑하며 정체점에서 5, 15 mm의 두 ±0.3% 단색 온도계로 보정된다; ±0.5% 압력 변환기와 두 ±0.75% 열전대가 냉각제 챔버를 모니터링하며; 두 고속 카메라가 충격파와 기체막을 기록한다."}, {"type": "bullet", "text": "냉각제 제어: 액체 증발의 급격한 밀도 변화가 큰 압력 변동을 일으키므로 일정 압력보다 일정 질량유량 주입이 선호된다; 정량 펌프(최대 구동 압력 2 MPa, ±0.5% RFS)가 챔버로의 물 질량유량을 설정한다."}, {"type": "bullet", "text": "압축 시험: MTS 809 시험은 자체 제작 다공질 재료에 대해 최대 허용 압력 $P_{max}=75$ MPa까지 선형 탄성 응답을 준다(일반 폼과 달리 뚜렷한 붕괴 평탄부 없음), 실험의 133 kPa 정체 압력보다 훨씬 높다.", "figure_refs": [4]}, {"type": "bullet", "text": "풍동 상태: 상태 1(총압 0.76 MPa, 엔탈피 900 kJ/kg, 총온도 870 K, 정체 76 kPa)과 상태 2(1.33 MPa, 2700 kJ/kg, 2310 K, 정체 133 kPa); 고엔탈피 상태 2가 TPS 평가에 사용되며, 모두 마하 4.2, 질량유량 645 g/s다."}, {"type": "bullet", "text": "냉각 효과와 주입비 정의가 명시되고 불확도 전달 해석이 주입비와 냉각 효과의 오차를 각각 3.25%와 2.79% 미만으로 제한한다."}, {"type": "formula", "label": "식 (1)-(2) — 주입비 F와 냉각 효과 η", "latex": "F = \\frac{\\dot m_c}{\\dot m_\\infty}\\times 100\\% = \\frac{\\rho_c \\dot V_c}{\\dot m_\\infty}\\times 100\\%, \\qquad \\eta = \\frac{T_0 - T_w}{T_0 - T_c}", "description": "냉각제 주입비 $F$(냉각제 대 자유류 질량유량 비)와 표면 냉각 효과 $\\eta$, 여기서 $T_0$는 자유류 총온도, $T_w$는 ITIS 측정 표면 온도, $T_c$는 냉각제 입구 온도다."}, {"type": "formula", "label": "식 (6)-(7) — Bernoulli / 압축성 정온도 (얼음 형성 설명)", "latex": "h_0 = h + \\tfrac{1}{2}V^2, \\qquad T = \\frac{T_0}{1 + \\frac{k-1}{2}\\mathrm{Ma}^2}", "description": "얼음 형성을 설명하는 데 사용된 총엔탈피 Bernoulli 관계와 등엔트로피 정체-정온도 관계; $T_0=870$ K, Ma=4.2에서 정온도는 ~190 K로 물 어는점보다 훨씬 낮다."}, {"type": "formula", "label": "식 (8) — 잠열 기반 물 질량유량 추정", "latex": "\\dot m_c = \\frac{\\dot Q_{in}}{h_{vap}}", "description": "시편으로의 열류 $\\dot Q_{in}$을 증발 잠열 $h_{vap}$(상태 2에서 2230 kJ/kg)로 나눈 필요 물 질량유량; 모든 열이 물 증발에 흡수된다고 가정하여 과소평가를 준다."}]}, "results": {"content": [{"type": "bullet", "text": "얼음 형성: 진공 과정 중 시편에 얼음 수염이 형성되었다가(챔버 253 K, 어는점 미만) 상태 1이 가동되자 사라졌다; 상태 1(총온도 870 K)에서도 초음속 정온도가 ~190 K에 불과해 브래킷 뒤에 얼음 덩어리가 형성되었고, 상태 2에서 얼음이 사라졌다. 진공 얼음은 선단 기공을 막지 않았다.", "figure_refs": [5]}, {"type": "bullet", "text": "충격파와 기체막: 냉각제가 매트릭스를 침투해 저장된 열을 흡수하고 증발했으며, 두 가지 가시적 이점이 있었다 — 역방향 냉각제 주입이 활 충격파를 선단에서 밀어냈고, 증발한 냉각제가 시편 주위에 연속적 보호 기체막을 형성했다.", "figure_refs": [6]}, {"type": "bullet", "text": "과도 거동(F=2.33%, 30/60/90 s): 최고 온도는 다공질 매트릭스와 불투과 합금 사이 용접점에서 발생한다(손상된 기공, 빈약한 냉각); 불투과 부위 표면 온도는 저전도 지르코니아 TBC 때문에 시간에 따라 점진 상승하고(열평형까지 더 긴 시간 — 이력현상), 정체 영역에서는 더 많은 물이 집중되며 냉각 효과가 시간에 따라 약간 증가한다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "서로 다른 주입비(정상상태, F=2.33%/1.94%/1.55%): 주입비가 낮아질수록 표면 온도가 상승한다; 평균 냉각 효과는 어디서나 0.77 초과(시스템 양호); 효과는 정체 영역(외압 ~133 kPa로 최고, 국소 냉각제 구동력 최저)에서 표면을 따라 빠르게 증가한다; 효과는 주입비에 따라 상승하며, 특히 유량에 더 민감한 정체 영역에서 1.55%-&gt;1.94%보다 1.94%-&gt;2.33%에서 더 강하다.", "figure_refs": [9, 10]}, {"type": "bullet", "text": "챔버 온도/압력: 압력은 계량 펌프의 왕복 운동에 따라 변동하며(더 높은 주입비는 더 높은 구동력 필요), 측정된 챔버 온도는 세 주입비 모두에서 압력 대응 비등 온도 미만으로 유지된다 — 물 상변화가 다공질 매트릭스 내부에서 일어나고 챔버 온도·압력 제어로 과냉/삭마를 해결할 수 있음을 확인한다.", "figure_refs": [11]}, {"type": "bullet", "text": "기체 기준 대비 효과: Foreest의 4% 질소 시험(정체점 2100-&gt;1500 K 냉각)에 비해, 본 연구는 1.55% 물 주입만으로 2300-&gt;700 K를 냉각하여, 증발 시 방출되는 큰 잠열에서 비롯한 물의 훨씬 큰 효과를 입증한다."}, {"type": "bullet", "text": "물 질량유량 추정: CFD 계산 열유속을 다공질 표면에 적분하면(F=2.33%, 1.55% 시험에서 다공질 표면 벽 온도를 ~450 K, ~650 K로 설정) 열류 31.04 kW와 19.72 kW를 주고, 잠열 공식은 13.92 g/s와 8.84 g/s를 산출한다 — 측정값 15 g/s, 10 g/s에 가까우며 7.2%, 11.6% 과소평가로, 주로 기공 내 및 물-합금 대류 무시 때문이다.", "figure_refs": [12]}]}, "discussion": {"content": [{"type": "bullet", "text": "액체 물의 잠열은 기체 냉각제보다 훨씬 효과적으로 만든다: 1.55% 주입에서 정체점을 ~700 K로 냉각하는 것은 ~1500 K로만 냉각하는 4% 질소 기준을 크게 능가하여, 극초음속 TPS용 물 상변화 증산냉각을 검증한다."}, {"type": "bullet", "text": "냉각 효과는 국소 냉각제 구동력에 의해 지배된다: 정체점에서 최저이며(최고 외압 ~133 kPa로 챔버-표면 압력차 최저, 국소 냉각제 질량유량 최저) 외압이 떨어지는 하류에서 빠르게 상승한다."}, {"type": "bullet", "text": "정체 영역은 하류 영역보다 주입율 변화에 더 민감한데, 그곳을 침투하는 물 질량유량이 주입비에 따라 비균일하게 증가하기 때문이다 — 정체 영역 효과가 핵심 제어 목표가 된다."}, {"type": "bullet", "text": "제어 전략: 증발의 급격한 밀도 변화가 큰 압력 변동을 일으키므로 (계량 펌프를 통한) 일정 질량유량 주입이 일정 압력 주입보다 선호되며, 챔버 온도·압력 조절이 과냉과 삭마를 해결한다."}, {"type": "bullet", "text": "지르코니아 TBC는 불투과 본체를 효과적으로 보호하나 그 저열전도가 열평형 이력현상을 도입한다(불투과 표면이 정상 온도에 도달하는 데 더 오래 걸림)."}, {"type": "bullet", "text": "얼음 형성은 실제 비행 우려다: 선단에서는 발생하지 않더라도(기공이 열린 채 유지) 하류 저정온 영역에서 형성되어 공력 형상과 국소 중량을 바꿀 수 있으므로 설계상 우회해야 한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "냉각 효과는 균일하지 않다: 그곳의 최고 공력 가열과 정체 압력 때문에 시편 정체 영역에서 최저다."}, {"type": "bullet", "text": "얼음 덩어리가 나타나는 곳마다 액체 냉각제의 과냉이 극초음속 비행체의 형상·중량 분포에 바람직하지 않은 변화를 일으킬 수 있다; TPS 설계에서 과냉과 삭마는 냉각제 유량 조정 및 챔버 압력·온도 제어로 해결할 수 있다."}, {"type": "bullet", "text": "불투과 합금 외부 표면에 분사된 지르코니아 TBC는 고엔탈피 유동으로부터 훌륭한 보호를 제공한다."}, {"type": "bullet", "text": "물 질량유량의 수치 추정이 도입된다; 그 과소평가(측정 대비 7.2%, 11.6%)는 주로 기공 내 및 물과 불투과 합금 간 대류 열전달을 무시한 데 기인한다."}, {"type": "bullet", "text": "전반적으로 물 상변화 증산냉각은 초음속 조건에서 극히 효과적임이 입증되며, 챔버 온도가 비등 온도 미만으로 유지되는 것은 상변화가 다공질 매트릭스 내부에서 일어남을 확인한다."}, {"type": "bullet", "text": "이 실험은 수치 LTNE-TPMM 계보를 위한 초음속 검증 데이터셋을 제공한다 — 동일한 마하 4.2, 2700 kJ/kg 소결 Ni-Cr 다공질 원뿔과 그 측정 냉각 효과가 Su 등(2019)이 자신들의 수정 LTNE-TPMM을 검증하는 데 사용되어, 모델 계열을 물리적 측정에 고정한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "필요 물 질량유량의 단순 잠열 기반 추정은 실험값을 과소평가하는데, 주로 기공 내 및 물과 불투과 합금 간 대류 열전달을 무시하기 때문이다.", "source_quote": "The underestimation is mainly caused by the neglect of the convection heat transfer in pores and between water and impermeable alloy.", "source_section": "results"}, {"claim": "정체 온도가 시편 재료의 허용 온도를 크게 초과하므로 최고 열역학 상태에서 냉각제 주입 없는 시험을 수행할 수 없었다.", "source_quote": "Due to the stagnation temperature in state 2 is far above the allowable temperature of the specimen material, a test without coolant injection is difficult to accomplish.", "source_section": "method"}, {"claim": "냉각 효과는 비균일하며, 그곳의 최고 공력 가열과 정체 압력 때문에 정체 영역에서 가장 낮다.", "source_quote": "At the stagnation region of the specimen, cooling effectiveness is lowest due to highest aerodynamic heating and stagnation pressure.", "source_section": "conclusion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["극초음속 예리한 모서리의 공력 가열은 모든 재료 온도 한계를 크게 초과하므로 더 효과적인 능동 열보호 기술(TPT)이 필요하다.", "기체 냉각제 증산냉각은 온도 감소 이점이 주입율 상승에 따라 포화되므로 용량이 제한적이다.", "액체 냉각제 증산냉각은 잠열을 통해 훨씬 높은 효과를 제공하나, 제어가 어렵고(급격한 밀도 변화가 압력 변동 유발) 선행 관련 실험은 실제 극초음속 비행보다 훨씬 완만한 조건에서 수행되었다.", "연료 냉각 방식은 흡열 능력이 제한적이고 노즈콘·날개/방향타 선단 같은 핵심 외부 구조에 비용이 크다."], "addressed_by_this_work": ["마하 4.2, 비엔탈피 2700 kJ/kg(선행 연구보다 실제 비행에 더 가까움)의 아크 가열 풍동 실험이 쐐기형 노즈콘에 대한 물 상변화 증산냉각을 입증한다.", "정량 비교는 액체 물 냉각이 기체 냉각보다 훨씬 효과적임을 보여(1.55% 물 주입에서 정체점 ~700 K 대 4% 질소에서 ~1500 K) 잠열 이점을 확인한다.", "정량 냉각제 주입 펌프가 질량유량을 제어하여 챔버 온도·압력 조절로 과냉과 삭마를 방지하며; 지르코니아 TBC가 불투과 본체를 효과적으로 보호한다.", "필요 물 질량유량의 단순 잠열 기반 수치 추정이 설계 참고로 도입되며, 그 오차가 실험에 대해 특성화된다."], "remaining_unresolved": ["실제 초음속/극초음속 비행 중 하류 저정온 영역에서 얼음 형성이 발생해 공력 형상과 국소 중량을 바꿀 수 있으므로 설계상 우회해야 한다(여기서 확인되었으나 해결되지 않음).", "수치 질량유량 추정은 기공 내 및 물-합금 대류가 무시되어 참값을 과소평가한다.", "실험은 초음속(마하 4.2)으로, 여전히 진정한 극초음속 비행 조건 미만이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
