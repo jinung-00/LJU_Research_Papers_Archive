@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Heat transfer in porous media considering phase change and capillarity—the heat pipe effect</title>
+    <meta name="keywords" content="porous media heat and mass transfer, phase change, capillarity, heat pipe effect, two-phase zone, Leverett J-function, relative permeability, dry-out heat flux, apparent thermal conductivity, theory">
+    <meta name="paper-authors" content="Kent S. Udell">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 28, No. 2, 1985, pp. 485-495 · DOI: 10.1016/0017-9310(85)90082-1">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Heat transfer in porous media considering phase change and capillarity—the heat pipe effect</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Kent S. Udell</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 28, No. 2, 1985, pp. 485-495 · DOI: 10.1016/0017-9310(85)90082-1</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 기초 논문은 모세관성, 중력, 다상 유동, 상변화를 포함하여 단일 성분 유체의 액체·증기 상으로 포화된 다공질 매질에서의 열·물질전달에 대한 1차원 정상상태 해석을 제시한다. 공존하는 상들이 거의 등온인 2상 영역을 형성하고, 그 안에서 액체(가열단 쪽)와 증기(냉각단 쪽)의 역류가 <span class="term">히트 파이프</span>와 유사한 증발-대류-응축 순환으로 열을 수송하여 겉보기 열전도도를 순수 전도보다 여러 자릿수 높임을 보인다. 2상 Darcy 유동, Leverett 모세관 압력 J-함수, 3차 상대 투과율을 사용하여, 문제는 액체 포화도 분포에 대한 단일 1차 ODE로 축약되며 그 적분이 2상 영역 길이를 준다; 수평/고유속 가열에 대해 열유속과 영역 길이의 곱이 일정하고(위크 한계), 하부 가열에 대한 임계 <span class="term">건조 열유속</span>이 폐형으로 예측된다. 수평·상부·하부 가열에 대한 이론적 포화도·압력·온도·겉보기 전도도 분포는 저자 자신의 모래층 실험 및 문헌 건조 데이터와 잘 일치한다.</div>
+            <div class="keywords"><span class="keyword-chip">porous media heat and mass transfer</span><span class="keyword-chip">phase change</span><span class="keyword-chip">capillarity</span><span class="keyword-chip">heat pipe effect</span><span class="keyword-chip">two-phase zone</span><span class="keyword-chip">Leverett J-function</span><span class="keyword-chip">relative permeability</span><span class="keyword-chip">dry-out heat flux</span><span class="keyword-chip">apparent thermal conductivity</span><span class="keyword-chip">theory</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">광범위한 산업·농업·에너지 공정이 증발·응축·수송을 겪는 다수 유체 상으로 포화된 다공질 매질의 열·물질전달을 수반한다(건조, 지열 에너지, 강화 석유 회수, 핵폐기물 처분, 매설 케이블, 히트 파이프 위크, 원자로 잔해 비등). 열전달 평가는 다공질 매질의 다상 상호작용이 잘 이해되지 않고, 작은 기공이 계면 장력 효과를 강조하며 기공 수준 측정을 방해하고, 복잡한 기공 기하가 거시적 평균화를 요구하므로 어렵다. 저자의 이전 상부 가열 연구를 기반으로, 본 논문은 다른 중력 방향에 대해 단일 성분 유체의 액체·증기로 포화된 1-D 정상 슬래브를 해석하여, 중력이 무시 가능한 시점을 식별하고 건조 기준과 겉보기 전도도를 확립한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 다공질 매질 상변화 해석(토양 과학, Luikov, Krischer, Sahota-Pagni, Eckert-Faghri, Ogniewicz-Tien)과 거의 등온인 히트 파이프 영역을 만든 하부/측면/내부 가열 실험, 그리고 히트 파이프 위크 건조 연구 사이에 자리한다. 구성 폐합식은 Leverett(모세관 압력 J-함수)와 Fatt-Klikoff / Wyllie(상대 투과율)에서 오며, 건조 및 겉보기 전도도 비교는 Bau-Torrance, Ogniewicz-Tien, Jones에 의존한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">거의 등온인 2상 영역 내에서(가정: 작은 온도 기울기, 점성 지배 Darcy 유동, 일정 수송 물성, 경계의 좁은 증발/응축 영역), 액체·증기 질량유속은 유체 포텐셜로 표현된 2상 Darcy 법칙을 따르고, 모세관 압력은 증기-액체 압력차이며, 정상상태 질량 보존이 순 질량유속을 0으로 만든다. 이들을 축약 에너지 균형 q = m_v h_fg와 결합하면 액체·증기 압력 기울기가 나오며 그 차이가 모세관 압력 기울기다. 모세관 압력을 Leverett 무차원 J(s) 형태로 캐스팅하고 포화도를 스케일하면 포화도 분포에 대한 단일 1차 ODE ds/d-delta가 생기며, 무차원 유속비 omega, 스케일 길이 delta, 운동점성비 beta로 지배된다. 3차 상대 투과율과 Leverett J-함수로 적분하면 영역 길이, 위크 한계, (하부 가열에 대한) 임계 건조 열유속이 나오며; 온도는 Clapeyron 및 Kelvin 방정식에서 나온다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Ottawa 모래층 실험(상부 및 수평 가열, 증류수 상변화)은 거의 등온인 2상 영역을 둘러싼 예측된 선형 단상 온도 분포를 확인한다; 측정된 수평 가열 위크 한계는 두 이상 실험(구속 하중 균열에 기인)을 제외하고 모두 이론의 ~20% 이내이며, 상부 가열 영역 길이는 적분된 포화도 ODE와 훌륭히 일치한다. 하부 가열 임계 건조 열유속은 이론값 0.303 대비 0.307-0.313으로 측정되고, 문헌 데이터가 건조 상관을 확인한다. 이론 분포는 투과도 증가가 2상 영역 온도 변화를 줄이고, 가장 큰 온도차가 하부 가열에서 가장 작은 것이 상부 가열에서 발생하며, 고투과도 매질의 겉보기 열전도도가 종래 히트 파이프(전도보다 자릿수 규모 큼)에 접근함을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논의는 핵심 물리적 결과 — 모세관성이 히트 파이프처럼 작동하는 역류 액체/증기 유동을 구동하여 전도보다 자릿수 규모 높은 겉보기 전도도를 줌 — 를 구성하고 모델의 일반성을 강조한다: 모든 분포가 단일 1차 포화도 ODE 적분에서 나오므로, 경계 단상 영역이 없는 경우도 적분 한계 조정으로 처리할 수 있다. 지배적 오차원(불확실한 모세관 압력 및 상대 투과율 함수, 가용한 역류 단일 성분 데이터 없음)과 높은 증기 Reynolds 수에서의 Darcy 유효 한계에 대해 솔직하다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">이론·실험 결합 연구는 단일 성분 유체의 액체·증기로 포화된 다공질 매질의 모세관성이 전도보다 자릿수 규모 높은 겉보기 전도도를 갖는 역류 히트 파이프 유사 유동을 생성함을 확립한다. 최대 2상 영역 길이는 포화도-기울기 ODE 적분에서 나오고, 열유속과 영역 길이의 곱은 고유속 또는 수평 가열에서 일정하며, (영역 길이로 스케일된) 포화도 분포는 열유속 무관 상사 변수이고, 임계 건조 열유속이 하부 가열 하에서 증기 영역 형성 여부를 지배한다. 2상 영역을 가로지르는 온도차는 투과도 감소에 따라 커지며 하부 가열에서 가장 크고 상부 가열에서 가장 작다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 25</span></summary>
+            <ol class="ref-list"><li>M.C. Leverett, Capillary behavior in porous solids, AIME Trans. 142, 152-169, 1941</li><li>I. Fatt, W.A. Klikoff, Effect of fractional wettability on multiphase flow through porous media, AIME Trans. 216, 246, 1959</li><li>M.R.J. Wyllie, Relative permeability, in Petroleum Production Handbook, Vol. 2, Ch. 25, McGraw-Hill, 1962</li><li>Y. Ogniewicz, C.L. Tien, Porous heat pipe, Paper 79-1093, AIAA 14th Thermophysics Conference, 1979</li><li>K.S. Udell, Heat transfer in porous media heated from above with evaporation, condensation and capillary effects, J. Heat Transfer 105(3), 485-492, 1983</li><li>H.H. Bau, K.E. Torrance, Boiling in low-permeability porous materials, Int. J. Heat Mass Transfer 25(1), 45-55, 1982</li><li>A.V. Luikov, Systems of differential equations of heat and mass transfer in capillary-porous bodies, Int. J. Heat Mass Transfer 18, 1-14, 1975</li><li>E.E. Gomaa, W.H. Somerton, The behavior of multifluid-saturated formations Part II, SPE Paper 4896-B, 1974</li><li>M.S. Sahota, P.J. Pagni, Heat and mass transfer in porous media subject to fires, Int. J. Heat Mass Transfer 22, 1069-1081, 1979</li><li>S.W. Jones, A study of dryout heat fluxes, Ph.D. thesis, Northwestern University, 1982</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다수 유체 상으로 포화된 다공질 매질의 열·물질전달은 많은 분야의 중심이다: 고체·토양 건조, 지열 에너지, 열적 강화 석유 회수, 지하 고준위 핵폐기물 처분, 매설 배관/케이블 열전달, 히트 파이프 위크, 원자로 잔해 사고 후 비등."}, {"type": "bullet", "text": "이러한 계의 평가는 다공질 매질 특유의 잘 이해되지 않은 다상 상호작용 때문에 어렵다; 작은 기공 치수는 계면 장력 효과를 강조하고 상 압력·계면 기하·기공 수준 속도의 측정을 방해하며, 복잡한 기공 기하는 미시 현상의 거시적 평균화를 강요한다."}, {"type": "bullet", "text": "해석은 온도차가 가로질러 부과되고 단일 성분 유체의 액체·증기 상으로 포화된 1-D 정상상태 슬래브로 제한되며, 중력·모세관성·다상 유동·상변화 효과를 포함한다."}, {"type": "bullet", "text": "선행 연구(토양 과학, Luikov, Krischer, Sahota-Pagni, Eckert-Faghri, Ogniewicz-Tien)와 실험(Hansen 등; Gomaa-Somerton)은 응축·모세관 액체 이동·재증발로 인한 전도 대비 대류 열전달 증대를 보였다 — 히트 파이프와 유사한 과정이다."}, {"type": "bullet", "text": "작은 기공 매질에는 세 개의 뚜렷한 영역이 나타난다: 가열단의 전도 지배 과열 증기 영역, 역류 액체/증기 유동을 갖는 거의 등온인 2상 대류 영역, 냉각단의 전도 지배 압축 액체 영역; 이들을 정량화하려면 열유속의 함수로서 2상 영역 길이 $x_1$이 필요하다.", "figure_refs": [1]}, {"type": "bullet", "text": "저자의 이전 상부 가열 연구를 확장하여, 본 연구는 다른 중력 방향에 대한 포화도·압력·온도 분포를 평가하고, 중력이 무시 가능한 조건을 식별하며, 건조 열유속 기준을 확립하고, 2상 영역 겉보기 열전도도를 제시한다."}, {"type": "bullet", "text": "이전 연구는 또한 액체 젖음 매질에서 상 간 열역학 평형을 위해 증기가 약간 과열되어야 하고(Kelvin 방정식) 액체가 계면 장력 효과로 안정적으로 과열되어야 함을 보였다 — 이후 사용되는 온도 관계의 열역학적 기초다."}]}, "related_works": {"content": [{"type": "bullet", "text": "선례로 인용된 해석적 다공질 매질 상변화 연구에는 초기 토양 과학 연구, Luikov의 모세관-다공질 미분방정식계, Krischer의 건조 연구, 그리고 Sahota와 Pagni, Eckert와 Faghri, Ogniewicz와 Tien의 에너지/물질 수송 해석이 포함된다."}, {"type": "bullet", "text": "실험적 선례: Hansen 등(대류 증대를 보인 유리/구리 비드 하부 가열), Gomaa와 Somerton(히트 파이프 기구에 기인한, 액체만의 값의 수 배인 증기-물 유효 전도도), 그리고 2상 영역을 분리한 Su의 실험."}, {"type": "bullet", "text": "하부/측면/내부 가열 실험(Bau-Torrance; Sondergeld-Turcotte; Abe 등; Dhir-Catton)은 모두 거의 등온이고 대류 지배적인 2상 히트 파이프 영역을 만들었으며, 히트 파이프 위크 연구(Ferrell-Alleavitch; Moss-Kelly; Cornwell 등)는 건조를 다루었다."}, {"type": "bullet", "text": "모세관 압력 폐합식은 Leverett의 J-함수 상관식(Leverett 1941)이고, 액체/증기 상대 투과율은 Wyllie도 제안한 Fatt와 Klikoff의 3차 형태를 사용한다."}, {"type": "bullet", "text": "무차원 위크 한계 그룹은 Ogniewicz와 Tien의 다공질 히트 파이프 한계와 일치하며, 해석은 저자 자신의 이전 상부 가열 증발/응축/모세관 연구(Udell 1983)에 직접 기반한다."}, {"type": "bullet", "text": "건조 검증은 Bau와 Torrance, Sondergeld-Turcotte, Jones의 문헌 데이터를 사용하며, 유도된 임계 열유속이 이에 비교된다."}]}, "method": {"content": [{"type": "bullet", "text": "네 가지 단순화 가정이 해석을 2상 영역으로 한정한다: (1) 그 안의 작은 온도 기울기, (2) 점성력 지배의 액체·증기 유동(Darcy 법칙), (3) 일정한 액체/증기 수송 물성, (4) 2상 영역을 경계 짓는 좁은 영역으로 한정된 증발/응축."}, {"type": "bullet", "text": "액체·증기 질량유속은 압력과 중력 수두를 결합한 유체 포텐셜로 표현된 <span class=\"term\">2상 Darcy 법칙</span>으로 주어진다; 상대 투과율은 다른 상으로 인한 감소된 유동 단면을 설명한다."}, {"type": "formula", "label": "식 (1)-(3) — 2상 Darcy 법칙 및 유체 포텐셜", "latex": "\\dot m_l = -\\frac{\\rho_l^2 \\kappa\\,\\kappa_{rl}}{\\mu_l}\\frac{d\\Phi_l}{dx}, \\qquad \\dot m_v = -\\frac{\\rho_v^2 \\kappa\\,\\kappa_{rv}}{\\mu_v}\\frac{d\\Phi_v}{dx}, \\qquad \\Phi_{l,v} \\equiv \\frac{P_{l,v}}{\\rho_{l,v}} + g\\,x\\sin\\theta", "description": "2상 Darcy 법칙으로부터의 액체·증기 상 질량유속; $\\kappa$는 절대 투과도, $\\kappa_{rl},\\kappa_{rv}$는 상대 투과율, $\\Phi_{l,v}$는 압력과 중력 수두를 결합한 유체 포텐셜이다($\\theta$는 가열 방향 각)."}, {"type": "bullet", "text": "액체 젖음 매질에서 증기 압력이 액체 압력을 초과하여 <span class=\"term\">모세관 압력</span> $P_c = P_v - P_l$를 정의하며, 이는 계면 장력에 비례하고 메니스커스 반경에 반비례한다."}, {"type": "formula", "label": "식 (4) — 모세관 압력", "latex": "P_c = P_v - P_l", "description": "증기-액체 압력차로서의 모세관 압력; 계면 장력에 정비례하고 기공 내 유효 메니스커스 반경에 반비례한다."}, {"type": "bullet", "text": "무시 가능한 온도 기울기와 일정 물성이 <span class=\"term\">에너지 방정식</span>을 $q = \\dot m_v h_{fg}$로 축약하며, 정상상태 질량 보존은 순 질량유속이 소멸하도록 요구한다."}, {"type": "formula", "label": "식 (5)-(6) — 축약 에너지 방정식 및 질량 보존", "latex": "q = \\dot m_v h_{fg}, \\qquad \\dot m_v + \\dot m_l = 0", "description": "2상 영역 열유속은 증기 질량유속에 증발 잠열 $h_{fg}$를 곱한 값과 같고, 순(액체 + 증기) 질량유속은 정상상태에서 0이므로 상들은 역류한다."}, {"type": "bullet", "text": "에너지 및 질량 보존 제약과 함께 Darcy 관계를 풀면 액체·증기 압력 기울기가 나오며, 그 차이가 (유속/투과율 항과 부력 항을 포함하는) <span class=\"term\">모세관 압력 기울기</span>를 산출한다."}, {"type": "formula", "label": "식 (7)-(9) — 상 압력 기울기 및 모세관 압력 기울기", "latex": "\\frac{dP_v}{dx} = -\\frac{\\nu_v q}{h_{fg}\\kappa\\,\\kappa_{rv}} - \\rho_v g\\sin\\theta, \\quad \\frac{dP_l}{dx} = +\\frac{\\nu_l q}{h_{fg}\\kappa\\,\\kappa_{rl}} - \\rho_l g\\sin\\theta, \\quad \\frac{dP_c}{dx} = -\\frac{q}{\\kappa h_{fg}}\\!\\left(\\frac{\\nu_v}{\\kappa_{rv}} + \\frac{\\nu_l}{\\kappa_{rl}}\\right) + (\\rho_l-\\rho_v)g\\sin\\theta", "description": "증기·액체 압력 기울기(점성 Darcy 항 더하기 정수압 항), 그리고 모세관 압력 기울기를 주는 그 차이; $\\nu_l,\\nu_v$는 운동점성이다."}, {"type": "bullet", "text": "모세관 압력은 <span class=\"term\">Leverett 무차원 형태</span> $f(s) = P_c (\\kappa/\\phi)^{1/2}/\\sigma$로 캐스팅되어 특성 기공 치수가 $(\\kappa/\\phi)^{1/2}$로 스케일됨을 함의한다; 포화도는 부동(펜듈러 링) 액체를 제거하도록 재스케일된다.", "figure_refs": []}, {"type": "formula", "label": "식 (10)-(11) — Leverett J-함수 및 스케일 포화도", "latex": "f(s) = \\frac{P_c}{\\sigma}\\left(\\frac{\\kappa}{\\phi}\\right)^{1/2}, \\qquad s = \\frac{s_l - s_{lp}}{1 - s_{lp}}", "description": "무차원 Leverett 모세관 압력 함수 $f(s)$(표면 장력 $\\sigma$, 투과도 $\\kappa$, 다공도 $\\phi$ 포함), 그리고 액체가 단절되는 부동 펜듈러 포화도 $s_{lp}$를 제거한 스케일 액체 포화도 $s$."}, {"type": "bullet", "text": "Leverett 형태를 대입하면 모세관 압력 기울기가 유속비 $\\omega$(증기 압력 기울기 대 정수압 기울기), 스케일 길이 $\\delta$(모세관 흡입 높이로 스케일된 x), 운동점성비 $\\beta=\\nu_l/\\nu_v$로 지배되는 무차원 포화도 방정식이 된다; $f$가 $s$에만 의존하므로 이는 포화도 분포에 대한 1차 ODE로 축약된다."}, {"type": "formula", "label": "식 (12)-(14) — 무차원 포화도 ODE 및 그룹", "latex": "\\frac{df}{d\\delta} = \\sin\\theta - \\omega\\!\\left(\\frac{1}{\\kappa_{rv}} + \\frac{\\beta}{\\kappa_{rl}}\\right), \\qquad \\omega = \\frac{q\\,\\nu_v}{\\kappa h_{fg}(\\rho_l-\\rho_v)g}, \\quad \\delta = \\frac{x(\\rho_l-\\rho_v)g}{\\sigma}\\!\\left(\\frac{\\kappa}{\\phi}\\right)^{1/2}, \\quad \\beta = \\frac{\\nu_l}{\\nu_v}, \\qquad \\frac{ds}{d\\delta} = \\frac{\\sin\\theta - \\omega\\!\\left(\\frac{1}{\\kappa_{rv}} + \\frac{\\beta}{\\kappa_{rl}}\\right)}{f'}", "description": "무차원 모세관 형태와 그로부터의 1차 포화도-기울기 ODE; $\\omega$는 증기 압력 대 정수압 기울기 비, $\\delta$는 중력/모세관 스케일 거리, $\\beta$는 액체-증기 운동점성비, $f'=df/ds$다. 이 ODE의 적분이 포화도 분포와 2상 영역 길이 $\\delta_1$을 준다."}, {"type": "bullet", "text": "구체적 함수 형태가 채택된다: Leverett의 흡수 <span class=\"term\">J-함수 상관식</span>과 Fatt와 Klikoff / Wyllie의 3차 <span class=\"term\">상대 투과율</span>."}, {"type": "formula", "label": "식 (20)-(22) — Leverett J-함수 상관식 및 상대 투과율", "latex": "f = 1.417(1-s) - 2.120(1-s)^2 + 1.263(1-s)^3, \\qquad \\kappa_{rl} = s^3, \\qquad \\kappa_{rv} = (1-s)^3", "description": "Leverett 흡수 모세관 압력 상관식과 3차 액체/증기 상대 투과율; 이 폐합식들은 이후 Wang-Beckermann 2상 혼합 모델과 증산냉각 LTNE-TPMM 연구에서 재사용되는 동일한 J-함수 및 거듭제곱 법칙 형태다."}, {"type": "bullet", "text": "2상 영역 내 온도는 열역학에서 나온다: 국소 포화 압력은 적분된 <span class=\"term\">Clapeyron 방정식</span>(이상기체 증기, 작은 액체 비체적)을 통해 온도와 관계되고, Kelvin 방정식이 온도를 증기 및 모세관 압력과 연결한다."}, {"type": "formula", "label": "식 (18)-(19) — Clapeyron 및 온도 관계", "latex": "P^* = P_0\\,e^{(T_0 - T)h_{fg}/(T T_0 R)}, \\qquad T = \\frac{T_0(1 + P_c/P_v)}{1 - (T_0 R/h_{fg})\\ln(1 + P_c/P_v)}", "description": "포화 압력 $P^*$에 대한 적분된 Clapeyron 관계와 (Clapeyron과 Kelvin을 결합한) 증기 및 모세관 압력의 함수로서의 2상 영역 온도; $R$은 기체 상수, $T_0,P_0$는 기준 포화 온도와 압력이다."}, {"type": "bullet", "text": "세 방향이 다루어진다: 수평 가열($\\theta=0$), 상부 가열($\\sin\\theta&lt;0$), 하부 가열($0&lt;\\theta&lt;\\pi$). 수평 가열에 대해 포화도 기울기 $ds/d\\delta=-f'\\,$형태가 상수 위크 한계($\\omega\\delta_1=$ 상수)로 적분되며, 영역 길이로 스케일된 포화도 분포는 열유속에 무관한 상사 변수다.", "figure_refs": [2]}, {"type": "bullet", "text": "하부 가열에 대해 액체·증기 압력 기울기 합이 정수압 기울기와 같은 임계 조건이 발생한다(포화도 기울기가 0이므로 영역이 무한할 수 있음); 가열단에 증기 영역이 생길 필요조건은 실근의 부재이며, $\\beta$의 함수로서 명시적 <span class=\"term\">임계 건조 열유속</span> $[\\omega/\\sin\\theta]_{cr}$를 준다."}, {"type": "formula", "label": "식 (28) — 임계 건조 열유속 (하부 가열)", "latex": "\\left[\\frac{\\omega}{\\sin\\theta}\\right]_{cr} = g\\!\\left(\\beta\\right)", "description": "식 (27)이 실 포화도 근을 갖지 않아야 한다는 요구에서 운동점성비 $\\beta$의 명시적 함수로 유도된 하부 가열의 임계 건조 열유속; 최소 건조 조건을 정의한다. (전체 대수적 우변은 논문에 제시됨; 구조적 결과 — $\\beta$에 대한 폐형 의존성 — 가 여기 보고되며, 상세 표현은 원본에 맡긴다.)"}]}, "results": {"content": [{"type": "bullet", "text": "장치 및 절차: 25.4 cm 유리섬유 관 내 Ottawa 모래(구형, 거의 순수 실리카)를 니크롬 코일 구리 블록으로 상부에서 가열하고 하부에서 제어했으며, 중심선을 따라 10개 열전대, 전도도 표준 열유속 측정, 증류수에 의한 진공 포화, 온도/압력 안정화로부터의 정상상태 판정을 사용했다.", "figure_refs": [3]}, {"type": "bullet", "text": "온도는 예상된 추세를 보였다: 액체·증기 단상 영역의 선형 분포와 거의 등온인 전이 영역으로, 단상 선형 분포를 외삽하여 2상 영역 길이를 도식적으로(~1 mm 이내) 결정했다."}, {"type": "bullet", "text": "수평 가열 검증(Table 1): 실험 위크 한계는 두 사례를 제외하고 모두 이론 예측(식 25)의 20% 이내다; 두 이상 실험(1.2, 2.4)은 2상 영역이 증기 영역을 침범하도록 요구했으며, 모델 실패가 아니라 구속 하중 유발 균열로 인한 모세관 흡수 장벽에 기인한다.", "figure_refs": []}, {"type": "bullet", "text": "상부 가열 검증(Table 2, Fig. 4): 실험 2상 영역 길이는 포화도 ODE(식 14) 적분 길이와 훌륭히 일치한다; 기공 부피 14%의 비응축 질소 첨가는 성능에 거의 영향이 없었으며, 예비 모델링이 이를 뒷받침한다.", "figure_refs": [4]}, {"type": "bullet", "text": "하부 가열 건조(Fig. 4, Fig. 5): 측정된 임계 건조 열유속은 이론값 0.303 대비 $0.307 &lt; [\\omega/\\sin\\theta]_{cr} &lt; 0.313$로 묶이며, 문헌 데이터(Bau-Torrance 무한 영역; Jones 데이터)가 식 28의 건조 상관을 확인한다(Jones 데이터는 열손실과 1에 가까운 증기 Reynolds 수로 ~50% 낮음).", "figure_refs": [5]}, {"type": "bullet", "text": "포화도/압력 분포(Figs. 6-7): 상부 가열은 수평 또는 하부 가열보다 큰 포화도 기울기를 준다(중력이 액체 복귀를 거스름); 가장 큰 증기·액체 압력 기울기는 각각 액체·증기 영역 경계 근처에서 발생하며(그곳의 낮은 상대 투과율), 포화도 분포는 $|\\omega/\\sin\\theta|$가 커질수록 상사 분포가 된다; 중력 효과는 $|\\omega/\\sin\\theta|&gt;10$에서 무시 가능하다.", "figure_refs": [6, 7]}, {"type": "bullet", "text": "온도/전도도 분포(Figs. 8-9): 더 큰 투과도는 더 작은 2상 영역 온도 변화를 준다; 가장 큰 온도차는 하부 가열에서, 가장 작은 것은 상부 가열에서 발생한다; 겉보기 열전도도는 단상 값보다 여러 자릿수 높고 고투과도 매질에 대해 종래 히트 파이프 전도도에 접근하며, 측정된 ~708 W/m K 사례가 이론 곡선과 일치한다.", "figure_refs": [8, 9]}]}, "discussion": {"content": [{"type": "bullet", "text": "정의적 기구는 모세관성 구동 역류다: 단일 성분 액체-증기 다공질 계에서 모세관 압력이 액체를 가열단으로, 증기를 냉각단으로 몰며, 종래 히트 파이프를 모방하고 극히 효율적인 열전달을 가능케 하는 증발-대류-응축 순환이다."}, {"type": "bullet", "text": "온도·압력·포화도가 모두 단일 1차 포화도 ODE(식 14) 적분에서 나오므로, 액체 또는 증기 영역이 없는 경우도 적분 한계 수정만으로 평가할 수 있어, 해석을 (Ogniewicz와 Tien이 연구한) 다공질 히트 파이프 구성으로 일반화한다."}, {"type": "bullet", "text": "저투과도 매질($\\kappa&lt;10^{-14}$ m$^2$)에서는 전도 기여가 대류 기여에 필적해지는 반면, 고투과도 매질에서는 겉보기 전도도가 종래 히트 파이프에 접근한다 — 주요 공학적 관심 영역이다."}, {"type": "bullet", "text": "주요 오차원은 가정된 모세관 압력(Leverett J-함수) 및 상대 투과율 함수의 불확실성으로 인정된다; 역류 단일 성분 2상 상대 투과율 데이터가 존재하지 않아 2상 영역을 통한 두 상의 연속성이 가정된다(하부 가열 시 가능한 침투 효과 포함)."}, {"type": "bullet", "text": "명시된 한계는 증기 Reynolds 수 1 미만으로의 제한(Darcy 유효성)이다: 고열유속에서 증기 Reynolds 수가 1을 초과할 수 있고, 그러면 관성 효과가 증기 압력 기울기를 Darcy 예측 이상으로 올려 유효 전도도를 감소시킨다(그리고 낮게 편향된 문헌 건조 데이터를 설명한다)."}, {"type": "bullet", "text": "중력 방향이 결과를 체계적으로 정렬한다: 상부 가열은 가장 큰 압력 기울기를 필요로 하고(중력이 액체 복귀를 거스름) 가장 큰 포화도 기울기를 주며, 하부 가열은 가장 작은 기울기를(중력이 액체 유동을 도움) 가장 큰 온도차를 주고, 둘 다 높은 $|\\omega/\\sin\\theta|$에서 수평(상사) 분포로 환원된다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "단일 성분 유체의 증기와 액체 모두로 포화된 다공질 매질의 모세관성은 두 상의 역류, 즉 종래 히트 파이프와 유사한 극히 효율적인 열전달 과정을 생성한다."}, {"type": "bullet", "text": "1-D 정상상태 계에서 최대 2상 히트 파이프 영역 길이는 포화도-기울기 ODE(식 14) 적분에서 나온다; 열유속과 2상 영역 길이의 곱은 고열유속 또는 수평 가열 하에서 고정된 유체/매질 물성에 대해 일정하며(위크 한계), 영역은 하부 가열에서 더 길고 상부 가열에서 더 짧다."}, {"type": "bullet", "text": "하부에서 가열될 때 2상 영역은 저열유속에서 무한히 길 수 있다; 가열 표면에 증기 영역은 임계 건조 열유속(식 28)을 초과할 때만 형성된다."}, {"type": "bullet", "text": "총 2상 영역 길이로 스케일된 포화도 분포는 수평 가열 또는 $|\\omega/\\sin\\theta|&gt;10$에 대해 열유속에 무관하므로 상사 분포로 취급할 수 있다; 중력 효과는 그 임계 이상에서 무시할 수 있다."}, {"type": "bullet", "text": "2상 영역을 가로지르는 온도차는 투과도 감소에 따라 증가하며 하부 가열에서 가장 크고 상부 가열에서 가장 작다; 유효 2상 영역 전도도는 고투과도 매질에서 단상 값보다 여러 자릿수 크며, 저투과도 매질($\\kappa&lt;10^{-14}$ m$^2$)에서는 전도가 대류와 같은 차수다."}, {"type": "bullet", "text": "여기서 확립된 폐합식 — Leverett 흡수 J-함수 $f(s)=1.417(1-s)-2.120(1-s)^2+1.263(1-s)^3$와 3차 상대 투과율 $\\kappa_{rl}=s^3,\\;\\kappa_{rv}=(1-s)^3$ — 은 단일 성분 액체-증기 모세관/상변화 그림과 함께, 이후 2상 혼합 모델과 증산냉각 LTNE-TPMM 계보가 재사용하는 구성 기초가 되었다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "가정된 모세관 압력 및 상대 투과율 함수의 불확실성이 해석의 주요 오차원이며, 저자가 아는 한 역류 단일 성분 2상 상대 투과율 데이터는 존재하지 않는다.", "source_quote": "The uncertainty inherent in these functions is the major source of error in this analysis. Data on countercurrent, single component, two-phase relative permeabilities do not exist to the author's knowledge.", "source_section": "discussion"}, {"claim": "해석은 Darcy 법칙이 적용되도록 증기 Reynolds 수 1 미만으로 제한된다; 높은 열유속은 증기 Reynolds 수를 1 이상으로 올려, 증기 압력 기울기를 Darcy 예측 이상으로 증가시키고 유효 전도도를 낮추는 관성 효과를 도입할 수 있다.", "source_quote": "One limitation of the analysis presented in this work as applied to high permeability media which should be noted is the restriction of the vapor Reynolds number to values below one, which allows for the use of the Darcy equation.", "source_section": "discussion"}, {"claim": "액체 또는 증기 영역이 없을 때 끝점(경계) 포화도는 사전에 알기 어려우므로, 적분 한계를 대신 규정된 평균 포화도나 측정된 2상 영역 길이로부터 유도해야 한다.", "source_quote": "the endpoint saturations are seldom known a priori if a liquid or vapor zone are not present. If average liquid saturations or actual two-phase zone lengths are specified, the integration limits can be deduced through the analysis presented in this work.", "source_section": "discussion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["다수 유체 상으로 포화된 다공질 매질의 열·물질전달(건조, 지열, 강화 석유 회수, 핵폐기물 처분, 매설 케이블, 히트 파이프 위크, 원자로 잔해 비등)은 다공질 매질 특유의 잘 이해되지 않은 다상 상호작용 때문에 평가하기 어렵다.", "작은 기공 치수는 계면 장력(모세관) 효과를 강조하고 기공 수준 데이터(개별 상 압력, 계면 기하, 상 속도)를 실험적으로 접근 불가능하게 만들며, 복잡한 기공 기하는 미시 현상의 거시적 평균화를 강요한다.", "선행 연구는 거의 등온이고 대류 지배적인 2상 영역을 확인했으나, 정량적 기술에는 서로 다른 중력 방향을 포함하여 열유속·유체 물성·매질 특성의 함수로서 2상 영역 길이를 아는 것이 필요하다."], "addressed_by_this_work": ["모세관성, 중력, 2상 Darcy 유동, 상변화를 갖는 1-D 정상 해석은 문제를 포화도 분포에 대한 단일 1차 ODE로 축약하며, 그 적분이 2상 영역 길이를, 따라서 온도·압력·겉보기 전도도 분포를 산출한다.", "수평/고유속 가열에 대해 열유속과 영역 길이의 곱이 상수(위크 한계)임이 보여지고, (영역 길이로 스케일된) 포화도 분포는 열유속에 무관한 상사 변수다; 하부 가열에 대해 폐형 임계 건조 열유속이 유도된다.", "세 중력 방향에 대한 이론적 예측이 저자의 Ottawa 모래 실험(2상 영역 길이는 이론의 ~20% 이내, 건조 열유속은 ~3% 이내)과 문헌 건조 데이터에 대해 검증되어, 히트 파이프 유추와 자릿수 규모의 전도도 증대를 확인한다."], "remaining_unresolved": ["정확한 역류 단일 성분 2상 상대 투과율 및 모세관 압력 함수가 부족하여, 구성 폐합식이 지배적 오차원으로 남는다.", "Darcy 기반 해석은 증기 Reynolds 수가 1을 초과하는 고열유속에서(관성 효과) 무너지며, 이는 모델링되지 않는다.", "경계 단상 영역이 없을 때 경계(끝점) 포화도는 사전에 알 수 없어, 평균 포화도나 영역 길이의 외부 규정이 필요하다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
