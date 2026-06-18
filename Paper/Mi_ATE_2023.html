@@ -25,11 +25,11 @@
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Noto Sans KR', 'Arial', sans-serif;
-            margin: 0; padding: 0;
+            margin: 0; padding: 0 0 24px;
             background: #f5f5f5;
             color: #333;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
         }
         .slide {
             width: min(1280px, 98vw);
@@ -39,6 +39,7 @@
             display: grid;
             grid-template-rows: auto auto 1fr;
             overflow: hidden;
+            flex-shrink: 0;
         }
         .header {
             background: #005b96;
@@ -306,11 +307,14 @@
             padding-bottom: 4px;
         }
         details.references {
-            margin-top: 18px;
+            width: min(1244px, calc(98vw - 36px));
+            margin: 14px auto 0;
+            box-sizing: border-box;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 10px 16px;
-            background: #fafbfc;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         details.references > summary {
             cursor: pointer;
@@ -378,12 +382,12 @@
                 <div class="section-summary">본 리뷰는 입증된 높은 효율에도 불구하고 발한 냉각이 실용화 이전에 재료·모델링·이상유동 과제에 직면한다고 결론짓는다. 미해결 문제는 정합된 물성을 갖춘 내산화성 고강도 다공성 재료, 기공 막힘 메커니즘, 상변화 병리(증기 막힘, 냉각 지연, 온도 진동), 기막-주류 상호작용, 상변화·초임계 냉각재의 경량 주입 제어에 걸쳐 있다.</div>
             </div>
         </div>
-
-        <details class="references">
-            <summary>References — 참고문헌 <span class="ref-count">key 20 / total 163</span></summary>
-            <ol class="ref-list"><li>A. van Foreest, M. Sippel, A. Gülhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration Cooling Using Liquid Water, J. Thermophys. Heat Transfer 23 (4) (2009) 693-702.</li><li>S. Weinbaum, H.L. Wheeler, Heat Transfer in Sweat-Cooled Porous Metals, J. Appl. Phys. 20 (1) (1949) 113-122.</li><li>Y.Q. Liu, P.X. Jiang, S.S. Jin, J.G. Sun, Transpiration cooling of a nose cone by various foreign gases, Int. J. Heat Mass Transfer 53 (23-24) (2010) 5364-5372.</li><li>T. Langener, J. von Wolfersdorf, J. Steelant, Experimental Investigations on Transpiration Cooling for Scramjet Applications Using Different Coolants, AIAA J. 49 (2011) 1409-1419.</li><li>H. Su, J. Wang, F. He, L. Chen, B. Ai, Numerical investigation on transpiration cooling with coolant phase change under hypersonic conditions, Int. J. Heat Mass Transfer 129 (2019) 480-490.</li><li>F. He, W. Dong, J. Wang, J. Zhou, L. Tang, Transient model and its application to investigate the injection mode and periodical operation of transpiration cooling with liquid coolant phase change, Appl. Therm. Eng. 181 (2020) 115956.</li><li>C.-Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media - I. Formulation, Int. J. Heat Mass Transfer 36 (1993) 2747-2758.</li><li>J. Shi, J. Wang, Inverse problem of transpiration cooling for estimating wall heat flux by LTNE model and CGM method, Int. J. Heat Mass Transfer 52 (2009) 2714-2720.</li><li>O.R. Alomar, M.A. Mendes, D. Trimis, S. Ray, Simulation of complete liquid-vapour phase change process inside porous evaporator using local thermal non-equilibrium model, Int. J. Therm. Sci. 94 (2015) 228-241.</li><li>G. Huang, Y. Zhu, Z. Liao, X.-L. Ouyang, P.-X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transfer 114 (2017) 1201-1213.</li><li>T. Langener, J. von Wolfersdorf, M. Selzer, H. Hald, Experimental investigations of transpiration cooling applied to C/C material, Int. J. Therm. Sci. 54 (2012) 70-81.</li><li>P.X. Jiang, G. Huang, Y. Zhu, Z. Liao, Z. Huang, Experimental investigation of combined transpiration and film cooling for sintered metal porous struts, Int. J. Heat Mass Transfer 108 (2017) 232-243.</li><li>Z. Min, G. Huang, S.N. Parbat, L. Yang, M.K. Chyu, Experimental Investigation on Additively Manufactured Transpiration and Film Cooling Structures, J. Turbomach. 141 (2019).</li><li>G. Huang, Z. Liao, R. Xu, Y. Zhu, P.-X. Jiang, Self-pumping transpiration cooling with a protective porous armor, Appl. Therm. Eng. 164 (2020) 114485.</li><li>C. Skamniotis, A.C.F. Cocks, Minimising stresses in double wall transpiration cooled components for high temperature applications, Int. J. Mech. Sci. 189 (2021) 105983.</li><li>P.X. Jiang, Z.Y. Liao, Z. Huang, Y.B. Xiong, Y.H. Zhu, Influence of shock waves on supersonic transpiration cooling, Int. J. Heat Mass Transfer 129 (2019) 965-974.</li><li>H. Boehrk, Transpiration Cooling at Hypersonic Flight - AKTiV on SHEFEX II, 11th AIAA/ASME Joint Thermophysics and Heat Transfer Conference, 2014.</li><li>N. Wu, J. Wang, F. He, L. Chen, B. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transfer 127 (2018) 882-891.</li><li>S. Zhang, X. Li, J. Zuo, J. Qin, K. Cheng, Y. Feng, W. Bao, Research progress on active thermal protection for hypersonic vehicles, Prog. Aerosp. Sci. 119 (2020) 100646.</li><li>R.N. Xu, X.Y. Li, Z.Y. Liao, Research progress in transpiration cooling with phase change, Journal of Tsinghua University (Science and Technology) 61 (12) (2021) 1341-1352.</li></ol>
-        </details>
     </div>
+
+    <details class="references">
+        <summary>References — 참고문헌 <span class="ref-count">key 20 / total 163</span></summary>
+        <ol class="ref-list"><li>A. van Foreest, M. Sippel, A. Gülhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration Cooling Using Liquid Water, J. Thermophys. Heat Transfer 23 (4) (2009) 693-702.</li><li>S. Weinbaum, H.L. Wheeler, Heat Transfer in Sweat-Cooled Porous Metals, J. Appl. Phys. 20 (1) (1949) 113-122.</li><li>Y.Q. Liu, P.X. Jiang, S.S. Jin, J.G. Sun, Transpiration cooling of a nose cone by various foreign gases, Int. J. Heat Mass Transfer 53 (23-24) (2010) 5364-5372.</li><li>T. Langener, J. von Wolfersdorf, J. Steelant, Experimental Investigations on Transpiration Cooling for Scramjet Applications Using Different Coolants, AIAA J. 49 (2011) 1409-1419.</li><li>H. Su, J. Wang, F. He, L. Chen, B. Ai, Numerical investigation on transpiration cooling with coolant phase change under hypersonic conditions, Int. J. Heat Mass Transfer 129 (2019) 480-490.</li><li>F. He, W. Dong, J. Wang, J. Zhou, L. Tang, Transient model and its application to investigate the injection mode and periodical operation of transpiration cooling with liquid coolant phase change, Appl. Therm. Eng. 181 (2020) 115956.</li><li>C.-Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media - I. Formulation, Int. J. Heat Mass Transfer 36 (1993) 2747-2758.</li><li>J. Shi, J. Wang, Inverse problem of transpiration cooling for estimating wall heat flux by LTNE model and CGM method, Int. J. Heat Mass Transfer 52 (2009) 2714-2720.</li><li>O.R. Alomar, M.A. Mendes, D. Trimis, S. Ray, Simulation of complete liquid-vapour phase change process inside porous evaporator using local thermal non-equilibrium model, Int. J. Therm. Sci. 94 (2015) 228-241.</li><li>G. Huang, Y. Zhu, Z. Liao, X.-L. Ouyang, P.-X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transfer 114 (2017) 1201-1213.</li><li>T. Langener, J. von Wolfersdorf, M. Selzer, H. Hald, Experimental investigations of transpiration cooling applied to C/C material, Int. J. Therm. Sci. 54 (2012) 70-81.</li><li>P.X. Jiang, G. Huang, Y. Zhu, Z. Liao, Z. Huang, Experimental investigation of combined transpiration and film cooling for sintered metal porous struts, Int. J. Heat Mass Transfer 108 (2017) 232-243.</li><li>Z. Min, G. Huang, S.N. Parbat, L. Yang, M.K. Chyu, Experimental Investigation on Additively Manufactured Transpiration and Film Cooling Structures, J. Turbomach. 141 (2019).</li><li>G. Huang, Z. Liao, R. Xu, Y. Zhu, P.-X. Jiang, Self-pumping transpiration cooling with a protective porous armor, Appl. Therm. Eng. 164 (2020) 114485.</li><li>C. Skamniotis, A.C.F. Cocks, Minimising stresses in double wall transpiration cooled components for high temperature applications, Int. J. Mech. Sci. 189 (2021) 105983.</li><li>P.X. Jiang, Z.Y. Liao, Z. Huang, Y.B. Xiong, Y.H. Zhu, Influence of shock waves on supersonic transpiration cooling, Int. J. Heat Mass Transfer 129 (2019) 965-974.</li><li>H. Boehrk, Transpiration Cooling at Hypersonic Flight - AKTiV on SHEFEX II, 11th AIAA/ASME Joint Thermophysics and Heat Transfer Conference, 2014.</li><li>N. Wu, J. Wang, F. He, L. Chen, B. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transfer 127 (2018) 882-891.</li><li>S. Zhang, X. Li, J. Zuo, J. Qin, K. Cheng, Y. Feng, W. Bao, Research progress on active thermal protection for hypersonic vehicles, Prog. Aerosp. Sci. 119 (2020) 100646.</li><li>R.N. Xu, X.Y. Li, Z.Y. Liao, Research progress in transpiration cooling with phase change, Journal of Tsinghua University (Science and Technology) 61 (12) (2021) 1341-1352.</li></ol>
+    </details>
 
     <!-- Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
