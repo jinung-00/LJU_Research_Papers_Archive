@@ -33,7 +33,6 @@
         }
         .slide {
             width: min(1280px, 98vw);
-            min-height: 96vh;
             background: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: flex;
@@ -79,8 +78,8 @@
             gap: 14px;
             padding: 14px 18px;
             overflow: hidden;
-            flex: 1 1 auto;      /* fill slide height when collapsed */
-            min-height: 62vh;    /* floor so cards keep size when references expands */
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
         }
         .section {
             background: white;
