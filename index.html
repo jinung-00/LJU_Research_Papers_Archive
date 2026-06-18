@@ -51,7 +51,7 @@
         .filterbar-inner {
             max-width: 1280px; margin: 0 auto; padding: 0 32px;
             display: grid;
-            grid-template-columns: minmax(240px, 1fr) auto auto;
+            grid-template-columns: 1fr;
             gap: 14px;
             align-items: center;
         }
@@ -283,14 +283,19 @@
 
         /* Topic / category section headers */
         .topic-header {
-            font-size: 18px;
-            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
             color: var(--text);
             padding: 10px 2px 4px;
             border-bottom: 2px solid var(--primary);
             margin-top: 10px;
         }
         .topic-header:first-child { margin-top: 0; }
+        .topic-title { font-size: 18px; font-weight: 700; }
+        .topic-controls { display: flex; align-items: center; gap: 12px; }
         .category-header {
             display: flex;
             align-items: center;
@@ -313,19 +318,13 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 13:08</div>
+            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:11</div>
         </div>
     </header>
 
     <div class="filterbar">
         <div class="filterbar-inner">
             <input id="search" class="search-input" type="text" placeholder="제목·저자·연도·키워드로 검색...">
-            <div class="read-toggle" role="tablist">
-                <button data-filter="all" class="active">전체</button>
-                <button data-filter="unread">미읽음</button>
-                <button data-filter="read">읽음</button>
-            </div>
-            <div class="counts" id="counts"></div>
         </div>
         <div class="tier-filter" id="tier-filter"></div>
         <div class="topic-filter" id="topic-filter"></div>
@@ -460,48 +459,79 @@
             );
         }
 
+        // Tier 1(최상위)→2→3→미지정(맨 뒤). JS sort는 stable → 동일 tier 내 기존 연도 내림차순 유지.
+        function byTierDesc(a, b) {
+            const ta = (a.tier === null || a.tier === undefined) ? 999 : a.tier;
+            const tb = (b.tier === null || b.tier === undefined) ? 999 : b.tier;
+            return ta - tb;
+        }
+
+        // Read-toggle tabs + topic-relative counts, mounted on the right of the topic header.
+        function buildTopicControls(visibleCount) {
+            const wrap = document.createElement('div');
+            wrap.className = 'topic-controls';
+            const tg = document.createElement('div');
+            tg.className = 'read-toggle'; tg.setAttribute('role', 'tablist');
+            [['all', '전체'], ['unread', '미읽음'], ['read', '읽음']].forEach(([f, label]) => {
+                const b = document.createElement('button');
+                b.textContent = label; b.dataset.filter = f;
+                if (state.readFilter === f) b.classList.add('active');
+                b.addEventListener('click', () => { state.readFilter = f; render(); });
+                tg.appendChild(b);
+            });
+            const topicPapers = PAPERS.filter(p => (p.topic || '') === state.selectedTopic);
+            const cnt = document.createElement('div');
+            cnt.className = 'counts';
+            cnt.innerHTML = `<strong>${visibleCount}</strong> / ${topicPapers.length}`
+                          + ` · 읽음 ${topicPapers.filter(isRead).length}`;
+            wrap.appendChild(tg); wrap.appendChild(cnt);
+            return wrap;
+        }
+
         function render() {
             const grid = document.getElementById('grid');
-            const visible = visiblePapers();
+            const visible = visiblePapers();   // already restricted to the selected topic
             grid.innerHTML = '';
+
+            // Always render the selected topic's header (with read-toggle + counts on its
+            // right), even when no papers are visible — so the read filter is never lost.
+            const th = document.createElement('div');
+            th.className = 'topic-header';
+            const title = document.createElement('span');
+            title.className = 'topic-title';
+            title.textContent = TOPIC_LABELS[state.selectedTopic] || state.selectedTopic;
+            th.appendChild(title);
+            th.appendChild(buildTopicControls(visible.length));
+            grid.appendChild(th);
+
             if (visible.length === 0) {
-                grid.innerHTML = '<div class="empty">조건에 맞는 논문이 없어요.</div>';
-            } else {
-                // 2-level grouping: topic -> category. Render only non-empty groups.
-                const topics = TOPIC_ORDER.slice();
-                visible.forEach(p => { if (p.topic && !topics.includes(p.topic)) topics.push(p.topic); });
-                topics.forEach(topic => {
-                    const inTopic = visible.filter(p => (p.topic || '') === topic);
-                    if (inTopic.length === 0) return;
-                    const th = document.createElement('div');
-                    th.className = 'topic-header';
-                    th.textContent = TOPIC_LABELS[topic] || topic;
-                    grid.appendChild(th);
-                    if (topic === 'Basic_Theory') {
-                        inTopic.forEach(p => grid.appendChild(makeCard(p)));
-                        return;
-                    }
-                    const cats = CATEGORY_ORDER.slice();
-                    inTopic.forEach(p => { const c = p.category || ''; if (c && !cats.includes(c)) cats.push(c); });
-                    cats.forEach(cat => {
-                        const inCat = inTopic.filter(p => (p.category || '') === cat);
-                        if (inCat.length === 0) return;
-                        const ch = document.createElement('div');
-                        ch.className = 'category-header';
-                        ch.innerHTML = `${CATEGORY_LABELS[cat] || cat} <span class="cat-count">${inCat.length}</span>`;
-                        grid.appendChild(ch);
-                        inCat.forEach(p => grid.appendChild(makeCard(p)));
-                    });
-                    // topic papers with no category (shouldn't happen for categorized topics)
-                    inTopic.filter(p => !(p.category || '')).forEach(p => grid.appendChild(makeCard(p)));
-                });
-                // visible papers with no topic at all (legacy) — render last
-                visible.filter(p => !(p.topic || '')).forEach(p => grid.appendChild(makeCard(p)));
+                const e = document.createElement('div');
+                e.className = 'empty';
+                e.textContent = '조건에 맞는 논문이 없어요.';
+                grid.appendChild(e);
+                return;
             }
-            const total = PAPERS.length;
-            const readCnt = PAPERS.filter(isRead).length;
-            document.getElementById('counts').innerHTML =
-                `<strong>${visible.length}</strong> / ${total} · 읽음 ${readCnt}`;
+
+            if (state.selectedTopic === 'Basic_Theory') {
+                // flat topic — no sub-categories, just tier-sorted cards
+                visible.slice().sort(byTierDesc).forEach(p => grid.appendChild(makeCard(p)));
+            } else {
+                const cats = CATEGORY_ORDER.slice();
+                visible.forEach(p => { const c = p.category || ''; if (c && !cats.includes(c)) cats.push(c); });
+                cats.forEach(cat => {
+                    const inCat = visible.filter(p => (p.category || '') === cat);
+                    if (inCat.length === 0) return;
+                    inCat.sort(byTierDesc);   // highest tier first within the category
+                    const ch = document.createElement('div');
+                    ch.className = 'category-header';
+                    ch.innerHTML = `${CATEGORY_LABELS[cat] || cat} <span class="cat-count">${inCat.length}</span>`;
+                    grid.appendChild(ch);
+                    inCat.forEach(p => grid.appendChild(makeCard(p)));
+                });
+                // papers with no category (shouldn't happen for categorized topics) — render last
+                visible.filter(p => !(p.category || '')).sort(byTierDesc)
+                       .forEach(p => grid.appendChild(makeCard(p)));
+            }
         }
 
         function makeCard(paper) {
@@ -649,14 +679,7 @@
             state.search = e.target.value;
             render();
         });
-        document.querySelectorAll('.read-toggle button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.read-toggle button').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                state.readFilter = btn.dataset.filter;
-                render();
-            });
-        });
+        // read-toggle is built per-render inside buildTopicControls (mounted on the topic header)
 
         renderTierFilter();
         renderTopicFilter();
