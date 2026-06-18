@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Discussion of the design method for porosity driven by pressure differences during transpiration cooling</title>
+    <meta name="keywords" content="transpiration cooling, porous media, porosity design, pressure difference, isothermal wall, gradient porosity, wedge nose cone, reverse design method, coolant distribution, hypersonic thermal protection">
+    <meta name="paper-authors" content="Xiaojuan Wang, Xiaoqiang Fan, Song Wang, Bing Xiong">
+    <meta name="paper-journal" content="International Communications in Heat and Mass Transfer, Vol. 152, 2024, Art. 107260 · DOI: 10.1016/j.icheatmasstransfer.2024.107260">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Discussion of the design method for porosity driven by pressure differences during transpiration cooling</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Xiaojuan Wang, Xiaoqiang Fan, Song Wang, Bing Xiong</div>
+            <div class="journal">International Communications in Heat and Mass Transfer, Vol. 152, 2024, Art. 107260 · DOI: 10.1016/j.icheatmasstransfer.2024.107260</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 수치 연구는 <span class="term">등온 벽(isothermal wall)</span>을 설계 목표로 삼고 증산 매트릭스 내외부 <span class="term">압력차(pressure difference)</span>를 설계 구동 변수로 사용하는 증산냉각용 <span class="term">역설계 다공도 방법</span>을 제안하여, 전통적 정방향 사슬 '다공도 → 압력차 → 냉각'을 '압력차 → 다공도 → 냉각'으로 뒤집는다. N2 기체로 냉각되는 쐐기형 노즈콘(Ma 4.2, T0 2310 K, P0 1.33 MPa)에서, 균일 다공도 기준(ε=0.33)은 후방 발산면을 과냉각하는 반면 정체점이 1522 K에 도달하여 — 열유속 정합 냉각 수요와 정반대다. 이 방법은 정체점에서 기준 다공도와 두께를 고정하고, <span class="term">Ergun 공식</span>과 <span class="term">Darcy-Forchheimer 방정식</span>으로 기준 압력차를 계산한 뒤, 표면을 따라 내외부 압력차를 동일하게 가정하여 국소 다공도를 역으로 풀며 4구간 계단형 다공도로 구현한다. 세 조합은 균일 다공도 대비 온도 균일성 지수를 ~70-73% 낮추고, 온도비 기반 반복(iteration)이 벽을 추가로 균질화하여(균일성 지수 56.32% 감소, 평균 표면 온도 ~37 °C 감소) 냉각재 분사 압력을 줄이고 냉각재를 완전히 활용한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">porous media</span><span class="keyword-chip">porosity design</span><span class="keyword-chip">pressure difference</span><span class="keyword-chip">isothermal wall</span><span class="keyword-chip">gradient porosity</span><span class="keyword-chip">wedge nose cone</span><span class="keyword-chip">reverse design method</span><span class="keyword-chip">coolant distribution</span><span class="keyword-chip">hypersonic thermal protection</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 증산냉각을 극초음속 앞전과 노즈콘을 위한 가장 효과적인 능동 열 보호법으로 규정하며, Mach 8에서 2600 K 부근의 열부하와 강한 압력 구배가 작은 구조 공간 내에서 설계를 어렵게 만든다. 메커니즘·모델링 연구(냉각재 종류, 매트릭스 물성, 분사비, D-B-F 방정식, 국소 열평형)와 응용/최적화 연구(경사 다공도, 불연속 발산면, 가변 두께, 분할 및 단계 분사, 복합 냉각법)를 개관한다. 대부분의 연구가 균일 다공도를 사용하고, 결합 다공도 설계가 다공도/두께 값을 계산하는 정량적 방법이 부족하며, 전통적 정방향 설계가 노동집약적임을 규명하여 — 역방향 압력차 구동 다공도 설계를 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론에서 개관된 관련 연구는 증산냉각 메커니즘/모델링 기초(냉각재 종류, 매트릭스 물성, D-B-F 방정식, 국소 열평형)와 본 논문이 확장하는 최적화 갈래를 다룬다: 경사 다공도, 불연속 발산면, 가변 벽 두께, 분할 및 단계 냉각재 분사, 복합 냉각법. 반복되는 공백은 결합 다공도/두께 값을 계산하는 정량적 방법의 부재와 노동집약적 정방향 설계 과정이며, 역방향 압력차 방법이 이를 다룬다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">방법론은 N2 냉각재를 갖는 2차원 축대칭 쐐기 노즈콘(전체 길이 114 mm, 필렛 반경 R=3 mm, 반원추각 7°, 2 mm 다공성·불투과 벽)의 전장(full-field) 결합 수치 시뮬레이션과 새로운 역설계 다공도 알고리즘을 결합한다. 네 영역(주류, 냉각재 채널, 고체 벽, 다공성 매질)은 자유 유동에 RANS, 다공성 매질에 Darcy-Brinkman-Forchheimer 방정식과 국소 열평형, 냉각재-주류 혼합에 성분 수송 모델로 풀며, 충격 거리와 기존 증산냉각 데이터로 검증된 S-A 난류 모델을 사용한다. 설계 방법은 정체점의 기준 다공도/두께를 고정하고, Ergun 공식과 Darcy-Forchheimer 방정식으로 기준 압력차를 계산한 뒤, 표면을 따라 동일 내외부 압력차를 부과해 4구간 계단형 다공도를 역으로 얻으며, 추가 정련을 위한 온도비 기반 반복을 갖는다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">역설계 계단형 다공도는 균일 다공도 대비 쐐기 노즈콘 표면 온도를 현저히 균질화한다. 세 다공도 조합은 균일성 지수 γ_T를 69.99-72.73% 줄이고 전체 다공성 매질을 재료 한계 아래로 유지하며, 정체 영역 저온 층을 두껍게 하고 거의 균등한 냉각재 질량 유동 분포(mA:mB:mC:mD ≈ 0.55:0.18:0.09:0.19)를 만든다. 온도 분포 계수 CTDF/RTDF는 기준 다공도가 감소함에 따라 낮아지나, 더 작은 기준 다공도는 필요 분사 압력을 높인다(j=1-3에서 0.29-0.45 MPa 대 균일 0.26 MPa). 온도비 기반 최적화는 7회 반복 후 표면 균일성 지수를 56.32% 줄이고 평균 표면 온도를 ~37 °C, 정점을 668.65 K에서 559.93 K로 낮추면서 냉각재 공급 압력도 줄인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">토의는 균일 다공도가 냉각재 공급을 열유속 구배에 맞추지 못한다는(냉각재는 하류로 증가하는 반면 열유속은 정체점에서 정점) 핵심 통찰을 중심으로 결과를 해석하고, 내외부 압력차를 균등화하면 냉각재 분포가 열부하에 맞는 다공도 장을 역으로 산출해 벽을 균질화함을 설명한다. 분사 압력 절충(더 낮은 기준 다공도가 더 균일하나 더 높은 압력 설계를 줌)을 설명하고, 더 잘 냉각하나 훨씬 높은 압력을 요하는 정체 영역 한정 증산 대안과 대조한다. 온도비 반복은 균일성을 더 밀어붙이면서 동시에 분사 압력을 낮추는 방법으로 제시된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 압력차 구동 역설계 다공도 — 정체 기준 다공도/두께를 고정하고, 기준 압력차를 계산하며, 동일 압력차 가정 하 국소 다공도를 역으로 푸는 — 가 비교 가능한 냉각 효과를 거의 균등한 구간별 냉각재 유동과 함께 제공하고 현저히 더 균일한 등온 벽을 만드는 다공도 조합을 산출할 수 있다고 결론짓는다. 더 작은 기준 다공도는 분사 압력을 높이고, 온도비 기반 최적화가 표면을 추가로 균질화하면서 냉각재 공급 압력을 줄이고 냉각재를 완전히 활용한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 49</span></summary>
+            <ol class="ref-list"><li>Professor Wang's laboratory (USTC) gradient-porosity design along the mainstream direction generating a coolant gradient supply for gas and liquid transpiration cooling (the gradient-porosity basis this work builds on)</li><li>Ding, discontinuous diverging surface design exploiting the downwind-continuing gas film to expand the thermal-protection area while reducing coolant consumption</li><li>Lin, stepwise coolant supply-rate method based on the nose cone's surface heat flow, increasing stagnation-zone cooling efficiency and decreasing coolant demand</li><li>Jin, axial-pressure-distribution segmented combustion-chamber wall with per-sector coolant injection pressures for temperature homogeneity and reduced coolant flow</li><li>the modified Darcy-Brinkman-Forchheimer (D-B-F) equation and the local thermal equilibrium model widely used in transpiration-cooling numerical calculations</li><li>Ergun's formula relating viscous and inertial resistance coefficients to porosity and particle diameter, used to invert porosity from the reference pressure difference</li><li>Ambrosio et al., empirical formula for the theoretical shock detached distance used to validate the numerical model (relative error 0.33%)</li><li>reference [45], the wedge-shaped nose cone geometry adopted as the research object for its extensive experimental and simulation study and sharp leading edge</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "고마하수의 바우 충격파는 둔두 노즈콘·앞전·인렛 립에 가혹한 열 환경을 만든다; Mach 8, 27 km 고도에서 앞전은 약 2600 K의 열부하를 견디므로 삭마를 피하기 위한 신뢰성 있는 열 보호 시스템이 필수적이다."}, {"type": "bullet", "text": "능동 열 보호는 수동(재료 물성 의존) 보호보다 더 효과적이고 적응적이며, 증산냉각은 현재 가장 효과적인 능동법으로, 냉각 효율과 온도 균질성을 높이고 냉각을 적시·국소·정량적으로 제어하여 대규모 재사용 보호를 달성한다 — 그러나 작은 노즈콘 공간·높은 열류·압력 구배로 인해 구현이 어렵다."}, {"type": "bullet", "text": "초기 메커니즘 연구는 냉각재 종류, 증산 매트릭스 열물성, 냉각재 분사비를 다뤘고, 모델링 연구는 Darcy 방정식의 보정/개선과 열전달 모델 선택을 다뤘다; D-B-F 방정식과 국소 열평형 모델이 이제 널리 사용된다."}, {"type": "bullet", "text": "응용 연구는 증산냉각을 연소실과 노즈콘에 적용하나, 대부분 균일 다공도를 사용해 예리한 앞전과 고압력/열유속 구배 구조를 충분히 냉각할 수 없어, 구조와 분사 방법 전략 모두로 국소 효율 개선을 동기화한다."}, {"type": "bullet", "text": "검토된 구조/분사 전략: 주류 방향 경사 다공도(Prof. Wang의 USTC 연구실)가 냉각재 경사 공급을 줌; Ding의 불연속 발산면; Lin의 단계 냉각재 공급률 방법; Jin의 축방향 압력 분포 분할 연소실 벽; 더불어 가변 두께·구획·복합 냉각법 — 모두 효과적이나 정량적 다공도/두께 계산이 부족하다."}, {"type": "bullet", "text": "반복되는 공백: 기존 설계는 결합 다공도와 벽두께 값을 계산하는 정량적 방법이 부족하고, 상당한 설계 작업을 요구하는 정방향 '다공도 → 압력차 → 열전달 효율' 과정을 따른다."}, {"type": "bullet", "text": "따라서 본 논문은 경사 다공도 연구 갈래를 토대로, 작은 설계 작업량과 짧은 최적화 반복 주기를 갖는 압력차 구동 역설계 방법('압력차 → 다공도 → 열전달 효율')을 조사한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "메커니즘/모델링 기초: 메커니즘은 냉각재 종류·증산 매트릭스 열물성·냉각재 분사비; 모델링은 Darcy 방정식 보정과 열전달 모델 선택으로, 널리 쓰이는 D-B-F 방정식과 국소 열평형 모델로 수렴한다."}, {"type": "bullet", "text": "경사 다공도 갈래: Prof. Wang의 USTC 연구실은 주류 방향 경사 다공도를 제안해 기체·액체 증산냉각 모두에 냉각재 경사 공급을 생성하고 국소 냉각을 높임을 보였으나, 다공도 값을 계산하는 방법보다는 주로 냉각재 유동 분포·공급 압력 변화·냉각 효율 법칙을 다뤘다."}, {"type": "bullet", "text": "불연속/구조 갈래: Ding은 불연속 발산면을 제안(하류로 이어지는 기막을 활용해 보호 면적을 확장하고 냉각재 감소)했고, Dong/Zhao/Jiang은 판·노즈콘·지지판에서 불균일 벽 두께를 연구하여 냉각재 측 박형화와 주류 측 슬롯화 간 절충을 다뤘다."}, {"type": "bullet", "text": "분사 최적화 갈래: Jin은 축방향 압력 분포로 구간별 분사 압력을 갖는 분할 연소실 벽을 구성(균일성 향상, 냉각재 감소)했고; Lin은 표면 열류 기반 단계 냉각재 공급률 방법을 제안(정체 영역 효율 상승, 수요 감소)했으나 여전히 균등 분포 온도장을 만들 수 없었다."}, {"type": "bullet", "text": "인접/고급 갈래: 복합 냉각(승화+증산, 기막+증산, 역분사+증산, 캐비티+증산)과 상변화 및 자가 적응 증산냉각(Dong의 PID 제어 및 적응 시스템; Wang의 개선된 분리 상 모델) — 더 넓은 프런티어로 인용되며, 결합 다공도 설계는 여전히 상대적으로 부족하다."}, {"type": "bullet", "text": "규명된 공백: 대부분의 선행 연구가 결합 다공도와 벽두께 값을 계산하는 정량적 방법이 부족하고 노동집약적 정방향 설계 사슬에 의존하여, 여기서 제안된 역방향 압력차 구동 다공도 설계를 동기화한다."}]}, "method": {"content": [{"type": "bullet", "text": "형상과 조건: 쐐기형 노즈콘(참고문헌 [45], 항력 감소를 위한 가능한 가장 예리한 앞전)으로 전체 길이 114 mm, R=3 mm, 반원추각 7°, 2 mm 두께 다공성·불투과 벽; N2를 다공성 매질로 펌핑한다. 원거리 경계는 Ma=4.2, T0=2310 K, P0=1.33 MPa; 냉각재 입구는 Mc=50 g/s, Tc=300 K이다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "지배 방정식: 전장 결합 방법이 주류 영역(연속, 운동량, 에너지)을 RANS로, 다공성 영역을 국소 열평형 하 Darcy-Brinkman-Forchheimer 방정식(유효 전도도 k_eff = ε k_f + (1-ε) k_s)으로, N2-공기 혼합을 성분 수송 방정식으로 푼다; 공기와 N2는 분자동역학으로부터 온도 의존 물성을 갖는 이상기체다.", "figure_refs": [2]}, {"type": "bullet", "text": "수치 처리 및 검증: 벽 근처 y+&lt;1의 구조 격자로 격자 독립성에서 Mesh3(250,597 노드) 선택; Ambrosio 경험식의 이론 충격 이탈 거리(Ma=4.2, R=3 mm에서 1.509 mm)가 시뮬레이션과 0.33% 이내, 정체 온도와 0.12% 이내로 일치하며; 기존 곡면 증산냉각 데이터와 비교해 S-A 난류 모델을 선택한다.", "figure_refs": [3, 4, 5]}, {"type": "bullet", "text": "균일 다공도(ε=0.33) 하 기준 거동: 정체점이 1522 K(재료 한계 훨씬 초과)에 이르는 반면 후방 발산면은 과도한 국소 냉각재 유동으로 454 K로 과냉각된다; 실제 냉각재 분사율이 하류로 증가하여 열유속 정합 설계 요구와 정반대 — 불균일 냉각의 근본 원인이다.", "figure_refs": [7, 8, 9]}, {"type": "bullet", "text": "설계 방법(1-2단계): 정체점 다공도 ε0를 기준 다공도로 삼고 점성·관성 저항 계수를 Ergun 공식으로 구함; 기준 벽 두께 L0와 동일 내외부 분사율을 가정해 필요한 정체 냉각재율을 열 균형으로 찾고 수정 Darcy-Forchheimer 방정식으로 기준 압력차 Δp_sp를 구한다.", "figure_refs": [10, 11]}, {"type": "formula", "label": "식 (9) — Ergun 공식 점성 및 관성 저항 계수", "latex": "\\frac{1}{\\alpha_{sp}} = \\frac{150}{D_p^2}\\,\\frac{(1-\\varepsilon_0)^2}{\\varepsilon_0^3}, \\qquad C_{2sp} = \\frac{3.5}{D_p}\\,\\frac{(1-\\varepsilon_0)}{\\varepsilon_0^3}", "description": "Ergun 공식은 입자 직경 $D_p$와 기준 다공도 $\\varepsilon_0$로부터 점성 저항($1/\\alpha_{sp}$, $\\alpha_{sp}$는 정체점 투과율)과 관성 저항 계수 $C_{2sp}$를 준다."}, {"type": "formula", "label": "식 (11) — 기준 내외부 압력차 (수정 Darcy-Forchheimer)", "latex": "-\\frac{\\Delta p_{sp}}{L_0} = -\\frac{p_{c,sp} - p_{g,sp}}{L_0} = \\frac{1}{\\alpha_{sp}}\\,\\mu\\,v_{c,sp} + \\frac{1}{2}\\,C_{2sp}\\,\\rho\\,v_{c,sp}^2", "description": "정체점 다공 벽(두께 $L_0$)을 가로지르는 기준 압력차 $\\Delta p_{sp}$는 Darcy 점성항과 Forchheimer 관성항을 결합하며, $\\mu,\\rho$는 냉각재 점성과 밀도, $v_{c,sp}$는 열 균형으로부터의 정체 냉각재 공급 속도다."}, {"type": "formula", "label": "식 (12) — 표면을 따른 동일 압력차로부터 역다공도", "latex": "\\frac{|\\Delta p_i|}{L_i} = \\frac{150\\,\\mu\\,(1-\\varepsilon_i)^2}{D_p^2\\,\\varepsilon_i^3}\\,v_c + \\frac{1.75\\,\\rho\\,(1-\\varepsilon_i)}{D_p\\,\\varepsilon_i^3}\\,v_{c,i}^2", "description": "내외부 압력차가 유동 방향을 따라 일정하다고 가정하면($\\Delta p_i=\\Delta p_{sp}$), 이 Ergun/Darcy-Forchheimer 관계를 각 위치의 국소 다공도 $\\varepsilon_i$에 대해 역으로 풀어 (4구간 계단형) 다공도 분포를 만든다."}, {"type": "bullet", "text": "계단형 구현과 온도비 최적화: 제작성을 위해 다공성 매질을 4구간(A-D, 경계점 0.6, 1.5, 3 mm)으로 분할; 온도 균일성 지수 γ_T가 표면 균일성을 정량화하고, 온도비 기반 반복이 연속 단계 간 평균 온도 상대 잔차가 0.3% 아래로 떨어질 때까지 압력차 비를 조정한다.", "figure_refs": [11, 21]}, {"type": "formula", "label": "식 (13) — 온도 균일성 지수 γ_T", "latex": "\\gamma_T = \\sum_{i=1}^{n}\\big[(|T_i - \\bar{T}|)\\,A_i\\big] \\Big/ (\\bar{T}\\,A_0), \\qquad \\bar{T} = \\sum_{i=1}^{n} T_i A_i \\Big/ A_0", "description": "온도 균일성 지수 $\\gamma_T$는 표면 온도가 면적 가중 평균 $\\bar{T}$로부터 갖는 면적 가중 평균 절대 편차를 $\\bar{T}$와 전체 다공 면적 $A_0$로 정규화한 것이다; $\\gamma_T$가 작을수록 더 균일한 온도를 뜻한다."}]}, "results": {"content": [{"type": "bullet", "text": "열 환경 기준: Ma 4.2에서 정체 영역 운동 에너지 대부분이 내부 에너지로 전환되어 구조 온도를 빠르게 높인다; 800 K로 냉각된 표면을 가정하면 열유속과 압력이 x=3 mm까지 정체값의 ~15%, x=5 mm까지 ~14%로 떨어져, 증산냉각 영역을 x∈(0,5 mm)로 설정한다.", "figure_refs": [6]}, {"type": "bullet", "text": "균일 다공도 실패: ε=0.33에서 정체점이 1522 K에 도달하는 반면 후방은 454 K로 과냉각된다; 실제 냉각재 분사율이 하류로 대략 두 배(선형 분포)가 되어 열 균형 설계 요구와 정반대이며, 이것이 바로 균일 다공도가 불균일하게 냉각하는 이유다.", "figure_refs": [7, 8, 9]}, {"type": "bullet", "text": "계단형 다공도 조합(표 2, ε0=0.39/0.33/0.30인 j=1/2/3): 다공성 매질 내부 온도가 성긴 등온선으로 훨씬 균일해지고, 전체 매질이 재료 한계 아래에 머물며, 정체 영역 저온 층이 균일 다공도보다 명백히 두껍다; 표면 온도와 정체 온도는 ε0가 감소함에 따라 떨어진다.", "figure_refs": [12, 13, 14]}, {"type": "bullet", "text": "균일성 지수 개선: 균일 다공도 대비 γ_T가 j=1, 2, 3에서 각각 69.99%, 71.59%, 72.73% 감소(0.352에서 ~0.106/0.1/0.096로)했고, 더 낮은 전체 다공도가 열전달 효율을 높이므로 ε0가 떨어짐에 따라 약간 감소했다.", "figure_refs": [12]}, {"type": "bullet", "text": "온도 분포 계수: 유동방향 CTDF는 j=2,3에서 j=1 대비 9.5%, 15.4% 떨어졌고; 반경방향 RTDF는 라인 1-1'에서 8.5%, 13.4% 떨어졌으며, 라인 2-2'와 3-3'에서는 더 작은 폭으로 변하여 온도 분포 법칙과 일치한다.", "figure_refs": [15, 16]}, {"type": "bullet", "text": "압력과 냉각재 분포: 균일 다공도는 0.26 MPa 분사 압력을 필요로 하는 반면 j=1/2/3은 0.29/0.38/0.45 MPa를 필요로 한다(전체 다공도가 0.33 미만이고 냉각재가 더 큰 압력 손실을 겪어 더 높음), 그러나 경사 다공도 압력 분포는 비냉각에 더 가깝고 표면을 따른 냉각재 분사율이 거의 균등하며, 질량 유동 비 mA:mB:mC:mD ≈ 0.55:0.18:0.09:0.19다; 균일 대비 j=1 평균 분사 압력은 0.48%만 상승하나 j=2/3은 34.64%/58.27% 상승한다.", "figure_refs": [17, 18, 19, 20]}, {"type": "bullet", "text": "온도비 최적화(5절, ε0=0.33 예): 7회 반복 후 다공도 조합(표 4)이 이전보다 더 균일한 온도를 준다 — 정점 표면 온도가 668.65 K에서 559.93 K로 떨어지고, 전체 온도 분포 계수가 개선되며, 표면 균일성 지수가 56.32% 감소하고, 평균 표면 온도가 ~37 °C 떨어지며, 냉각재 공급 압력이 감소해 구동계 요구를 완화한다.", "figure_refs": [22, 23]}]}, "discussion": {"content": [{"type": "bullet", "text": "핵심 통찰: 균일 다공도 하에서 실제 냉각재 분사율이 하류로 상승하여 정체점에서 정점에 이르는 열유속 정합 수요와 정반대이므로, 정체 영역이 결핍(1522 K)되고 후방이 과냉각(454 K)된다."}, {"type": "bullet", "text": "역설계 메커니즘: 정체 기준 압력차를 고정하고 표면을 따라 동일 내외부 압력차를 부과하면 정체점 부근에 더 높은 다공도, 하류에 더 낮은 다공도를 역으로 산출하여, 냉각재 분포가 열부하를 추종하고 벽이 등온에 가까워진다.", "figure_refs": [10]}, {"type": "bullet", "text": "냉각재 분포 결과: 계단형 다공도 조합은 발산면을 따라 거의 균등한 냉각재 분사율(질량 유동 비 ~0.55:0.18:0.09:0.19)과 비냉각에 더 가까운 압력 분포를 주어, 강하게 하류 편향된 균일 사례 대비 잘 정합된 국소 공급을 나타낸다.", "figure_refs": [17, 20]}, {"type": "bullet", "text": "분사 압력 절충: 더 작은 기준 다공도 ε0는 전체 다공도를 낮추고 열전달 효율과 균일성을 높이나, 필요 냉각재 분사(구동) 압력을 증가시키므로(j=2/3 평균 압력이 균일 대비 34.64%/58.27% 상승), 기준 다공도는 균일성과 압력 비용을 균형 맞춰야 한다.", "figure_refs": [18]}, {"type": "bullet", "text": "정체 한정 증산과 비교: 증산을 정체 영역에 한정하고 하류 침투를 없애면(참고문헌 [23]) 더 잘 냉각하나 분사 압력과 공급계 요구를 크게 높인다; 본 방법은 대신 균일한 온도·감소된 분사 압력·완전한 냉각재 활용을 동시에 달성한다."}, {"type": "bullet", "text": "온도비 최적화 근거: 예비 경사 다공도 온도장을 사용해 압력차 비를 온도비와 동일하게 설정하고 평균 온도 잔차가 &lt;0.3%가 될 때까지 반복하여, 표면 온도를 추가로 평탄화(정점 668.65 K → 559.93 K)하면서 냉각재 공급 압력을 낮춘다.", "figure_refs": [21, 22, 23]}]}, "conclusion": {"content": [{"type": "bullet", "text": "정체점 내외부 압력차에 기반한 다공도 설계 방법은 유사한 냉각 효과를 제공하는 다공도 조합 설계를 달성할 수 있으며, 타당성과 합리성에 대해 수치 시뮬레이션으로 검증되었다."}, {"type": "bullet", "text": "압력차 구동 설계 하에서 서로 다른 다공도 조합이 비교 가능한 냉각 효과를 제공하고, 각 구간의 냉각재 유량이 거의 균등하게 분배된다(질량 유동 비 mA:mB:mC:mD ≈ 0.55:0.18:0.09:0.19)."}, {"type": "bullet", "text": "기준 다공도가 작을수록 전체 다공도가 작아지고 필요 냉각재 분사 압력이 높아진다(j=1-3에서 0.29-0.45 MPa 대 균일 0.26 MPa); 기준 다공도는 온도 균일성과 분사 압력 비용을 균형 맞춰 선택해야 한다."}, {"type": "bullet", "text": "세 다공도 조합은 균일 다공도 대비 온도 균일성 지수를 69.99-72.73% 줄여 전체 다공성 매질을 재료 한계 아래로 유지하고 표면과 정체점 온도를 모두 극적으로 낮췄다."}, {"type": "bullet", "text": "온도비 기반 최적화는 7회 반복 후 표면 균일성 지수 56.32% 감소, 평균 표면 온도 ~37 °C 하락(정점 668.65 K → 559.93 K), 냉각재 공급 압력 감소를 달성하여, 균일한 표면 온도·더 낮은 분사 압력·완전한 냉각재 활용을 동시에 제공했다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "참고문헌 [23]은 증산을 정체 영역에 한정하고 하류 냉각재 침투가 없을 때 더 나은 냉각 효과가 달성됨을 지적하나, 이는 냉각재 분사 압력과 공급계 요구를 크게 증가시킨다 — 제안된 방법이 명시적으로 회피할 뿐 해결하지는 않는 절충이다.", "source_quote": "reference [23] points out that the transpiration region is limited in the stagnation zone and a better cooling effect can be achieved when no coolant penetrates downstream. However, this means that the coolant injection pressure is significantly increased and the requirements for the supply system are greatly improved.", "source_section": "discussion"}, {"claim": "더 작은 기준 다공도는 더 작은 전체 다공도를 주어 동일 냉각재 유량에 대해 더 높은 냉각재 분사(구동) 압력을 요구한다.", "source_quote": "The smaller the reference porosity, the smaller the overall porosity, and the coolant injection pressure will be higher.", "source_section": "conclusion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["고마하수의 예리한 앞전과 노즈콘은 큰 열유속·압력 구배와 함께 2600 K 부근의 열부하를 견디며, 작은 구조 공간과 정체점 부근의 높은 냉각재 유동 저항이 증산냉각 설계를 어렵게 만든다.", "대부분의 증산냉각 연구는 균일 다공도 매질을 사용하는데, 이는 예리한 앞전과 고구배 구조에 충분한 냉각을 공급할 수 없다.", "기존 다공도 최적화 접근(경사 다공도, 불연속 발산면, 가변 두께, 최적화 분사)은 결합 다공도/벽두께 값을 계산하는 정량적 방법이 부족하고, 전통적 정방향 '다공도 → 압력차 → 열전달 효율' 설계는 많은 시행 작업을 요구한다."], "addressed_by_this_work": ["등온 벽을 목표로 하고 설계 사슬을 '압력차 → 다공도 → 열전달 효율'로 뒤집는 압력차 구동 다공도 설계 방법을 제안하여, 설계 작업량을 줄이고 최적화 반복 주기를 단축한다.", "다공도를 정량적으로 계산한다: 정체점의 기준 다공도/두께가 Ergun 공식과 Darcy-Forchheimer 방정식으로 기준 압력차를 주고, 유동 방향을 따른 동일 내외부 압력차가 국소 다공도(4구간 계단형 다공도로 구현)를 준다.", "쐐기 노즈콘에 대한 수치 시뮬레이션은 세 다공도 조합이 균일 다공도 대비 온도 균일성 지수를 69.99-72.73% 낮추고 냉각재 유동을 거의 균등하게 분배함을, 온도비 반복이 균일성을 추가로 향상(지수 56.32% 감소)하면서 분사 압력을 낮추고 냉각재를 완전히 활용함을 보인다."], "remaining_unresolved": ["더 작은 기준 다공도(더 낮은 전체 다공도)는 동일 유량에 더 높은 냉각재 분사 압력을 요구하므로, 분사 압력 요구 감소와 더 균일한 저다공도 장 달성이 상충한다.", "증산을 정체 영역에만 엄격히 한정(하류 침투 없음)하면 최선의 냉각을 주나 훨씬 높은 분사 압력과 공급계 요구를 동반하며; 이 방법은 완전히 해결하기보다 일부 정점 냉각을 더 낮은 압력과 의도적으로 절충한다.", "이 방법은 단상 N2 냉각 2차원 축대칭 쐐기 노즈콘에 대해서만 입증되었다; 상변화 및 자가 적응 증산냉각과 기타 부품이 더 넓은 연구 프런티어로 언급되나 여기서 다루어지지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
