@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis of dispersion effects and non-thermal equilibrium, non-Darcian, variable porosity incompressible flow through porous media</title>
+    <meta name="keywords" content="local thermal non-equilibrium, LTNE, two-equation model, porous media heat and mass transfer, non-Darcian flow, thermal dispersion, variable porosity, packed bed, error maps, numerical">
+    <meta name="paper-authors" content="A. Amiri, K. Vafai">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 37, No. 6, 1994, pp. 939-954 · DOI: 10.1016/0017-9310(94)90219-4">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Analysis of dispersion effects and non-thermal equilibrium, non-Darcian, variable porosity incompressible flow through porous media</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">A. Amiri, K. Vafai</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 37, No. 6, 1994, pp. 939-954 · DOI: 10.1016/0017-9310(94)90219-4</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 기초 논문은 <span class="term">완전 일반화(비Darcy) 운동량 방정식</span>과, 결정적으로 유체·고체 상 간 국소 열평형을 가정하지 않는 <span class="term">2방정식 에너지 모델(LTNE)</span>을 사용하여 고체 구 충전층을 통한 강제 대류 비압축성 유동을 수치 시뮬레이션한다. 관성(Forchheimer) 효과, 경계(Brinkman) 효과, 가변 다공도(지수 대 Mueller 감쇠 진동 모델), 열분산이 속도·온도장과 유체/고체 Nusselt 수에 미치는 영향을 체계적으로 분리한다. 완전 일반화 모델을 기준으로, 저자들은 더 단순한 모델이 하나 이상의 비Darcy 효과를 버릴 때 발생하는 백분율 오차를 입자 Reynolds 수, Darcy 수, 고체-유체 확산도 비의 함수로 정량화하는 손쉽게 접근 가능한 <span class="term">오차 지도</span>를 만든다. 본 연구는 후속 증산냉각 LTNE 모델이 기반으로 삼는 LTNE 2에너지 방정식 틀(계면 열전달 항으로 결합된 별도의 유체·고체 에너지 방정식)을 확립하며, Darcy 수가 LTE 유효성에 가장 영향력 있는 매개변수이고 횡방향 분산이 분산 현상을 지배함을 보인다.</div>
+            <div class="keywords"><span class="keyword-chip">local thermal non-equilibrium</span><span class="keyword-chip">LTNE</span><span class="keyword-chip">two-equation model</span><span class="keyword-chip">porous media heat and mass transfer</span><span class="keyword-chip">non-Darcian flow</span><span class="keyword-chip">thermal dispersion</span><span class="keyword-chip">variable porosity</span><span class="keyword-chip">packed bed</span><span class="keyword-chip">error maps</span><span class="keyword-chip">numerical</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공질 매질 내 수송은 화재 방호용 물 증산냉각을 포함한 광범위한 응용(태양열 수신기, 단열, 열교환기, 에너지 저장, 촉매 반응기) 때문에 수십 년간 연구되었다. 서론은 불투과 경계가 다공도를 어떻게 비균일하게(벽에서 높고 멀어지면 점근) 만들어 채널링 효과를 내는지, 열분산이 국소 유선 혼합에서 어떻게 발생하여 축/반경 유효 전도도로 특성화되는지, 그리고 선행 단상(LTE) 모델이 유체-고체 온도차를 어떻게 무시했는지를 개관한다. 본 기여를 세 핵심 무차원 매개변수(입자 Reynolds 수, Darcy 수, 고체-유체 확산도 비)로 지배되는, 구 충전층에 초점을 둔 비LTE·비Darcy·가변 다공도·분산 해상 시뮬레이션으로 자리매김한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 Vafai-Tien 비Darcy 다공질 대류 계보(경계·관성 효과, 가변 다공도 채널링)와 LTE 완화를 동기화하는 Vafai-Sozen 2상 에너지 수송 모델에 뿌리를 둔다. 분산 폐합식은 Wakao-Kaguei와 Cheng-Vortmeyer/Hunt-Tien에서, 투과도/Forchheimer 형태는 Ergun에서, 가변 다공도 상관식은 Benenati-Brosilow와 Mueller에서, 유체-고체 열전달 상관식은 Wakao 등에서 가져온다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">문제는 2차원으로 취급되는 50 cm x 20 cm 균일 구 무작위 충전층을 통한 비압축성 유체의 정상 강제 대류다. 다섯 가정(등방 매질, 균일 비압축성 구, 지배적 강제 대류, 40 K 범위에서 온도 무관 물성, 무시 가능 복사)이 체적 평균계를 뒷받침한다: 연속 방정식, 가변 다공도장에 걸친 Brinkman 점성·Forchheimer 관성 항을 갖는 일반화 운동량 방정식, 그리고 계면 열전달 항 $h_{sf}a_{sf}$로 결합된 유체·고체 상에 대한 두 별도(LTNE) 에너지 방정식. 투과도와 기하 함수는 Ergun을, 비표면적은 Vafai-Sozen을, 유체-고체 계수는 Wakao 등을 따른다; 열분산은 추가 확산 항으로 더해진다. 계는 SOR, 가변 y-격자, 상류 대류, 격자 독립성 검사를 갖는 양해 유한차분으로 풀린다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Vafai의 해석/수치 해에 대해 검증되어(훌륭한 일치) 본 연구는 속도/온도장과 Nusselt 분포를 제시한다. 비Darcy 효과(경계 전단, 관성)는 벽 근처 속도와 열경계층을 재형성하며, 오차 지도는 낮은 Re와 Da에서도 단순화 모델 사용 시 큰 Nusselt 수 오차를 보이되 Darcy 모델 오차는 Re 증가에 따라 감소함을 보인다. '실제'(Mueller) 다공도 모델은 특히 분산이 있을 때 지수 모델 대비 속도 분포와 Nusselt 분포를 바꾼다. 횡방향 열분산이 종방향보다 지배적이며, LTE 오차 지도는 Darcy 수가 LTE 유효성에 가장 영향력 있는 매개변수이고 Re와 Da가 증가하면 LTE가 덜 유효해짐을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논의는 모델 선택(어떤 비Darcy 효과를 유지할지)과 다공도 표현이 예측 속도·온도·Nusselt 장을 실질적으로 바꾸며, 종래 기울기 기반 Nusselt 수가 참 열유속으로 변환되지 않으면 가변 전도도 매질에 대해 오도할 수 있음을 강조한다. 종방향이 아니라 횡방향 분산이 지배적 분산 모드이며, LTE 유효성이 주로 Darcy 수(부차적으로 입자 Reynolds 수와 고체-유체 확산도 비)로 지배됨을 강조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 별도(LTNE) 유체·고체 에너지 방정식을 완전 일반화 운동량 방정식과 함께 사용하여 충전층 수송의 정확한 시뮬레이션을 달성하며, 관성·경계·다공도 변화·열분산 효과를 체계적으로 탐구한다. LTE 조건의 유효성과 2차원성 거동을 예시하고, 단순화 모델과 가정이 유동 조건·층 구성에 걸쳐 언제 적용 가능한지에 대한 특성화 체계를 확립하는 포괄적 오차 지도를 제시한다. 2방정식 에너지 틀과 관련 열전달/비표면적 폐합식은 증산냉각 응용을 포함한 후속 LTNE 모델의 기초 참고가 된다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 26</span></summary>
+            <ol class="ref-list"><li>K. Vafai, C.L. Tien, Boundary and inertia effects on flow and heat transfer in porous media, Int. J. Heat Mass Transfer 24, 195-203, 1981</li><li>K. Vafai, M. Sozen, Analysis of energy and momentum transport for fluid flow through a porous bed, J. Heat Transfer 112, 690-699, 1990</li><li>K. Vafai, Convective flow and heat transfer in variable-porosity media, J. Fluid Mech. 147, 233-259, 1984</li><li>N. Wakao, S. Kaguei, Heat and Mass Transfer in Packed Beds, Gordon and Breach, New York, 1982</li><li>N. Wakao, S. Kaguei, T. Funazkri, Effect of fluid dispersion coefficients on particle-to-fluid heat transfer coefficients in packed beds, Chem. Eng. Sci. 34, 325-336, 1979</li><li>M.L. Hunt, C.L. Tien, Non-Darcian convection in cylindrical packed beds, J. Heat Transfer 110, 378-384, 1988</li><li>R.F. Benenati, C.B. Brosilow, Void fraction distribution in beds of spheres, A.I.Ch.E. Jl 4, 450-464, 1962</li><li>G.E. Mueller, Prediction of radial porosity distribution in randomly packed fixed beds of uniformly sized spheres in cylindrical containers, Chem. Eng. Sci. 46, 706-708, 1991</li><li>S. Ergun, Fluid flow through packed columns, Chem. Eng. Prog. 48, 89-94, 1952</li><li>P. Cheng, D. Vortmeyer, Transverse thermal dispersion and wall channeling in a packed bed with forced convective flow, Chem. Eng. Sci. 43(9), 2523-2532, 1988</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다공질 매질의 수송 현상은 광범위한 응용으로 50년간 관심을 끌었다: 태양열 수신기, 건물 단열, 열교환기, 에너지 저장 장치, 세라믹 가공, 촉매 반응기; 논문은 소방/구조용 다공층의 <span class=\"term\">물 증산냉각</span>(Yano 등)이 유망한 응용 영역임을 언급한다."}, {"type": "bullet", "text": "불투과 경계는 다공도를 비균일하게 만든다: 다공도는 벽 근처에서 높고 약 4~5 구 직경 떨어진 곳에서 점근값으로 감쇠하며, 벽에 가까이서 정현파적으로 감쇠 진동한다(Roblee 등; Benenati와 Brosilow), 이는 <span class=\"term\">채널링 효과</span>를 도입한다."}, {"type": "bullet", "text": "굴곡진 고체 경로를 통한 국소 유선 혼합과 재순환이 축방향·반경 유효 전도도로 특성화되는 <span class=\"term\">열분산</span>을 구성한다; 축방향 분산은 높은 유량에서 대류가 축방향 확산을 지배하므로 낮은 Peclet/입자-Reynolds 수에서만 유의하다."}, {"type": "bullet", "text": "대부분의 선행 모델은 단상 <span class=\"term\">국소 열평형(LTE)</span> 가정(유체와 고체 온도가 어디서나 같음)을 채택했다; 이는 냉각제-봉 온도차가 중요한 고정층 원자력 추진 및 원자로 모델링 같은 문제에서 완화되어야 하며, Vafai와 Sozen의 2상 방정식 연구가 유의한 유체-고체 온도 불일치를 보인 바와 같다."}, {"type": "bullet", "text": "기존 비압축성 유동 다공질 매질 모델은 하나 이상의 단순화(LTE, 무시된 축방향 전도, 1차원 접근, 일정 다공도, 무시된 경계/관성 효과)를 포함한다; 무작위 충전 구 층을 통한 비압축성 유동의 본 정상상태 해석은 대신 이들을 모두 유지한다."}, {"type": "bullet", "text": "연구는 관성 효과, 거시적 전단응력(고체 경계 효과), 다공도 변화 모델, 열분산 효과가 운동량·에너지 수송에 미치는 영향을 분리하고, 오차 지도를 통해 LTE 가정과 2차원성 거동을 통합 형태로 예시한다."}, {"type": "bullet", "text": "세 무차원 매개변수가 문제 물리에 본질적으로 묶여 있음이 밝혀진다: <span class=\"term\">입자 Reynolds 수</span>, <span class=\"term\">Darcy 수</span>, <span class=\"term\">고체-유체 확산도 비</span> — 오차 지도의 축이다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Vafai와 Tien은 다공질 매질의 유동·열전달에 대한 경계·관성 효과를 확립했고, Vafai의 가변 다공도/채널링 해석이 본 수치 속도장이 검증되는 해석 기준을 제공한다."}, {"type": "bullet", "text": "Vafai와 Sozen의 2상 방정식 모델(다공질 층의 에너지·운동량 수송)은 유의한 유체-고체 온도 불일치를 보고했으며, 여기 채택된 2방정식 에너지 틀과 비표면적 폐합식을 제공한다."}, {"type": "bullet", "text": "열분산 모델링은 Hunt과 Tien(정체 성분에 대한 추가 확산 항으로서의 분산)과 Cheng과 Vortmeyer / Cheng과 Zhu(횡방향 분산과 벽 채널링)를 따르며, 정체 유효 전도도는 상 다공도와 전도도에서 얻는다."}, {"type": "bullet", "text": "투과도와 기하(Forchheimer) 함수는 Ergun의 충전 칼럼 관계를 사용하고, 유체-고체 열전달 계수는 경험적 Wakao 등 상관식을 사용한다; 유효 전도도는 Wakao와 Kaguei를 따른다."}, {"type": "bullet", "text": "가변 다공도 상관식: 지수 감쇠 벽 근처 다공도 모델(Roblee 등과 Benenati-Brosilow 데이터에 피팅된 상수)과 Mueller 감쇠 진동 모델로, 지수 모델이 '실제' 다공도 변화에서 얼마나 벗어나는지를 보이는 데 사용된다."}, {"type": "bullet", "text": "선행 LTE 유효성·분산 연구(Gunn-Desouza, Vortmeyer, Sozen-Vafai 종방향 분산; Renken-Poulikakos; Levec-Carbonell)가 단순화가 언제 허용되는지에 대한 오차 지도 평가를 구성한다."}]}, "method": {"content": [{"type": "bullet", "text": "다섯 모델링 가정: (1) 등방 매질(기하 함수와 유효 전도도 의존성은 유지), (2) 균일 비압축성 구, (3) 강제 대류 지배(자연 대류 무시), (4) 온도 무관 물성(40 K 범위로 정당화), (5) 무시 가능한 입자 간·입자 내 복사.", "figure_refs": [1]}, {"type": "formula", "label": "식 (1)-(2) — 연속 및 일반화(비Darcy) 운동량", "latex": "\\nabla\\!\\cdot\\langle\\mathbf{v}\\rangle = 0, \\qquad \\frac{\\rho_f}{\\varepsilon}\\langle(\\mathbf{v}\\!\\cdot\\!\\nabla)\\mathbf{v}\\rangle = -\\frac{\\mu}{K}\\langle\\mathbf{v}\\rangle - \\frac{\\rho_f F\\varepsilon}{\\sqrt{K}}\\big[\\langle\\mathbf{v}\\rangle\\!\\cdot\\!\\langle\\mathbf{v}\\rangle\\big]\\mathbf{J} + \\frac{\\mu}{\\varepsilon}\\nabla^2\\langle\\mathbf{v}\\rangle - \\nabla\\langle P\\rangle^f", "description": "체적 평균 연속과 완전 일반화 운동량 방정식: Darcy 항력 $-\\mu\\langle\\mathbf{v}\\rangle/K$, Forchheimer 관성 항(기하 함수 $F$, 기공 속도 방향 단위 벡터 $\\mathbf{J}$), Brinkman 거시 전단 $\\frac{\\mu}{\\varepsilon}\\nabla^2\\langle\\mathbf{v}\\rangle$, 그리고 압력 기울기."}, {"type": "formula", "label": "식 (3)-(4) — LTNE 유체 및 고체 에너지 방정식 (2방정식 모델)", "latex": "\\varepsilon(\\rho_f c_{p_f})\\frac{\\partial\\langle T_f\\rangle^f}{\\partial t} + (\\rho_f c_{p_f})\\langle\\mathbf{v}\\rangle\\!\\cdot\\!\\nabla\\langle T_f\\rangle^f = \\nabla\\!\\cdot\\big[k_{f,\\mathrm{eff}}\\!\\cdot\\!\\nabla\\langle T_f\\rangle^f\\big] + h_{sf}a_{sf}\\big(\\langle T_s\\rangle^s - \\langle T_f\\rangle^f\\big)", "description": "2방정식(LTNE) 모델의 유체상 에너지 방정식: 저장과 이류가 유효(분산 포함) 전도와 계면 교환 $h_{sf}a_{sf}(T_s-T_f)$로 균형 잡힌다. 짝을 이루는 고체 방정식 $(1-\\varepsilon)\\rho_s c_{p_s}\\partial_t\\langle T_s\\rangle^s = \\nabla\\!\\cdot[k_{s,\\mathrm{eff}}\\nabla\\langle T_s\\rangle^s] - h_{sf}a_{sf}(\\langle T_s\\rangle^s-\\langle T_f\\rangle^f)$은 부호가 반대인 교환 항을 가진다. (시뮬레이션에는 정상 형태가 사용된다.)"}, {"type": "bullet", "text": "두 에너지 방정식은 오직 계면 항 $h_{sf}a_{sf}(T_s-T_f)$를 통해서만 결합되며, 이것이 <span class=\"term\">국소 열적 비평형</span> 처리의 핵심이다: 단일 장을 강제하지 않고 유체와 고체가 서로 다른 국소 온도를 가지게 한다."}, {"type": "formula", "label": "식 (5)-(7) — 투과도, 기하(Forchheimer) 함수, 비표면적", "latex": "K = \\frac{\\varepsilon^3 d_p^2}{150(1-\\varepsilon)^2}, \\qquad F = \\frac{1.75}{\\sqrt{150\\,\\varepsilon^{3}}}, \\qquad a_{sf} = \\frac{6(1-\\varepsilon)}{d_p}", "description": "Ergun 기반 투과도 $K$와 (Forchheimer 항을 구동하는) 기하 함수 $F$, 그리고 충전층의 기하 비표면적 $a_{sf}$(Vafai-Sozen); $d_p$는 입자 직경이다."}, {"type": "formula", "label": "식 (8) — Wakao 유체-고체 열전달 계수", "latex": "h_{sf} = \\frac{k_f}{d_p}\\left[2.0 + 1.1\\,\\mathrm{Pr}^{1/3}\\left(\\frac{\\rho u d_p}{\\mu}\\right)^{0.6}\\right]", "description": "LTNE 교환 항에 나타나는 유체-고체(계면) 열전달 계수에 대한 경험적 Wakao 등 상관식; 괄호는 Prandtl 및 입자 Reynolds 수로 나타낸 입자 Nusselt 수다."}, {"type": "bullet", "text": "열분산은 정체 유효 전도도에 더해지는 추가 확산 항으로 처리된다(Hunt-Tien); 따라서 유효 유체 전도도는 국소 속도에 의존하며, 예컨대 횡방향 성분 $(k_{f,\\mathrm{eff}})_x = \\varepsilon k_f + 0.5\\,\\mathrm{Pr}(\\rho u d_p/\\mu)k_f$이다."}, {"type": "bullet", "text": "가변 다공도는 자유류 다공도 0.37과 피팅 상수를 갖는 지수 감쇠 벽 근처 모델을 사용하며, Benenati-Brosilow 데이터에 더 잘 맞는 Mueller 감쇠 진동 모델과 비교된다; 유체·고체 Nusselt 수는 혼합 평균 온도로부터 별도로 정의된다.", "figure_refs": [1]}, {"type": "bullet", "text": "경계조건: 무활주·일정 온도 벽, 입구 유체와 고체는 입구 온도; 입구/벽 온도(300 K, 340 K)는 주요 결론에 영향을 주지 않는다고 명시된다."}, {"type": "bullet", "text": "수치: 양해 유한차분 기법이 정상 연속·운동량·두 에너지 방정식을 푼다; 운동량 비선형성은 선형화·삼중대각화되고, 에너지 방정식은 상류 대류와 축차 과완화(SOR)를 갖는 중심 차분, 가변 y-격자(각 경계의 4% 이내에서 조밀), 격자 독립성 검사, 수렴 기준 $10^{-10}$을 사용하며, CRAY YMP에서 구동된다."}]}, "results": {"content": [{"type": "bullet", "text": "검증: 모델을 가용한 단순화 사례로 축소한 후, 수치 속도 분포가 Vafai의 해석해와 일치하고 온도장이 Vafai의 수치와 훌륭히 일치한다.", "figure_refs": [1]}, {"type": "bullet", "text": "비Darcy 효과(Fig. 2): 불투과 경계를 생략하면 속도 분포가 슬러그 유동으로(벽 근처 전단 없음) 축소되고, 관성 항을 생략하면 벽 근처 속도가 증가한다(관성 효과는 감쇠를 더함); 더 높은 속도는 열경계층을 얇게 하고 Nusselt 수를 높인다.", "figure_refs": [2]}, {"type": "bullet", "text": "비Darcy 오차 지도(Fig. 3): 일반화 모델을 기준으로, Darcy·수정 Darcy·관성 없는 모델의 평균 유체 Nusselt 수 백분율 오차는 Da와 Re가 증가함에 따라 커진다 — 단 Darcy 모델 오차는 Re에 따라 감소한다(압력 기울기 증가에 따라 계산 속도가 일반화 값으로 상승하기 때문). 대부분의 단순화 모델에서 낮은 Re와 Da에서도 유의한 오차가 나타난다.", "figure_refs": [3]}, {"type": "bullet", "text": "다공도 모델 효과(Fig. 4): 속도 분포는 다공도에 가장 민감한 장 변수이며 다공도 변화를 따르므로, 지수 모델 대신 '실제'(Mueller) 모델을 사용하면 다른 Nusselt 분포가 나오며, 분산이 포함될 때 (유효 유체 전도도가 속도에 의존하므로) 더 뚜렷하다.", "figure_refs": [4]}, {"type": "bullet", "text": "열분산(Figs. 5-6): 종방향(축) 분산은 전체 열경계층에 무시 가능한 영향을 미치는 반면 횡방향 분산이 지배한다; 종래(기울기 기반) Nusselt 수는 유효 횡방향 전도도를 곱하기 전까지 열유속 증대를 과소평가하며, 곱한 후에는 분산이 열유속을 명확히 높인다.", "figure_refs": [5, 6]}, {"type": "bullet", "text": "LTE 평가(Fig. 7): LTE 유효성은 백분율 상대 유체-고체 온도차로 정량화되어 등급화된다(매우 좋음 &lt;1%에서 매우 나쁨 &gt;15%); Darcy 수가 가장 영향력 있는 매개변수이고 입자 Reynolds 수도 중요하며, Re와 Da 모두 증가하면 LTE가 덜 유효해진다. '실제' 다공도 모델은 벽 근처에서 나쁨~매우 나쁨 LTE 등급을 준다.", "figure_refs": [7]}, {"type": "bullet", "text": "2차원성(Fig. 8): 국소 대 중간면 온도차가 2.5%를 초과하는 위치의 정량적 '백분율 높이' 척도가 Da와 Re 범위에 걸쳐 두 다공도 모델의 2차원 거동 강도를 특성화한다.", "figure_refs": [8]}]}, "discussion": {"content": [{"type": "bullet", "text": "비Darcy 효과를 유지하거나 버리는 것이 중요하다: 경계 전단은 슬러그 유동을 전단 분포로 바꾸고, 관성은 벽 근처 속도를 감쇠시키며, 이들이 다시 열경계층과 Nusselt 수를 재형성하므로 단순화 모델은 적당한 Re와 Da에서도 큰 오차를 일으킬 수 있다."}, {"type": "bullet", "text": "종래 Nusselt 수 정의(경계 온도 기울기)는 가변 전도도(분산 활성) 매질에 대해 오도할 수 있다: 열유속 증대는 유효 횡방향 전도도를 곱한 후에만 드러나므로 열유속 기반 오차 지도가 사용된다."}, {"type": "bullet", "text": "횡방향 열분산이 분산 현상을 지배하는데, 열경계층 성장이 축방향보다 횡방향 전도도에 더 강하게 의존하기 때문이다; 종방향 분산은 전체 열장에 무시 가능하다."}, {"type": "bullet", "text": "LTE 유효성은 주로 Darcy 수(가장 영향력 있는 매개변수)로 지배되며, 입자 Reynolds 수와 고체-유체 열확산도 비도 유의하다; Re와 Da가 증가하면 LTE가 덜 유효해지고, 벽 근처 영역(특히 '실제' 다공도 모델 하에서)이 가장 큰 유체-고체 온도차를 보인다."}, {"type": "bullet", "text": "'실제'(Mueller 감쇠 진동) 다공도 모델은 지수 모델보다 더 높은 벽 근처 대류와 더 큰 유체-고체 온도차를 만들어, 다공도 모델 충실도가 유동과 LTE 평가 모두에 영향을 줌을 예시한다."}, {"type": "bullet", "text": "오차 지도는 특성화 체계를 구성한다: Re, Da, 확산도 비가 주어지면 엔지니어가 임의의 단순화 모델 채택으로 발생하는 오차를 읽어낼 수 있어 충실도와 비용 간 절충을 명시화한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "유체·고체 상에 대한 별도 에너지 방정식(2방정식 LTNE 모델)을 사용하여 정상 비압축성 강제 대류에 대한 충전층 수송 현상의 정확한 시뮬레이션이 달성된다."}, {"type": "bullet", "text": "다양한 효과 — 관성·경계·다공도 변화·열분산 — 가 충전층의 운동량·에너지 수송에 미치는 영향이 탐구되며, LTE 조건의 유효성과 2차원성 거동이 제시된다."}, {"type": "bullet", "text": "수치 발견에 기반한 포괄적 오차 지도가 유동 조건·층 구성에 걸쳐 단순화 모델과 가정의 적용성을 해석하기 위한 특성화 체계를 확립한다."}, {"type": "bullet", "text": "Darcy 수가 LTE 유효성에 가장 영향력 있는 매개변수로 식별되고, 횡방향 열분산이 분산 현상을 지배하며, 세 지배 무차원 매개변수는 입자 Reynolds 수, Darcy 수, 고체-유체 확산도 비다."}, {"type": "bullet", "text": "일반화 모델이 기준 역할을 한다; 각 단순화 모델의 백분율 오차가 정량화되어 실무자에게 직접적인 충실도 대 비용 절충을 주고, 후속 다공질 매질 및 증산냉각 모델이 재사용하는 LTNE 2방정식 틀을 확립한다."}, {"type": "bullet", "text": "여기서 도입된 계면 교환 폐합식 — 기하 비표면적 $a_{sf}=6(1-\\varepsilon)/d_p$와 Wakao형 유체-고체 계수 $h_{sf}$ — 은 후속 증산냉각 LTNE 모델(Wang-Shi, Shi-Wang, Su, Jin)에서 고체·유체 에너지 방정식을 결합하는 바로 그 항들로, 이 논문을 LTNE-TPMM 계보의 직접적 조상으로 만든다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "온도에 따른 열물성 변화가 무시되며, 이는 해석에 적용된 비교적 낮은(40 K) 작동 온도 범위로만 정당화되는 단순화다.", "source_quote": "(4) The variation of thermophysical properties with temperature is ignored. This is a reasonable assumption for the operating temperature range applied (40 K) in the analysis.", "source_section": "method"}, {"claim": "입자 간 및 입자 내 복사 열전달은 고려된 비교적 낮은 작동 온도 때문에 무시된다.", "source_quote": "(5) Due to the relatively low operating temperature considered in the present study, the inter-partible and intra-particle radiation heat transfer are neglected.", "source_section": "method"}, {"claim": "사용된 종래 Nusselt 수 정의는 실제 열유속이 아니라 경계의 온도 기울기를 나타내므로, 가변 전도도 매질에서는 참 열유속 증대를 복원하려면 Nusselt 수에 유효 전도도를 곱해야 한다.", "source_quote": "the definition of the Nusselt number essentially represents the temperature gradient at the boundary. This was purposely done since studies in the literature define the Nusselt number in a similar manner even for a variable conductivity medium.", "source_section": "method"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["대부분의 선행 다공질 매질 수송 연구는 유체와 고체 온도가 어디서나 같다고 가정하는 단상(국소 열평형) 모델을 채택했는데, 냉각제-고체 온도차가 중요한 문제(예: 고정층 원자력 시스템)에서는 이를 완화해야 한다.", "선행 모델들은 각 가정이 언제 유효한지에 대한 체계적 평가 없이 하나 이상의 단순화 가정 — LTE, 무시된 축방향 전도, 1차원 접근, 일정 다공도, 무시된 경계·관성 효과 — 을 포함했다.", "불투과 경계는 다공도를 비균일하게(벽 근처에서 높음, 채널링 효과) 만들며, 선행 분산 연구는 종종 관성 효과를 무시하여 가변 다공도·분산·비Darcy 효과의 상호작용을 불명확하게 남겼다."], "addressed_by_this_work": ["국소 열평형을 가정하지 않는 2상(2방정식) 에너지 모델이 완전 일반화 운동량 방정식(Brinkman + Forchheimer + 가변 다공도)과 함께 풀려, 별도의 유체·고체 온도장을 포착한다.", "관성·경계·다공도 변화·열분산 효과의 영향이 각각 분리·정량화되며, LTE 가정의 유효성과 2차원성 거동이 통합 형태로 예시된다.", "각 비Darcy 효과를 버릴 때의 백분율 Nusselt 수 오차를 입자 Reynolds 수, Darcy 수, 고체-유체 확산도 비의 함수로 정량화하는 포괄적 오차 지도가(완전 일반화 모델 대비) 만들어진다."], "remaining_unresolved": ["물성-온도 변화와 복사는 저온 가정에 의해 배제되어 모델링되지 않는다.", "2차원성 거동의 3차원적 관점(다공도 스케일, Da, Re의 함수로서)이 더 유익할 수 있다고 언급되나 추구되지 않는다('추가 연구를 요함').", "Nusselt 수 정의는 참 열유속이 아니라 경계 온도 기울기로 유지되어, 가변 전도도 매질에 대해 유효 전도도를 후속 곱해야 한다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
