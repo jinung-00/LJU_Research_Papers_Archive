@@ -25,11 +25,11 @@
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Noto Sans KR', 'Arial', sans-serif;
-            margin: 0; padding: 0;
+            margin: 0; padding: 0 0 24px;
             background: #f5f5f5;
             color: #333;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
         }
         .slide {
             width: min(1280px, 98vw);
@@ -39,6 +39,7 @@
             display: grid;
             grid-template-rows: auto auto 1fr;
             overflow: hidden;
+            flex-shrink: 0;
         }
         .header {
             background: #005b96;
@@ -306,11 +307,14 @@
             padding-bottom: 4px;
         }
         details.references {
-            margin-top: 18px;
+            width: min(1244px, calc(98vw - 36px));
+            margin: 14px auto 0;
+            box-sizing: border-box;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 10px 16px;
-            background: #fafbfc;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         details.references > summary {
             cursor: pointer;
@@ -378,12 +382,12 @@
                 <div class="section-summary">저자들은 새로운 LTNE-TPMM이 냉각제 상변화를 동반한 증산냉각을 성공적으로 모델링하며 이 모델만이 포착할 수 있는 이상 영역의 유체-고체 역전 온도 현상을 드러낸다고 결론짓는다. 고온면 압력이 높을수록 냉각이 저하되며, 이상 거동은 공극률, 구 직경, 전도율, 냉각제 주입률을 통해 제어 가능함을 보고한다.</div>
             </div>
         </div>
-
-        <details class="references">
-            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 23</span></summary>
-            <ol class="ref-list"><li>A.V. Luikov, L.L. Vasiliev, V.A. Mayorov, Static characteristics of equilibrium two-phase transpiration cooling systems, Int. J. Heat and Mass Transfer, 1975</li><li>A.V. Luikov, L.L. Vasiliev, V.A. Mayorov, Determination of the region of stable and reliable operation of equilibrium two-phase transpiration cooling system, Int. J. Heat and Mass Transfer, 1975</li><li>A. van Foreest, M. Sippel, A. Guelhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophysics and Heat Transfer, 2009</li><li>C.Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media-I: formulation, Int. J. Heat and Mass Transfer, 1993</li><li>C.Y. Wang, A fixed-grid numerical algorithm for two-phase flow and heat transfer in porous media, Numerical Heat Transfer B, 1997</li><li>K.S. Udell, Heat transfer in porous media considering phase change and capillarity - the heat pipe effect, Int. J. Heat and Mass Transfer, 1985</li><li>Y. Kazuhisa, A. Jun, H. Hidetoshi, T. Saburo, Numerical investigation of thermofluid flow characteristics with phase change against high heat flux in porous media, ASME J. Heat Transfer, 2008</li><li>J.H. Wang, H.N. Wang, A discussion of transpiration cooling problems through an analytical solution of local thermal non-equilibrium model, ASME J. Heat Transfer, 2006</li><li>D. Greuel, A. Herbertz, O.J. Haidn, M. Ortelt, H. Hald, Transpiration cooling applied to C/C liners of cryogenic liquid rocket engines, AIAA/ASME/SAE/ASEE JPC Conference, 2004</li><li>Y.H. Andoh, B. Lips, Prediction of porous walls thermal protection by effusion or transpiration cooling: an analytical approach, Applied Thermal Engineering, 2003</li></ol>
-        </details>
     </div>
+
+    <details class="references">
+        <summary>References — 참고문헌 <span class="ref-count">key 10 / total 23</span></summary>
+        <ol class="ref-list"><li>A.V. Luikov, L.L. Vasiliev, V.A. Mayorov, Static characteristics of equilibrium two-phase transpiration cooling systems, Int. J. Heat and Mass Transfer, 1975</li><li>A.V. Luikov, L.L. Vasiliev, V.A. Mayorov, Determination of the region of stable and reliable operation of equilibrium two-phase transpiration cooling system, Int. J. Heat and Mass Transfer, 1975</li><li>A. van Foreest, M. Sippel, A. Guelhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophysics and Heat Transfer, 2009</li><li>C.Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media-I: formulation, Int. J. Heat and Mass Transfer, 1993</li><li>C.Y. Wang, A fixed-grid numerical algorithm for two-phase flow and heat transfer in porous media, Numerical Heat Transfer B, 1997</li><li>K.S. Udell, Heat transfer in porous media considering phase change and capillarity - the heat pipe effect, Int. J. Heat and Mass Transfer, 1985</li><li>Y. Kazuhisa, A. Jun, H. Hidetoshi, T. Saburo, Numerical investigation of thermofluid flow characteristics with phase change against high heat flux in porous media, ASME J. Heat Transfer, 2008</li><li>J.H. Wang, H.N. Wang, A discussion of transpiration cooling problems through an analytical solution of local thermal non-equilibrium model, ASME J. Heat Transfer, 2006</li><li>D. Greuel, A. Herbertz, O.J. Haidn, M. Ortelt, H. Hald, Transpiration cooling applied to C/C liners of cryogenic liquid rocket engines, AIAA/ASME/SAE/ASEE JPC Conference, 2004</li><li>Y.H. Andoh, B. Lips, Prediction of porous walls thermal protection by effusion or transpiration cooling: an analytical approach, Applied Thermal Engineering, 2003</li></ol>
+    </details>
 
     <!-- Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
