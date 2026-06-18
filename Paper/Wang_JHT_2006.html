@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>A Discussion of Transpiration Cooling Problems through an Analytical Solution of Local Thermal Nonequilibrium Model</title>
+    <meta name="keywords" content="transpiration cooling, local thermal non-equilibrium, LTNE, analytical solution, LTE error, Biot number, porous media, two-equation model, coolant mass flow rate, fundamentals">
+    <meta name="paper-authors" content="J. H. Wang, H. N. Wang">
+    <meta name="paper-journal" content="Journal of Heat Transfer (ASME), Vol. 128, No. 10, Oct. 2006, pp. 1093-1098 (Technical Brief) · DOI: 10.1115/1.2345434">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="01_Fundamentals">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">A Discussion of Transpiration Cooling Problems through an Analytical Solution of Local Thermal Nonequilibrium Model</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">J. H. Wang, H. N. Wang</div>
+            <div class="journal">Journal of Heat Transfer (ASME), Vol. 128, No. 10, Oct. 2006, pp. 1093-1098 (Technical Brief) · DOI: 10.1115/1.2345434</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 기술 보고는 다공질 매질 내 유체 냉각제의 열전도를 무시하여 네 개 대신 세 개의 경계조건만 필요하도록 얻은, 다공질 평판을 통한 증산냉각의 <span class="term">1차원 정상 국소 열적 비평형(LTNE) 모델의 해석해</span>를 유도한다. Amiri-Vafai 2방정식 틀을 이용해 고체·유체 에너지 방정식을 무차원 냉각제 질량유량 $M$, 기공 내 Biot 수 $\mathrm{Bi}$, 고온면 Biot 수 $\mathrm{Bi}_h$, Stanton 수 $\mathrm{St}$로 지배되는 결합계로 무차원화하고, 제2종·제3종 고온면 경계조건 모두에 대해 폐형(Cramer 법칙 계수를 갖는 지수 모드)으로 푼다. 해석은 고온면 온도가 $M$, $\mathrm{Bi}$, (제3종 BC의 경우) $\mathrm{Bi}_h$로 제어되나, <span class="term">LTE 오차</span>(상대 고체-유체 온도차)는 $M$과 $\mathrm{Bi}$에만 의존하고 $\mathrm{Bi}_h$와 본질적으로 $\mathrm{St}$에 무관한 단일 통합 표현을 가짐을 보인다. 5% LTE 오차 임계는 더 단순한 LTE 모델이 허용될 시점에 대한 실용적 정량 기준 $M \geq 0.223\,\mathrm{Bi}^{0.507}$를 산출한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">local thermal non-equilibrium</span><span class="keyword-chip">LTNE</span><span class="keyword-chip">analytical solution</span><span class="keyword-chip">LTE error</span><span class="keyword-chip">Biot number</span><span class="keyword-chip">porous media</span><span class="keyword-chip">two-equation model</span><span class="keyword-chip">coolant mass flow rate</span><span class="keyword-chip">fundamentals</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">증산냉각은 고온면을 보호하기 위해 열유속 반대 방향으로 다공질 평판을 통해 유체 냉각제를 주입하며, 극초음속 비행체·가스터빈 블레이드·로켓 연소기에 널리 쓰인다. 많은 연구가 냉각제와 고체 매트릭스 간 국소 열평형(LTE)을 가정하며(두 BC가 필요한 단일 2차 에너지 방정식), 이는 고체 대 유체 유효 전도도 비가 극히 낮을 때 유효하다; 그러나 실제로는 고체 전도도가 기체 냉각제를 초과하고, 높은 Reynolds, 낮은 Biot, 높은 Darcy 수에서 두 온도가 달라 LTNE 2방정식 모델을 동기화한다. 두 불확실성 — LTE 유효 한계와 LTNE 네 번째 경계조건 — 이 부각되며, 본 논문은 네 번째 BC 문제를 회피하는 해석 LTNE 해를 유도하여 전자에 집중한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">이 보고는 Vafai 학파의 LTNE/다공질 매질 문헌에 뿌리를 둔다: Amiri와 Vafai(그리고 Vafai-Sozen)가 2방정식 LTNE 모델과 그 열전달/분산 폐합식을 제공하고, Lee-Vafai와 Alazmi-Vafai가 고체-유체 온도차와 경계조건 변형을 분석하며, Nield(와 Kuznetsov)가 LTNE 강제 대류 기준을 제공한다. 증산냉각 응용 맥락(Burch 등, Polezhaev-Seliverstov)이 세 개의 인정된 경계조건을 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Amiri와 Vafai를 따라, 정상 1-D 증산냉각 문제는 유체-고체 대류 교환 항을 갖는 결합 유체·고체 LTNE 에너지 방정식으로 기술된다. 고체 대 유체 유효 전도도 비가 크므로(고체 전도도 &gt;&gt; 기체 냉각제) 유체의 유효 전도 항을 무시하여 유체 방정식을 세 경계조건만 필요한 1차 균형으로 축약한다(Burch 등; Polezhaev-Seliverstov). $Y=y/H$와 무차원 온도로 무차원화하면 무차원 냉각제 질량유량 $M$, 기공 내 Biot 수 $\mathrm{Bi}$, 고온면 Biot 수 $\mathrm{Bi}_h$, Stanton 수 $\mathrm{St}$의 결합계가 되며, 제2종(규정 고온면 유속)과 제3종(대류 고온면) 경계조건 모두에 대해 작성된다. 폐형 해는 모드 지수 $k_{1,2}$와 3x3 경계조건 행렬에 대한 Cramer 법칙 계수를 갖는 지수 모드 합 $\theta=C_1 e^{k_1 Y}+C_2 e^{k_2 Y}+C_3$이다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">폐형 해로부터 고체·유체 온도는 제3종 BC에서 세 무차원 매개변수(Bi, M, Bi_h), 제2종 BC에서 둘(Bi, M)로 제어되며, Stanton 수의 영향은 0.1% 미만이다(따라서 St는 1로 고정). 큰 냉각제 질량유량과 큰 기공 내 Biot 수는 고온면 고체 온도를 급격히 낮춘다; 제3종 BC에서 큰 고온면 Biot 수는 이를 높인다. LTE 오차(고온면의 상대 고체-유체 온도차)는 고온면 Biot 수에 무관하며 두 BC 모두에 대해 M과 Bi의 단일 통합 표현으로 축약됨이 드러난다. 오차는 냉각제 질량유량에 따라 감소하고 기공 내 Biot 수가 감소함에 따라 증가한다. 5% 임계는 기준 M &gt;= 0.223*Bi^0.507을 준다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">핵심 실용 기여는 통합된 매개변수 경량 LTE 오차 표현과 그로부터 얻은 M 대 Bi 선택 곡선이며, 이는 증산냉각에서 더 단순한 LTE 모델이 LTNE 모델을 언제 대체할 수 있는지에 대한 오랜 불확실성을 함께 해소한다. 논의는 어떤 매개변수가 중요한지(냉각제 질량유량과 기공 내 Biot 수) 대 그렇지 않은지(고온면 Biot 수와 Stanton 수)를 강조하며, 세 BC로 문제를 해석적으로 다루기 위해 유체 열확산을 제거했기에 기준이 보수적임을 솔직히 밝힌다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공질 평판 내 유체 냉각제 열확산을 무시하여 증산냉각의 1차원 정상 LTNE 모델의 해석해를 얻는다. 이를 통해 냉각 효과와 LTE 오차를 제어하는 매개변수가 분석된다: 고온면 온도는 Stanton 수에 둔감하다; 냉각제 질량유량과 기공 내 Biot 수가(Stanton 수나 고온면 Biot 수가 아니라) LTE/LTNE 선택을 지배한다; 그리고 LTE 모델은 M &gt;= 0.223*Bi^0.507일 때 유효하다(오차 5% 미만).</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 24</span></summary>
+            <ol class="ref-list"><li>A. Amiri, K. Vafai, T.M. Kuzay, Effects of boundary conditions on non-Darcian heat transfer through porous media and experimental comparisons, Numer. Heat Transfer Part A 27, 651-664, 1995</li><li>K. Vafai, M. Sozen, Analysis of energy and momentum transport for fluid flow through a porous bed, ASME J. Heat Transfer 112, 690-699, 1990</li><li>D.Y. Lee, K. Vafai, Analytical characterization and conceptual assessment of solid and fluid temperature differentials in porous media, Int. J. Heat Mass Transfer 42, 423-435, 1999</li><li>B. Alazmi, K. Vafai, Constant wall heat flux boundary conditions in porous media under local thermal non-equilibrium conditions, Int. J. Heat Mass Transfer 45, 3071-3087, 2002</li><li>D.A. Nield, Effects of local thermal non-equilibrium in steady convective processes in a saturated porous medium: forced convection in a channel, J. Porous Media 1, 181-186, 1998</li><li>D.M. Burch, R.W. Allen, B.A. Peavy, Transient temperature distributions within porous slabs subjected to sudden transpiration heating, ASME J. Heat Transfer 98, 221-225, 1976</li><li>Y.V. Polezhaev, E.M. Seliverstov, A universal model of heat transfer in systems with penetration cooling, High Temp. 40, 856-864, 2002</li><li>B. Alazmi, K. Vafai, Analysis of variants within the porous media transport models, ASME J. Heat Transfer 122, 303-326, 2000</li><li>N. Wakao, S. Kaguei, T. Funazkri, Effect of fluid dispersion coefficients on particle-to-fluid heat transfer coefficients in packed beds, Chem. Eng. Sci. 34, 325-336, 1979</li><li>D.A. Nield, A.V. Kuznetsov, M. Xiong, Effect of local thermal non-equilibrium on thermally developing forced convection in a porous medium, Int. J. Heat Mass Transfer 45, 4949-4955, 2002</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "증산냉각은 효율적 열보호 방법으로 입증되어 극초음속 비행체·가스터빈 블레이드·로켓 연소기에 널리 쓰인다; 유체 냉각제가 고온면 보호를 위해 열유속 반대 방향으로 다공질 평판을 통해 주입된다.", "figure_refs": [1]}, {"type": "bullet", "text": "<span class=\"term\">국소 열평형(LTE)</span> 모델은 냉각제와 고체 매트릭스가 하나의 온도를 공유한다고 가정하여 두 경계조건만 필요한 단일 2차 에너지 방정식을 주며; 고체 대 유체 유효 전도도 비가 극히 낮을 때 유효하다."}, {"type": "bullet", "text": "실제로 고체 전도도는 보통 기체 냉각제를 초과하며, 연구들은 두 상 온도가 항상 같지는 않음을 — 특히 높은 Reynolds 수, 낮은 Biot 수, 높은 Darcy 수에서 — 보이므로, 두 2차 에너지 방정식(하나는 유체 냉각제, 하나는 고체 매트릭스)을 갖는 <span class=\"term\">국소 열적 비평형(LTNE)</span> 모델이 제안된다."}, {"type": "bullet", "text": "첫 번째 불확실 문제: LTE 모델의 한계 — LTE가 성립하려면 이 수들이 얼마나 커야 하는지 — 는 증산냉각 연구에서 여전히 불확실했다."}, {"type": "bullet", "text": "두 번째 불확실 문제: LTNE 모델이 더 합리적이나 두 2차 방정식을 풀려면 일반적으로 네 BC가 필요한데 세 식만 합리적인 것으로 널리 인정되며, 네 번째 BC에 대한 여러 경험식이 여전히 논쟁 중이다 — 따라서 네 번째 BC는 불확실하게 남는다."}, {"type": "bullet", "text": "본 연구는 첫 번째 문제에 집중하고, 다공질 매질 내 유체 냉각제 열확산을 무시하여 두 번째를 회피하므로, LTNE 모델을 세 BC만으로 해석적으로 풀어 상대 고체-유체 온도차와 정량 모델 선택 기준을 산출한다."}, {"type": "bullet", "text": "명시된 목적은 증산냉각 연구자에게 LTE 또는 LTNE 모델 선택을 위한 방법과 정량 기준, 그리고 냉각 효과 제어를 위한 참고를 제공하는 것이다."}]}, "related_works": {"content": [{"type": "bullet", "text": "지배 2방정식 LTNE 형태는 Amiri와 Vafai에서 취하며(문제는 'Amiri와 Vafai에 따라 LTNE 모델로 기술될 수 있음'), 고체-유체 열전달 계수와 비표면적은 Vafai-Sozen / Amiri-Vafai 충전층 폐합식을 따른다."}, {"type": "bullet", "text": "다공질 평판의 분산 전도도는 Wakao 등 / Alazmi-Vafai 경험 충전층 공식 $k_{dis}=0.5 k_f (\\rho_f \\nu d_p/\\mu_f)\\mathrm{Pr}$를 사용하나, 고체 전도도가 기체 냉각제를 크게 초과하므로 증산냉각에서는 이후 무시된다."}, {"type": "bullet", "text": "Lee와 Vafai의 고체-유체 온도차 해석과 Alazmi와 Vafai의 다공질 매질 수송 모델 변형이 LTE 오차를 상대 온도차로 정량화하는 것을 동기화한다."}, {"type": "bullet", "text": "세 인정된 경계조건은 Burch 등(다공질 슬래브의 과도 증산 가열)과 Polezhaev와 Seliverstov(보편 침투 냉각 열전달 모델)를 따른다; 미해결 네 번째 BC 쟁점이 이 문헌에 대비되어 구성된다."}, {"type": "bullet", "text": "Nield(와 Nield-Kuznetsov, Nield-Kuznetsov-Xiong)는 채널과 발달 유동에서 LTNE 강제 대류 기준을 제공하며, 본 LTE/LTNE 선택 기준이 이에 비교되어 선행 정성 공식과 일치함이 확인된다."}, {"type": "bullet", "text": "기초 증산냉각 참고문헌(Hartnett-Eckert 물질전달 냉각; Eckert-Cho 증산-막 전이; Landis-Bowman 및 Glass 등 로켓 노즐/대류-증산 수치)이 공학적 응용을 확립한다."}]}, "method": {"content": [{"type": "bullet", "text": "차원 <span class=\"term\">LTNE 에너지 방정식</span>은 유체 방정식(이류 + 유효 전도 + 분산, 고체-유체 대류 교환과 균형)과 고체 방정식(전도가 동일 교환과 균형)이며, $k_{se}=(1-\\varepsilon)k_s$는 유효 고체 전도도, $k_{fe}=\\varepsilon k_f + k_{dis}$는 분산을 포함한 유효 유체 전도도다.", "figure_refs": [1]}, {"type": "formula", "label": "식 (1)-(2) — 차원 LTNE 유체 및 고체 에너지 방정식", "latex": "(\\rho c)_f v_f \\frac{dT_f}{dy} = \\frac{d}{dy}\\!\\left(k_{fe}\\frac{dT_f}{dy}\\right) + h_{sf}a_{sf}(T_s - T_f), \\qquad \\frac{d}{dy}\\!\\left(k_{se}\\frac{dT_s}{dy}\\right) = h_{sf}a_{sf}(T_s - T_f)", "description": "2온도(LTNE) 모델: 유체 냉각제 에너지 방정식(이류 + 유효 전도 = 상간 대류 교환)과 고체 매트릭스 에너지 방정식(전도 = 교환); $h_{sf}a_{sf}$는 체적 상간 열전달 계수다."}, {"type": "bullet", "text": "증산냉각에서 다공질 매트릭스 전도도가 기체 냉각제보다 훨씬 크고 다공도/특성 길이가 작으므로 유효 고체-냉각제 전도도 비가 1보다 훨씬 크다; 따라서 식 1의 첫 번째(유체 유효 전도) 항이 무시되어 유체 방정식을 1차 이류-교환 균형으로 축약한다."}, {"type": "formula", "label": "식 (3) — 축약 유체 에너지 방정식 (전도 무시)", "latex": "h_{sf}a_{sf}(T_s - T_f) = m\\,c_{pf}\\frac{dT_f}{dy}, \\qquad m=(\\rho v)_f=\\text{const}", "description": "유체 유효 전도 항이 제거되면 유체 에너지 균형이 1차가 되어 세 경계조건만 필요해지고 완전 LTNE 모델의 미해결 네 번째 BC 문제가 회피된다; $m$은 일정 냉각제 질량유속이다."}, {"type": "bullet", "text": "세 경계조건이 사용된다(Burch 등; Polezhaev-Seliverstov): 저온면에서 대류 유입 조건과 유체-고체 온도 일치, 고온면에서 규정 열유속(제2종 BC) 또는 자유류 온도와의 대류 조건(제3종 BC)."}, {"type": "bullet", "text": "무차원화는 $Y=y/H$와 무차원 온도 $\\theta$(제2종 BC는 $qH/k_{se}$, 제3종 BC는 $T_\\infty-T_c$ 기준)를 사용하여 고체·유체 무차원 온도의 결합 무차원계를 산출한다."}, {"type": "formula", "label": "식 (7)-(8) — 무차원 LTNE 계", "latex": "\\frac{d^2\\theta_s}{dY^2} - \\mathrm{Bi}(\\theta_s - \\theta_f) = 0, \\qquad \\mathrm{Bi}(\\theta_s - \\theta_f) = M\\frac{d\\theta_f}{dY}", "description": "무차원 고체·유체 에너지 방정식; $M=mc_{pf}H/k_{se}$는 무차원 냉각제 질량유량, $\\mathrm{Bi}=h_{sf}a_{sf}H^2/k_{se}$는 기공 내 Biot 수다."}, {"type": "formula", "label": "식 (9)-(11) — 무차원 경계조건", "latex": "Y=0:\\;\\; \\frac{d\\theta_s}{dY}=M\\,\\mathrm{St}\\,\\theta_s,\\quad \\theta_f=\\mathrm{St}\\,\\theta_s; \\qquad Y=1:\\;\\; \\frac{d\\theta_s}{dY}=1\\;\\text{(2nd BC)}\\;\\text{ or }\\; \\mathrm{Bi}_h(1-\\theta_s)=\\frac{d\\theta_s}{dY}\\;\\text{(3rd BC)}", "description": "저온면 대류·일치 조건(Stanton 수 $\\mathrm{St}=h/mc_{pf}$ 포함)과 두 고온면 옵션: 규정 유속(제2종 BC) 또는 고온면 Biot 수 $\\mathrm{Bi}_h=hH/k_{se}$를 갖는 대류(제3종 BC)."}, {"type": "bullet", "text": "해석해는 고체·유체 온도 모두에 대해 두 지수 모드 더하기 상수 형태이며, 고체 진폭은 모드 인자 $K_{1,2}=1+(M/\\mathrm{Bi})k_{1,2}$로 스케일되고 모드 지수 $k_{1,2}$는 특성 2차식의 근이다."}, {"type": "formula", "label": "식 (12) — 해석해 및 모드 지수", "latex": "\\theta_f = C_1 e^{k_1 Y} + C_2 e^{k_2 Y} + C_3, \\quad \\theta_s = K_1 C_1 e^{k_1 Y} + K_2 C_2 e^{k_2 Y} + C_3, \\quad k_{1,2} = \\frac{-\\dfrac{\\mathrm{Bi}}{M} \\pm \\sqrt{\\left(\\dfrac{\\mathrm{Bi}}{M}\\right)^2 + 4\\mathrm{Bi}}}{2}, \\quad K_{1,2}=1+\\frac{M}{\\mathrm{Bi}}k_{1,2}", "description": "폐형 지수 모드 해; 계수 $C_i=\\Delta_i/\\Delta$는 3x3 경계조건 계수 행렬에 대한 Cramer 법칙으로 평가된다(제2종과 제3종 BC에 서로 다른 행렬, 부록에 상세)."}, {"type": "bullet", "text": "계수 $C_i=\\Delta_i/\\Delta$는 3x3 경계조건 행렬에서 Cramer 법칙으로 계산되며, 제2종 BC와 제3종 BC에 별도 행렬을 갖는다(전체 행렬식 전개는 부록 B에 제시)."}]}, "results": {"content": [{"type": "bullet", "text": "Stanton 수가 고체 표면 온도에 미치는 영향은 전 범위에서 항상 0.1% 미만이므로 St는 1로 고정된다; 이후 고체·유체 온도는 제3종 BC에서 세 매개변수(Bi, M, Bi_h), 제2종 BC에서 둘(Bi, M)로 지배된다."}, {"type": "bullet", "text": "고온면 고체 온도: 큰 냉각제 질량유량 M에서 온도는 기공 내 Biot 수 Bi가 증가함에 따라 급격히 떨어진다(큰 Bi는 더 강한 냉각제-고체 열교환을 의미); 작은 M에서는 흡수 총열이 작은 냉각제 질량유량으로 제한되므로 온도가 Bi에 따라 거의 변하지 않는다.", "figure_refs": [2]}, {"type": "bullet", "text": "제3종 BC에서 큰 고온면 Biot 수 Bi_h(고온면에서 강한 대류 교환)는 고온면 고체 온도를 크게 증가시킨다; 그 외에는 제2종과 제3종 BC 온도 추세가 유사하다.", "figure_refs": [3]}, {"type": "bullet", "text": "<span class=\"term\">LTE 오차</span>는 LTE 가정이 두 온도를 같다고 보므로 $Y=1$에서의 상대 고온면 고체-유체 온도차 $\\delta=(\\theta_s-\\theta_f)/\\theta_s$로 정의된다."}, {"type": "formula", "label": "식 (13) — 고온면에서의 LTE 오차", "latex": "\\delta\\big|_{Y=1} = \\frac{(K_1-1)C_1 e^{k_1} + (K_2-1)C_2 e^{k_2}}{K_1 C_1 e^{k_1} + K_2 C_2 e^{k_2} + C_3}", "description": "고온면의 상대 고체-유체 온도차; 고온면 Biot 수 $\\mathrm{Bi}_h$가 소거되므로(부록 B에 제시) LTE 오차는 $\\mathrm{Bi}_h$와 (0.1% 이내로) $\\mathrm{St}$에 무관하다."}, {"type": "bullet", "text": "두 BC의 계수 행렬은 다르지만 최종 LTE 오차 표현은 둘 다 동일하여, 냉각제 질량유량 M과 기공 내 Biot 수 Bi에만 의존하는 단일 통합 표현을 준다.", "figure_refs": [4]}, {"type": "bullet", "text": "LTE 오차는 냉각제 질량유량 증가에 따라 감소하고 기공 내 Biot 수 감소에 따라 증가한다(선행 연구와 일치): 작은 M은 느린 유체 속도와 더 많은 냉각제-고체 열교환 기회를 의미해 냉각제를 고체 온도 쪽으로 몰며(LTE 더 유효), 작은 Bi는 상간 교환을 줄이고 온도차를 키운다(LTE 무효).", "figure_refs": [4]}, {"type": "formula", "label": "식 (14)-(15) — 정량 LTE/LTNE 선택 기준", "latex": "M \\geq 0.223\\,\\mathrm{Bi}^{0.507}", "description": "5% LTE 오차 등고선에 피팅된 곡선: 이 곡선 아래(Bi에 비해 M이 작음)에서 LTE 오차가 5%를 초과해 LTNE 모델이 필요하고; 그 위/선상에서 LTE 모델이 허용된다. 이 기준은 Nield 등의 선행 정성 공식과 일치한다."}, {"type": "bullet", "text": "기준은 무시된 유체 열확산이 포함되면 실제 유체 온도를 고체 온도에 더 가깝게 올려 참 LTE 오차를 줄이므로 보수적이라고 명시된다.", "figure_refs": [5]}]}, "discussion": {"content": [{"type": "bullet", "text": "고온면 고체 온도는 어느 BC에서도 Stanton 수에 민감하지 않다; 핵심 냉각 제어 매개변수는 냉각제 질량유량, 기공 내 Biot 수, 그리고 (제3종 BC에서) 고온면 Biot 수다."}, {"type": "bullet", "text": "Stanton 수와 고온면 Biot 수는 LTE와 LTNE 선택에 '무의미'하다 — LTE 오차가 오직 M과 Bi에만 의존하므로 냉각제 질량유량과 기공 내 Biot 수만이 모델 선택을 결정한다."}, {"type": "bullet", "text": "물리적 해석: 냉각제 질량유량이 작으면 유체가 느리게 움직여 매트릭스와 열교환 기회가 더 많아 고체 온도에 접근한다(LTE 합리적); 기공 내 Biot 수가 작으면 상간 교환이 약해져 두 온도가 발산한다(LTE 무효)."}, {"type": "bullet", "text": "5% LTE 오차 등고선은 LTE 모델 수용을 위한 명시적 기준 $M\\geq 0.223\\,\\mathrm{Bi}^{0.507}$를 주며, 이는 선행 정성 공식과 정량적으로 일치하고 제2종·제3종 고온면 BC 모두에 적용된다."}, {"type": "bullet", "text": "기준은 보수적이다: 해석해를 얻기 위해 다공질 평판 내 유체 냉각제 열확산을 무시했으므로 예측 유체 온도가 실제보다 (고체에서 더 멀리) 낮아, 참 LTE 오차가 더 작고 LTE 모델이 기준이 함의하는 것보다 다소 넓은 영역에서 유효하다."}, {"type": "bullet", "text": "방법론적으로 유체 유효 전도 항을 무시하면 LTNE 모델이 해석적으로 풀릴 뿐 아니라 필요 경계조건이 넷에서 셋으로 줄어 미해결 네 번째 BC 문제를 깔끔히 우회한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "다공질 평판의 고온면 온도는 제2종이든 제3종 BC이든 Stanton 수에 민감하지 않다; 냉각 효과를 제어하는 핵심 매개변수는 냉각제 질량유량, 기공 내 Biot 수, 그리고 (제3종 BC에서) 고온면 Biot 수다."}, {"type": "bullet", "text": "Stanton 수와 고온면 Biot 수는 LTE와 LTNE 모델 선택에 무의미하다; 냉각제 질량유량과 기공 내 Biot 수가 모델 선택에 영향을 미치는 중요한 매개변수다."}, {"type": "bullet", "text": "LTE 오차가 5% 미만이면 LTE 모델이 유효하며, 정량 기준 $M\\geq 0.223\\,\\mathrm{Bi}^{0.507}$를 LTE와 LTNE 사이 결정에 사용할 수 있다."}, {"type": "bullet", "text": "이 기준은 다공질 평판 내 유체 냉각제 열확산을 무시하므로 보수적이다; 이를 포함하면 실제 유체 온도가 고체 온도에 더 가까워지고 참 LTE 오차가 더 작아진다."}, {"type": "bullet", "text": "전반적으로 해석 LTNE 해는 증산냉각 연구자에게 LTE 또는 LTNE 모델 선택을 위한 방법과 정량 기준을 제공하면서, 완전 LTNE 모델의 미해결 네 번째 경계조건 문제를 의도적으로 회피한다."}, {"type": "bullet", "text": "이 LTNE 증산냉각 처리는 — Amiri-Vafai 2방정식 모델에 기반하고 이후 Wang-Shi 경계조건 연구로 이어지며 — 수치 LTNE-TPMM 연구(Shi-Wang, Su, Jin)가 이후 2상·상변화·극초음속 결합 설정으로 확장한 LTNE 계보의 핵심 해석적 노드다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "해석해는 조건부다: 다공질 평판 내 유체 열확산을 무시할 수 있을 때만 정확하다.", "source_quote": "the analytical solution is conditional, only when the fluid thermal diffusion in the porous plate can be neglected, is it exact.", "source_section": "results"}, {"claim": "유도된 LTE 기준은 보수적인데, 냉각제 열확산을 무시하면 예측 유체 온도가 실제보다 (고체 온도에서 더 멀리) 낮아지기 때문이다.", "source_quote": "This criterion expression is conservative, because the thermal diffusion of the fluid coolant in the porous plate is neglected. If this term is considered, the actual fluid temperature should be higher than the value obtained by the analytical solution, and closer to the solid temperature.", "source_section": "discussion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["많은 다공질 증산냉각 연구가 유체 냉각제와 고체 매트릭스가 하나의 온도를 공유한다고(국소 열평형, LTE) 가정하나, 실제로는 두 상이 (특히 높은 Reynolds, 낮은 Biot, 높은 Darcy 수에서) 다르므로 LTNE 2방정식 모델이 더 적절하다.", "LTE 모델의 유효 한계 — 지배 수들이 얼마나 커야 하는지 — 는 증산냉각 문제에서 불확실하게 남아 있었다('첫 번째 불확실 문제').", "LTNE 모델의 두 2차 에너지 방정식은 통상 네 경계조건을 요구하나 세 개만 합리적인 것으로 널리 인정된다; 네 번째 BC는 여전히 미해결 문제다('두 번째 불확실 문제')."], "addressed_by_this_work": ["정상 1-D LTNE 모델의 해석해가 제2종·제3종 고온면 경계조건 모두에 대해 제시되어 상대 고체-유체 온도차(LTE 오차)를 정량화한다.", "(고체 대 유체 유효 전도도 비가 크므로 정당화되는) 유체 냉각제 열확산을 무시함으로써 LTNE 모델이 축약되어 세 경계조건만 필요해지고, 미해결의 네 번째 BC 문제를 우회한다.", "냉각제 질량유량 M과 기공 내 Biot 수 Bi에만 의존하는 통합 LTE 오차 표현이 얻어지며, 정량 LTE/LTNE 선택 기준 M &gt;= 0.223*Bi^0.507(5% 오차 임계)이 권장된다."], "remaining_unresolved": ["완전 LTNE 모델의 네 번째 경계조건은 불확실한 미해결 문제로 남는다; 여기서는 해결이 아니라 회피된다.", "기준은 무시된 유체 열확산이 복원되지 않아 보수적이다; 그 항을 포함한 정확한 처리는 미해결로 남는다.", "해석은 1차원·정상이다; 다차원 또는 과도 증산냉각의 LTE/LTNE 선택은 다루어지지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
