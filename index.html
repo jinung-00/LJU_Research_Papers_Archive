@@ -308,13 +308,12 @@
         }
         .sort-dir {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 28px; height: 28px; padding: 0;
-            border: 1px solid var(--border); border-radius: 6px;
-            background: white; color: var(--text-soft); cursor: pointer;
-            transition: background 0.15s, color 0.15s, border-color 0.15s;
+            padding: 0; border: none; background: none;
+            color: var(--text-soft); cursor: pointer;
+            transition: color 0.15s;
         }
-        .sort-dir:hover { color: var(--primary); border-color: var(--primary); }
-        .sort-dir svg { width: 16px; height: 16px; }
+        .sort-dir:hover { color: var(--primary); }
+        .sort-dir svg { width: 18px; height: 18px; }
         .sort-dir.asc svg { transform: scaleY(-1); }   /* 오름차순: 아이콘 뒤집기 */
         .category-header {
             display: flex;
@@ -338,7 +337,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:52</div>
+            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:53</div>
         </div>
     </header>
 
