@@ -33,12 +33,11 @@
         }
         .slide {
             width: min(1280px, 98vw);
-            height: 96vh;
+            min-height: 96vh;
             background: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: grid;
-            grid-template-rows: auto auto 1fr;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
             flex-shrink: 0;
         }
         .header {
@@ -80,6 +79,8 @@
             gap: 14px;
             padding: 14px 18px;
             overflow: hidden;
+            flex: 1 1 auto;      /* fill slide height when collapsed */
+            min-height: 62vh;    /* floor so cards keep size when references expands */
         }
         .section {
             background: white;
@@ -307,14 +308,12 @@
             padding-bottom: 4px;
         }
         details.references {
-            width: min(1244px, calc(98vw - 36px));
-            margin: 14px auto 0;
+            margin: 4px 18px 18px;
             box-sizing: border-box;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 10px 16px;
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: #fafbfc;
         }
         details.references > summary {
             cursor: pointer;
@@ -382,12 +381,12 @@
                 <div class="section-summary">이중층 다공판은 기존 단일층 판을 대체해 상변화 transpiration cooling을 개선하며, 검증된 수정 TPMM-LTNE로 모델링된다. 결론은 주입 압력을 흔히 간과되어 온 핵심 평가 지표로 재확인하고, 지배적 압력 강하를 고점성 증기 영역에 귀속시키며, 균일 열유속에서는 압력 저감을 위해 더 큰 상층 공극률을, 온도 저감을 위해 eA<eB 조합(case 2)을 권장한다. 비균일 열유속에서는 냉각재 분배를 열유속 분포에 맞추는 불균일 두께 설계가 최대 주입 압력을 20.8% 줄이고 균일도를 33.3% 향상시키며 표면 온도도 낮춘다.</div>
             </div>
         </div>
-    </div>
 
-    <details class="references">
-        <summary>References — 참고문헌 <span class="ref-count">key 10 / total 58</span></summary>
-        <ol class="ref-list"><li>T. Hermann, M. McGilvray, et al., Performance of transpiration-cooled heat shields for reentry vehicles, AIAA Journal, 2019</li><li>T. Langener, J. von Wolfersdorf, et al., Experimental investigations on transpiration cooling for scramjet applications using different coolants, AIAA Journal, 2011</li><li>X. Xiao, G. Zhao, et al., Numerical investigation of transpiration cooling for porous nose cone with liquid coolant, Int. J. Heat and Mass Transfer, 2018</li><li>Y. Chen, D. Shen, et al., Numerical investigation of transient phase-change transpiration cooling based on variable properties of coolant, Applied Thermal Engineering, 2021</li><li>A. van Foreest, M. Sippel, et al., Transpiration cooling using liquid water, J. Thermophysics and Heat Transfer, 2009</li><li>G. Huang, Y. Zhu, et al., Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat and Mass Transfer, 2017</li><li>J. Shi, J. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transport in Porous Media, 2011</li><li>H. Hu, P. Jiang, et al., A modified energy equation model for flow boiling in porous media and its application to transpiration cooling at low pressures with transient effect, Int. J. Heat and Mass Transfer, 2020</li><li>C.Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media-I. Formulation, Int. J. Heat and Mass Transfer, 1993</li><li>O.R. Alomar, M. Mendes, et al., Simulation of complete liquid-vapour phase change process inside porous evaporator using local thermal non-equilibrium model, Int. J. Thermal Sciences, 2015</li></ol>
-    </details>
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 58</span></summary>
+            <ol class="ref-list"><li>T. Hermann, M. McGilvray, et al., Performance of transpiration-cooled heat shields for reentry vehicles, AIAA Journal, 2019</li><li>T. Langener, J. von Wolfersdorf, et al., Experimental investigations on transpiration cooling for scramjet applications using different coolants, AIAA Journal, 2011</li><li>X. Xiao, G. Zhao, et al., Numerical investigation of transpiration cooling for porous nose cone with liquid coolant, Int. J. Heat and Mass Transfer, 2018</li><li>Y. Chen, D. Shen, et al., Numerical investigation of transient phase-change transpiration cooling based on variable properties of coolant, Applied Thermal Engineering, 2021</li><li>A. van Foreest, M. Sippel, et al., Transpiration cooling using liquid water, J. Thermophysics and Heat Transfer, 2009</li><li>G. Huang, Y. Zhu, et al., Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat and Mass Transfer, 2017</li><li>J. Shi, J. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transport in Porous Media, 2011</li><li>H. Hu, P. Jiang, et al., A modified energy equation model for flow boiling in porous media and its application to transpiration cooling at low pressures with transient effect, Int. J. Heat and Mass Transfer, 2020</li><li>C.Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media-I. Formulation, Int. J. Heat and Mass Transfer, 1993</li><li>O.R. Alomar, M. Mendes, et al., Simulation of complete liquid-vapour phase change process inside porous evaporator using local thermal non-equilibrium model, Int. J. Thermal Sciences, 2015</li></ol>
+        </details>
+    </div>
 
     <!-- Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
