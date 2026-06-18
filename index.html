@@ -306,6 +306,16 @@
             padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px;
             background: white; cursor: pointer;
         }
+        .sort-dir {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 28px; height: 28px; padding: 0;
+            border: 1px solid var(--border); border-radius: 6px;
+            background: white; color: var(--text-soft); cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+        .sort-dir:hover { color: var(--primary); border-color: var(--primary); }
+        .sort-dir svg { width: 16px; height: 16px; }
+        .sort-dir.asc svg { transform: scaleY(-1); }   /* 오름차순: 아이콘 뒤집기 */
         .category-header {
             display: flex;
             align-items: center;
@@ -328,7 +338,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:41</div>
+            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:49</div>
         </div>
     </header>
 
@@ -416,6 +426,7 @@
             search: '',
             readFilter: 'all',           // all | read | unread
             sortBy: 'tier',              // within-category sort: tier | year
+            sortDir: 'desc',             // sort direction: desc (default) | asc
             tierFilter: new Set(["0","1","2","3","null"]),  // active tier keys (default: all on)
             selectedTopic: TOPIC_KEYS[0] || '',   // single-select (radio)
             categoryFilter: new Set(),            // active category keys for the selected topic
@@ -499,7 +510,28 @@
             });
             sel.addEventListener('change', () => { state.sortBy = sel.value; render(); });
             wrap.appendChild(lab); wrap.appendChild(sel);
+            wrap.appendChild(buildSortDirButton());
             return wrap;
+        }
+
+        // 오름/내림 토글. 기본 desc(현재 순서), 클릭 시 asc. 아이콘은 "정렬 내림차순" 스타일,
+        // asc일 때 세로로 뒤집어 방향 표시.
+        function buildSortDirButton() {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'sort-dir' + (state.sortDir === 'asc' ? ' asc' : '');
+            btn.title = state.sortDir === 'asc' ? '오름차순' : '내림차순';
+            btn.setAttribute('aria-label', btn.title);
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 3v15"/><path d="M3 15l3 3 3-3"/>
+                <line x1="12" y1="5" x2="21" y2="5"/><line x1="12" y1="10" x2="19" y2="10"/>
+                <line x1="12" y1="15" x2="16" y2="15"/><line x1="12" y1="20" x2="14" y2="20"/></svg>`;
+            btn.addEventListener('click', () => {
+                state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+                render();
+            });
+            return btn;
         }
 
         // Read-toggle tabs + topic-relative counts, mounted on the right of the topic header.
@@ -552,8 +584,10 @@
                 return;
             }
 
-            // within-category comparator chosen by the sort dropdown
-            const cmp = state.sortBy === 'year' ? byYearDesc : byTierDesc;
+            // within-category comparator chosen by the sort dropdown + direction toggle
+            const base = state.sortBy === 'year' ? byYearDesc : byTierDesc;
+            const dirMul = state.sortDir === 'asc' ? -1 : 1;
+            const cmp = (a, b) => dirMul * base(a, b);
 
             if (state.selectedTopic === 'Basic_Theory') {
                 // flat topic — no sub-categories, just sorted cards
