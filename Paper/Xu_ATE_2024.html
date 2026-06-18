@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Research on the heat transfer characteristics of through-hole transpiration cooling based on ceramic matrix composites</title>
+    <meta name="keywords" content="transpiration cooling, through-hole, ceramic matrix composites, scramjet engine, thermal protection, single-phase gas coolant, blowing ratio, hole arrangement, response surface method, anisotropic thermal conductivity">
+    <meta name="paper-authors" content="Jia-Chen Xu, Shen Du, Yi-Peng Zhou, Zhi-Yong Li">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 257, 2024, Art. 124360 · DOI: 10.1016/j.applthermaleng.2024.124360">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Research on the heat transfer characteristics of through-hole transpiration cooling based on ceramic matrix composites</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Jia-Chen Xu, Shen Du, Yi-Peng Zhou, Zhi-Yong Li</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 257, 2024, Art. 124360 · DOI: 10.1016/j.applthermaleng.2024.124360</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 수치 연구는 스크램제트 연소실 환경(Ma=8 유입, 주류 2930 K)을 위한 <span class="term">세라믹 기지 복합재(CMC)</span>의 <span class="term">관통홀 증산냉각(through-hole transpiration cooling)</span>을 해석하며, ANSYS Fluent에서 국소 열 비평형(LTNE) 모델과 CO2 단상 기체 냉각제(상변화 없음)를 사용한다. 송풍비(blowing ratio), 구멍 배치, 구멍 크기, 이방성 재료 열전도도의 영향을 조사하고, Keras 신경망으로 유동 영역을 분류하며 반응표면법(RSM)으로 선단부 구멍 크기를 최적화한다. 송풍비 증가는 냉각을 강화하지만 관통홀 내부 압력 구배를 높여 비균일 냉각제 분포와 더 높은 온도 구배를 유발한다. <span class="term">매화형(엇갈림) 구멍 배치(plum / staggered hole arrangement)</span>는 평행 배치보다 우수하다(냉각 효율 +8%, 균일성 +50%, 비균일도 20% 미만 대 40% 초과). 선단부 구멍 확대는 내부 압력 구배를 줄이며, RSM 최적화(직경 1.995/1.224/0.510 mm) 후 온도 구배와 평균 온도가 각각 8.824%, 4.290% 개선된다. 열류(z) 방향 열전도도 강화는 다른 방향보다 냉각 효율을 훨씬 더 증가시키지만, 매트릭스 구조 최적화가 주된 개선 경로로 남는다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">through-hole</span><span class="keyword-chip">ceramic matrix composites</span><span class="keyword-chip">scramjet engine</span><span class="keyword-chip">thermal protection</span><span class="keyword-chip">single-phase gas coolant</span><span class="keyword-chip">blowing ratio</span><span class="keyword-chip">hole arrangement</span><span class="keyword-chip">response surface method</span><span class="keyword-chip">anisotropic thermal conductivity</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 스크램제트 엔진이 비행 속도에 따라 급격히 증가하는 열부하에 직면하며, 증산냉각이 가장 효율적인 능동 냉각으로, CMC가 주요 경량·내고온 재료로 여겨짐을 제시한다. CMC는 기공률/투과율이 낮아(공급 압력이 높아) 낮은 압력 강하를 갖는 관통홀 증산냉각이 제안된다. 복잡한 비뉴턴/충격파 시나리오로 확장된 LTNE 및 VOF 수치 방법, 금속과 블레이드의 구멍 기하 및 비균일 기공률 연구, 낮은 내온성으로 제한되는 삼중 주기 최소 곡면(TPMS) 이방성 설계를 검토한다. 스크램제트 유동 조건 하 CMC 관통홀의 특정 기하 구성의 영향이 미탐구된 공백을 확인하며, 단순 원형 구멍 설계와 직경 조정에 대한 수치+신경망 연구를 동기 부여한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론에서 검토된 관련 연구는 수치 방법 개발(LTNE, VOF 및 복잡한 비뉴턴/충격파 유동으로의 확장), 냉각제 분포와 비균일 기공률을 다루는 증산냉각 연구, 금속 재료 및 터빈 블레이드 관통홀 구조 연구, 적층 제조 TPMS 이방성 설계에 걸친다. 반복되는 공백은 스크램제트 유동 조건 하 CMC 관통홀의 특정 기하 구성이 충분히 탐구되지 않은 점이다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">냉각제 축적 공동, 다공질(CMC, 기공률 0.048) 영역, 극초음속 주류 영역으로 구성된 물리 모델을 ANSYS Fluent에서 분할 결합으로 풀이하며, 증산 영역에는 SST k-omega 모델을, 그 외 영역에는 표준 k-epsilon을 사용하고, 질량/운동량/에너지/화학종 보존과 유체·고체 LTNE 에너지 방정식 쌍을 푼다. CO2 단상 순수 기체 냉각제는 Sutherland 점성과 NIST 적합 CO2 비열·전도도로 이상기체 법칙을 따르며, 이방성 CMC 전도도는 1073 K까지 측정된다. Keras 신경망(3 특징, 64 뉴런 은닉층 2개, 출력 2개)이 다공질 골격/관통홀 유량비와 속도 표준편차로 계산 모델을 선택한다(비율 50 초과 시 매트릭스를 고체로 취급). 경계조건은 Ma=8, 2930 K, 0.3 kg/s 주류와 253 K 냉각제 입구, 0.23 MPa 출구이며, 4격자 독립성 연구로 612만 셀(y+ ~ 1)을 선택한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">송풍비 증가는 결합면 냉각을 개선하지만(더 많은 냉각제, 더 높은 내부 대류 계수와 근벽 피복) 효율 증가율이 감소하며, 선단부 구멍의 강한 보우 충격(bow shock)이 냉각제 비균일성을 악화시켜 온도 구배를 높인다. 매화형(엇갈림) 구멍 배치는 평행 배치보다 낮고 더 균일한 벽 온도를 준다 — 냉각 효율 +8%, 균일성 +50%, 비균일도 20% 미만 대 40% 초과 — 이는 둘째 줄 구멍이 첫째 줄 구멍 사이 리브의 피복을 개선하고 냉각제 부착을 유지하는 더 강한 역회전 와류쌍(CRVP)을 형성하기 때문이다. 세 선단부 직경에 대한 2차 RSM(ANOVA R2 0.98)은 구멍-1 크기가 온도 구배와 평균 온도 모두를 지배함을 보이며, 최적값(직경 1.995/1.224/0.510 mm)은 온도 구배를 141.566 K에서 130.087 K(8.824%)로, 평균 온도를 1807.472 K에서 1731.464 K(4.290%)로 줄이고, 냉각제 유량 44% 증가와 속도 35% 감소로 보우 충격을 약화시킨다. 열류(z) 방향 열전도도 강화는 x/y(0.8-1.3%에 불과)보다 훨씬 효과적이다(Nusselt ~130.7).</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논의는 결합된 유동-열 메커니즘을 해석한다. 송풍비는 내부 대류와 근벽 피복을 통해 냉각을 높이지만, 선단부 보우 충격과 내부 압력 구배를 강화하여 냉각제 비균일성을 악화시키고 온도 구배를 높이므로, 최대가 아닌 최적의 송풍비가 요구된다. 매화형 배치의 우수성은 줄어든 유효 구멍 간격, 경계층 적층, 냉각제 부착을 유지하는 더 강한 CRVP를 통해 설명되고, 선단부 구멍 확대 이점은 낮은 출구 속도와 약한 보우 충격을 통해 설명된다. 구조적(기하적) 매트릭스 최적화가 방향성 열전도도 강화보다 지배적임을 결론짓는다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Ma=8 스크램제트 연소실에서 CMC 관통홀 증산냉각에 대해, 송풍비는 핵심 효율 파라미터로 — 증가는 냉각을 강화하지만 근벽 교란과 유동 비균일성을 심화시킨다. 매화형(엇갈림) 구멍 배치는 인접 구멍 사이 냉각제 피복과 단열을 개선하여 평행 배치 대비 효율을 크게 높인다. 선단부 구멍 크기의 RSM 최적화는 온도 구배를 8.824%, 평균 온도를 4.290% 개선한다(CFD 오차 5% 이내). 열류(z) 방향 열전도도 강화는 열전달에 가장 두드러진 영향을 주는 반면 다른 방향의 강화는 비교적 작은 효과를 갖는다. 본 연구는 스크램제트 열보호 설계를 안내하며 주로 저냉각제 유량 조건에서 개선을 보인다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 32</span></summary>
+            <ol class="ref-list"><li>P. Jiang, Z. Liao, Z. Huang et al., Influence of shock waves on supersonic transpiration cooling, Int. J. Heat Mass Transf., 2019</li><li>X. Liu, Y. Bian, W. Zhou et al., Investigation on efficient utilization of heat sink in transpiration cooling, Appl. Therm. Eng., 2024 (companion phase-change CMC plate work)</li><li>X. Li, Z. Liao, H. Li et al., Phase-change transpiration cooling in heterogeneous composite porous plates, Int. J. Heat Mass Transf., 2024</li><li>J.X. Shi, J.H. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transp. Porous Media, 2011 (LTNE reference)</li><li>H. Ma, H. Sun, H. Fu et al., Numerical investigation on transpiration cooling performance of turbine blades with non-uniform porosity, Appl. Therm. Eng., 2023</li><li>W. Wang, G. Tao, D. Ke et al., Transpiration cooling of high pressure turbine vane with optimized porosity distribution, Appl. Therm. Eng., 2023</li><li>Z. Zhou, Y. Lv, F. He et al., Pore-scale investigation of transpiration cooling based on triply periodic minimal surface, Int. J. Therm. Sci., 2024</li><li>Z. Cheng, R. Xu, P. Jiang, Transpiration cooling with phase change by functionally graded porous media, Int. J. Heat Mass Transf., 2023</li><li>S. Patankar, Numerical Heat Transfer and Fluid Flow, CRC Press, 2018 (governing-equation basis)</li><li>D.A. Nield, A. Bejan, Convection in Porous Media, Springer, 2006 (LTNE/porous-media theory)</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "스크램제트 엔진은 고초음속 비행으로 주목받지만, 비행 속도 증가가 엔진 부품의 열부하를 급격히 높여 전통적 냉각에 도전이 된다. 재생 냉각 및 막냉각과 비교하여 증산냉각이 가장 효율적인 능동 냉각 방법으로 여겨지며, 고유 메커니즘과 효율적 성능으로 핵심 부품을 보호하기 위해 CMC 기반 증산냉각이 제안된다.", "figure_refs": [1]}, {"type": "bullet", "text": "CMC는 경량·내고온성으로 열관리를 돕고 냉각제 수요를 잠재적으로 줄이지만, 기공률과 투과율이 낮아 액체 축적 공동의 공급 압력이 높다. 따라서 고유 메커니즘과 낮은 압력 강하를 갖는 관통홀 증산냉각이 고열류 환경에서 엔진 부품을 보호하기 위해 제안된다."}, {"type": "bullet", "text": "이들 재료에 대한 수치 방법은 LTNE 모델과 유체체적(VOF) 모델을 포함하며, 최근 연구는 이를 복잡한 시나리오로 확장했다 — Anwar et al.(2등급 유체에 대한 유도 자기장), Abbas et al.(지수적으로 늘어나는 표면 위 마이크로폴라 나노유체), 일반화된 푸리에/픽 법칙 비뉴턴 유동 — 복잡한 유체 거동 이해의 중요성을 강조한다."}, {"type": "bullet", "text": "증산냉각 특정 연구: Jiang et al.은 고초음속 환경에서 충격파 영향을 밝혔고, Liu et al.은 복합 다공질 평판의 상변화 증산냉각(TPMM 방법)을, Li et al.은 인접 다공질 평판 간 협력 효과(VOF 및 Lee 모델)를, Wu/Shen et al.은 극초음속 노즈콘 열환경을 연구하여, 냉각제 분포 최적화와 비균일 기공률이 주된 개선 수단임을 나타낸다."}, {"type": "bullet", "text": "금속 재료 및 블레이드 연구: 관통홀 구조 변경으로 비균일 기공률 설계 달성(Kim, Wang), Ma와 Yue는 다른 블레이드 높이에서 비균일 기공률 터빈 블레이드의 냉각 효율과 냉각제 분포를 분석, Shen은 결합 증산냉각 구조가 국소 냉각 효율을 강화함을 보였고, TPMS 설계는 효율적 이방성 구조 냉각을 달성하나 낮은 내온성을 겪는다."}, {"type": "bullet", "text": "확인된 공백: CMC를 기지로 사용하면 내고온성과 낮은 구조 압력을 결합하지만 연구가 제한적이다. CMC 강도 한계를 고려할 때 단순 원형 구멍 설계가 더 합리적이며, 스크램제트 유동 특성에 기반한 구멍 직경 조정이 강도를 손상하지 않고 성능을 최적화할 수 있는데, 이는 충분히 탐구되지 않은 영역이다."}, {"type": "bullet", "text": "본 연구는 정확한 계산 모델을 구축하고 신경망 모델을 적용하여 서로 다른 파라미터 구성 하의 냉각을 탐구하며, 고온 항공우주 응용을 위한 증산냉각의 효과적 설계·최적화에 새로운 통찰을 제공하고 실용적 열보호 방안 설계를 안내한다.", "figure_refs": [2]}]}, "related_works": {"content": [{"type": "bullet", "text": "수치 방법 계열: LTNE 및 VOF 모델로, Anwar et al.(유도 자기장, 2등급 유체), Abbas et al.(마이크로폴라 나노유체, 열 슬립), 비뉴턴 유체의 일반화된 푸리에/픽 법칙 연구에 의해 확장되어 복잡한 유체 거동 이해를 강조한다."}, {"type": "bullet", "text": "충격파 및 복합 평판 계열: Jiang et al.(고초음속 증산냉각에 대한 충격파 영향, 실험+시뮬레이션), Liu et al.(TPMM 방법을 통한 복합 다공질 평판의 상변화 증산냉각), Li et al.(VOF 및 Lee 모델로 인접 다공질 평판 간 협력 효과, 실험 검증)."}, {"type": "bullet", "text": "노즈콘 및 냉각제 분포 계열: Wu et al.과 Shen et al.은 극초음속 노즈콘 극한 열환경을 연구했으며, 현재 연구는 냉각제 분포 최적화와 비균일 기공률(고열류 영역의 냉각제 증가, 온도 구배 감소)을 주된 개선 수단으로 나타낸다."}, {"type": "bullet", "text": "금속 재료/블레이드 계열: Kim과 Wang은 블레이드 증산냉각의 관통홀 기하 효과에 대해 수치 시뮬레이션과 열전달 가시화를 결합했고, Ma와 Yue는 다른 블레이드 높이에서 비균일 기공률 터빈 블레이드의 냉각 효율과 냉각제 분포를 분석했으며, Shen은 관통홀 수 증가에 따라 결합 구조가 국소 효율을 높임을 보였다."}, {"type": "bullet", "text": "복합 기지/TPMS 계열: Alsikh et al.은 고분자 복합 기지의 기하/수력 특성에 대해 시뮬레이션과 실험을 결합했고, 최근 재료과학/적층 제조 발전은 다공질 기재에 삼중 주기 최소 곡면(TPMS) 설계를 사용하여 효율적 이방성 냉각을 달성하나, 이 재료의 낮은 내온성이 유의미한 한계로 남는다."}, {"type": "bullet", "text": "검증 참고문헌: Liu et al.의 평판 증산냉각 실험(소결 스테인리스강, 입자 크기 90 미크론, 기공률 0.367)과 저자의 선행 막냉각 연구가 본 수치 모델을 검증하는 실험 데이터를 제공한다(각각 오차 &lt; 15% 및 &lt; 5%)."}]}, "method": {"content": [{"type": "bullet", "text": "물리 모델: 냉각제 축적 공동(두께 He=5 mm), CMC 다공질 영역(두께 Hp=15 mm, 기공률 0.048, 단위 길이 Lp=20 mm, 폭 W=10 mm), 극초음속 주류 영역(높이 75 mm, 총길이 L=200 mm). 구조 무결성을 보장하기 위해 인공 관통홀 간 최소 간격은 x, y 방향으로 5 mm이며, Line-1(y=2.5 mm)과 Line-2(y=5 mm)를 따라 분석한다.", "figure_refs": [1]}, {"type": "formula", "label": "식 (1)-(2) — 질량 및 운동량 보존", "latex": "\\nabla\\!\\cdot(\\rho\\,\\vec{u})=0, \\qquad (\\vec{u}\\cdot\\nabla)u_i=-\\frac{1}{\\rho}\\nabla p+\\nabla\\!\\cdot\\!\\left[\\left(\\nu+\\frac{\\nu_t}{\\sigma_k}\\right)\\nabla u_i\\right]-\\nabla\\!\\cdot(\\rho\\,u_i' u_j')", "description": "난류 점성 $\\nu_t$, 난류 모델 상수 $\\sigma_k$, 레이놀즈 응력 $u_i' u_j'$를 갖는 정상상태 질량 및 RANS 운동량 보존. 증산 영역에는 kappa-omega SST 모델을, 그 외 영역에는 표준 k-epsilon 모델을 사용한다."}, {"type": "formula", "label": "식 (3) — 에너지 보존", "latex": "(\\vec{u}\\cdot\\nabla)T=\\nabla\\!\\cdot\\!\\left[\\left(\\alpha+\\frac{\\alpha_t}{\\sigma_T}\\right)\\nabla T\\right]+\\frac{P_r}{\\rho C_p}\\nabla\\!\\cdot(\\vec{u}T)+S_h", "description": "열확산도 $\\alpha$, 난류 열확산도 $\\alpha_t$, 에너지 원천항 $S_h$를 갖는 에너지 방정식으로, 유체와 고체 영역에 대해 아래 LTNE 쌍과 함께 풀이된다."}, {"type": "formula", "label": "식 (4)-(5) — LTNE 유체 및 고체 에너지 방정식", "latex": "\\frac{\\partial}{\\partial t}(\\gamma \\rho_f E_f)+\\nabla\\!\\cdot(\\vec{u}(\\rho_f E_f+p))=\\nabla\\!\\cdot\\Big(\\gamma k_f \\nabla T_f-\\textstyle\\sum_i h_i J_i+(\\tau\\cdot u)\\Big)+S_{h,f}+h_{f,s}A_{f,s}(T_s-T_f), \\qquad \\frac{\\partial}{\\partial t}((1-\\gamma)\\rho_s E_s)=\\nabla\\!\\cdot((1-\\gamma)k_s \\nabla T_s)+S_{h,s}+h_{f,s}A_{f,s}(T_f-T_s)", "description": "LTNE 모델은 유체와 다공질 매트릭스 간 온도 불균형을 가정하고, 체적 열전달항 $h_{f,s}A_{f,s}(T_s-T_f)$로 결합된 분리된 유체·고체 에너지 방정식을 풀이하며, 기공률 $\\gamma$와 유체/고체 전도도 $k_f$, $k_s$를 포함한다."}, {"type": "formula", "label": "식 (7) — Sutherland 점성 법칙", "latex": "\\nu=\\nu_0\\left(\\frac{T}{T_0}\\right)^{3/2}\\frac{T_0+S_s}{T+S_s}", "description": "기준 점성 $\\nu_0=1.715\\times10^{-5}$ kg/(m s), 기준 온도 $T_0=273.11$ K, Sutherland 상수 $S_s=110.56$ K를 갖는 Sutherland 법칙으로부터의 냉각제 동점성. 비열은 온도의 구간 다항식을 사용한다."}, {"type": "formula", "label": "식 (8)-(10) — 송풍비 M, 냉각 효율 eta, 비균일도 delta", "latex": "M=\\frac{(\\rho V)_{c,in}}{(\\rho V)_{\\infty}}, \\qquad \\eta=\\frac{T_\\infty-T_w}{T_\\infty-T_{c,in}}, \\qquad \\delta=\\frac{\\dot m_i-\\overline{\\dot m_i}}{\\overline{\\dot m_i}}", "description": "송풍비 $M$은 냉각제 대 주류 질량유속비, 냉각 효율 $\\eta$는 무차원 벽 온도, 비균일도 $\\delta$는 단일 구멍 유량 $\\dot m_i$의 평균으로부터의 편차이며, $\\delta$가 클수록 균일성이 나쁘다."}, {"type": "bullet", "text": "신경망 모델 선택: 3 특징, 은닉층 2개(각 64 뉴런), 출력층 2개의 Keras 망이 다공질 골격/관통홀 출구 유량비와 속도 표준편차로 계산 모델을 분류한다. 비율이 50을 초과하면 다공질 매트릭스를 비유동 고체 영역으로 단순화한다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "단상 기체 냉각제 및 물성: 주류는 고온 N2/O2/CO2 혼합물(입구에서 76.7% N2, 23.3% O2, 0% CO2)이고 냉각제는 CO2이다. 냉각제가 단상 순수 기체이므로 상변화가 없어 이상기체 법칙이 밀도를 주며, CO2 비열과 열전도도는 NIST 적합 다항식이다(식 11-12). CMC 매트릭스 전도도는 1073 K까지 측정(Hot Disk)된다.", "figure_refs": [4]}, {"type": "bullet", "text": "경계조건(표 1): 주류 질량유량 입구 m_inf=0.3 kg/s, T_inf=2930 K, Ma=1.18(연소실)/Ma=8 유입 조건; 냉각제 질량유량 입구 Tc,in=253 K; 압력 출구 0.23 MPa; 주기 방향 벽과 단열 기타 벽; 8개 사례(A1-A4 평행, B1-B4 매화형)가 송풍비 0.2-2.0%에 걸친다."}, {"type": "bullet", "text": "검증 및 메시: Liu et al.의 소결 스테인리스강 평판 증산냉각(입자 90 미크론, 기공률 0.367, 주류 425 K, Re=1e5)에 대해 최대 오차 &lt; 15%, 막냉각 모델 오차 &lt; 5%; 첫 층 높이 &lt; 0.001 mm(y+&lt;1)의 정렬 ICEM-CFD 격자 3.26/4.88/6.12/8.01백만을 시험하여 612만 셀을 선택했다.", "figure_refs": [5, 6, 7]}]}, "results": {"content": [{"type": "bullet", "text": "송풍비 효과: 송풍비 증가는 더 많은 냉각제 유량(더 높은 내부 대류 계수)과 더 높은 근벽 냉각제 피복을 통해 결합면 냉각을 크게 개선한다. A1-A4와 B1-B4의 냉각 효율 개선(21.3/12.75/10.87% 및 27.22/13.81/9.97%)은 증가율 감소를 보여, 무분별한 송풍비 증가는 비실용적이다.", "figure_refs": [8, 10]}, {"type": "bullet", "text": "압력 구배와 비균일성: 높은 송풍비는 제트 구멍 전방의 보우 충격을 강화하여 선단부 구멍 내부의 유동 저항을 높이고, 냉각제 비균일성을 악화시키며 온도 구배를 높인다. 매화형 구조는 비균일도를 20% 미만으로 유지하는 반면 평행 배치는 40%를 초과한다.", "figure_refs": [9]}, {"type": "bullet", "text": "구멍 배치 효과: 매화형(엇갈림) 구멍 배치는 평행 배치보다 더 균일한 온도 분포와 낮은 벽 온도를 준다(동일 송풍비에서 냉각 효율 +8%, 균일성 +50%). 줄어든 유효 간격과 근벽 경계층 적층이 냉각제를 더 쉽게 부착시키기 때문이다. 평행 배치에서는 더 큰 y축 간격이 구멍 사이 리브를 잘 피복하지 못해 y축 온도 구배를 높인다.", "figure_refs": [8, 10, 11]}, {"type": "bullet", "text": "CRVP 메커니즘: 평행 구조는 리브 부근에 효과적인 역회전 와류쌍(CRVP)을 형성하지 못해 냉각제가 그 영역에 도달하지 못하는 반면, 매화형 구조는 관통홀 뒤에 CRVP를 형성하여 반복적 부착-혼합-재부착을 통해 하류로 강화되며, 냉각제 부착을 유지하고 냉각 사각지대를 줄인다.", "figure_refs": [11]}, {"type": "formula", "label": "식 (13) — 2차 RSM 모델", "latex": "Y=a_0+\\sum_{i=1}^{n}a_i X_i+\\sum_{i=1}^{n}b_i X_i^2+\\sum_{i=1}^{n}\\sum_{j=1}^{n}c_{ij}X_i X_j\\;(i<j)", "description": "2차 반응표면 모델은 각 응답 $Y$(온도 구배 또는 평균 온도)를 구멍 직경 $X_i$와 절편 $a_0$, 1차 $a_i$, 2차 $b_i$, 상호작용 $c_{ij}$ 계수로 관계 짓는다. 기대값(만족도) 함수는 0-1 범위이며 1이 최적이다."}, {"type": "bullet", "text": "RSM 분석: ANOVA는 모델 P-값 &lt; 0.0001, R2 0.9844(구배) 및 0.9871(평균 온도), 비유의 적합 부족(lack-of-fit)을 준다. 구멍-1 크기가 두 응답 모두를 지배(구멍-1이 커지면 온도 구배가 감소 후 안정화)하고, 구멍-2와 구멍-3 크기는 더 약한 효과를 가지며, 적합식은 온도 구배에 식 (14), 평균 온도에 식 (15)이다.", "figure_refs": [12, 13]}, {"type": "bullet", "text": "최적화 결과: 최적 직경은 1.995/1.224/0.510 mm(마지막 줄 구멍 1 mm 고정)로, 온도 구배를 141.566 K에서 130.087 K(8.824%)로, 평균 온도를 1807.472 K에서 1731.464 K(4.290%)로 줄이며, CFD 대 예측 오차는 5% 이내이다. 최적화 후 더 큰 선단부 구멍은 냉각제 유량 44% 증가와 속도 35% 감소를 주어 제트-주류 상호작용을 완화하고 보우 충격 강도와 근벽 압력 구배를 낮춘다.", "figure_refs": [14, 15]}, {"type": "bullet", "text": "이방성 전도도: 열류(z) 방향 열전도도 강화는 양 끝에서 온도 구배를 가장 크게 개선(전단에서 최저 Nusselt ~130.7)하여 고체가 냉각제 축적 공동으로부터 더 많은 열을 사용하게 하는 반면, x와 y 방향 강화는 각각 0.8%와 1.3% 감소만 준다. 따라서 매트릭스 구조 최적화가 방향성 전도도보다 주된 개선 경로이다.", "figure_refs": [16]}]}, "discussion": {"content": [{"type": "bullet", "text": "송풍비 트레이드오프: 송풍비 증가는 냉각을 강화하지만(더 많은 냉각제, 더 높은 내부 대류 계수, 벽에 부착하여 주류 열을 차단하는 저온 냉각제) 냉각 효율 증가율이 감소하고 보우 충격이 강화되므로, 무분별한 증가는 비실용적이다.", "figure_refs": [8, 9]}, {"type": "bullet", "text": "매화형 배치가 더 나은 이유: 줄어든 유효 간격과 근벽 경계층 적층이 냉각제를 더 쉽게 부착시키고, 둘째 줄 구멍이 첫째 줄 리브의 피복을 개선하여 구멍 간 온도 구배를 낮추고 평행 구조보다 낮은 결합면 온도를 준다.", "figure_refs": [10, 11]}, {"type": "bullet", "text": "CRVP 물리: 역회전 와류쌍이 관통홀 뒤에 형성되어 유입된 냉각제의 반복적 부착·혼합·재부착을 통해 하류로 강화된다. 이는 매화형 구조에서 더 두드러져 더 강한 냉각제 부착, 고속 주류에 대한 더 효과적 저항, 더 작은 냉각 사각지대를 준다.", "figure_refs": [11]}, {"type": "bullet", "text": "선단부 구멍 크기 효과: 선단부 구멍 확대는 냉각제 유량(44%)을 높이고 출구 속도(35%)를 낮춰 제트-주류 상호작용을 완화하고 보우 충격 강도를 약화시키며, 이는 근벽 및 구멍 뒤 압력 구배를 줄이고 전단 냉각제 피복과 전체 효율을 개선한다.", "figure_refs": [14, 15]}, {"type": "bullet", "text": "열 축적과 z 방향 전도도: Nusselt 수가 흐름 방향을 따라 감소하여 열이 전단에 집중된다. z 방향 전도도 강화는 고체가 냉각제 공동으로부터 더 많은 열을 끌어와 냉각제가 더 많은 전단 열을 흡수하게 하여 최대 및 평균 결합벽 온도를 낮추는 반면, x/y 강화는 훨씬 약하다.", "figure_refs": [16]}, {"type": "bullet", "text": "설계 결론: 방향성 열전도도 강화는 국소 열전달을 효과적으로 개선할 수 있으나 매트릭스 재료의 구조 최적화 대비 작으므로, 관통홀 CMC 증산냉각을 개선하는 주된 방법은 매트릭스 구조(구멍 배치 및 크기) 최적화이다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "송풍비는 증산냉각 효율에 영향을 주는 핵심 인자이다. 증가는 냉각 효율을 효과적으로 강화하지만, 더 높은 냉각제 유량은 벽 부근 냉각제 교란을 심화시켜 유동 비균일성을 악화시킨다."}, {"type": "bullet", "text": "매화형 구멍 배치는 인접 구멍 사이 냉각제 피복을 강화하고 냉각제의 단열 효과를 개선하며, 평행 배치 대비 냉각 효율을 크게 향상시킨다(효율 +8%, 균일성 +50%)."}, {"type": "bullet", "text": "원본 구조 대비 RSM 방법은 단위 내 열전달 효율을 효과적으로 강화하여, 적합 상관식에 기반한 다인자 최적화를 통해 온도 구배를 8.824%, 평균 온도를 4.290% 개선한다(최적 직경 1.995/1.224/0.510 mm)."}, {"type": "bullet", "text": "z 방향 열전도도 강화는 열전달 효율에 가장 두드러진 영향을 주어 액체 축적 챔버와 결합면 사이의 열전달을 개선하는 반면, x 및 y 방향 강화는 비교적 작은 효과를 갖는다(각각 0.8%와 1.3% 감소)."}, {"type": "bullet", "text": "결합된 LTNE + Keras 신경망 + RSM 수치 프레임워크(평판 증산냉각 및 막냉각 실험에 대해 각각 15%와 5% 이내로 검증)는 Ma=8 스크램제트 유입 조건 하 관통홀 CMC 증산냉각에 대한 신뢰할 수 있는 계산 기반을 제공한다."}, {"type": "bullet", "text": "단순 원형 관통홀(CMC 구조 무결성 유지)에 구멍 배치 및 선단부 직경 최적화를 적용하는 것이 주된 개선 경로로 식별되며, 특히 저냉각제 유량 조건에서 초음속 연소 램제트 연소실의 열보호 방안 설계를 안내한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "연소실의 고온 연소 화학 반응을 고온 공기 주류로 대체하고 연소실 내부의 복사 가열을 무시하여, 모델링된 열환경을 단순화하였다.", "source_quote": "(1) High-temperature air mainstream is used to replace the complex combustion chemical reactions in the combustion chamber. (2) Radiative heating inside the combustion chamber is neglected.", "source_section": "method"}, {"claim": "다공질 골격과 인공 관통홀 사이의 출구 유량비가 50을 초과하면 다공질 매트릭스를 비유동 고체 영역으로 단순화하여, 그 영역에서는 매트릭스를 통한 침투 유동을 무시한다.", "source_quote": "However, when the flow rate ratio exceeds 50, the coolant flow rate in the artificial through-holes significantly surpasses the seepage flow rate within the porous matrix... the computational model simplifies the porous matrix as a non-flowing solid region.", "source_section": "method"}], "future_works": [{"claim": "예비 결과는 저냉각제 유량 조건에서 증산냉각 성능 향상을 나타내며, 향후 스크램제트 연소실 열보호 방안 설계를 안내한다.", "source_quote": "Preliminary results indicate an improvement in transpiration cooling performance under low coolant flow conditions.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["스크램제트 비행 속도가 증가함에 따라 엔진 부품의 열부하가 급격히 상승하여 전통적 냉각 기술에 심각한 도전을 제기하고 가장 효율적인 능동 냉각을 요구한다.", "CMC는 경량·내고온성이지만 기공률과 투과율이 낮아 액체 축적 공동의 공급 압력이 높다. 고유 메커니즘과 낮은 압력 강하를 갖는 관통홀 증산냉각이 제안되었으나, 고온에서의 CMC 관통홀 증산냉각 연구는 제한적이다.", "기존 연구는 주로 냉각제 분포와 기공률 패턴을 최적화했으나, 특히 변화하는 스크램제트 유동 조건 하에서 CMC 관통홀의 특정 기하 구성이 미치는 영향은 충분히 탐구되지 않았다."], "addressed_by_this_work": ["Ma=8 스크램제트 연소실에서 CMC 관통홀 증산냉각에 대한 정확한 수치 모델(LTNE, 유량비로 계산 모델을 선택하는 Keras 신경망)을 구축하고, 평판 증산냉각 및 막냉각 실험에 검증하였다(오차 &lt; 15% 및 &lt; 5%).", "송풍비, 구멍 배치(평행 대 매화형), 구멍 크기, 이방성 열전도도의 영향을 조사하여, 매화형 배치가 냉각 효율을 8%, 균일성을 50% 높이고, 선단부 구멍 확대가 내부 압력 구배를 낮춤을 보였다.", "세 선단부 구멍 직경(CMC 구조 무결성을 유지하는 단순 원형 구멍)에 대한 RSM 최적화로 온도 구배를 8.824%, 평균 온도를 4.290% 개선(CFD 오차 5% 이내)하여, 스크램제트 조건 하 CMC 관통홀 기하의 설계 기반을 제공한다."], "remaining_unresolved": ["연소실의 연소 화학과 복사 가열이 모델링되지 않아(고온 공기 주류로 대체) 실제 반응/복사 환경이 포착되지 않는다.", "이방성 열전도도 강화는 매트릭스 구조 최적화 대비 비교적 작은 개선만 준다(z 방향이 최선, x/y는 0.8-1.3%에 불과)므로, 방향성 전도도 설계만으로는 충분하지 않다.", "결과는 예비적이며 완전한 관통홀 CMC 스크램제트 실험이 아닌 평판/막 실험에 검증되었고, 성능은 주로 저냉각제 유량 조건에서 입증된다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
