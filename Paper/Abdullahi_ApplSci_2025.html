@@ -25,11 +25,11 @@
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Noto Sans KR', 'Arial', sans-serif;
-            margin: 0; padding: 0;
+            margin: 0; padding: 0 0 24px;
             background: #f5f5f5;
             color: #333;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
         }
         .slide {
             width: min(1280px, 98vw);
@@ -39,6 +39,7 @@
             display: grid;
             grid-template-rows: auto auto 1fr;
             overflow: hidden;
+            flex-shrink: 0;
         }
         .header {
             background: #005b96;
@@ -306,11 +307,14 @@
             padding-bottom: 4px;
         }
         details.references {
-            margin-top: 18px;
+            width: min(1244px, calc(98vw - 36px));
+            margin: 14px auto 0;
+            box-sizing: border-box;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 10px 16px;
-            background: #fafbfc;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         details.references > summary {
             cursor: pointer;
@@ -378,12 +382,12 @@
                 <div class="section-summary">리뷰는 발한 냉각 수치 모델링의 현재 과제와 다섯 가지 향후 연구 방향을 제시하며 끝맺는다. 가장 핵심적인 과제는 다공질 유동·열전달·난류·상변화 사이의 강한 다중 물리 결합이며, 추가 우선순위로 적층 제조 재료, 고충실도 설계 시뮬레이션, 엄밀한 VV&UQ, AI 보조 대리모델이 있다. 이를 해결하는 것이 차세대 재사용 극초음속 비행체와 고성능 항공우주 엔진을 가능케 하는 데 필수적이라고 본다.</div>
             </div>
         </div>
-
-        <details class="references">
-            <summary>References — 참고문헌 <span class="ref-count">key 20 / total 90</span></summary>
-            <ol class="ref-list"><li>H. Darcy, Les Fontaines Publiques de la Ville de Dijon, Victor Dalmont, Paris, 1856.</li><li>Ph. Forchheimer, Wasserbewegung durch Boden, Z. des Vereines Dtsch. Ingenieure, 1901, 45, 1781-1788.</li><li>H. C. Brinkman, A calculation of the viscous force exerted by a flowing fluid on a dense swarm of particles, Flow Turbul. Combust., 1949, 1, 27-34.</li><li>K. Vafai, M. Sozen, Analysis of Energy and Momentum Transport for Fluid Flow Through a Porous Bed, J. Heat Transf., 1990, 112, 690-699.</li><li>A. Amiri, K. Vafai, Analysis of dispersion effects and non-thermal equilibrium, non-Darcian, variable porosity incompressible flow through porous media, Int. J. Heat Mass Transf., 1994, 37, 939-954.</li><li>S. Pati, A. Borah, M. P. Boruah, P. R. Randive, Critical review on local thermal equilibrium and local thermal non-equilibrium approaches for the analysis of forced convective flow through porous media, Int. Commun. Heat Mass Transf., 2022, 132, 105889.</li><li>X. Xiao, G. Zhao, W. Zhou, Numerical investigation of transpiration cooling for porous nose cone with liquid coolant, Int. J. Heat Mass Transf., 2018, 121, 1297-1306.</li><li>N. Wu, J. Wang, F. He, L. Chen, B. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transf., 2018, 127, 882-891.</li><li>R. Ding, J. Wang, F. He, G. Dong, L. Tang, Numerical investigation on the performances of porous matrix with transpiration and film cooling, Appl. Therm. Eng., 2019, 146, 422-431.</li><li>N. J. Georgiadis et al., Assessment of Multiphysics Computations of Flow over a Film-Cooled Plate, J. Thermophys. Heat Transf., 2025, 39, 704-723.</li><li>C.-Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media-I. Formulation, Int. J. Heat Mass Transf., 1993, 36, 2747-2758.</li><li>S. Ray, O. R. Alomar, Simulation of liquid-vapour phase change process inside porous media using modified enthalpy formulation, Int. J. Therm. Sci., 2016, 105, 123-136.</li><li>H. Su, J. H. Wang, F. He, L. Chen, B. C. Ai, Numerical investigation on transpiration cooling with coolant phase change under hypersonic conditions, Int. J. Heat Mass Transf., 2019, 129, 480-490.</li><li>W. J. Dong, J. H. Wang, A New Model and its Application to Investigate Transpiration Cooling with Liquid Coolant Phase Change, Transp. Porous Media, 2018, 122, 575-593.</li><li>T. Liu, H. Su, Z. Chen, F. He, J. Wang, Numerical investigation on the transient transport and heat transfer characteristics of transpiration cooling with liquid phase change during coolant adjustment, Appl. Therm. Eng., 2022, 209, 118277.</li><li>G. Brillant, F. O. Bataille, F. Ducros, Large-eddy simulation of a turbulent boundary layer with blowing, Theor. Comput. Fluid Dyn., 2004, 17, 433-443.</li><li>N. Christopher, J. M. F. Peter, M. J. Kloker, J. P. Hickey, DNS of turbulent flat-plate flow with transpiration cooling, Int. J. Heat Mass Transf., 2020, 157, 119972.</li><li>D. A. Nield, A. V. Kuznetsov, Local thermal nonequilibrium effects in forced convection in a porous medium channel: A conjugate problem, Int. J. Heat Mass Transf., 1999, 42, 3245-3252.</li><li>W. Dahmen et al., Numerical boundary layer investigations of transpiration-cooled turbulent channel flow, Int. J. Heat Mass Transf., 2015, 86, 90-100.</li><li>O. R. Alomar, M. A. A. Mendes, D. Trimis, S. Ray, Numerical simulation of complete liquid-vapour phase change process inside porous media: A comparison between local thermal equilibrium and non-equilibrium models, Int. J. Therm. Sci., 2017, 112, 222-241.</li></ol>
-        </details>
     </div>
+
+    <details class="references">
+        <summary>References — 참고문헌 <span class="ref-count">key 20 / total 90</span></summary>
+        <ol class="ref-list"><li>H. Darcy, Les Fontaines Publiques de la Ville de Dijon, Victor Dalmont, Paris, 1856.</li><li>Ph. Forchheimer, Wasserbewegung durch Boden, Z. des Vereines Dtsch. Ingenieure, 1901, 45, 1781-1788.</li><li>H. C. Brinkman, A calculation of the viscous force exerted by a flowing fluid on a dense swarm of particles, Flow Turbul. Combust., 1949, 1, 27-34.</li><li>K. Vafai, M. Sozen, Analysis of Energy and Momentum Transport for Fluid Flow Through a Porous Bed, J. Heat Transf., 1990, 112, 690-699.</li><li>A. Amiri, K. Vafai, Analysis of dispersion effects and non-thermal equilibrium, non-Darcian, variable porosity incompressible flow through porous media, Int. J. Heat Mass Transf., 1994, 37, 939-954.</li><li>S. Pati, A. Borah, M. P. Boruah, P. R. Randive, Critical review on local thermal equilibrium and local thermal non-equilibrium approaches for the analysis of forced convective flow through porous media, Int. Commun. Heat Mass Transf., 2022, 132, 105889.</li><li>X. Xiao, G. Zhao, W. Zhou, Numerical investigation of transpiration cooling for porous nose cone with liquid coolant, Int. J. Heat Mass Transf., 2018, 121, 1297-1306.</li><li>N. Wu, J. Wang, F. He, L. Chen, B. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transf., 2018, 127, 882-891.</li><li>R. Ding, J. Wang, F. He, G. Dong, L. Tang, Numerical investigation on the performances of porous matrix with transpiration and film cooling, Appl. Therm. Eng., 2019, 146, 422-431.</li><li>N. J. Georgiadis et al., Assessment of Multiphysics Computations of Flow over a Film-Cooled Plate, J. Thermophys. Heat Transf., 2025, 39, 704-723.</li><li>C.-Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media-I. Formulation, Int. J. Heat Mass Transf., 1993, 36, 2747-2758.</li><li>S. Ray, O. R. Alomar, Simulation of liquid-vapour phase change process inside porous media using modified enthalpy formulation, Int. J. Therm. Sci., 2016, 105, 123-136.</li><li>H. Su, J. H. Wang, F. He, L. Chen, B. C. Ai, Numerical investigation on transpiration cooling with coolant phase change under hypersonic conditions, Int. J. Heat Mass Transf., 2019, 129, 480-490.</li><li>W. J. Dong, J. H. Wang, A New Model and its Application to Investigate Transpiration Cooling with Liquid Coolant Phase Change, Transp. Porous Media, 2018, 122, 575-593.</li><li>T. Liu, H. Su, Z. Chen, F. He, J. Wang, Numerical investigation on the transient transport and heat transfer characteristics of transpiration cooling with liquid phase change during coolant adjustment, Appl. Therm. Eng., 2022, 209, 118277.</li><li>G. Brillant, F. O. Bataille, F. Ducros, Large-eddy simulation of a turbulent boundary layer with blowing, Theor. Comput. Fluid Dyn., 2004, 17, 433-443.</li><li>N. Christopher, J. M. F. Peter, M. J. Kloker, J. P. Hickey, DNS of turbulent flat-plate flow with transpiration cooling, Int. J. Heat Mass Transf., 2020, 157, 119972.</li><li>D. A. Nield, A. V. Kuznetsov, Local thermal nonequilibrium effects in forced convection in a porous medium channel: A conjugate problem, Int. J. Heat Mass Transf., 1999, 42, 3245-3252.</li><li>W. Dahmen et al., Numerical boundary layer investigations of transpiration-cooled turbulent channel flow, Int. J. Heat Mass Transf., 2015, 86, 90-100.</li><li>O. R. Alomar, M. A. A. Mendes, D. Trimis, S. Ray, Numerical simulation of complete liquid-vapour phase change process inside porous media: A comparison between local thermal equilibrium and non-equilibrium models, Int. J. Therm. Sci., 2017, 112, 222-241.</li></ol>
+    </details>
 
     <!-- Modal -->
     <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
