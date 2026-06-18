@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Pore-scale structure effect on phase-change heat transfer enhancement and drag reduction at the porous interface using CFD-PNM coupling method for transpiration cooling applications</title>
+    <meta name="keywords" content="transpiration cooling, phase change, porous media, pore-scale structure, CFD-PNM coupling, pore-network model, multiscale modelling, drag reduction, cooling efficiency, graded porous structure">
+    <meta name="paper-authors" content="Kaiyan Jin, Jin Zhao, Guice Yao, Dongsheng Wen">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 250, 2025, Art. 127312 · DOI: 10.1016/j.ijheatmasstransfer.2025.127312">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Pore-scale structure effect on phase-change heat transfer enhancement and drag reduction at the porous interface using CFD-PNM coupling method for transpiration cooling applications</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Kaiyan Jin, Jin Zhao, Guice Yao, Dongsheng Wen</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 250, 2025, Art. 127312 · DOI: 10.1016/j.ijheatmasstransfer.2025.127312</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 연구는 다공성 매질의 <span class="term">기공 규모 형상(pore-scale geometry)</span>이 <span class="term">상변화 증산냉각(phase-change transpiration cooling)</span>의 다공성 계면에서 열전달 강화와 항력 감소를 어떻게 지배하는지를, 연속체 규모 전산유체역학(CFD) 자유유동 영역과 기공 규모 기공망 모델(PNM) 다공성 영역을 양방향으로 연성한 <span class="term">다중규모 완전 연성 CFD-PNM 기법</span>으로 연구한다. 세 가지 기공 규모 변수 — 공극률 $\varepsilon$, 내접 기공 목 반지름 $r_T$, 내접 기공 몸체 반지름 $r_P$ — 를 변화시키며 분사 영역과 분사 후 영역에서의 냉각 효율 및 온도 균일도, 과도 분사비와 총 냉각재 소비량, 항력 감소(표면 마찰) 효과의 세 가지 관점으로 평가한다. 높은 공극률은 채널을 따라 냉각 효율과 항력 감소를 모두 향상시키지만 냉각재 사용량을 급격히 늘리고, 큰 기공 목은 분사 후 성능을 개선하나 선단부를 악화시키며, 큰 기공 몸체는 냉각 향상이 제한적인 반면 소비량과 항력 변동을 증폭시킨다. 이러한 경향에 따라 세 가지 구배형 구조(선단부에 더 큰 $\varepsilon$과 더 작은 $r_T$)가 설계되며, 그중 최적(Case 4)은 동일 평균 공극률 균일 구조 대비 선단부 냉각 효율을 약 <span class="term">7.5%</span> 향상시키면서 냉각재를 약 <span class="term">49% 적게</span> 소비한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">phase change</span><span class="keyword-chip">porous media</span><span class="keyword-chip">pore-scale structure</span><span class="keyword-chip">CFD-PNM coupling</span><span class="keyword-chip">pore-network model</span><span class="keyword-chip">multiscale modelling</span><span class="keyword-chip">drag reduction</span><span class="keyword-chip">cooling efficiency</span><span class="keyword-chip">graded porous structure</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">재진입 비행체, 고속 항공기, 로켓 노즐은 임계 요소를 가혹한 공력 가열 하중에 노출시키며, 이는 증산냉각 — 특히 상변화 액체 냉각재를 사용하는 — 을 효과적인 능동 열관리 기법으로 만들고 표면 마찰 감소 가능성도 제공한다. 서론은 다공성 매질의 형상 변수와 다양한 설계 전략(구배 공극률, 다영역 공극률, 기계적/생체모방 구조)이 거의 전적으로 연속체(REV) 규모에서 연구되어 왔음을 개관한다. 이어서 기공 규모 해상도가 다공성 매질 내 수송에 필수적이며 기존 기공 규모/다중규모 연구가 기체 냉각재에 국한되어 있음을 지적하고, 저자들의 완전 연성 다중규모 CFD-PNM 모델(상변화 포함)을 기공 규모 형상 해석 및 설계 도구로 자리매김한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">관련 연구 논의는 서론에 내재되어 있으며 세 가닥으로 구성된다: 상변화 증산냉각에 대한 형상 변수 효과(공극률, 구체 직경, 이방성)의 연속체 규모 연구, 냉각과 공급 압력 최적화를 위한 구조 설계 전략(구배 공극률, 다영역 공극률, 기계적·생체모방 구조), 그리고 초기 단계의 기공 규모/다중규모 모델링 계열이다. 반복되는 공백은 형상 효과 및 설계 연구가 거의 전적으로 연속체 규모인 반면 소수의 기공 규모/다중규모 노력은 기체 냉각재에 국한된다는 점으로, 계면에서 상변화 항력 감소를 다룬 연성 기공 규모 연구는 없었다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">물리 모델은 연속체 규모 CFD 자유유동(FF) 채널을 기공 규모 기공망 모델(PNM) 다공성 영역과 연성하며, 후자에서는 정육면체 기공 몸체(내접 반지름 $r_P$)가 정사각 기공 목(내접 반지름 $r_T$)으로 연결되고 바닥에 다수의 냉각재 입구가 있다. FF 영역은 운동량, 2성분(물/공기) 질량 보존, 에너지를 유한체적법으로 풀고, PNM 영역은 기공 몸체와 목에 대해 유량, 성분 수송, 국소 열평형 에너지 균형을 이산화하며, 이상 구성 법칙(모세관 압력/액체 포화도 관계, 수력 컨덕턴스, 스냅오프 임계값)으로 닫히고 오픈소스 DuMux 3 프레임워크로 구현된다. 계면의 양방향 열·물질 전달(수증기와 고온 공기의 침입·혼합·분출)이 두 영역을 연성한다. 세 가지 기공 규모 변수가 Table 2에 따라 변화되며(기공 몸체 수에 의한 공극률 ε, 목 크기 $r_T$, 무작위성 케이스를 포함한 몸체 크기 $r_P$), 20 mm × 4 mm 고온 채널과 10 mm × 10 mm 다공성 영역, 1000 Pa 채널 압력 강하, 1500 K 입구 고온 기체 조건 하에서 수행된다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 2.4절에 정의된 세 가지 성능 관점 — 냉각 효율 $\eta$와 온도 균일도, 과도 분사비 $F$와 총 냉각재 소비량 $M_c$, FFT 필터링된 표면 마찰 계수 $C_f$ — 으로 각 기공 규모 변수를 평가한다. 높은 공극률은 채널을 따라 냉각 효율과 항력 감소를 모두 높이고 온도 균일도를 개선하지만(최대 온도차 544.89 K → 459.21 K), 냉각재 소비량은 공극률 단계마다 약 75% 급증하며 매우 높은 공극률은 외부 고온 기체 침입을 일으킨다. 큰 기공 목은 분사 후 냉각을 개선하나 선단부를 악화시키고(최대 온도차 485.53 K → 636.60 K) 소비량을 가파르게 늘리며, 큰 기공 몸체는 냉각 변화가 작지만 균일도를 개선하고 소비량과 항력 변동을 늘린다. 수치는 검증된 CFD-PNM 시뮬레이션에서 도출되며, 제안된 구조에 대한 물리 실험은 본 연구에 없다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논의는 결과와 교차되어 있다: 저자들은 각 성능 경향을 기공 규모 메커니즘 — 공극률에 대한 투과율과 외부 침입의 균형, 기공 목 크기에 대한 스냅오프 임계값($\propto r_T^{-1}$)과 유동 저항($\propto r_T^{-4}$), 기공 몸체 크기에 대한 투과율/모세관 보충 — 으로 귀속시키고, 계면 체적 플럭스를 국소 분사비 및 필터링된 표면 마찰과 연결한다. 이어서 기공 규모 결론을 기존 연속체 규모 연구(선단부 공극률에 대한 Liu 등, 분사비 항력 감소에 대한 Zhang 등)와 교차 검증하여 일치하는 경향을 확인한 뒤, 설계 지침을 세 가지 구배 구조로 종합하며 Case 4(구배 $r_P$와 $r_T$ 모두)가 가장 균형 잡혔다고 결론짓는다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">이전에 개발된 다중규모 CFD-PNM 완전 연성 모델을 사용하여, 본 연구는 기법을 검증한 뒤 공극률, 기공 목 크기, 기공 몸체 크기가 상변화 증산냉각의 다공성 계면에서 냉각 효율, 냉각재 공급, 항력 감소에 미치는 영향을 정량화하고, 마지막으로 세 가지 구배 설계를 제안한다. 공극률 증가는 냉각과 항력 감소를 개선하나 냉각재 소비량을 크게 늘리고, 기공 목 크기 증가는 후방/분사 후 영역을 도우나 분사 영역 시작을 해치며, 기공 몸체 크기 증가는 냉각을 거의 바꾸지 않으면서 균일도와 평균 항력 감소를 더 높은 소비량에서 개선한다. 최적 구배 구조(선단부에 더 큰 ε과 더 작은 $r_T$, 구배 $r_P$와 $r_T$)는 균일 구조 대비 최고 선단부 온도를 약 80 K(~7.5% 냉각 효율 향상) 낮추면서 냉각재를 약 49% 적게 소비한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 61</span></summary>
+            <ol class="ref-list"><li>K. Jin, J. Zhao, G. Yao, D. Xu, D. Wen, A fully coupled multiscale phase-change model at the porous interface for transpiration cooling: coupling dynamics pore-scale networks to continuum-scale free flow, Int. J. Heat and Mass Transfer, 2025</li><li>K. Jin, J. Zhao, G. Yao, D. Wen, A modified local thermal non-equilibrium model of transient phase-change transpiration cooling for hypersonic thermal protection, Advances in Aerodynamics, 2024</li><li>S. Müller, M. Rom, An effective model for the simulation of transpiration cooling, Communications in Applied Mathematics and Computation, 2024</li><li>S. Hillcoat, J. P. Hickey, Pressure-velocity coupling in transpiration cooling, arXiv:2408.05166, 2024</li><li>Z. Zhou, Y. Lv, F. He, T. Liu, J. Wang, Pore-scale investigation of transpiration cooling based on triply periodic minimal surface, Int. J. Thermal Sciences, 2024</li><li>V. Joekar-Niasar, S. M. Hassanizadeh, H. K. Dahle, Non-equilibrium effects in capillarity and interfacial area in two-phase flow: dynamic pore-network modelling, J. Fluid Mechanics, 2010</li><li>J. X. Shi, J. H. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transport in Porous Media, 2011</li><li>Y. Liu, T. Liu, R. Ding, F. He, J. Wang, Experimental and numerical investigation of transpiration cooling with gradient porosity layout for the thermal protection of nose cone, Aerospace Science and Technology, 2024</li><li>Z. Zhang, X. Sun, X. Wang, G. Xie, Flow structure and heat transfer of transpiration cooling by using a LBM: the effects of wall blowing and spatially nonuniform injection, Int. Communications in Heat and Mass Transfer, 2021</li><li>T. Koch, D. Glaeser, et al., DuMux 3 — an open-source simulator for solving flow and transport problems in porous media with a focus on model coupling, Computers and Mathematics with Applications, 2021</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "항공우주 비행체의 재진입, 고속 항공기의 순항, 로켓 노즐 작동 중 임계 요소는 상당한 공력 가열 하중과 그에 따른 재료 열화에 직면하며, 이는 증산냉각 — 특히 상변화 액체 냉각재를 사용하는 — 을 유연한 냉각재 제어, 효율적 표면 보호, 잠재적 표면 마찰 감소의 이점을 갖는 효과적인 능동 열관리 기법으로 만든다."}, {"type": "bullet", "text": "상변화 증산냉각을 위한 다공성 매질 내 수송의 현재 주류 수치 모델링은 대표 체적 요소(REV) 접근에 의존하며, 이는 연속체 규모로 평균화된 형상 변수(공극률, 구체 직경, 이방성에 대한 투과율 텐서)와 경험식을 요구한다."}, {"type": "bullet", "text": "많은 연구자가 연속체 규모에서 형상 변수 효과를 연구하였다: Shi 등은 1차원 이상 혼합 모델(TPMM)로 공극률이나 구체 직경 증가가 이상 영역을 확장하고 액체 온도를 상승시킴을 보였고, Li 등은 micro-CT와 수정 TPMM으로 이질적 CMC 기공 구조를 획득하여 왜곡된 유선과 비균일 압력을 관찰하였으며, Prokein과 Wolfersdorf는 단상 REV OpenFOAM 솔버로 쐐기형 CMC의 이방성을 조사하였다."}, {"type": "bullet", "text": "항력 감소에 관하여: 마찰 항력 감소는 에너지 소비를 낮추며, Eto 등은 Clark-Y 익형에서 균일 분사가 국소 마찰 항력을 줄임을 보였고, 증산냉각에서는 다공성 계면의 공간적 비균일 벽면 분사가 항력 감소 이점을 가져올 수 있다. Zhang 등(LBM)은 큰 분사비에서의 유동 박리를 관찰하였고 Dahmen 등은 벽면 분사 하 유선방향 표면 마찰 변화를 시뮬레이션하였으나, 이들은 기체 냉각재로 단일 자유유동 영역에 집중하여 연성 기법에 의한 상변화 항력 감소는 충분히 연구되지 않았다.", "figure_refs": []}, {"type": "bullet", "text": "다수의 설계 전략이 다공성 형상을 최적화한다: 구배/평활 구배 공극률 분포(Cheng, Chen 등)는 정체점 부근 냉각을 개선하고 필요 공급 압력을 낮추며, 다영역 할당 공극률(Ma, Liu 등)은 선단부 온도를 낮춘다. 기계적 동기의 설계로는 He 등의 이중층 평판과 Yang 등의 측방 투과율 배향 구조가 있고, 생체모방 표면(Huang 등)은 보호막을 두껍게 한다. 이들 모두 연속체 규모 수치 모델에 기반한다."}, {"type": "bullet", "text": "최근 기공 규모/다중규모 기법으로는 기체 냉각재 냉각 효율에 대한 기공 규모 효과를 다룬 Müller와 Rom의 다중규모 모델, 합성곱 신경망을 통해 PNM과 DNS를 연성한 Hillcoat와 Hickey, 삼중 주기 최소 곡면 구조를 DNS로 연구한 Zhou 등이 있으나, 모두 기체 냉각재에 국한된다."}, {"type": "bullet", "text": "저자들의 이전 연구에서는 오픈소스 프레임워크 DuMux 3에 기반하여 상변화 증산냉각의 다공성 계면에 대한 완전 연성 다중규모 수치 모델을 개발하고, 이를 사용하여 물 액/기 계면 변화, 기막 발달, 과도 온도, 자유유동 압력 구배 영향을 해석하였으나, 다공성 매질의 형상 구조에 대한 효과 해석과 설계는 더 논의되지 않았다."}, {"type": "bullet", "text": "따라서 본 연구는 실험 및 TPMM과 모델을 검증한 뒤, 이를 사용하여 공극률(기공 몸체 크기 일정), 기공 몸체 크기(공극률 일정), 기공 목 크기(공극률 및 기공 몸체 크기 일정)가 액체 물 및 기막 발달, 분사 영역과 분사 후 영역의 냉각, 냉각재 공급, 전단응력 감소에 미치는 영향을 해석한다.", "figure_refs": [1]}, {"type": "bullet", "text": "기존 모델 대비 두 가지 명시된 이점: (1) 기공망 모델링은 연속체 규모 평균화와 달리 다양한 형상 배열(기공 몸체와 목의 크기·개수·무작위성·구배 분포) 하에서 열보호를 기공 규모로 시각화·정량화할 수 있다. (2) 비연성 또는 일방향 반복 연성 모델과 달리, 본 완전 연성 기법은 양방향 계면 열·물질 전달, 과도 변동 계면 온도, 과도 분사비, 일정 압력 입구 조건에서의 총 냉각재 소비량, 계면 분사에 의한 항력 감소 효과를 포착한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "연속체 규모 형상 효과 계열: Shi 등(1차원 TPMM)은 공극률이나 구체 직경 증가가 이상 영역을 확장하고 액체 온도를 상승시킴을 발견하였고, Li 등은 micro-CT 기공 구조를 수정 TPMM과 연성하여 연속체 규모 이질성을 복원하였으며, Prokein과 Wolfersdorf는 쐐기형 CMC에서 섬유 배향이 형상 대칭선에 평행할 때 열보호가 유리함을 발견하였다."}, {"type": "bullet", "text": "항력 감소 계열: Eto 등(실험, Clark-Y 익형)은 균일 분사가 국소 마찰 항력을 줄임을 보였고, Zhang 등(LBM)은 큰 분사비에서의 유동 박리를 관찰하였으며, Dahmen 등(경계층 시뮬레이션)은 벽면 분사 하 유선방향 표면 마찰 변화를 보였다 — 모두 기체 냉각재로 단일 자유유동 영역에 한정된다."}, {"type": "bullet", "text": "구배/다영역 설계 계열: Cheng와 Chen 등은 적절한 냉각재 분포를 위해 평활 구배 공극률을 사용하여 정체 영역 냉각을 개선하고 필요 공급 압력을 낮추었으며, Ma와 Liu 등은 매질을 영역으로 나누고 공극률을 할당하여 선단부 온도를 크게 낮추었다."}, {"type": "bullet", "text": "기계적·생체모방 설계 계열: He 등은 일정 냉각재 질량 유속에서 전체 압력 강하를 줄이는 이중층 다공성 평판을 설계하였고, Yang 등은 배향 구조에 측방 투과율을 추가하여 과도한 국소 압력을 완화하였으며, Huang 등은 보호막을 두껍게 하는 생체모방 표면을 제안하였다."}, {"type": "bullet", "text": "기공 규모/다중규모 모델링 계열: Müller와 Rom은 기체 냉각재 냉각 효율에 대한 기공 규모 효과(온도 변동, 표면 마찰 감소)의 다중규모 모델을 구축하였고, Hillcoat와 Hickey는 합성곱 신경망을 통해 PNM을 난류 경계층 DNS와 연성하였으며, Zhou 등은 계면의 삼중 주기 최소 곡면 다공성 구조를 DNS로 연구하였다 — 모두 기체 냉각재에 국한된다."}, {"type": "bullet", "text": "인용된 기초 도구 및 이론: 연성 다상/다중규모 다공성 매질 수송을 위한 오픈소스 DuMux 3 프레임워크(Flemisch 등; Koch 등), 기공망 모델링 기초(Blunt; Gostick 등 OpenPNM/PoreSpy), 그리고 구성 법칙에 사용된 동적 기공망 모세관성(Joekar-Niasar 등)과 코너 기막 모세관 유동(Mason과 Morrow; Ransohoff와 Radke)이 있다."}, {"type": "bullet", "text": "확인된 공백: 상변화 증산냉각에 대한 형상 효과 해석과 구조 설계는 연속체 규모 REV 모델이 지배하는 반면, 다공성 매질 수송에 필수적인 기공 규모 통찰은 기체 냉각재에 대해서만 존재하며, 상변화 열전달 강화와 계면 분사 항력 감소를 동시에 정량화한 완전 연성 기공 규모 연구는 없었다."}]}, "method": {"content": [{"type": "bullet", "text": "모델은 두 영역으로 구성된다(Fig. 1a): 정육면체 기공 몸체(내접 반지름 $r_P$)가 정사각 단면 기공 목(내접 반지름 $r_T$)으로 연결되고 바닥에 다수의 냉각재 입구를 갖는 기공 규모 기공망으로 모델링된 다공성 매질 영역과, 고온 기체 입구/출구 및 다수의 분사 입구를 갖는 연속체 규모 CFD 자유유동(FF) 채널이다. 상변화는 다공성 영역의 액/기 계면 아래에서 일어나고, 양방향 열·물질 전달이 다공성 계면에서 발생하며, 채널은 분사 영역과 분사 후 영역으로 나뉜다.", "figure_refs": [1]}, {"type": "bullet", "text": "이상화된 정육면체/정사각 형상은 해석 편의를 위해 실제 기공 구조와 의도적으로 다르며, 실제 매질로 확장하려면 적절한 알고리즘으로 micro-CT 스캔에서 기공망을 추출할 수 있다(Fig. 1b).", "figure_refs": [1]}, {"type": "bullet", "text": "자유유동 운동량은 유한체적법으로 풀린다(식 1). FF의 밀도, 속도, 동점성, 전단응력, 압력과 3차원 등가 모델링을 위한 체적력을 포함한다."}, {"type": "formula", "label": "Eq. (1) — free-flow momentum conservation", "latex": "\\frac{\\partial(\\rho_{FF}\\,\\vec{v}_{FF})}{\\partial t} + \\nabla\\cdot\\left(\\rho_{FF}\\,\\vec{v}_{FF}\\,\\vec{v}_{FF}^{\\,T}\\right) = \\nabla\\cdot\\left(\\mu_{FF}\\,\\overset{\\leftrightarrow}{\\tau}_{FF}\\right) - \\nabla p_{FF} + \\vec{f}", "description": "자유유동 영역의 과도 Navier-Stokes형 운동량 균형: $\\rho_{FF}$, $\\vec{v}_{FF}$, $\\mu_{FF}$, $\\overset{\\leftrightarrow}{\\tau}_{FF}$, $p_{FF}$는 밀도, 속도, 동점성, 전단응력 텐서, 압력이며, $\\vec{f}$는 3차원 등가 모델링에 사용되는 체적력이다."}, {"type": "bullet", "text": "FF의 2성분(수증기, 공기) 질량 보존(식 2)은 각 성분의 몰분율, 몰질량, 질량분율, 확산 계수를 통해 수송을 지배한다."}, {"type": "formula", "label": "Eq. (2) — free-flow species mass conservation", "latex": "\\frac{\\partial}{\\partial t}\\!\\left(\\rho_{FF}\\frac{x_k^{FF}M_k}{\\sum_{k=water,air} x_k^{FF}M_k}\\right) + \\nabla\\cdot\\!\\left(\\rho_{FF}\\frac{x_k^{FF}M_k}{\\sum_{k=water,air} x_k^{FF}M_k}\\,\\vec{v}_{FF}\\right) = \\nabla\\cdot\\!\\left(\\rho_{FF}D_k^{FF}\\nabla X_k^{FF}\\right)", "description": "자유유동 내 성분 $k\\in\\{water,air\\}$의 대류-확산: $x_k^{FF}$는 몰분율, $M_k$는 몰질량, $X_k^{FF}$는 질량분율, $D_k^{FF}$는 질량 확산 계수이다."}, {"type": "bullet", "text": "FF의 에너지 보존(식 3)은 엔탈피를 이송하고 성분 엔탈피 확산과 푸리에 전도를 더한다. 비내부에너지는 $u_{FF}=h_{FF}-p_{FF}/\\rho_{FF}$, 비엔탈피는 $h_{FF}=c_p^{FF}(T_{FF}-T_{ref})$이다."}, {"type": "formula", "label": "Eq. (3) — free-flow energy conservation", "latex": "\\frac{\\partial(\\rho_{FF}u_{FF})}{\\partial t} + \\nabla\\cdot\\left(\\rho_{FF}h_{FF}\\vec{v}_{FF}\\right) = \\sum_{k=water,air}\\nabla\\cdot\\left(h_k^{FF}\\rho_{FF}D_k^{FF}\\nabla X_k^{FF}\\right) + \\nabla\\cdot\\left(k_{FF}\\nabla T_{FF}\\right)", "description": "자유유동 에너지 균형: 과도 내부에너지와 엔탈피 이송이 성분 엔탈피 확산 수송과 푸리에 전도의 합과 같다($k_{FF}$, $T_{FF}$는 열전도율과 온도)."}, {"type": "bullet", "text": "FF의 유한체적법과 달리, PNM 지배방정식은 기공 몸체와 목에 대한 이산화로 구축된다. 기공 몸체 $i$와 $j$ 사이의 목 $ij$를 통한 각 상 $\\alpha\\in\\{g,l\\}$의 유량은 컨덕턴스에 기공 몸체 압력 차를 곱한 것이다(식 4)."}, {"type": "formula", "label": "Eq. (4) — pore-throat phase flow rate (PNM)", "latex": "Q_{\\alpha,ij}^{PNM} = g_{\\alpha,ij}^{PNM}\\left(p_{\\alpha,i}^{PNM} - p_{\\alpha,j}^{PNM}\\right)", "description": "목 $ij$를 통한 상 $\\alpha$(기상 또는 액상)의 기공망 유량은 수력 컨덕턴스 $g_{\\alpha,ij}^{PNM}$에 연결된 기공 몸체 $i$와 $j$ 사이 상 $\\alpha$의 압력 차를 곱한 값이다."}, {"type": "bullet", "text": "PNM의 성분 수송(식 5)은 두 상에 걸친 성분 $k$의 과도 저장을 목을 통한 이송 플럭스, 확산 질량 플럭스, 계면 물질 전달 원천항 $Vq_k^{PNM,i}$과 균형시킨다. $V_i$는 기공 몸체 체적, $s_\\alpha$는 상 체적분율, $x_{\\alpha,k}^{PNM}$는 상 $\\alpha$ 내 $k$의 몰분율, $J_{\\alpha,k}^{PNM}$는 확산 질량 플럭스이다."}, {"type": "formula", "label": "Eq. (5) — PNM species transport with interface source", "latex": "\\frac{\\partial}{\\partial t}\\sum_{\\alpha=l,g} V_i\\,s_\\alpha^{PNM}\\rho_\\alpha^{PNM}\\frac{x_{\\alpha,k}^{PNM}M_k}{\\sum_{k=water,air} x_{\\alpha,k}^{PNM}M_k} = \\sum_{\\alpha=l,g}\\sum_{j}\\left(x_{\\alpha,k}^{PNM}M_k\\rho_\\alpha Q_{\\alpha,ij}^{PNM}\\right) + \\sum_{\\alpha=l,g}\\sum_{j}\\left(J_{\\alpha,k}^{PNM}A_\\alpha\\right)_{ij} + \\left(Vq_k^{PNM}\\right)_i", "description": "기공 몸체 $i$ 내 성분 $k\\in\\{water,air\\}$의 보존: 액상과 기상에 걸친 저장 질량의 과도 변화가 목을 통한 이송 플럭스, 확산 플럭스, 계면 기공 몸체에서 활성화되는 계면 물질 전달 원천 $(Vq_k^{PNM})_i$과 같다."}, {"type": "bullet", "text": "PNM의 에너지 보존(식 6)은 국소 열평형 가정 하에 수립되며 계면 기공 몸체에서 에너지 원천 $Vq_e^{PNM,i}$을 포함한다. 유체 내부에너지와 고체 골격 에너지를 저장하고 엔탈피를 이송으로, 기공 간 전도(공극률 가중 유체 및 고체)로, 성분 엔탈피 확산으로 수송한다."}, {"type": "formula", "label": "Eq. (6) — PNM energy conservation (local thermal equilibrium)", "latex": "V_i\\frac{\\partial}{\\partial t}\\!\\left[\\sum_{\\alpha=l,g}\\rho_\\alpha^{PNM}u_\\alpha^{PNM}s_\\alpha^{PNM} + (1-\\varepsilon)\\rho_s^{PNM}c_{p,s}^{PNM}T^{PNM}_i\\right] + \\sum_{\\alpha=l,g}\\sum_{j}\\left(\\rho_\\alpha^{PNM}h_\\alpha^{PNM}Q_\\alpha^{PNM}\\right)_{ij} = \\sum_{\\alpha=l,g}\\sum_{j}A_{\\alpha,ij}\\frac{k_{\\alpha,i}^{PNM}+k_{\\alpha,j}^{PNM}}{2}\\frac{T_j^{PNM}-T_i^{PNM}}{L_{ij}} + (1-\\varepsilon)k_s^{PNM}\\frac{T_j^{PNM}-T_i^{PNM}}{L_{ij}} + \\sum_{\\alpha=l,g}\\sum_{j}A_\\alpha\\!\\left(\\sum_{k=water,air} J_{\\alpha,k}^{PNM}h_{\\alpha,k}^{PNM}\\right) + \\left(Vq_e^{PNM}\\right)_i", "description": "국소 열평형 하 기공망 에너지 균형: 과도 유체 내부에너지와 고체 골격 저장(좌변에 엔탈피 이송)이, 길이 $L_{ij}$ 목을 가로지르는 유체 및 공극률 가중 고체 전도, 성분 엔탈피 확산, 계면 에너지 원천 $(Vq_e^{PNM})_i$과 균형을 이룬다. $\\varepsilon$은 PNM 형상으로부터 계산된다."}, {"type": "bullet", "text": "이상 변위 구성 법칙: 액체·기체·모세관 압력이 제약되고(식 7), 정육면체 기공의 국소 모세관 압력/액체 포화도 관계는 Joekar-Niasar 등을 따른다(식 8). 수력 컨덕턴스, 모세관 임계값, 상변화, 계면 열·물질 전달, 경계 조건에 대한 추가 법칙은 저자들의 이전 연구를 따르며, 구현은 DuMux 3에서 이루어진다."}, {"type": "formula", "label": "Eq. (7) — capillary-pressure constraint", "latex": "p_l^{PNM} = p_g^{PNM} - p_{cap}^{PNM}\\!\\left(s_l^{PNM}\\right)", "description": "액체 압력은 기체 압력에서 모세관 압력을 뺀 값이며, 모세관 압력 자체는 국소 액체 포화도 $s_l^{PNM}$의 함수이다."}, {"type": "formula", "label": "Eq. (8) — cubic-pore capillary-pressure / liquid-saturation relation (Joekar-Niasar et al.)", "latex": "p_{cap}^{PNM}\\!\\left(s_l^{PNM}\\right) = \\begin{cases} \\text{linear} & 0 \\le s_l^{PNM} < 10^{-2} \\\\ 2\\sigma_{PNM}\\big/\\!\\left[r_P\\left(1-e^{-6.83\\,s_l^{PNM}}\\right)\\right] & 10^{-2} \\le s_l^{PNM} < 1-10^{-6} \\\\ \\text{linear} & 1-10^{-6} \\le s_l^{PNM} < 1 \\\\ 0 & s_l^{PNM} = 1 \\end{cases}", "description": "정육면체 기공의 구간별 모세관 압력 법칙: 중앙 포화도 구간에서는 표면장력 $\\sigma_{PNM}$과 내접 기공 몸체 반지름 $r_P$에 지수 포화도 항을 통해 비례하며, 건조 및 포화 한계 부근에서는 선형으로 연결되고 완전 포화 시 0이 된다."}, {"type": "bullet", "text": "시뮬레이션 영역 및 조건: 고온 기체 채널은 20 mm × 4 mm, 다공성 영역은 10 mm × 10 mm이며 고온 기체 입구 뒤 2.5 mm에 위치한다. Table 1에 따라 채널 입출구 압력 강하는 1000 Pa(입구 속도 ~14 m/s), 입구 고온 공기 온도 1500 K, 기준 압력 1e5 Pa, 냉각재 입구 액체 압력 400 Pa, 냉각재 온도 300 K이다. 기공 몸체는 초기에 6.897e-3 m 높이 아래로 포화되고 그 위는 기체로 채워진다.", "figure_refs": []}, {"type": "bullet", "text": "변수 행렬(Table 2): 공극률 ε 효과(기공 몸체 수 15×15, 20×20, 25×25로 $r_P$=150 μm, $r_T$=40 μm 일정 하에서 ε = 0.20, 0.36, 0.56), 기공 목 $r_T$ 효과(ε=0.36, $r_P$=150 μm에서 30/40/50/60 μm), 기공 몸체 $r_P$ 효과(ε=0.36에서 60/150/200 μm 및 150±50 μm 무작위성 케이스). 형상 효과를 분리하기 위해 동일한 외부 조건이 부과된다.", "figure_refs": []}, {"type": "bullet", "text": "모델 검증 및 격자 독립성(2.5절): 연성 기법은 먼저 Vorhauer 등의 미세유체 건조 실험(297.45 K, 건조 공기 20 mL/min)과 검증되고 — 양쪽 모두 평균 액체 포화도가 t ≈ 50 h 부근에서 거의 0으로 감소 — 이어서 고온 계면 조건(1200 K, 70 m/s, 냉각재 공급 플럭스 0.0832 kg/m^2·s)에서 흔히 쓰이는 TPMM과 검증된다. 네 가지 격자(59×14, 89×20, 138×28, 167×36)를 비교하여 Mesh 3을 선택한다.", "figure_refs": [2, 3]}, {"type": "formula", "label": "Eq. (14) — TPMM empirical interface heat flux (validation baseline)", "latex": "q_{TPMM}(x) = h_\\infty(x)\\left(T_\\infty - T_{TPMM}^{s}\\right), \\qquad h_\\infty(x) = \\frac{0.332\\,k_\\infty}{x+x_0}\\,Re_{x,\\infty}^{1/2}\\,Pr_\\infty^{1/3}", "description": "TPMM 검증 기준에서, 다공성 매질 상부로의 계면 열유속은 국소 레이놀즈 수 $Re_{x,\\infty}$, 프란틀 수 $Pr_\\infty$, 고온 공기 전도율 $k_\\infty$, 상류 채널 길이 $x_0$에 따라 변하는 Blasius형 대류 계수 $h_\\infty(x)$를 사용한다. $T_{TPMM}^{s}$는 다공성 상부의 고체 온도이다."}, {"type": "bullet", "text": "검증 품질: 총 건조 시간의 모델-실험 상대 오차는 9.4%, 액체 포화도의 평균 절대 오차는 0.0996이다. 감소 곡선 형상의 불일치는 미지의 실제 기공 배열, 다른 건조 공기 유동 방향, 일정 증발률 코너 기막 가정에 기인한다. 경험적 열유속 TPMM과 비교하여, 연성 기법은 추가로 계면 물질 전달(침입, 혼합, 분출)과 더 큰 순수 기상 분포 범위를 포착한다.", "figure_refs": [2]}]}, "results": {"content": [{"type": "bullet", "text": "평가 변수: 냉각 효율 $\\eta$(식 9)는 국소 자유유동 온도를 자유유동 입구 및 냉각재 입구 온도에 대해 정규화하고, 온도 균일도는 채널을 따르는 최대 온도차(식 9a)를 사용하며, 과도 분사비 $F$(식 10)는 합산 냉각재 입구 질량 플럭스 대 적분된 고온 기체 입구 질량 플럭스의 비이고, 총 냉각재 소비량 $M_c$(식 11)는 냉각재 질량 플럭스를 분사 시간에 걸쳐 적분하며, 표면 마찰 계수 $C_f$(식 12)는 분사 영역 변동을 통과하는 평균 항력 감소 경향을 드러내기 위해 $C_{f,filtered}$로 FFT 필터링된다."}, {"type": "formula", "label": "Eq. (9) — cooling efficiency", "latex": "\\eta = \\frac{T_\\infty - T}{T_\\infty - T_c}", "description": "채널 바닥을 따르는 냉각 효율로, $T_\\infty$는 자유유동 입구 온도, $T$는 $y=0.01$ m에서의 자유유동 온도, $T_c$는 냉각재 입구 온도이다. $\\eta=1$은 벽이 냉각재 온도까지 냉각됨을 의미한다."}, {"type": "formula", "label": "Eq. (9a) — maximum temperature difference (uniformity)", "latex": "(\\Delta T)_{max} = T_{max} - T_{min}", "description": "온도 균일도 척도: 채널을 따라 $y=0.01$ m에서의 최대 자유유동 온도와 최소 자유유동 온도의 차이로, 값이 작을수록 더 균일한 냉각을 의미한다."}, {"type": "formula", "label": "Eq. (10) — blowing ratio", "latex": "F = \\sum_{inlet,c}\\rho_c U_c \\Big/ \\int_{inlet,h}\\rho_h U_h", "description": "분사비: 합산 냉각재 입구 질량 플럭스($\\rho_c U_c$)와 적분된 고온 기체 입구 질량 플럭스($\\rho_h U_h$)의 비로, 첨자 $c$와 $h$는 냉각재 분사 영역과 고온 기체 입구 영역을 나타낸다."}, {"type": "formula", "label": "Eq. (11) — total coolant consumption", "latex": "M_c = \\int_0^{T_{total}}\\left(\\sum_{inlet,c}\\rho_c U_c\\right)dt", "description": "총 냉각재 소비량: 입구에 걸쳐 합산되고 전체 분사 시간 $T_{total}$에 걸쳐 적분된 냉각재 입구 질량 플럭스로, 단위 면적당 누적 냉각재 무게를 준다."}, {"type": "formula", "label": "Eq. (12) — skin-friction coefficient", "latex": "\\frac{C_f}{2} = \\frac{\\mu_{mixture}\\left(\\partial U_x^{FF}/\\partial y\\right)\\big|_{y=0.01m}}{\\left[\\rho_{FF}\\left(U_x^{FF}\\right)^2\\right]_\\infty}", "description": "표면 마찰 계수(경계층 관례로 $C_f/2$로 표기): 벽면 전단응력 — 기체 혼합물의 동점성에 $y=0.01$ m에서의 속도 구배를 곱한 값 — 을 자유류 동압으로 정규화한다. FFT 필터($C_{f,filtered}$)가 분사 영역 변동을 평활화한다."}, {"type": "bullet", "text": "공극률 효과 — 포화도 및 기막(Fig. 4): ε를 0.20에서 0.36, 0.56으로 늘리면(기공 몸체 크기 일정, 기공 몸체 수 증가) 절대 투과율이 증가하여 평균 액체 포화도의 상대 증가가 공극률과 함께 커지고 t=60 s에서의 정상 수위가 더 큰 ε에서 더 높아진다. 자유유동에서 기막 형상은 유사하나 더 높은 공극률은 더 높은 수증기 농도를 준다.", "figure_refs": [4]}, {"type": "bullet", "text": "공극률 효과 — 냉각(Fig. 5): 공극률 증가는 분사 영역과 분사 후 영역 모두에서 전체 냉각 효율을 높이며, 선단부 최대 온도는 ε 0.20→0.36, 0.36→0.56 증가에 따라 6.6%와 4.7% 떨어지고 최대 온도차는 544.89 K에서 459.21 K로 감소한다(균일도 개선). 그러나 분사 영역 시작 부근에서 최고 공극률 케이스(ε=0.56)는 더 큰 공기 농도와 외부 고온 기체 침입을 나타내는 기체 속도 방향을 보인다 — 높은 투과율은 분사를 돕지만 외부 침입도 쉽게 한다.", "figure_refs": [5]}, {"type": "bullet", "text": "공극률 효과 — 냉각재 공급(Fig. 6): 일정 입구 액체 압력 하에서 과도 분사비는 수위 변화에 따라 초기에 변동하다 ~15 s 후 정상화되며, 낮은 유동 저항으로 인해 높은 공극률에서 정상 분사비가 더 크다. 60 s 동안 총 냉각재 소비량은 두 공극률 단계에서 75.2%와 72.5% 증가하여 더 나은 냉각 효율은 더 높은 냉각재 무게로 대가를 치러야 함을 확인한다. 모세관 압력 제약은 계면에서 큰 액체 압력 및 속도 구배를 만든다.", "figure_refs": [6]}, {"type": "bullet", "text": "공극률 효과 — 항력 감소(Fig. 7): 분사 영역을 따라 항력 감소 효과는 공극률과 함께 증가하고(필터링된 $C_f$ 감소), 분사 후 감소는 공극률에 걸쳐 유사하다. 모델의 온도 의존 동점성은 ε=0.56(최고 냉각 효율)에서 가장 크게 떨어지며, 평균 표면 마찰 계수는 정상 분사비 증가와 함께 감소하여 기존 항력 감소 연구와 일치한다.", "figure_refs": [6, 7]}, {"type": "bullet", "text": "기공 목 $r_T$ 효과 — 메커니즘 및 냉각(Fig. 8, 9): $r_T$는 수력 컨덕턴스와 스냅오프 모세관 압력을 통해 작용한다(스냅오프 임계값 ∝ $r_T^{-1}$, 유동 저항 ∝ $r_T^{-4}$). 큰 $r_T$는 분사 영역 후방과 분사 후 영역의 냉각을 개선하나 선단부를 악화시키며, $r_T$ 30→60 μm에서 최대 온도차가 485.53 K → 636.60 K로 상승하고, 큰 $r_T$일수록 선단부 침입이 더 심하고 후단부 분출이 더 크다.", "figure_refs": [8, 9]}, {"type": "bullet", "text": "기공 목 $r_T$ 효과 — 공급 및 항력(Fig. 10, 11): 큰 $r_T$는 훨씬 큰 총 냉각재 소비량과 더 큰 초기 분사비를 주지만, 정상 분사비는 다공성 매질을 가로지르는 액체 압력 차가 작아지므로 $r_T$와 반비례로 감소한다. 평균 항력 감소 효과는 $r_T$에 강하게 민감하지 않으나, 큰 $r_T$는 후방 분사 영역에서 더 뚜렷한 감소를 보이는데 이는 더 큰 y방향 체적 플럭스가 더 작은 필터링된 $C_f$를 유발하기 때문이다.", "figure_refs": [10, 11]}, {"type": "bullet", "text": "기공 몸체 $r_P$ 효과 — 포화도 및 냉각(Fig. 12, 13): $r_P$ 증가는 액체 포화도 상승을 키우나(투과율 증가), 150±50 μm 무작위성 케이스는 습윤상 성장을 교란한다. $r_P$에 따른 냉각 변화는 작아 $r_P$=60 μm는 최선의 분사 후 최소/최대 온도를 주지만 최악의 선단부 최대 온도를 보이며, $r_P$를 60에서 200 μm로 늘리면 최대 온도차가 597.66 K에서 465.78 K로 감소한다. 매질 내 최대 온도(~600 K)는 재료 열화 임계값 이하이므로 열화는 모델링되지 않는다.", "figure_refs": [12, 13]}, {"type": "bullet", "text": "기공 몸체 $r_P$ 효과 — 공급 및 항력(Fig. 14, 15): 큰 $r_P$는 냉각재 소비량을 높이며, $r_P$ 60→200 μm에서 정상 분사비가 ~0.2%에서 2.2%로 증가하는 동안 표면 마찰 계수는 ~0.08에서 ~0.07로 떨어진다(반비례 경향). $r_P$=60 μm의 변동 범위와 평균 항력 감소 진폭이 가장 작으며, 무작위성(150±50 μm) 추가는 전체 성능을 크게 바꾸지 않으나 변동을 도입한다.", "figure_refs": [14, 15]}, {"type": "bullet", "text": "설계된 구배 구조(Table 4, Fig. 16–20): 변수 경향으로부터 세 가지 구배 케이스가 구축된다(Case 1 균일 기준; Case 2 후단부에 더 큰 $r_T$=60 μm의 구배 $r_T$; Case 3 선단부 ε=0.48, 후단부 0.24, 평균 0.36의 구배 ε; Case 4 구배 ε와 $r_T$ 결합). 선단부에 더 큰 ε과 더 작은 $r_T$는 그곳의 수위를 높여 임계 선단부에 유리하다. 구배 ε는 냉각재 사용 효율을 현저히 개선하여 — Case 3은 Case 2보다 냉각재를 49.4% 적게 소비 — 반면 구배 $r_T$는 사용 효율을 약간 낮추나 냉각을 개선한다. 동일 평균 ε과 $r_T$에서 네 구조는 평균 항력 감소에 차이가 거의 없으나, Case 4(구배 $r_P$와 $r_T$ 모두)가 모든 평가 측면에서 최선을 보인다.", "figure_refs": [16, 17, 18, 19, 20]}]}, "discussion": {"content": [{"type": "bullet", "text": "공극률 메커니즘: 높은 ε에서의 더 높은 절대 투과율은 액체 포화도와 정상 분사비를 늘리고 온도를 낮추지만, 계면에서 외부 고온 기체 침입도 쉽게 한다(ε=0.56에서 더 큰 공기 농도와 내향 기체 속도로 나타남), 냉각재 분사와 침입 저항 사이의 절충을 드러낸다.", "figure_refs": [4, 5]}, {"type": "bullet", "text": "공극률의 항력 감소 메커니즘: 모델이 주로 온도 의존 동점성을 포착하므로, 가장 큰 점성 감소(및 가장 큰 항력 감소)는 최고 냉각의 ε=0.56 케이스와 일치한다. 평균 표면 마찰은 정상 분사비가 증가함에 따라 감소하여 Eto 등의 분사 항력 감소 경향과 부합한다.", "figure_refs": [7]}, {"type": "bullet", "text": "기공 목 메커니즘: $r_T^{-1}$로 스케일되는 스냅오프 임계값은 작은 $r_T$에서 초기 액체 포화도 상승을 쉽게 하는 반면, $r_T^{-4}$로 스케일되는 유동 저항은 큰 $r_T$가 유입과 유출 양방향에서 기상 저항을 급격히 줄임을 의미한다 — 큰 $r_T$에서 더 쉬운 선단부 침입과 더 큰 후단부 분출, 그리고 그에 따른 선단부 냉각 손실을 설명한다.", "figure_refs": [8, 9]}, {"type": "bullet", "text": "기공 목 공급/항력 메커니즘: $r_T$와 함께 정상 분사비가 반비례로 감소하는 것은 매질을 가로지르는 액체 압력 차가 작아지기 때문이다. 항력 감소는 큰 $r_T$에서 후방 분사 영역에서 더 뚜렷한데, 이는 더 큰 계면 y-체적 플럭스가 더 작은 필터링된 표면 마찰 계수와 더 빠른 기막 유동을 유발하기 때문이다.", "figure_refs": [10, 11]}, {"type": "bullet", "text": "기공 몸체 메커니즘: 큰 $r_P$는 투과율과 포화도 상승을 늘리고 목 유동 저항을 줄이나(더 높은 기공 목 속도), 냉각 영향은 비교적 약하다. $r_P$ 분포의 무작위성은 습윤상 성장을 교란하고(수위 상승이 쉬워짐) 변동을 도입하며, $r_P$=60 μm는 t=30 s 이후 저포화 위치를 모세관 압력으로 보충하는 이점을 얻는다.", "figure_refs": [12, 13, 14]}, {"type": "bullet", "text": "기존 연속체 규모 연구와의 일치: Liu 등은 선단부에 최대 공극률을 갖는 시편을 제작하여 선단부 냉각재 유량과 냉각 효율을 높였다 — 본 연구의 기공 규모 공극률 결과(높은 ε가 냉각과 소비량을 모두 증가)와 일치한다. Zhang 등은 박리 전 분사비와 함께 표면 마찰이 감소함을 관찰하였다 — 역시 본 연구와 부합한다."}, {"type": "bullet", "text": "구배 설계 종합: 세 가지 결론(Table 3) — ε 증가는 냉각, 항력 감소, 균일도를 개선하나 냉각재 사용을 크게 늘림; $r_T$ 증가는 분사 후 성능을 개선하나 분사 영역 시작과 균일도를 악화시킴; $r_P$ 증가는 냉각을 거의 바꾸지 않으나 더 높은 소비량에서 균일도와 항력 감소를 개선함 — 이 선단부에 더 큰 ε과 더 작은 $r_T$를 배치하되 추가 냉각재를 피하기 위해 전체 평균을 제어하는 구배 설계를 이끈다.", "figure_refs": [16]}, {"type": "bullet", "text": "구배의 국소 효과 및 최적 설계: 구배 ε는 시작 영역에서 항력 감소를 개선하고 후방에서 감소시키며(Fig. 7의 균일 공극률 경향과 일치), 구배 $r_T$는 Fig. 11의 기공 목 항력 경향을 재현한다. 더 큰 계면 체적 플럭스는 더 큰 국소 분사비와 더 낮은 국소 필터링 표면 마찰을 준다. 구배 $r_P$와 $r_T$를 결합한 Case 4가 모든 측면에서 최선을 보인다 — 비교적 낮은 냉각재 소비에서 유망한 냉각 효율과 항력 감소를 제공한다.", "figure_refs": [18, 19, 20]}]}, "conclusion": {"content": [{"type": "bullet", "text": "ε를 0.20에서 0.36, 0.56으로 늘리면 냉각 효율과 항력 감소가 모두 개선되나 냉각재 소비량이 크게 증가한다: 분사 영역 최대 온도가 두 단계에서 6.6%와 4.7% 감소하는 반면 총 냉각재 소비량은 각각 75.2%와 72.5% 증가한다."}, {"type": "bullet", "text": "동일 ε에서 $r_T$를 30, 40, 50, 60 μm로 늘리면 분사 영역 후방의 냉각 효율과 항력 감소가 개선되나 시작에서는 악화되어 온도 균일도가 감소한다. 분사 후 최대 온도가 3.0%, 3.6%, 5.5% 감소하는 동안 총 냉각재 소비량은 단계별로 18.7%, 39.5%, 231.7% 증가한다."}, {"type": "bullet", "text": "$r_P$를 60, 150, 200 μm로 늘리면 냉각 효율은 거의 변하지 않으나 평균 항력 감소가 개선되고 냉각재 소비량이 증가한다. $r_P$에 무작위성을 추가해도 전체 성능은 크게 바뀌지 않으나 변동이 도입된다."}, {"type": "bullet", "text": "최적 설계 구배 구조 — 후단부보다 선단부에 더 큰 ε과 더 작은 $r_T$, 그리고 $r_P$와 $r_T$ 모두의 구배 분포 — 는 균일 구조 대비 최고 선단부 온도를 약 80 K 낮추며(냉각 효율 ~7.5% 향상) 냉각재를 약 49% 적게 소비한다. 균일 $r_T$ 분포 대비 냉각재 소비량은 약 5.7% 증가하나 채널 전체에 걸쳐 냉각이 개선된다."}, {"type": "bullet", "text": "기공망 접근은 다양한 기공 몸체/목 크기, 개수, 무작위성, 구배 분포 하에서 열보호를 기공 규모로 시각화·정량화하는 능력 — 연속체 규모 REV 평균화를 넘어서는 — 을 제공하며, 완전 연성 정식화는 비연성 또는 일방향 반복 모델이 놓치는 양방향 계면 열·물질 전달을 포착한다."}, {"type": "bullet", "text": "전반적으로 본 연구는 상변화 증산냉각 응용을 위한 다공성 매질의 기공 규모 설계에 기여하여 전반적 열보호와 항력 감소 성능을 개선한다. 본 연구는 NSFC-DFG Mobility Programme(M-0368)와 111 Center(B18002)의 지원을 받았다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "사용된 기공 규모 형상은 실제 다공성 구조와 상당한 차이가 있는 매우 이상화된 정육면체 기공 몸체와 정사각 기공 목으로, 충실도보다는 해석 편의를 위해 선택되었다.", "source_quote": "The geometries set in this work have relatively large discrepancies from the real pore structures, and these structures are arranged for analyzing the influences of the critical geometric factors more conveniently.", "source_section": "method"}, {"claim": "외부 압력장은 모든 케이스에서 동일한 조건으로 고정되었으므로, 실제 공학 조건에서 다양하게 나타나는 외부 압력 분포의 영향은 탐구되지 않았다.", "source_quote": "The external pressure distributions in real engineering conditions are various, it is important to discuss the influences of this factor. While in this work, the study focused on the influences of geometric structures, so the same external conditions had been chosen for comparison.", "source_section": "method"}, {"claim": "다공성 매질 내 예측된 최대 온도(약 600 K)가 열화를 유발하기에 충분히 높지 않다고 판단되어 재료 열화는 무시되었으며, 따라서 해당 현상은 모델링되지 않았다.", "source_quote": "the largest temperature within the porous media is around 600 K, which is not high enough to induce the thermal degradation of material. Therefore, this work had not considered the effect of these phenomena.", "source_section": "results"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["다중규모 해석의 부재로 인해, 상변화 증산냉각의 다공성 계면에서 기공 규모 구조가 열전달 강화에 미치는 영향이 불분명하게 남아 있었다.", "상변화 증산냉각에서 계면 분사가 항력 감소에 미치는 연성 효과는 연성 기법으로 충분히 연구되지 않았다(기존 항력 감소 연구는 기체 냉각재로 단일 자유유동 영역만 다룸).", "기존 연속체 규모(REV 기반) 모델은 평균화된 형상 변수와 경험식에 의존하여 기공 규모 유동 패턴을 해석할 수 없는 반면, 기존 기공 규모/다중규모 연구는 기체 냉각재(상변화 없음)에 국한되었다.", "저자들 자신의 이전 완전 연성 다중규모 모델은 아직 다공성 매질의 형상 구조를 해석하거나 설계하는 데 사용되지 않았다."], "addressed_by_this_work": ["다중규모 CFD-PNM 연성 기법을 사용하여, 공극률·기공 목 크기·기공 몸체 크기가 냉각 효율, 온도 균일도, 분사비, 냉각재 소비량, 항력 감소에 미치는 영향을 분사 영역과 분사 후 영역 모두에서 정량화한다.", "연성 기법은 상변화 증산냉각에 대해 과도 분사비, 일정 압력 입구 조건에서의 총 냉각재 소비량, 그리고 계면 분사에 의한 항력 감소 효과(필터링된 표면 마찰 계수)를 정량화한다.", "기공망 모델링은 REV 모델이 포착할 수 없는 기공 규모 계면 현상(양방향 열·물질 전달, 외부 고온 기체 침입, 수증기 기막, 액상/기상 압력 및 속도 구배)을 해석하며, 이를 상변화하는 액체 냉각재에 적용한다.", "세 가지 새로운 구배형 기공 규모 구조가 설계·시뮬레이션되며, 그중 최적(Case 4)은 동일 평균 공극률 및 목 크기 균일 구조 대비 선단부 냉각 효율을 약 7.5% 향상시키면서 냉각재 소비량을 약 49% 절감한다."], "remaining_unresolved": ["이상화된 정육면체/정사각 기공 형상을 실제 micro-CT 추출 기공망으로 연결하는 것은 향후 응용 과제로 남아 있다(알고리즘은 언급되었으나 본 연구에서 수행되지 않음).", "실제 공학 조건에서 마주치는 다양한 외부 압력 분포의 영향은 의도적으로 일정하게 고정되어 여전히 미해결로 남아 있다.", "더 높은 계면 온도에서의 재료 열화는 연구 조건이 열화 임계값 이하에 머물렀기 때문에 다루어지지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
