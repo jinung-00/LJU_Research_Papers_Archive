@@ -295,7 +295,17 @@
         }
         .topic-header:first-child { margin-top: 0; }
         .topic-title { font-size: 18px; font-weight: 700; }
+        .topic-left { display: flex; align-items: center; gap: 14px; }
         .topic-controls { display: flex; align-items: center; gap: 12px; }
+        .sort-control {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12.5px; color: var(--text-soft);
+        }
+        .sort-control select {
+            font-family: inherit; font-size: 12.5px; color: var(--text);
+            padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px;
+            background: white; cursor: pointer;
+        }
         .category-header {
             display: flex;
             align-items: center;
@@ -318,7 +328,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:11</div>
+            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:41</div>
         </div>
     </header>
 
@@ -405,6 +415,7 @@
         const state = {
             search: '',
             readFilter: 'all',           // all | read | unread
+            sortBy: 'tier',              // within-category sort: tier | year
             tierFilter: new Set(["0","1","2","3","null"]),  // active tier keys (default: all on)
             selectedTopic: TOPIC_KEYS[0] || '',   // single-select (radio)
             categoryFilter: new Set(),            // active category keys for the selected topic
@@ -465,6 +476,31 @@
             const tb = (b.tier === null || b.tier === undefined) ? 999 : b.tier;
             return ta - tb;
         }
+        // 최신 년도 위. 동일 년도는 tier로 2차 정렬.
+        function byYearDesc(a, b) {
+            const ya = a.year || '0000', yb = b.year || '0000';
+            if (ya !== yb) return ya < yb ? 1 : -1;   // descending
+            return byTierDesc(a, b);
+        }
+
+        // 정렬 기준 드롭다운 (제목 우측에 마운트). 카테고리 내 정렬만 바꾼다.
+        function buildSortControl() {
+            const wrap = document.createElement('div');
+            wrap.className = 'sort-control';
+            const lab = document.createElement('label');
+            lab.setAttribute('for', 'sort-select'); lab.textContent = '정렬';
+            const sel = document.createElement('select');
+            sel.id = 'sort-select';
+            [['tier', '티어순'], ['year', '년도순']].forEach(([v, label]) => {
+                const o = document.createElement('option');
+                o.value = v; o.textContent = label;
+                if (state.sortBy === v) o.selected = true;
+                sel.appendChild(o);
+            });
+            sel.addEventListener('change', () => { state.sortBy = sel.value; render(); });
+            wrap.appendChild(lab); wrap.appendChild(sel);
+            return wrap;
+        }
 
         // Read-toggle tabs + topic-relative counts, mounted on the right of the topic header.
         function buildTopicControls(visibleCount) {
@@ -497,10 +533,14 @@
             // right), even when no papers are visible — so the read filter is never lost.
             const th = document.createElement('div');
             th.className = 'topic-header';
+            const left = document.createElement('div');
+            left.className = 'topic-left';
             const title = document.createElement('span');
             title.className = 'topic-title';
             title.textContent = TOPIC_LABELS[state.selectedTopic] || state.selectedTopic;
-            th.appendChild(title);
+            left.appendChild(title);
+            left.appendChild(buildSortControl());
+            th.appendChild(left);
             th.appendChild(buildTopicControls(visible.length));
             grid.appendChild(th);
 
@@ -512,16 +552,19 @@
                 return;
             }
 
+            // within-category comparator chosen by the sort dropdown
+            const cmp = state.sortBy === 'year' ? byYearDesc : byTierDesc;
+
             if (state.selectedTopic === 'Basic_Theory') {
-                // flat topic — no sub-categories, just tier-sorted cards
-                visible.slice().sort(byTierDesc).forEach(p => grid.appendChild(makeCard(p)));
+                // flat topic — no sub-categories, just sorted cards
+                visible.slice().sort(cmp).forEach(p => grid.appendChild(makeCard(p)));
             } else {
                 const cats = CATEGORY_ORDER.slice();
                 visible.forEach(p => { const c = p.category || ''; if (c && !cats.includes(c)) cats.push(c); });
                 cats.forEach(cat => {
                     const inCat = visible.filter(p => (p.category || '') === cat);
                     if (inCat.length === 0) return;
-                    inCat.sort(byTierDesc);   // highest tier first within the category
+                    inCat.sort(cmp);   // tier or year, within the category
                     const ch = document.createElement('div');
                     ch.className = 'category-header';
                     ch.innerHTML = `${CATEGORY_LABELS[cat] || cat} <span class="cat-count">${inCat.length}</span>`;
@@ -529,7 +572,7 @@
                     inCat.forEach(p => grid.appendChild(makeCard(p)));
                 });
                 // papers with no category (shouldn't happen for categorized topics) — render last
-                visible.filter(p => !(p.category || '')).sort(byTierDesc)
+                visible.filter(p => !(p.category || '')).sort(cmp)
                        .forEach(p => grid.appendChild(makeCard(p)));
             }
         }
