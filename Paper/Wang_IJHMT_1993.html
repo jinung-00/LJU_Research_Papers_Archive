@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media—I. Formulation</title>
+    <meta name="keywords" content="two-phase, porous media heat and mass transfer, phase-change, mixture model, numerical, two-phase mixture model, capillary porous media, separate flow model, capillary diffusion, liquid saturation">
+    <meta name="paper-authors" content="Chao-Yang Wang, C. Beckermann">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 36, No. 11, 1993, pp. 2747-2758 · DOI: 10.1016/0017-9310(93)90094-M">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="01_Fundamentals">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media—I. Formulation</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Chao-Yang Wang, C. Beckermann</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 36, No. 11, 1993, pp. 2747-2758 · DOI: 10.1016/0017-9310(93)90094-M</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 기초 논문은 모세관 다공질 매질 내에서 공존하는 액상과 기상을, 두 유체를 각각 따로 추적하는 대신 하나의 <span class="term">다상 혼합물(multiphase mixture)</span>의 두 구성성분으로 취급하는 <span class="term">2상 혼합물 모델(TPMM, two-phase mixture model)</span>을 제시한다. 혼합물 보존 방정식(질량·운동량·에너지와 액체질량/조성 방정식)은 추가적인 근사를 도입하지 않고 <span class="term">고전적 분리유동모델(SFM, separate flow model)로부터 엄밀하게 유도</span>되므로, 두 정식화는 수학적으로 동등하다. 혼합물 밀도 $\rho$, 질량가중 평균속도 $\mathbf{u}$, Chavent형 혼합물 압력 $p$, 동역학적 밀도 $\rho_k(s)$, 상대 이동도 $\lambda_l,\lambda_v$, 모세관 확산계수 $D(s)$ 와 같은 평균 혼합물 변수를 정의함으로써, 이 모델은 SFM의 약 4개의 상별 미분방정식을 절반 수준으로 줄이면서도 각 상의 개별 속도와 플럭스를 대수적으로 복원할 수 있다(이것이 정보를 잃는 일반 혼합물 모델이 아니라 &lt;em&gt;2상&lt;/em&gt; 혼합물 모델인 이유다). 통합 단일영역 정식화는 단상영역과 2상영역 사이의 이동 경계면을 추적할 필요를 없애, 경계층 2상유동, 다중영역의 켤레(conjugate) 2상/단상 유동, 과도 유동을 수치해석으로 훨씬 다루기 쉽게 만든다. 동반 논문 Part II는 이 모델을 다공질 매질 내 수직 가열판에 인접한 압력구동 비등유동에 적용한다.</div>
+            <div class="keywords"><span class="keyword-chip">two-phase</span><span class="keyword-chip">porous media heat and mass transfer</span><span class="keyword-chip">phase-change</span><span class="keyword-chip">mixture model</span><span class="keyword-chip">numerical</span><span class="keyword-chip">two-phase mixture model</span><span class="keyword-chip">capillary porous media</span><span class="keyword-chip">separate flow model</span><span class="keyword-chip">capillary diffusion</span><span class="keyword-chip">liquid saturation</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공질 매질을 통한 2상유동은 지열계, 오일 저류층 공학, 원자로 사고 후 해석, 충전층 반응기, 핵폐기물 처분, 다공질 히트파이프, 건조, 응축 강화 등에 걸쳐 있으며, 전통적으로는 액상과 기상을 각자의 물성·속도·경계면 조건을 갖는 서로 다른 유체로 보는 연속체 기반의 분리유동모델(SFM)로 다루어져 왔다. SFM은 엄밀하지만 단상 문제보다 약 두 배 많은 미분방정식을 요구하며, 이 단점은 다차원 경우에 더 심해져 다양한 임시방편적 수정 정식화를 낳았다. 본 연구의 명시된 목적은, 두 상을 하나의 다상 혼합물의 구성성분으로 보고 SFM으로부터 엄밀하게 유도되어 그것과 정확히 동등한, 물리적으로 의미 있고 실용적인 새 정식화 — 2상 혼합물 모델 — 를 개발하는 것이다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 두 갈래의 선행 연구를 배경으로 한다: 기초 SFM 문헌(Scheidegger, Bear, Marle)과 오일 저류층·원자로 안전 공학에서의 수치해 노력, 그리고 유추의 토대가 되는 통상적 다성분 혼합물에 대한 혼합물 이론 문헌(Bowen)이다. 또한 지열 유동, 핵폐기물 히트파이프 효과, 충전층/트리클 반응기, 막응축, 건조 등 응용 분야를 인용하며, 이들의 구성식 상관관계(상대투과도와 모세관 압력 J-함수)를 이후 상호 교환 가능한 폐합식으로 채택한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">정식화는 두 가지 물리적 가정 아래 두 유동상(액체 l, 증기/기체 v)의 다상 혼합물을 정의하는 데서 출발한다: 상들이 연속체의 모든 점에 공존하며, 제어체적이 어떤 상요소보다 크지만 계 척도보다 훨씬 작다는 것이다. 정적 혼합물 밀도 $\rho$, 질량가중 평균 겉보기 속도 $\mathbf{u}$, 평균 동점성과 상대 이동도 $\lambda_l,\lambda_v$, Chavent형 의사(pseudo) 혼합물 압력 $p$, 혼합물 점성 $\mu(s)$, 동역학적 혼합물 밀도 $\rho_k(s)$ 등 평균 혼합물 변수를 정의한 뒤 SFM(질량, Darcy 운동량, 모세관 압력/Leverett-J 폐합식)을 요약하고 재결합한다. 상 질량 방정식을 더하면 단일 혼합물 연속방정식이, 빼고 총질량 플럭스 $\mathbf{j}$(모세관 확산항과 중력 이동항)를 쓰면 액체질량(조성) 방정식이, 상 운동량 방정식을 합치면 단일 Darcy형 혼합물 운동량 방정식이, 국소 열역학적 평형하의 전(全)에너지 보존에서 온도식 또는 액체포화도식으로 환원 가능한 혼합물 에너지 방정식이 얻어진다. 구성식 폐합(멱법칙 상대투과도, 여러 J-함수 상관, 유효 열전도도)과 수력학적/포화도/엔탈피 경계조건이 계를 완성한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">모델의 효용은 실험이 아니라 정준(canonical) 환원을 통해 해석적으로 입증된다. Table 1은 2상 혼합물 방정식을 통상적 다성분 혼합물 방정식과 나란히 놓아, 몇 개의 밑줄 친 항을 제외하면 구조적으로 동일함을 보인다. 1차원 상변화 환원(Eq. 64)은 $u$ 와 $s$ 에 대해 단 두 개의 지배방정식만 필요로 하고(SFM은 네 개), 기지의 상사해를 재현하는 Boltzmann 상사 환원(Eq. 65)을 허용하며, 바닥/체적 가열 아래에서 고전적 Lipinski 방정식(Eq. 67)으로 붕괴한다. 마지막으로 각 보존방정식이 단일 대류-확산-생성 템플릿(Eq. 68)으로 표현되어 기존 단상 수치 해법을 직접 적용할 수 있다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논의는 모델이 추가 근사 없이 SFM으로부터 엄밀하게 유도되므로 SFM의 대안적이지만 동등한 형태이며, 두 가지 명시된 물리적 가정(상의 동시 점유와 중간 척도의 제어체적)에 기반함을 강조한다. 다성분 혼합물 이론과의 유추가 개념적 핵심이다: 다상 혼합물은 유한한 경계면 면적과 강한 구성성분 물성 차이를 제외하면 다성분 혼합물처럼 거동하며, 이 차이가 중력 유도 확산 질량 플럭스와 질량확산 구동 현열 항을 주입한다. 저자들은 중력 대 모세관 확산 구동력을 비교하고, 정식화가 미분방정식 수를 대략 절반으로 줄여 켤레·과도·경계층 문제의 단일영역 처리를 가능케 함을 주장하면서도 강한 비선형성이 수치 작업을 여전히 어렵게 함을 경고한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공질 매질 내 2상유동을 다상 혼합물 유동으로 재개념화하고, 경계면 면적과 물성 차이가 사라지면 고전적 다성분 혼합물 이론으로 환원되면서 SFM과는 정확히 동등하게 유지되는 일관된 혼합물 모델을 제시한다. 유도된 방정식은 유한한 상요소 치수와 큰 물성 차이의 효과를 중력 구동 확산 질량 플럭스와 에너지 수송에 대한 질량전달 기여를 통해 보존하면서도, 미분방정식 수를 대략 절반으로 줄여 중간 수준의 계산 자원으로도 수치 시뮬레이션에 적합하게 만든다. 단상 다성분 수송과의 닮음은 1차원 상변화 유동, 경계층 2상유동, 단일영역 내 단상·2상 결합 유동에 새로운 통찰을 주며, 고유 상특성을 뭉개지 않는다. 향후 과제는 실제 응용, 다성분(액체-증기-공기) 확장, 관성/비다르시 유동이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 46</span></summary>
+            <ol class="ref-list"><li>A. E. Scheidegger, The Physics of Flow Through Porous Media, 3rd Edn, University of Toronto Press, Toronto, 1974</li><li>J. Bear, Dynamics of Fluids in Porous Media, Elsevier, New York, 1972</li><li>G. Chavent, A new formulation of diphasic incompressible flows in porous media, Lecture Notes in Mathematics 503, Springer, 1976</li><li>K. S. Udell, Heat transfer in porous media considering phase change and capillary — the heat pipe effect, Int. J. Heat Mass Transfer 28, 485-495, 1985</li><li>M. C. Leverett, Capillary behavior in porous solids, AIME Trans. 142, 152-169, 1941</li><li>R. J. Lipinski, A model for boiling and dryout in particle beds, NUREG/CR-2034, 1982</li><li>V. X. Tung and V. K. Dhir, A hydrodynamic model for two-phase flow through porous media, Int. J. Multiphase Flow 14, 47-65, 1988</li><li>C. Doughty and K. Pruess, A similarity solution for two-phase fluid and heat flow near a high-level nuclear waste package emplaced in porous media, Int. J. Heat Mass Transfer 33, 1205-1222, 1990</li><li>R. Bowen, Theory of mixtures, in Continuum Physics III, ed. A. C. Eringen, Academic Press, New York, 1976</li><li>C. Y. Wang and C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media — II. Application to pressure-driven boiling flow adjacent to a vertical heated plate, Int. J. Heat Mass Transfer 36, 2759-2768, 1993</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다공질 매질을 통한 2상유동은 여러 공학 분야에 걸친 중요한 주제다: 지열계, 오일 저류층 공학, 원자로 사고 후 해석, 다상 충전층 반응기, 고준위 핵폐기물 처분, 다공질 히트파이프, 건조, 응축 강화, 열에너지 저장 등."}, {"type": "bullet", "text": "전통적 접근법은 <span class=\"term\">분리유동모델(SFM, separate flow model)</span>로, 기상과 액상을 각자의 열역학·수송 물성과 서로 다른 유동 속도를 갖는 별개의 유체로 보고 상별 보존법칙과 경계면 조건으로 기술하는 연속체 정식화다. 한 상의 존재로 인해 다른 상의 유효 유동 단면적이 감소하는 것을 설명하기 위해 도입된 <span class=\"term\">상대투과도(relative permeability)</span>가 핵심 개념이다."}, {"type": "bullet", "text": "2상유동 문제는 본질적으로 비선형이므로 정확해는 많은 단순화 가정을 둔 소수의 1차원 문제(예: Buckley-Leverett 사례)에 한정되며, 중력과 모세관성을 포함하는 실제 다차원 문제는 수치 절차를 요구하여 다수의 유한요소·유한차분 알고리즘 연구를 촉발했다."}, {"type": "bullet", "text": "SFM은 직관적이고 엄밀한 기술을 제공하지만, 단상의 거의 두 배에 달하는 많은 미분방정식을 풀어야 하므로 직접적인 수치 시뮬레이션에는 일반적으로 불편하며, 이 단점은 다차원 상황에서 더욱 심각해진다."}, {"type": "bullet", "text": "방정식 수를 줄이기 위해 오일 저류층 공학과 원자로 안전 해석에서는 수치 처리 전에 다양한 수정 정식화가 구성되어 왔으며, 본 연구는 그 대신 단일한 일반적용 축약을 추구한다."}, {"type": "bullet", "text": "주된 목적은 물리적으로 의미 있으면서 실용적인, 모세관 다공질 매질을 통한 2상유동의 새 정식화 — 두 상을 이성분 혼합물의 구성성분으로 보는 <span class=\"term\">2상 혼합물 모델</span> — 을 개발하는 것이다."}, {"type": "bullet", "text": "(서로 다른 화학 성분으로 이루어진) 통상적 다성분 혼합물과 구분하기 위해 이 구성을 <span class=\"term\">다상 혼합물(multiphase mixture)</span>이라 부른다. 상들은 0이 아닌(유한한) 경계면 면적을 갖는 별개의 분리 가능한 구성성분이며, 그 혼합물은 상조성(phasic composition)이 매끄럽게 변하는 단일 물질이다."}, {"type": "bullet", "text": "결정적으로, 다상 혼합물의 모든 물성은 구성성분 물성의 결과이지만 그 함수 형태를 선험적으로 가정하지 않고 SFM으로부터 엄밀히 유도한다. 따라서 본 정식화는 수학적으로 SFM과 정확히 동등하며, 지배 방정식의 형태, 그 물리적 의미, 수치 구현 적합성에서만 차이가 난다."}]}, "related_works": {"content": [{"type": "bullet", "text": "기초 SFM 문헌: Scheidegger(The Physics of Flow Through Porous Media)와 Bear(Dynamics of Fluids in Porous Media)는 본 논문이 출발점으로 삼는, 비혼합·비압축 2상 다공질 유동 방정식의 통상적 형태를 제공하며, Marle의 Multiphase Flow in Porous Media도 인용된다."}, {"type": "bullet", "text": "SFM의 수치해 문헌은 유한요소·유한차분법(Peaceman; Lewis, Verner, Zienkiewicz; Kukreti, Rajapaksa; Tung, Dhir) 전반에 걸쳐 개관되며, 방대한 SFM 방정식 계를 푸는 불편함은 오일 저류층(Douglas)과 원자로 안전(Chung, Catton; Lee, Catton) 보고서들에 문서화되어 있다."}, {"type": "bullet", "text": "혼합물 압력 구성에는 수정된 Chavent 압력 변수(Chavent, 1976)가 사용되며, 통상적 다성분 혼합물과의 개념적 유추는 Bowen의 혼합물 이론(1976)에 근거한다."}, {"type": "bullet", "text": "표준 관행으로 인용되는 상대투과도 폐합식: 지열계에서 흔한 선형 함수(지수 n=1; Sheu, Torrance, Turcotte; Schubert, Straus)와 석유·원자로 안전 공학에서 흔한 3차 형태(Lipinski; Fatt, Klikoff; Wyllie)."}, {"type": "bullet", "text": "상호 교환 가능한 폐합식으로 인용되는 모세관 압력 J-함수 상관관계: 건조 및 다공질 히트파이프용 Leverett 데이터에 대한 Udell의 흡입(imbibition) 적합, 트리클 반응기용 Grosser 등의 배수(drainage) 곡선 상관(Dankworth, Sundaresan이 향류로 확장), 그리고 원자로 안전 해석에서 사용된 배수+흡입 J-함수."}, {"type": "bullet", "text": "정식화의 다루기 쉬움 주장을 뒷받침하는 응용/검증 맥락: 핵폐기물 패키지 부근 2상유동의 상사해(Doughty, Pruess), Boltzmann/O'Sullivan 상사 변환, Lipinski의 비등/건조 입자층 모델, 자기상사 응축 유동(Nilson, Romero), 그리고 경계층 2상유동 논의를 촉발하는 다공질 매질 막응축 연구(Plumb; Shekarriz, Plumb; Majumdar, Tien)."}, {"type": "bullet", "text": "고체 골격과 혼합물로 이루어진 계의 유효 열전도도 폐합식은 Somerton 등과 관련 상관관계에서 가져와 혼합물 에너지 방정식을 폐합하는 데 사용된다."}]}, "method": {"content": [{"type": "bullet", "text": "다상 혼합물의 토대가 되는 두 물리적 가정(Fig. 1): (i) 두 분리 가능한 상의 계는 어떤 위치든 두 상이 동시에 점유할 수 있는 연속체이며, (ii) 미분 모델을 세우는 제어체적은 어떤 상요소의 최대 치수보다 크지만 계의 특성 척도보다는 훨씬 작다.", "figure_refs": [1]}, {"type": "bullet", "text": "먼저 평균 혼합물 물성을 정의한다: 정적 <span class=\"term\">혼합물 밀도</span> $\\rho$ 는 상 밀도의 포화도 가중합이고, 질량가중 <span class=\"term\">혼합물 속도</span> $\\rho\\mathbf{u}$ 는 상 질량 플럭스의 합이다. 여기서 $s$ 는 액체포화도(공극 부피 중 액체가 차지하는 부피분율), $\\mathbf{u}$ 는 전체 단면 기준 겉보기(Darcy) 속도다.", "figure_refs": [1]}, {"type": "formula", "label": "Eq. (1) — 정적 혼합물 밀도", "latex": "\\rho = \\rho_l s + \\rho_v (1-s)", "description": "정적 혼합물 밀도는 액상·기상 밀도의 액체포화도 가중 평균이다; $s$ 는 액체포화도."}, {"type": "formula", "label": "Eq. (2) — 질량가중 혼합물 속도", "latex": "\\rho\\mathbf{u} = \\rho_l \\mathbf{u}_l + \\rho_v \\mathbf{u}_v", "description": "혼합물 질량 플럭스는 두 상 질량 플럭스의 합이므로, 혼합물 속도는 (공극률을 곱한) 고유 상속도의 질량가중 평균이다; $\\mathbf{u}_l,\\mathbf{u}_v$ 는 겉보기 상속도."}, {"type": "bullet", "text": "2상 혼합물의 평균 동점성 $\\nu(s)$ 가 상 상대투과도와 동점성으로부터 정의되고, 이로부터 <span class=\"term\">상대 이동도</span> $\\lambda_l(s)$ 와 $\\lambda_v(s)=1-\\lambda_l(s)$ 가 정의된다. 이 이동도들은 정식화 전반에 반복되는 구성성분 부피분율형 가중치다."}, {"type": "formula", "label": "Eqs. (3)-(5) — 평균 동점성과 상대 이동도", "latex": "\\nu(s) = \\frac{1}{\\dfrac{k_{rl}(s)}{\\nu_l} + \\dfrac{k_{rv}(s)}{\\nu_v}}, \\qquad \\lambda_l(s) = \\nu(s)\\,\\frac{k_{rl}(s)}{\\nu_l}, \\qquad \\lambda_v(s) = 1-\\lambda_l(s) = \\nu(s)\\,\\frac{k_{rv}(s)}{\\nu_v}", "description": "2상 혼합물의 평균 동점성 $\\nu(s)$ 와, 상대투과도 $k_{rl},k_{rv}$ 및 상 동점성 $\\nu_l,\\nu_v$ 로부터 구성한 상대 이동도 $\\lambda_l,\\lambda_v$; 이동도는 $\\lambda_l+\\lambda_v=1$ 을 만족한다."}, {"type": "bullet", "text": "<span class=\"term\">의사(Chavent형) 혼합물 압력</span> $p$ 는 모세관 효과가 단일 압력 변수에 흡수되도록 정의된다. 모세관력이 무시될 만하면 $p=p_l=p_v$ 이고, $s\\to1$(순액체) 또는 $s\\to0$(순증기)이면 해당 단상 압력으로 환원되어 혼합물 이론과의 일관성을 확인하며, 혼합물 운동량 방정식을 크게 단순화한다."}, {"type": "formula", "label": "Eq. (6) — 의사(Chavent) 혼합물 압력", "latex": "p = \\frac{p_l + p_v}{2} + \\frac{1}{2}\\int_0^{p_c}\\big[\\lambda_v(\\xi)-\\lambda_l(\\xi)\\big]\\,\\mathrm{d}\\xi", "description": "수정 Chavent 혼합물 압력: 두 상 압력의 평균에 모세관 압력 $p_c$ 에 대한 이동도 가중 적분을 더한 것으로, 혼합물 운동량 균형에서 명시적인 액체-증기 압력차를 제거한다."}, {"type": "bullet", "text": "이어 출발점으로 SFM이 요약된다: 상별 질량 보존(Eqs. 7-8, 내부 상변화 질량생성 $\\dot m_l,\\dot m_v$ 포함, 외부생성이 없으면 Eq. 9에서 합이 0), 체적력을 포함하는 각 상의 Darcy 법칙(Eqs. 10-11, 절대투과도 $K$ 와 상대투과도 $k_r$), 모세관 압력 정의 $p_c=p_v-p_l$(Eq. 12)과 이를 폐합하는 Leverett J-함수(Eq. 13)."}, {"type": "formula", "label": "Eqs. (7)-(9) — SFM 상 질량 보존", "latex": "\\rho_l\\!\\left[\\varepsilon\\frac{\\partial s}{\\partial t} + \\nabla\\!\\cdot\\mathbf{u}_l\\right] = \\dot m_l, \\qquad \\rho_v\\!\\left[\\varepsilon\\frac{\\partial(1-s)}{\\partial t} + \\nabla\\!\\cdot\\mathbf{u}_v\\right] = \\dot m_v, \\qquad \\dot m_l + \\dot m_v = 0", "description": "액상·기상에 대한 분리유동모델 질량 균형(공극률 $\\varepsilon$, 비압축·비변형 매질); $\\dot m_l,\\dot m_v$ 는 내부 상변화 질량생성으로, 외부 생성/소멸이 없으면 합이 0이다."}, {"type": "formula", "label": "Eqs. (10)-(13) — Darcy 법칙, 모세관 압력, Leverett J-함수", "latex": "\\mathbf{u}_l = -K\\frac{k_{rl}}{\\mu_l}(\\nabla p_l - \\rho_l\\mathbf{g}), \\quad \\mathbf{u}_v = -K\\frac{k_{rv}}{\\mu_v}(\\nabla p_v - \\rho_v\\mathbf{g}), \\quad p_c = p_v - p_l, \\quad p_c = \\left(\\frac{\\varepsilon}{K}\\right)^{1/2}\\!\\sigma\\,J(s)", "description": "체적력을 포함한 각 상의 Darcy 유동, 모세관 압력 정의(증기-액체 압력차), 그리고 그 Leverett-J-함수 표현; $K$ 는 절대투과도, $\\sigma$ 는 증기-액체 경계면(표면) 장력."}, {"type": "bullet", "text": "<span class=\"term\">질량 보존</span>: 두 상 방정식 (7)+(8)을 더하고 Eq. 9를 쓰면 단상 혼합물 유동과 형태가 동일한 단일 혼합물 연속방정식이 얻어진다. 혼합물 밀도가 크게 가변적이므로 다상 혼합물 유동은 압축성으로 분류된다."}, {"type": "formula", "label": "Eq. (14) — 혼합물 연속방정식", "latex": "\\varepsilon\\frac{\\partial \\rho}{\\partial t} + \\nabla\\!\\cdot(\\rho\\mathbf{u}) = 0", "description": "혼합물 질량 보존으로, 단상 연속방정식과 형태가 같다; $\\rho$ 의 강한 가변성 때문에 혼합물 유동은 압축성이다."}, {"type": "bullet", "text": "<span class=\"term\">운동량 보존</span>: 상 Darcy 법칙에 각 상 밀도를 곱해 더하고(Eq. 15), 혼합물 압력 항등식 $\\lambda_l\\nabla p_l + \\lambda_v\\nabla p_v = \\nabla p$(Eq. 16)을 사용하면, 혼합물 점성 $\\mu(s)=\\rho(s)\\nu(s)$(Eq. 18)과 체적력에 곱해지는 새로운 <span class=\"term\">동역학적 혼합물 밀도</span> $\\rho_k(s)$(Eq. 19)를 갖는 단일 Darcy형 혼합물 운동량 방정식으로 재구성된다."}, {"type": "formula", "label": "Eqs. (17)-(19) — 혼합물 운동량, 혼합물 점성, 동역학적 밀도", "latex": "\\mathbf{u} = -\\frac{K}{\\mu(s)}\\big[\\nabla p - \\rho_k(s)\\mathbf{g}\\big], \\qquad \\mu(s) = \\rho(s)\\,\\nu(s), \\qquad \\rho_k(s) = \\rho_l\\lambda_l(s) + \\rho_v\\lambda_v(s)", "description": "벌크 겉보기 속도 $\\mathbf{u}$ 에 대한 Darcy형 혼합물 운동량 방정식으로, 혼합물 점성 $\\mu(s)$ 와 중력항 앞에 나타나는 이동도 가중 동역학적 혼합물 밀도 $\\rho_k(s)$(Eq. 1의 정적 밀도 $\\rho(s)$ 와 구별)를 포함한다."}, {"type": "bullet", "text": "<span class=\"term\">액체질량 보존</span>: 평균 물성이 액체포화도 $s$ 에 의존하므로 추가 방정식이 필요하다. 상 질량 방정식을 빼고(Eq. 20), $\\lambda_l\\nabla p_l-\\lambda_v\\nabla p_v=-2\\lambda_l\\lambda_v\\nabla p_c+(\\lambda_l-\\lambda_v)\\nabla p$(Eq. 21)을 사용하며 운동량 방정식과 연속방정식을 대입하면 액체질량 이류-확산 방정식(Eq. 23)이 얻어진다. 여기서 $p_c'$ 는 모세관 압력 함수의 액체포화도에 대한 도함수다."}, {"type": "formula", "label": "Eq. (23) — 액체질량(조성) 방정식", "latex": "\\varepsilon\\frac{\\partial(\\rho_l s)}{\\partial t} + \\nabla\\!\\cdot\\big[\\rho\\mathbf{u}\\,\\lambda_l(s)\\big] = \\nabla\\!\\cdot\\!\\left(-\\frac{K}{\\nu}\\lambda(1-\\lambda)\\,p_c'\\,\\nabla s\\right) - \\nabla\\!\\cdot\\!\\left(\\frac{K}{\\nu}\\lambda(1-\\lambda)(\\rho_l-\\rho_v)\\mathbf{g}\\right) + \\dot m_l", "description": "혼합물 변수로 쓴 액체질량 균형: 액체 구성성분의 저장과 이류는 모세관 확산 플럭스($p_c'$ 를 통해 $\\nabla s$ 가 구동), 중력 유도 이동 플럭스, 상변화 생성 $\\dot m_l$ 의 합과 같다; $\\lambda\\equiv\\lambda_l$."}, {"type": "bullet", "text": "<span class=\"term\">총질량 플럭스 $\\mathbf{j}$</span> 가 도입되어(Eq. 24) 모세관 유도 확산 플럭스(모세관 확산계수 $D(s)$, Eq. 25)와 중력 유도 이동 플럭스(방해함수 $f(s)=k_{rv}\\lambda(s)$, Eq. 26)를 결합한다. 이것으로 액체질량 방정식은 간결한 형태 Eq. 27로 환원된다. 표준 J-함수가 모두 포화도 증가에 따라 감소하므로 모세관 확산계수는 항상 양(+)이다."}, {"type": "formula", "label": "Eqs. (24)-(27) — 총질량 플럭스, 모세관 확산계수, 방해함수, 간결한 액체질량 방정식", "latex": "\\mathbf{j} = -D(s)\\nabla s + f(s)\\frac{K\\Delta\\rho}{\\nu_v}\\mathbf{g}, \\quad D(s) = \\frac{K}{\\nu(s)}\\lambda(1-\\lambda)\\,[-p_c'(s)], \\quad f(s) = k_{rv}\\,\\lambda(s), \\quad \\varepsilon\\frac{\\partial(\\rho_l s)}{\\partial t} + \\nabla\\!\\cdot[\\rho\\mathbf{u}\\lambda(s)] = -\\nabla\\!\\cdot\\mathbf{j} + \\dot m_l", "description": "총(모세관 확산 + 중력 이동) 질량 플럭스 $\\mathbf{j}$, 모세관 확산계수 $D(s)$($p_c'&lt;0$ 이므로 양), 방해함수 $f(s)$, 그리고 그 결과 얻어지는 간결한 액체질량 보존방정식의 정의; $\\Delta\\rho=\\rho_l-\\rho_v$."}, {"type": "bullet", "text": "개별 상 플럭스는 여전히 복원 가능하다: 대수 관계 $\\rho_l\\mathbf{u}_l=\\lambda\\rho\\mathbf{u}+\\mathbf{j}$ 와 $\\rho_v\\mathbf{u}_v=(1-\\lambda)\\rho\\mathbf{u}-\\mathbf{j}$(Eqs. 32-33)는 각 상의 실제 질량 유량을 가상 벌크 항($\\lambda\\rho\\mathbf{u}$)에 확산 플럭스 $\\mathbf{j}$ 를 더하거나 빼는 형태로 표현하여, 고유 2상 특성이 뭉개지지 않게 한다. 이것이 정보를 잃는 혼합물 모델이 아니라 &lt;em&gt;2상&lt;/em&gt; 혼합물 모델인 이유다."}, {"type": "formula", "label": "Eqs. (32)-(33) — 혼합물 해로부터 복원되는 상 플럭스", "latex": "\\rho_l\\mathbf{u}_l = \\lambda\\,\\rho\\mathbf{u} + \\mathbf{j}, \\qquad \\rho_v\\mathbf{u}_v = (1-\\lambda)\\,\\rho\\mathbf{u} - \\mathbf{j}", "description": "벌크 혼합물 유동을 풀고 나면 각 구성성분의 실제 질량 유량을 이동도 가중 벌크 기여에 확산 질량 플럭스 $\\mathbf{j}$ 를 더하거나 빼서 대수적으로 얻는다; 따라서 상세 상유동이 여전히 접근 가능하다."}, {"type": "bullet", "text": "<span class=\"term\">에너지 보존</span>: 고체골격과 혼합물로 이루어진 복합계의 전에너지 보존을 <span class=\"term\">국소 열역학적 평형</span>($T=T_s=T_l=T_v$, Eq. 34) 아래에서 출발하여, 상 엔탈피를 온도와 관계짓고(Eqs. 35a-c, 잠열 $h_{fg}$ 포함), 이류항을 벌크 운동과 상대 상운동 기여로 분해해 동역학적 혼합물 엔탈피 $h_\\kappa$(Eq. 37)와 $\\rho h$ 를 통한 정적 혼합물 엔탈피(Eq. 38)를 정의한다."}, {"type": "formula", "label": "Eq. (41) — 혼합물 에너지 방정식(온도/포화도, 혼합물 변수)", "latex": "\\frac{\\partial}{\\partial t}\\big[(1-\\varepsilon)\\rho_s h_s + \\varepsilon\\rho h_\\kappa\\big] + \\nabla\\!\\cdot(\\rho\\mathbf{u}h_\\kappa) = \\nabla\\!\\cdot(k_{\\mathrm{eff}}\\nabla T) + \\nabla\\!\\cdot\\big[(h_v-h_l)\\mathbf{j}\\big] + \\dot Q", "description": "단상·2상 영역 전반에 유효한 동역학적 혼합물 엔탈피 형태의 혼합물 에너지 보존: 고체골격과 혼합물의 저장 및 엔탈피 이류가 유효 전도, 상대 상운동에 의한 에너지 플럭스(현열+잠열, $\\mathbf{j}$ 경유), 체적생성 $\\dot Q$ 와 균형을 이룬다; $k_{\\mathrm{eff}}$ 는 유효 열전도도."}, {"type": "formula", "label": "Eq. (42) — 정적 혼합물 엔탈피 h 의 단일변수 에너지 방정식", "latex": "\\Omega\\frac{\\partial(\\rho h)}{\\partial t} + \\nabla\\!\\cdot(\\gamma_h\\,\\rho\\mathbf{u}h) = \\nabla\\!\\cdot(\\Gamma_h\\nabla h) + \\nabla\\!\\cdot\\big[\\Gamma_h(h-h_{v,\\mathrm{sat}})\\nabla\\ln\\rho\\big] + \\nabla\\!\\cdot\\!\\left(f(s)\\frac{K\\Delta\\rho\\,h_{fg}}{\\nu_v}\\mathbf{g}\\right) + \\dot Q", "description": "에너지 방정식을 단일 혼합물 엔탈피 변수 $h$(Eq. 38)로 재구성한 것으로, 열용량비 $\\Omega$(Eq. 43), 이류 보정계수 $\\gamma_h$(Eq. 44), 확산계수 $\\Gamma_h$(Eq. 45)를 도입한다; 단상영역에서는 온도식, 등온 2상영역에서는 액체포화도식으로 작용한다."}, {"type": "formula", "label": "Eqs. (43)-(45) — 에너지 방정식 계수", "latex": "\\Omega = \\varepsilon + \\frac{\\rho_s c_s(1-\\varepsilon)}{\\rho}\\frac{\\mathrm{d}T}{\\mathrm{d}h}, \\qquad \\gamma_h = \\frac{\\dfrac{\\rho_l h_{l,\\mathrm{sat}}}{\\mu_l}k_{rl}(s) + \\dfrac{\\rho_v h_{v,\\mathrm{sat}}}{\\mu_v}k_{rv}(s)}{\\dfrac{\\rho_l h_{l,\\mathrm{sat}}}{\\mu(s)}\\,s + \\dfrac{\\rho_v h_{v,\\mathrm{sat}}}{\\mu(s)}(1-s)}, \\qquad \\Gamma_h = \\frac{\\rho(s)D(s)}{\\rho_l} + k_{\\mathrm{eff}}\\frac{\\mathrm{d}T}{\\mathrm{d}h}", "description": "단일변수 에너지 방정식의 열용량비 $\\Omega$, 이류 보정계수 $\\gamma_h$(이동도/엔탈피 가중 비), 유효 확산계수 $\\Gamma_h$; $\\mathrm{d}T/\\mathrm{d}h$ 는 온도-엔탈피 도함수. $\\gamma_h$ 의 분자/분모 묶음은 페이지 이미지에서 전사하였으니, 항별 포화도 가중은 원본 PDF로 검증 요망."}, {"type": "bullet", "text": "<span class=\"term\">등온 2상유동</span>(2.5.1절): 2상영역은 흔히 등온으로 가정할 수 있으며(특히 단일성분 상변화), 이 경우 Eq. 41은 액체질량 방정식 Eq. 27과 정확히 일치하게 환원된다 — 에너지 수송이 오로지 질량전달로 제어되는 상변화로만 구동된다. 온도와 포화도는 구간별 사상 Eqs. 46-47을 통해 혼합물 엔탈피로부터 유일하게 복원되어, 경계면 추적이 필요 없는 단일영역 정식화(Eqs. 14, 17, 42)를 준다."}, {"type": "formula", "label": "Eqs. (46)-(47) — 혼합물 엔탈피로부터의 구간별 온도와 포화도", "latex": "T = \\begin{cases} h/c_l & h \\le h_{l,\\mathrm{sat}} \\\\ T_{\\mathrm{sat}} & h_{l,\\mathrm{sat}} < h \\le h_{v,\\mathrm{sat}} \\\\ T_{\\mathrm{sat}} + \\dfrac{h-h_{v,\\mathrm{sat}}}{c_v} & h_{v,\\mathrm{sat}} < h \\end{cases} \\qquad s = \\begin{cases} 1 & h \\le h_{l,\\mathrm{sat}} \\\\ \\dfrac{\\rho}{\\rho_l}\\dfrac{h_{v,\\mathrm{sat}}-h}{h_{fg}} & h_{l,\\mathrm{sat}} < h \\le h_{v,\\mathrm{sat}} \\\\ 0 & h_{v,\\mathrm{sat}} < h \\end{cases}", "description": "혼합물 엔탈피 $h$ 로부터 온도와 액체포화도의 유일 복원: 과냉 액체, $T_{\\mathrm{sat}}$ 의 등온 2상 평탄역(여기서 포화도는 잠열 대역 $h_{fg}$ 를 통해 선형으로 변함), 과열 증기."}, {"type": "bullet", "text": "<span class=\"term\">비등온 2상유동</span>(2.5.2절): 두 상이 서로 다른 화학 성분(예: 불포화 매질의 물과 공기)일 때 2상역 온도는 비균일하므로, (엔탈피-온도 관계를 대입하고 상간 상변화를 무시해 얻은) 에너지 방정식의 온도 형태(Eq. 49)가 선호된다."}, {"type": "formula", "label": "Eq. (49) — 에너지 방정식의 비등온 온도 형태", "latex": "\\big[(\\rho c)_s\\varepsilon + \\rho c(1-\\varepsilon)\\big]\\frac{\\partial T}{\\partial t} + \\rho c_v\\mathbf{u}\\!\\cdot\\!\\nabla T + (c_l-c_v)\\mathbf{j}\\!\\cdot\\!\\nabla T = \\nabla\\!\\cdot(k_{\\mathrm{eff}}\\nabla T) + \\dot Q", "description": "비등온 2상 수송을 위한 혼합물 에너지 방정식의 온도 형태(상간 상변화는 고려하지 않음): 유효 열용량 저장과 이류($\\mathbf{j}$ 를 통한 상대 상운동 이류항 포함)가 유효 전도 및 생성 $\\dot Q$ 와 균형을 이룬다."}, {"type": "bullet", "text": "<span class=\"term\">구성식</span>(2.6절): 폐합에는 정규화 포화도 $S=(s-s_{li})/(1-s_{li})$ 의 멱법칙 상대투과도 $k_{rl}=S^n$, $k_{rv}=(1-S)^n$(지열용 선형 n=1, 석유/원자력용 3차), 여러 상호 교환 가능한 Leverett J-함수 상관(Udell Eq. 53; Grosser 등 Eq. 54; 원자로 안전용 배수+흡입 Eq. 55), 그리고 단순 가중 추정(Eq. 56)에서 포화도 보간형(Eq. 57)에 이르는 유효 열전도도가 사용된다. 지배 방정식은 특정 상관에 얽매이지 않는다."}, {"type": "formula", "label": "Eqs. (50)-(52) — 멱법칙 상대투과도와 정규화 포화도", "latex": "k_{rl} = S^n, \\qquad k_{rv} = (1-S)^n, \\qquad S = \\frac{s - s_{li}}{1 - s_{li}}", "description": "정규화(잔류 보정) 액체포화도 $S$ 의 표준 멱법칙 상대투과도; $s_{li}$ 는 증발로만 제거 가능한 환원불가 액체포화도. 선형($n=1$) 형태는 지열계에, 3차 형태는 석유·원자로 안전 공학에 적합하다."}, {"type": "formula", "label": "Eqs. (53)-(55) — 대표적 Leverett J-함수 상관", "latex": "J = 1.417(1-S) - 2.120(1-S)^2 + 1.263(1-S)^3 \\quad\\text{(Udell, imbibition)} \\\\ J = 0.48 + 0.036\\,\\ln\\!\\left(\\frac{1-s}{s}\\right) \\quad\\text{(Grosser et al., drainage)} \\\\ J = \\frac{(S^{-1}-1)^{0.175}}{\\sqrt{5}} \\quad\\text{(nuclear-safety, drainage+imbibition)}", "description": "건조/히트파이프, 트리클 반응기, 원자로 안전 응용에 인용된 세 가지 상호 교환 가능한 모세관 압력 J-함수 상관; 모두 액체포화도의 감소함수이므로 모세관 확산계수의 양수성을 보장한다."}, {"type": "formula", "label": "Eqs. (56)-(57) — 유효 열전도도 폐합식", "latex": "k_{\\mathrm{eff}} = k_s(1-\\varepsilon) + k_l\\varepsilon s + k_v\\varepsilon(1-s), \\qquad k_{\\mathrm{eff}} = k_{sv} + \\sqrt{s}\\,(k_{sl} - k_{sv})", "description": "유효 열전도도의 가장 거친 부피가중 추정과, 건조 매질($k_{sv}$) 및 완전 액체포화($k_{sl}$) 극한 사이를 보간하는 더 정교한 포화도 보간형; $k_s$ 는 고체골격 열전도도."}, {"type": "bullet", "text": "<span class=\"term\">초기/경계조건</span>(2.7절): 수력학적 경계조건에는 불투과 조건 $\\mathbf{u}\\!\\cdot\\!\\mathbf{n}=0$(Eq. 58, Darcy 법칙을 쓰므로 미끄럼 허용), 일정 혼합물 질량유량, 투과면의 일정 압력이 있다. 액체포화도 경계조건은 $s$ 또는 그 기울기를 지정하며(예: 순증기역 인접 $s=0$, 순액체 인접 $s=1$), 부여된 벽열유속 $q$ 는 $\\mathbf{j}$ 에 대한 플럭스 조건(Eqs. 59-61) 또는 엔탈피 형태의 조건 Eqs. 62-63을 준다."}, {"type": "formula", "label": "Eqs. (58)-(61) — 불투과 및 벽열유속 경계조건", "latex": "\\mathbf{u}\\!\\cdot\\!\\mathbf{n} = 0, \\qquad \\mathbf{j}\\!\\cdot\\!\\mathbf{n} = -\\frac{q}{h_{fg}}, \\qquad -D(s)\\frac{\\partial s}{\\partial n} + f(s)\\frac{K\\Delta\\rho}{\\nu_v}g_n = -\\frac{q}{h_{fg}}, \\qquad -D(s)\\frac{\\partial s}{\\partial n} = -\\frac{q}{h_{fg}}", "description": "혼합물 속도에 대한 불투과 벽 조건과, 등온 2상영역의 확산 질량 플럭스에 대한 벽열유속 조건 — 중력을 포함한 전체 형태와 체적가속이 없는 단순 형태; 단열 벽은 $q=0$ 인 경우다."}]}, "results": {"content": [{"type": "bullet", "text": "Table 1은 네 개의 혼합물 보존방정식(질량·운동량·액체질량·에너지)을 모두 요약하고, 친숙한 다공질 매질 다성분 혼합물 모델과 항별로 비교한다. 둘은 놀랄 만큼 유사하며 밑줄 친 항에서만 차이가 나는데, 이는 액체·기체 구성성분 사이의 유한한 경계면 면적과 강한 물성 변화에서 비롯된다.", "figure_refs": []}, {"type": "bullet", "text": "첫 번째 구체 예 — 등온 가정하의 1차원 상변화 2상유동: 연속방정식과 액체질량 방정식이 미지수 $u$ 와 $s$ 에 대한 두 방정식 계(Eq. 64)로 환원되며, 상속도 $u_l,u_v$ 는 Eqs. 32-33에서 대수적으로, 압력은 이후 운동량 방정식에서 복원된다 — SFM의 네 개 연립 미분방정식($u_l,u_v,p_l,p_v$)과 반복적 포화도 결정에 대비된다."}, {"type": "formula", "label": "Eq. (64) — 1차원 등온 상변화 2상유동", "latex": "\\begin{cases} \\varepsilon\\dfrac{\\partial\\rho}{\\partial t} + \\dfrac{\\partial(\\rho u)}{\\partial x} = 0 \\\\[2mm] \\varepsilon\\rho_l\\dfrac{\\partial s}{\\partial t} + \\dfrac{\\partial[\\rho u\\,\\lambda(s)]}{\\partial x} = -\\dfrac{\\partial j}{\\partial x} + \\dot m_l \\end{cases}", "description": "환원된 1차원 직교좌표 계: $u$ 와 $s$ 만을 갖는 혼합물 연속방정식과 액체질량 방정식. 2상 혼합물 모델은 이 둘만 필요한 반면, SFM은 네 개의 미분방정식과 반복적 포화도 결정을 요구한다."}, {"type": "bullet", "text": "내부 상변화와 중력 유도 질량 플럭스를 무시하면 Eq. 65가 되며, 속도 경계조건이 $t^{-1/2}$ 로 변하면 Boltzmann형 상사변수 $\\eta = x/\\sqrt{t}$ 가 PDE를 ODE로 환원한다 — O'Sullivan이 지질매질에, Doughty와 Pruess가 원통좌표 2상 정확해를 얻는 데 쓴 동일 변환이다."}, {"type": "formula", "label": "Eq. (65) — 상사 환원 가능한 1차원 형태(상변화 없음, 중력 플럭스 없음)", "latex": "\\begin{cases} \\varepsilon\\dfrac{\\partial\\rho}{\\partial t} + \\dfrac{\\partial(\\rho u)}{\\partial x} = 0 \\\\[2mm] \\varepsilon\\rho_l\\dfrac{\\partial s}{\\partial t} + \\dfrac{\\partial[\\rho u\\,\\lambda(s)]}{\\partial x} = \\dfrac{\\partial}{\\partial x}\\!\\left(D\\frac{\\partial s}{\\partial x}\\right) \\end{cases}", "description": "내부 상변화와 중력 이동을 버리면 포화도 방정식이 비선형 확산 방정식이 된다; $t^{-1/2}$ 속도 경계조건은 Boltzmann 상사변수 $\\eta=x/\\sqrt{t}$ 를 허용하여 계를 ODE로 환원한다."}, {"type": "bullet", "text": "두 번째 구체 예 — 바닥 및/또는 체적 가열로 구동되는 정상 2상유동: 연속방정식과 불투과면 조건(Eq. 58)이 혼합물 속도를 0으로 만들어, Eq. 64는 $-\\partial j/\\partial x + \\dot m_l = 0$(Eq. 66)으로 단순화된다. $\\dot m_l=\\dot Q/h_{fg}$ 로 적분하고 벽유속 조건(Eq. 59)을 적용하면 입자층 비등/건조에 대한 고전적 Lipinski 방정식(Eq. 67)이 얻어진다."}, {"type": "formula", "label": "Eq. (67) — 복원된 Lipinski 방정식", "latex": "D(s)\\frac{\\partial s}{\\partial x} + f(s)\\frac{K\\Delta\\rho}{\\nu_v}g = \\left[q + \\int \\dot Q\\,\\mathrm{d}x\\right]\\Big/ h_{fg}", "description": "혼합물 속도가 0이 되는 정상 체적/바닥 가열 아래에서, 모델은 입자층 비등·건조에 대한 잘 알려진 Lipinski 방정식으로 붕괴하여, 기존 결과가 본 정식화의 특수한 경우임을 보인다."}, {"type": "bullet", "text": "일반 수치 템플릿: 모든 보존방정식은 일반 변수 $\\Phi$, 확산계수 $D_\\Phi$, 생성 $S_\\Phi$ 를 갖는 단일 대류-확산-생성 형태(Eq. 68)로 표현될 수 있어, 기존의 다수 연립 단상 수송 해법을 원칙적으로 적용할 수 있다 — 다만 강한 비선형성과 가변 물성 때문에 실제 해를 구하는 것은 단상보다 어렵다고 저자들은 주의를 둔다."}, {"type": "formula", "label": "Eq. (68) — 통합 대류-확산-생성 형태", "latex": "\\frac{\\partial}{\\partial t}(\\rho\\Phi) + \\nabla\\!\\cdot(\\gamma_\\Phi\\,\\rho\\mathbf{u}\\Phi) = \\nabla\\!\\cdot(D_\\Phi\\nabla\\Phi) + S_\\Phi", "description": "각 혼합물 보존방정식이 사상되는 공통 템플릿으로, $\\Phi$ 는 일반 종속변수, $D_\\Phi$ 는 확산계수, $S_\\Phi$ 는 생성항이다 — 표준 단상 수치 알고리즘을 재사용하는 토대다."}, {"type": "bullet", "text": "경계층 2상유동: 저자들은 번거로운 SFM(정당화되지 않은 가정을 강요하고 체계적 이론 부재)과 달리, 본 정식화가 2상 경계층 유동의 존재를 깔끔하게 드러냄을 지적하며, 동반 논문 Part II가 그 첫 상세 연구다."}]}, "discussion": {"content": [{"type": "bullet", "text": "모델은 추가 근사를 도입하지 않고 고전 SFM으로부터 엄밀하게 유도되므로 원래 SFM의 대안적이지만 수학적으로 동등한 형태다; 두 가지 명시된 물리적 가정(모든 상의 공간 동시 점유, 중간 척도의 제어체적)은 다른 다공질 2상 모델과 공유된다."}, {"type": "bullet", "text": "다성분 혼합물 이론과의 유추(Table 1): 다상 혼합물은 다성분 혼합물과 유사하도록 구상되며, 둘은 전자가 유한한 경계면 면적과 구성성분(상) 사이의 강한 물성 변화를 갖는다는 점에서만 다르다.", "figure_refs": []}, {"type": "bullet", "text": "첫 번째 함의: 액체 대 기체 구성성분 물성의 격차는 다상 혼합물 유동을 다성분 혼합물 유동보다 훨씬 강한 가변물성 문제로 만들며, 향후 해석적·수치적 연구에서 어려움을 일으킬 것으로 예상된다."}, {"type": "bullet", "text": "두 번째 함의: 중력하에서 큰 상밀도 차이는 구성성분 사이에 중력 유도 이동 질량 플럭스를 기여하는데, 이는 통상적 농도기울기 구동 확산 플럭스와 달리 농도기울기에 의존하지 않는다; 모세관력은 또 다른, 포화도 기울기에 비례하는 기여를 주며 이는 모세관 확산계수 $D$ 로 포착된다."}, {"type": "bullet", "text": "중력 대 모세관 구동력의 상대적 중요도는 그 크기로 평가할 수 있다: 모세관력이 작은(예: 고투과) 계에서는 중력 효과가 지배적이어서 다상 반응기에서 흔하지만 아직 잘 이해되지 않은 상분리와 유동 불균일 분포를 일으킨다 — 모델을 활용한 향후 연구의 주요 표적이다."}, {"type": "bullet", "text": "세 번째 함의(에너지): 구성성분 비열의 차이는 질량확산이 벌크 혼합물의 현열 전달을 일으킴을 의미하며(Eq. 49의 $(c_l-c_v)\\mathbf{j}\\!\\cdot\\!\\nabla T$ 항), 이는 두 구성성분의 비열이 같으면 사라지는 효과다."}, {"type": "bullet", "text": "켤레 문제에서의 계산적 이점: SFM은 (공간·시간상 미지인) 명시적 이동 경계면 추적과 정교한 이동격자/좌표사상을 갖는 다중영역 해를 필요로 하는 반면, 본 단일영역 연속체 정식화는 전 영역에 유효하여 경계면 추적, 이동격자, 내부 경계면 경계조건 정합을 제거한다."}, {"type": "bullet", "text": "종합 평가: 정식화는 SFM 대비 지배 미분방정식 수를 거의 절반으로 줄여 (특히 다차원) 수치 구현에 더 적합하지만, 저자들은 강한 비선형성과 크게 변하는 수송 물성 때문에 해를 구하는 것이 단상보다 여전히 어려울 것이라고 솔직히 예상한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "다공질 매질 내 2상유동을 다상 혼합물 유동으로 구상하고, 구성성분 사이의 경계면 면적과 물성 차이가 사라지면 고전적 다성분 혼합물 이론으로 환원되는 일관된 다상 혼합물 모델을 제시한다; 모델은 SFM과 동등하다."}, {"type": "bullet", "text": "유도된 보존방정식은 유한한 상요소 치수와 상 사이의 큰 물성 차이의 효과를 보존하며, 이는 중력 구동 확산 질량 플럭스(밀도 차이)와 에너지 수송에 대한 질량전달 기여(상 사이의 엔탈피 차이)를 통해 명시적으로 나타난다."}, {"type": "bullet", "text": "모델은 SFM 대비 지배 미분방정식 수를 거의 절반으로 줄여, 중간 수준의 계산 자원으로도 수치 시뮬레이션에 적합하게 만든다."}, {"type": "bullet", "text": "단상 다성분 혼합물 유동과의 유사성은 여러 중요한 문제에 새로운 통찰을 준다: 상변화를 동반한 1차원 유동, 경계층 2상유동, 단일영역에서 처리되는 단상·2상 결합 유동."}, {"type": "bullet", "text": "핵심 이점은, 미분방정식이 벌크 혼합물 거동만 다루더라도 개별 상의 고유 특성이 뭉개지지 않는다는 점이다. 혼합물 운동과 그 분리 가능한 상들을 잇는 단순한 대수 관계(Eqs. 32-33) 덕분이다."}, {"type": "bullet", "text": "향후 과제: 모델을 다양한 실제 문제에 적용하고, 다성분 2상유동(예: 액체-증기-공기)으로 확장하며, 관성 및 기타 비다르시 효과를 포함하는 유동으로 확장한다. 본 연구는 미국 국립과학재단(NSF, grant CTS-8957149)의 부분 지원을 받았다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "방정식 수가 줄어들더라도, 강한 비선형 수송 방정식과 크게 변하는 수송 물성 때문에 혼합물 방정식의 수치해를 구하는 것은 여전히 어려울 것으로 저자들은 예상한다.", "source_quote": "However, we believe that numerical solutions will be more difficult to obtain than in the single-phase case, because of the highly nonlinear nature of the set of transport equations and the presence of strongly varying transport properties.", "source_section": "discussion"}, {"claim": "액상과 기상 구성성분 물성의 큰 차이는 다상 혼합물 유동을 일반적인 다성분 혼합물 유동보다 훨씬 강한 가변물성(variable-property) 문제로 만들며, 이는 향후 해석적·수치적 연구에서 상당한 어려움을 초래할 것으로 예상된다.", "source_quote": "the disparity in the properties of the two constituents (liquid and gas) makes the multiphase mixture flow a much stronger variable-property problem than multicomponent mixture flow. This can be expected to cause considerable difficulties in future analytical and numerical studies of two-phase flow problems via the current formulation.", "source_section": "discussion"}, {"claim": "체계적인 2상 경계층 이론은 아직 정립되지 않았다. 번거로운 SFM 때문에 기존 경계층 처리들은 정당화되지 않은 가정을 도입할 수밖에 없었으며, 본 논문은 그러한 유동이 새로운 틀 안에 존재함을 보이는 데 그친다.", "source_quote": "due to the cumbersome form of the SFM, these flows are never dealt with as strictly as in the classical boundary layer theory. Instead, unjustified assumptions are introduced, and a systematic two-phase boundary layer theory is far from being developed.", "source_section": "discussion"}], "future_works": [{"claim": "2상 혼합물 모델을 다양한 실제 문제에 적용한다(동반 논문 Part II가 경계층 유동을 향한 첫 단계).", "source_quote": "Future work will consist not only of applying the two-phase mixture model to a variety of practical problems", "source_section": "conclusion"}, {"claim": "단일성분 2상 유동에서 액체-증기-공기 계와 같은 다성분 2상 유동으로 모델을 확장한다.", "source_quote": "but also of extending it to multicomponent two-phase flows (e.g. the liquid-vapor-air system)", "source_section": "conclusion"}, {"claim": "관성 및 기타 비(非)다르시(non-Darcian) 효과를 포함하는 유동으로 정식화를 확장한다.", "source_quote": "and to flows which include inertia and other non-Darcian effects.", "source_section": "conclusion"}, {"claim": "다상 반응기 등에서 나타나는 중력·모세관 구동의 상분리 및 유동 불균일 분포와 같은 복잡한 다차원 현상을 본 정식화로 규명한다.", "source_quote": "Addressing and clarifying these complicated multi-dimensional phenomena will constitute a large part of future research using the present formulation.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["고전적 분리유동모델(SFM)은 엄밀하지만 단상 문제의 거의 두 배에 달하는 많은 수의 미분방정식을 요구하여, 특히 다차원 상황에서 직접적인 수치해석에 불편하다.", "방정식 수를 줄이기 위해 오일 저류층 및 원자로 안전 공학의 기존 연구자들은 수치 처리 전에 다양한 임시방편적 수정 정식화를 만들었으며, 물리적으로 의미 있고 일반적으로 적용 가능한 단일 축약이 부재했다.", "단상·2상 부분영역이 함께 있는 켤레 문제는 SFM에서 다중영역 해를 요구하여, 공간·시간상 미지인 이동 경계면을 추적하고 복잡한 경계면 경계조건을 정합시켜야 하므로 정교한 이동격자/좌표사상 절차가 필요하다.", "2상 경계층 유동, 과도 유동 및 기타 다차원 효과는 번거로운 SFM으로는 제대로 다루기 어려워, 체계적인 2상 경계층 이론의 정립을 가로막아 왔다."], "addressed_by_this_work": ["2상 혼합물 모델을 SFM으로부터 (추가 근사 없이) 엄밀하게 유도하여, 지배 미분방정식을 거의 절반으로 — 연속방정식, 혼합물 운동량방정식, 단일 에너지/액체질량 방정식으로 — 줄이면서도 SFM과 수학적으로 동등하게 유지한다.", "모델이 가정이 아니라 SFM으로부터 엄밀히 유도되므로, 구성식 형태를 선험적으로 고정하지 않은 채(감소하는 임의의 J-함수와 표준 상대투과도 법칙을 허용) 물리적으로 의미 있고 일반적으로 적용 가능한 축약을 제공한다.", "단상·2상 영역 전반에 걸쳐 유효한 단일영역(one-domain) 정식화를 얻어, 켤레 문제에서 명시적 경계면 추적·이동격자/좌표사상·내부 경계면 경계조건 정합을 제거한다.", "이 정식화는 1차원 상변화 유동(Boltzmann 상사 / Lipinski 방정식을 허용), 경계층 2상유동, 과도 유동을 다루기 쉽게 만들며, 각 보존방정식을 공통의 대류-확산-생성 형태로 표현하여 기존 단상 수치 알고리즘을 재사용할 수 있게 한다."], "remaining_unresolved": ["강한 비선형성과 크게 변하는 가변 수송 물성 때문에, 실제 수치해를 구하는 것은 단상의 경우보다 여전히 더 어려울 것으로 예상된다.", "체계적인 2상 경계층 이론은 여전히 정립되지 않았으며, 본 논문은 그러한 유동이 새 틀 안에 존재함을 보이는 데 그치고 동반 논문 Part II가 첫 단계다.", "다성분 2상 유동(액체-증기-공기) 및 관성/비다르시 유동으로의 확장은 향후 과제로 남는다.", "중력·모세관 구동의 다차원 현상(상분리, 유동 불균일 분포)을 규명하는 일은 본 논문에서 해결된 것이 아니라 향후 연구의 큰 부분으로 제시된다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
