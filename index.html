@@ -294,7 +294,7 @@
             margin-top: 10px;
         }
         .topic-header:first-child { margin-top: 0; }
-        .topic-title { font-size: 18px; font-weight: 700; }
+        .topic-title { font-size: 23px; font-weight: 700; }
         .topic-left { display: flex; align-items: center; gap: 14px; }
         .topic-controls { display: flex; align-items: center; gap: 12px; }
         .sort-control {
@@ -338,7 +338,7 @@
     <header class="hero">
         <div class="hero-inner">
             <h1>LJU Research Papers Archive</h1>
-            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:49</div>
+            <div class="meta">총 <strong>5</strong>편 · 마지막 갱신 2026-06-18 14:52</div>
         </div>
     </header>
 
@@ -498,10 +498,9 @@
         function buildSortControl() {
             const wrap = document.createElement('div');
             wrap.className = 'sort-control';
-            const lab = document.createElement('label');
-            lab.setAttribute('for', 'sort-select'); lab.textContent = '정렬';
             const sel = document.createElement('select');
             sel.id = 'sort-select';
+            sel.setAttribute('aria-label', '정렬 기준');
             [['tier', '티어순'], ['year', '년도순']].forEach(([v, label]) => {
                 const o = document.createElement('option');
                 o.value = v; o.textContent = label;
@@ -509,7 +508,7 @@
                 sel.appendChild(o);
             });
             sel.addEventListener('change', () => { state.sortBy = sel.value; render(); });
-            wrap.appendChild(lab); wrap.appendChild(sel);
+            wrap.appendChild(sel);
             wrap.appendChild(buildSortDirButton());
             return wrap;
         }
