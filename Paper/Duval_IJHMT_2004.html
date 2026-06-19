@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>A local thermal non-equilibrium model for two-phase flows with phase-change in porous media</title>
+    <meta name="keywords" content="local thermal non-equilibrium, two-phase, phase change, volume averaging, porous media heat and mass transfer, three-temperature model, closure problem, evaporation rate, numerical">
+    <meta name="paper-authors" content="F. Duval, F. Fichot, M. Quintard">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 47, 2004, pp. 613-639 · DOI: 10.1016/j.ijheatmasstransfer.2003.07.005">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">A local thermal non-equilibrium model for two-phase flows with phase-change in porous media</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">F. Duval, F. Fichot, M. Quintard</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 47, 2004, pp. 613-639 · DOI: 10.1016/j.ijheatmasstransfer.2003.07.005</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 기초 이론 논문은 <span class="term">체적 평균법(method of volume averaging)</span>을 사용하여 공극 규모 보존 방정식으로부터, 강체 다공성 매질을 통과하는 상변화 동반 액-증기 유동에 대한 거시적 <span class="term">3-온도(3-방정식) 모델</span>을 유도하며, 고체·액체·증기 세 상 사이의 <span class="term">국소 열적 비평형(LTNE)</span>을 명시적으로 허용한다. 핵심 독창성은 별도의 현상론적 관계 없이 폐합 해석으로부터 직접 <span class="term">거시적 증발률의 폐합형(closed form)</span>을 얻어낸다는 점이다. 유효 수송 계수(열분산 텐서, 속도형 계수, 상간 열전달 계수)는 대표 단위 셀 위에서 푸는 <span class="term">여섯 개의 공극 규모 폐합 문제(six closure problems)</span>를 통해 공극 규모 물리와 연결된다. 단순 1차원 단위 셀(층상 셀과 Chang 셀)과 순수 확산 상변화 과정에 대해, 3-방정식 모델이 예측한 평균 온도와 액체 포화도는 직접 공극 규모 수치 시뮬레이션과 매우 잘 일치하여 상향 스케일링 접근의 타당성을 확인해 준다. LTNE/이상(two-phase) 모델링 계보에서 결정적으로, 본 논문은 Shi &amp; Wang(2011)보다 먼저 LTNE + 이상 + 상변화를 달성하지만, 다른 모델 계열을 통해서다: 즉 Wang-Beckermann 단일 혼합물 이상혼합물모델(TPMM)이 아니라 체적 평균 다중 온도 모델이며, TPMM은 단지 1-온도 극한 사례로만 인용된다.</div>
+            <div class="keywords"><span class="keyword-chip">local thermal non-equilibrium</span><span class="keyword-chip">two-phase</span><span class="keyword-chip">phase change</span><span class="keyword-chip">volume averaging</span><span class="keyword-chip">porous media heat and mass transfer</span><span class="keyword-chip">three-temperature model</span><span class="keyword-chip">closure problem</span><span class="keyword-chip">evaporation rate</span><span class="keyword-chip">numerical</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공성 매질에서 액-증기 상변화를 동반한 열전달과 유체 유동은 건조, 지열 시스템, 열교환기 설계, 원자력 안전(예: 심각하게 손상된 원자로 노심의 냉각)에서 나타난다. 거시적 기술은 전통적으로 단일 온도(국소 열적 평형) 에너지 방정식을 사용하지만, 이 가정은 입자/공극이 크거나, 상의 열물성 차이가 크거나, 대류가 강하거나, 상당한 발열 또는 급속 증발-응축이 있을 때 성립하지 않는다. 본 논문의 목적은 세 상 사이의 국소 열적 비평형을 명시적으로 유지하면서 체적 평균을 통해 이러한 시스템의 거시적 에너지 수송 방정식을 유도하고, 유효 계수를 공극 규모 폐합 문제로부터 결정하는 것이다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">이 연구는 다공성 매질 수송에 대한 Whitaker, Quintard, Carbonell 및 동료들의 체적 평균 상향 스케일링 계보에 위치하며, 원자력 안전/연료-냉각재 상호작용 문헌의 휴리스틱 비평형 모델과 대비된다. 과도 확산에 대한 기존 2-방정식(2-매질) 처리와 Petit 등의 상변화 없는 3-방정식 모델 위에 직접 구축하면서, 확립된 혼합물/1-온도 모델(Wang-Beckermann, Lipinski)을 극한 사례로 위치 짓는다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">공극 규모 모델은 l-g 계면에서 상변화가 일어나는 세 상(고체 s, 액체 l, 증기 g) 시스템으로, 각 유체 상의 연속 및 열에너지 방정식과 고체에서의 체적 발열을 동반한 전도, 그리고 계면 조건들에 의해 지배된다: 유체-고체 계면에서의 온도와 플럭스 연속, 열역학적 평형 조건(계면이 포화 온도에 고정), 그리고 l-g 계면에서의 엔탈피-플럭스 점프. 이상 유동은 열전달과 분리된다(속도는 알려진 것으로 가정). 위상 및 내재 평균과 Gray의 공간 분해를 평균화 체적에 적용하면 증발률을 정의하는 거시적 연속 방정식과, 닫혀야 하는 온도 편차 적분을 포함하는 세 개의 결합된 거시적 에너지 방정식을 얻는다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">폐합 단계는 준정상·준정적 가정 하에서 여섯 개의 공극 규모 폐합 문제가 지배하는 매핑 스칼라와 벡터를 통해, 온도 편차를 여섯 개의 거시적 '원천(source)' 항(포화로부터의 세 온도차 + 세 평균 온도 구배)의 선형 결합으로 표현한다. 이 표현을 다시 대입하면 완전히 닫힌 3-방정식 거시 모델과 폐합형 증발률을 얻는다. 층상 셀과 Chang 셀, 순수 확산 상변화에 대해, 3-방정식 모델이 예측한 평균 온도와 액체 포화도는 가열 실험과 온도 완화 실험 모두에서 직접 공극 규모 수치 시뮬레이션과 매우 잘 일치한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">세 거시 방정식은 일반화된 준정상 3-방정식 모델을 구성하며, 그 유효 계수는 물성과 공극 규모 형상에 의존하지만 이력 효과에는 의존하지 않는다. 상향 스케일링 이론의 두 가지 장점은 거시 모델링의 어려움을 명확히 식별한다는 점과 공극-거시 스케일을 연결하는 폐합 문제를 제공하여 모든 유효 계수를 단위 셀로부터 계산 가능하게 한다는 점이다. 저자들은 분리, 준정적 계면, 준정상 폐합, 상변화의 편차 영향 무시 등 근사들을 신중히 구분하고, 비용(더 많은 유효 계수)과 관련 상 분포 선택의 어려움을 논의한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">체적 평균법을 사용하여 국소 열적 비평형 하에서 다공성 매질의 상변화 동반 액-증기 유동에 대한 거시적 3-방정식(3-온도) 모델을 유도한다. 준정상·준정적 폐합 가정 하에서 포화 온도가 명시적으로 나타나고, 거시 온도와 유효 물성에 의존하는 증발률의 폐합형이 얻어진다. 유효 계수는 여섯 개의 폐합 문제를 통해 공극 규모와 연결된다. 단순 단위 셀에 대해 이를 풀고 순수 확산 공극 규모 수치 실험과 비교하면 매우 잘 일치하여, 폐합 가정과 3-방정식 모델의 실용적 가치를 뒷받침한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 74</span></summary>
+            <ol class="ref-list"><li>S. Whitaker, The Method of Volume Averaging, Theory and Applications of Transport in Porous Media, vol. 13, Kluwer Academic Publishers, Dordrecht, 1999</li><li>S. Whitaker, Coupled transport in multiphase systems: a theory of drying, Advances in Heat Transfer, vol. 31, Academic Press, 1998, pp. 1-102</li><li>C.Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media. I. Formulation, Int. J. Heat Mass Transfer 36(11), 2747-2758, 1993</li><li>M. Quintard, S. Whitaker, One- and two-equation models for transient diffusion processes in two-phase systems, Advances in Heat Transfer, vol. 23, Academic Press, 1993, pp. 369-464</li><li>M. Quintard, M. Kaviany, S. Whitaker, Two-medium treatment of heat transfer in porous media: numerical results for effective properties, Adv. Water Resour. 20, 77-94, 1997</li><li>M. Quintard, S. Whitaker, Local thermal equilibrium for transient heat conduction: theory and comparison with numerical experiments, Int. J. Heat Mass Transfer 38(15), 2779-2796, 1995</li><li>F. Petit, F. Fichot, M. Quintard, Ecoulement diphasique en milieux poreux: modele a non-equilibre local, Int. J. Thermal Sci. 38, 239-249, 1999</li><li>R.J. Lipinski, A coolability model for post-accident nuclear reactor debris, Nucl. Technol. 65, 53-66, 1984</li><li>G. Berthoud, M. Valette, Development of a multidimensional model for the premixing phase of a fuel-coolant interaction, Nucl. Eng. Des. 149, 409-418, 1994</li><li>C. Moyne, Two-equation model for a diffusive process in porous media using the volume averaging method with an unsteady-state closure, Adv. Water Resour. 20(2-3), 63-76, 1997</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다공성 매질에서의 액-증기 상변화는 여러 실제 상황에 나타난다: <span class=\"term\">건조 과정(drying processes)</span>, 지열 시스템, 열교환기 설계, 그리고 <span class=\"term\">원자력 안전 해석(nuclear safety analysis)</span>(심각하게 손상된 원자로 노심을 냉각할 수 있는지 예측)."}, {"type": "bullet", "text": "여기서 <span class=\"term\">국소 열적 평형(LTE)</span>이란 세 상의 거시 온도가 충분히 가까워 단일 온도로 기술이 가능함을 뜻한다. 이는 비포화 매질의 여러 건조 문제에서 허용 가능하며, 유효 계수 측면에서 1-방정식 모델의 단순함이 그 폭넓은 사용을 동기 부여한다."}, {"type": "bullet", "text": "LTE는 입자나 공극이 충분히 작지 않을 때, 상의 열물성 차이가 클 때, 대류 수송이 중요할 때, 한 상에 상당한 발열이 있을 때, 또는 급속 증발-응축에서 더 이상 성립하지 않는다. 심각 사고 해석에서 과열된 다공성 층의 물 침수가 1-온도 기술이 부적절한 전형적 예다."}, {"type": "bullet", "text": "LTE가 실패하면 각 상에 대해 별도의 수송 방정식을 세우게 되어 <span class=\"term\">비평형 모델(non-equilibrium models)</span>을 얻는다. 이상 물질의 경우 이는 대체로 2-방정식 모델 형태를 취해 왔고 유효 계수가 폭넓게 연구되었다."}, {"type": "bullet", "text": "Petit 등은 체적 평균으로 3-방정식 모델을 개발했으나 상변화를 고려하지 않았다. 다른 3-방정식 모델들은 휴리스틱하게 제안되었다. Quintard 등은 휴리스틱 접근이 직관적 모델을 주지만 공극 규모 방정식으로부터 스케일링 이론으로 유도되지 않았기 때문에 잘못 해석될 수 있다고 강조한다."}, {"type": "bullet", "text": "그러한 3-방정식 모델의 유효 계수(예: 열교환 계수)를 결정하는 공극 규모 기반의 포괄적 접근법이 없었다. 실험적 결정은 극히 어렵고(작거나 불투명한 공극에서 광학 기법이 실패), 따라서 휴리스틱 유효 물성은 종종 타당성이 의심스러운 단상 또는 관내 유동 상관식에서 외삽된다."}, {"type": "bullet", "text": "본 논문의 목적은 <span class=\"term\">체적 평균법(method of volume averaging)</span>을 사용하고 세 상 사이의 LTNE를 고려하여, 다공성 매질의 액-증기 상변화에 대한 거시적 열에너지 수송 방정식을 유도하는 것이며, 일반화된 3-방정식 모델, 증발률의 폐합형, 그리고 유효 계수를 위한 여섯 개의 공극 규모 폐합 문제를 얻는다. 이후 단순 1D 단위 셀을 공극 규모 시뮬레이션과 비교한다.", "figure_refs": [1]}]}, "related_works": {"content": [{"type": "bullet", "text": "이상 다공성 매질에 대한 2-방정식 모델은 폭넓게 연구되어 많은 공극 규모 구성에 대해 유효 계수가 계산되었으며(Quintard, Kaviany &amp; Whitaker), 준정상 및 비정상 폐합을 사용해 과도 순수 확산 문제에 대한 타당성이 검토되었다(Quintard &amp; Whitaker; Moyne; Auriault &amp; Royer)."}, {"type": "bullet", "text": "상수 대 시간 의존 논쟁: 준정상 2-방정식 모델은 상수 유효 계수를 사용하는 반면, 비정상 폐합(Moyne)은 기억 효과를 포착하기 위해 시간 의존 계수를 도입한다. 비교 결과 확산도 비와 온도 변동 주파수가 적당할 때 준정상 기술이 대체로 충분함이 나타났다."}, {"type": "bullet", "text": "LTNE 이상 유동 문제는 이론적 관심을 거의 받지 못했다: <span class=\"term\">Petit 등(Petit et al.)</span>은 체적 평균으로 3-방정식 모델을 구축했으나 상변화가 없었고, 다른 3-방정식 모델들(Amarasooriya &amp; Theofanous; Berthoud &amp; Valette; Likhanskii 등; Park 등)은 휴리스틱하게 제안되었다."}, {"type": "bullet", "text": "체적 평균 기법은 Whitaker(공간 평균 정리, 체적 평균법, 건조 이론), Gray(공간 분해), Carbonell &amp; Whitaker(다공성 매질의 열·물질 전달)로부터 가져왔다."}, {"type": "bullet", "text": "본 논문이 극한 사례로 복원하는 확립된 이상/1-온도 모델로는 <span class=\"term\">Wang-Beckermann 이상혼합물모델(two-phase mixture model)</span>(단일 혼합물 변수)과 <span class=\"term\">Lipinski</span> 잔해층 냉각성 모델, 그리고 Berthoud &amp; Valette와 Likhanskii 등의 휴리스틱 3-구동-온도차 증발 형태가 있다."}, {"type": "bullet", "text": "수치 실험 방법론(거시 규모 예측을 직접 공극 규모 해의 평균과 비교)은 2-방정식 모델에 대한 Quintard, Ladevie &amp; Whitaker를 따르며, 여기서는 3-방정식 상변화 사례에 맞게 적용된다."}]}, "method": {"content": [{"type": "bullet", "text": "형상: 세 상 - 고체(s), 액체(l), 증기(g) - 을 갖는 강체 다공성 구조이며, 유체 물성은 온도에 따라 크게 변하지 않는다고 가정한다. 공간의 각 점에 평균화 체적 V가 결합된다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "과감하지만 명시적인 모델링 선택: 이상 유동 문제를 열전달 문제와 분리하여 독립적으로 풀어, 상 속도가 열전달 해석에 알려진 장으로 입력된다. 일반화된 Darcy 법칙과 일관되게 준정적 계면 가정이 도입된다."}, {"type": "bullet", "text": "공극 규모 지배 방정식: 기체상과 액체상의 연속, 기체와 액체의 열에너지 방정식(엔탈피 대류가 전도와 균형), 고체의 열에너지 방정식(전도 + 상수 체적 발열)이며, 압축 일·점성 소산·복사를 무시한다."}, {"type": "formula", "label": "식 (6)-(8) — 공극 규모 열에너지 방정식", "latex": "\\frac{\\partial \\rho_g h_g}{\\partial t} + \\nabla\\!\\cdot(\\rho_g h_g \\mathbf{v}_g) = \\nabla\\!\\cdot(k_g \\nabla T_g)\\ \\ (\\text{g}); \\quad \\frac{\\partial \\rho_\\ell h_\\ell}{\\partial t} + \\nabla\\!\\cdot(\\rho_\\ell h_\\ell \\mathbf{v}_\\ell) = \\nabla\\!\\cdot(k_\\ell \\nabla T_\\ell)\\ \\ (\\ell); \\quad \\frac{\\partial \\rho_s h_s}{\\partial t} = \\nabla\\!\\cdot(k_s \\nabla T_s) + \\varpi_s\\ \\ (\\text{s})", "description": "증기·액체·고체 상의 공극 규모 엔탈피/에너지 균형. $\\varpi_s$는 고체 내 상수 균질 체적 발열원이다. 압축 일, 점성 소산, 복사는 무시된다."}, {"type": "bullet", "text": "계면 조건: 액-고 및 증기-고 계면에서 온도와 열 플럭스의 연속(식 9-10), 액-증기 계면에서는 증기가 액체와 열역학적 평형이므로 계면 온도가 포화 온도 $T^{sat}$에 고정된다."}, {"type": "formula", "label": "식 (11) — l-g 계면의 국소 열역학적 평형", "latex": "T_\\ell = T_g = T^{sat}, \\quad \\text{at } A_{\\ell g}", "description": "액-증기 계면에서 액체와 증기 온도가 포화 온도와 같다. 이 국소 열역학적 평형 조건은 (기각된) 거시 상 온도 간 국소 열적 평형 가정과 혼동되어서는 안 된다."}, {"type": "bullet", "text": "b-상에 결합된 양에 대해 두 가지 평균이 정의된다: 위상 평균과 내재 위상 평균이며 체적 분율로 연결된다. Gray의 공간 분해는 점 양을 내재 평균과 공간 편차로 나눈다."}, {"type": "formula", "label": "식 (13)-(14) — 위상/내재 평균과 Gray의 분해", "latex": "\\langle \\psi_\\beta \\rangle = \\frac{1}{V}\\int_{V_\\beta}\\psi_\\beta\\, dV, \\quad \\langle \\psi_\\beta \\rangle^\\beta = \\frac{1}{V_\\beta}\\int_{V_\\beta}\\psi_\\beta\\, dV, \\quad \\langle \\psi_\\beta \\rangle = \\varepsilon_\\beta \\langle \\psi_\\beta \\rangle^\\beta; \\qquad \\psi_\\beta = \\langle \\psi_\\beta \\rangle^\\beta + \\tilde{\\psi}_\\beta", "description": "평균화 체적에 대한 위상 평균 $\\langle\\psi_\\beta\\rangle$와 내재 위상 평균 $\\langle\\psi_\\beta\\rangle^\\beta$, 체적 분율 $\\varepsilon_\\beta$($\\varepsilon_g+\\varepsilon_\\ell+\\varepsilon_s=1$), 그리고 내재 평균에 편차 $\\tilde{\\psi}_\\beta$를 더한 Gray의 공간 분해."}, {"type": "bullet", "text": "공극 규모 연속 방정식을 체적 평균하고 l-g 질량 균형 조건을 사용하면, <span class=\"term\">거시적 증발 질량률</span> $\\dot{m}$을 계면 질량 플럭스 적분으로 정의하는 거시적 연속 방정식을 얻는다."}, {"type": "formula", "label": "식 (17)-(19) — 증발률과 거시적 연속", "latex": "\\dot{m} = -\\frac{1}{V}\\int_{A_{g\\ell}} \\mathbf{n}_{g\\ell}\\!\\cdot\\!\\rho_g(\\mathbf{v}_g - \\mathbf{w})\\, dA; \\quad \\frac{\\partial \\varepsilon_g \\rho_g}{\\partial t} + \\nabla\\!\\cdot(\\rho_g \\langle \\mathbf{v}_g\\rangle) = \\dot{m}; \\quad \\frac{\\partial \\varepsilon_\\ell \\rho_\\ell}{\\partial t} + \\nabla\\!\\cdot(\\rho_\\ell \\langle \\mathbf{v}_\\ell\\rangle) = -\\dot{m}", "description": "거시적 증발률 $\\dot{m}$(식 17, $\\mathbf{w}$는 계면 속도)은 평균 증기(식 18) 및 액체(식 19) 연속 방정식에 생성/소멸항으로 나타난다. $\\langle\\mathbf{v}_g\\rangle,\\langle\\mathbf{v}_\\ell\\rangle$은 표면(Darcy) 속도다."}, {"type": "bullet", "text": "에너지 방정식(식 6-8)을 수송 및 공간 평균 정리와 함께 위상 평균하면, 온도 편차 $\\tilde{T}_g,\\tilde{T}_\\ell,\\tilde{T}_s$에 대한 미폐합 적분과 $\\dot{m}$에 비례하는 상변화항을 포함하는 세 개의 거시적 에너지 방정식(식 34-36)을 얻는다. 편차는 폐합 해석으로 결정해야 한다. <span class=\"term\">[무거운 중간 체적 평균 대수(식 21-36)는 여기서 산문으로 요약한다. 추출 텍스트가 깨져 있어 KaTeX로 전사하지 않는다.]</span>"}]}, "results": {"content": [{"type": "bullet", "text": "온도 편차가 평균 방정식에 나타나므로, 편차에 대한 공극 규모 경계값 문제가 개발된다. 준정상(시간 도함수 제거)과 준정적 가정 하에서, 여섯 개 항이 편차를 생성하는 거시적 <span class=\"term\">원천 항(source terms)</span>으로 식별된다."}, {"type": "bullet", "text": "편차는 <span class=\"term\">매핑 스칼라(mapping scalars)</span> $s$(세 온도차 $\\langle T_\\beta\\rangle^\\beta - T^{sat}$를 매핑)와 <span class=\"term\">매핑 벡터(mapping vectors)</span> $\\mathbf{b}$(세 평균 온도 구배를 매핑)를 통해 여섯 원천의 선형 결합으로 표현되며, 이들은 여섯 개의 공극 규모 폐합 문제로 정의된다."}, {"type": "formula", "label": "식 (49)-(51) — 온도 편차의 선형 폐합 표현", "latex": "\\tilde{T}_\\beta = -s^\\beta_{\\ell i}(\\langle T_\\ell\\rangle^\\ell - T^{sat}) - s^\\beta_{g i}(\\langle T_g\\rangle^g - T^{sat}) - s^\\beta_{s i}(\\langle T_s\\rangle^s - T^{sat}) + \\mathbf{b}_{\\beta\\ell}\\!\\cdot\\!\\nabla\\langle T_\\ell\\rangle^\\ell + \\mathbf{b}_{\\beta g}\\!\\cdot\\!\\nabla\\langle T_g\\rangle^g + \\mathbf{b}_{\\beta s}\\!\\cdot\\!\\nabla\\langle T_s\\rangle^s, \\quad \\beta = g,\\ell,s", "description": "각 공간 편차 $\\tilde{T}_\\beta$는 포화로부터의 세 온도차(매핑 스칼라 $s$ 경유)와 세 거시 온도 구배(매핑 벡터 $\\mathbf{b}$ 경유)의 선형 결합이다. 폐합 변수 $s,\\mathbf{b}$는 여섯 폐합 문제로부터 얻는다. (식 49-51의 구조에서 전사. 부록 A의 폐합 문제 대수는 설계상 생략.)"}, {"type": "bullet", "text": "이 표현을 평균 에너지 방정식에 대입하면 <span class=\"term\">완전히 닫힌 3-방정식 모델</span>(식 54-56)을 얻으며, 유효 열분산 텐서 $K_{\\beta\\gamma}$, 속도형 계수 $u_{\\beta\\gamma}$, 추가 속도형 계수 $d_{\\beta i}$, 상간 열전달 계수 $h_{\\beta i \\gamma}$가 모두 여섯 폐합 문제로부터 도출된다."}, {"type": "bullet", "text": "비전통적 대류 항을 무시하면, 모델은 교차 분산·열교환·상변화 항을 통해 세 거시 온도를 결합하는 간결한 3-방정식 형태(식 57-59)로 단순화된다."}, {"type": "formula", "label": "식 (57)-(59) — 단순화된 닫힌 3-방정식(3-온도) 모델", "latex": "\\varepsilon_g(\\rho C_p)_g\\Big(\\tfrac{\\partial \\langle T_g\\rangle^g}{\\partial t} + \\langle\\mathbf{v}_g\\rangle\\!\\cdot\\!\\nabla\\langle T_g\\rangle^g\\Big) = \\nabla\\!\\cdot\\!\\big(K_{gg}\\!\\cdot\\!\\nabla\\langle T_g\\rangle^g + K_{g\\ell}\\!\\cdot\\!\\nabla\\langle T_\\ell\\rangle^\\ell + K_{gs}\\!\\cdot\\!\\nabla\\langle T_s\\rangle^s\\big) - \\dot{m}\\,C_{pg}(\\langle T_g\\rangle^g - T^{sat}) - \\textstyle\\sum_{\\gamma}h_{g i \\gamma}(\\langle T_\\gamma\\rangle^\\gamma - T^{sat})", "description": "단순화된 3-온도 모델의 대표(증기상) 방정식. 액체상과 고체상에 대해서도 유사한 방정식이 성립한다. 세 거시 온도는 교차 분산 텐서 $K_{g\\gamma}$, 상간 열교환 계수 $h_{gi\\gamma}$, $\\dot{m}$의 상변화항을 통해 결합된다. 액체·고체 방정식(58-59)도 같은 구조를 따른다."}, {"type": "bullet", "text": "핵심 결과: 거시적 증발률이 폐합 해석으로부터 직접 <span class=\"term\">폐합형(closed form)</span>으로 얻어지며, $\\dot{m}$을 결정하는 것이 유체 상들 사이의 열전달을 계산하는 것과 동등함을 보여준다 - 추가 현상론적 관계 없이."}, {"type": "formula", "label": "식 (64) — 거시적 증발률의 폐합형", "latex": "\\dot{m}\\,\\Delta h = \\frac{1}{V}\\int_{A_{g\\ell}} \\mathbf{n}_{g\\ell}\\!\\cdot\\!\\big(k_\\ell \\nabla T_\\ell - k_g \\nabla T_g\\big)\\, dA", "description": "거시적 증발률에 잠열 $\\Delta h = h_g^{sat}-h_\\ell^{sat}$을 곱한 값은 순 계면 전도 열 플럭스와 같다. 이는 상변화율이 유체 상간 열전달에 의해 결정됨을 확립한다. 폐합 후 이는 식 (68), 즉 세 온도 구배와 포화로부터의 세 온도차의 선형 결합이 된다."}, {"type": "bullet", "text": "검증: 층상 단위 셀과 Chang 셀(매개변수는 표 1, $T^{sat}=373$ K, $\\Delta h = 2.2\\times10^6$ J/kg)에 대해, 두 가지 순수 확산 수치 실험 - 가열 문제(고체 체적 발열 $\\varpi_s = 10^7$ W/m^3)와 온도 완화 문제(초기 30 K, 60 K 오프셋) - 을 수행하여, 3-방정식 모델을 평균된 직접 공극 규모(엔탈피법) 해와 비교한다.", "figure_refs": [10, 12]}, {"type": "bullet", "text": "이론적 거시 온도 $\\langle T_g\\rangle^g$와 $\\langle T_s\\rangle^s$, 그리고 액체 포화도 변화는, 강한 비정상 조건과 크게 대비되는 열확산도에도 불구하고 공극 규모 기준과 매우 잘 일치한다. 평균 액체 온도는 과정 내내 $T^{sat}$에 머문다.", "figure_refs": [3, 4, 5, 6, 7, 8]}, {"type": "bullet", "text": "민감도 점검: 층상 셀 가열 실험을 열전달 계수 $h^{gs}_{gi}$를 3배로 하여 반복하면 거시 온도가 크게 달라지며, 거동을 사전 계수 추정으로는 포착할 수 없음을 보여주고 이를 계산하는 상향 스케일링 이론의 가치를 확인해 준다.", "figure_refs": [9]}]}, "discussion": {"content": [{"type": "bullet", "text": "거시 방정식은 일반화된 준정상 3-방정식 모델을 이루며, '준정상'이란 유효 계수가 물성과 공극 규모 형상에 의존하되 가능한 이력 효과는 배제함을 뜻한다."}, {"type": "bullet", "text": "상향 스케일링 방법의 두 가지 핵심 장점: (i) 공극 규모에서 출발하면 거시 규모의 어려움이 명확히 드러나고, (ii) 폐합 문제가 명시적 공극-거시 관계를 제공하여 모든 유효 계수를 공극 규모 기술로부터 계산할 수 있게 한다."}, {"type": "bullet", "text": "세 가지 주요 근사가 명시적으로 진술된다: (1) 유동이 준정적(공극 규모에서 계면 정지), (2) 편차가 거시 원천 항의 1차 준정상 전개로 표현, (3) 상변화율이 편차에 미치는 영향 무시."}, {"type": "bullet", "text": "준정적 근사는 일반화된 Darcy 법칙과는 일관되지만 액-증기 LTNE 시스템에는 논쟁의 여지가 있다. 가능한 정당화로 시공간 에르고드성(많은 계면에 대한 공간 평균이 암묵적으로 계면 운동을 시간 평균)이 있으나, 완전한 타당성 해석은 극히 어렵다."}, {"type": "bullet", "text": "전통적 휴리스틱 3-방정식 모델과 비교해, 유도된 모델은 추가 확산형·대류형 결합 항과 더 복잡한 연속체 간 결합(교차 분산, 교차 대류, 거시 규모 열교환)을 갖는다. 매력적 특징은 현상론 없이 얻은 폐합형 증발률이며, 이는 2-방정식 및 1-방정식 모델과 양립 가능함을 보일 수 있다."}, {"type": "bullet", "text": "개선된 기술의 대가는 더 많은 수의 유효 수송 계수다. 상향 스케일링 이론의 큰 장점은 여섯 개의 폐합 문제를 통해 그 모든 계수를 공극 규모 특성으로부터 결정할 수 있다는 점이며, 폐합 문제는 주기 경계 조건으로 대표 단위 셀 위에서 풀린다."}, {"type": "bullet", "text": "상 분포가 강하게 영향을 준다: 주어진 액체 체적 분율에 대해 s-l-g(액체 젖음, 응축형)와 s-g-l(증기 젖음, 증발형) 분포가 매우 다른 유효 물성을 주며, 어떤 거시 규모 선택 기준(예: 액체 체적 분율과 $\\langle T_s\\rangle^s - T^{sat}$의 부호)으로 관련 분포를 고르는가라는 실질적 문제를 제기한다."}, {"type": "bullet", "text": "계보 노트: 본 논문은 <span class=\"term\">Wang-Beckermann 이상혼합물모델</span>과 Lipinski 모델을 1-온도 극한 사례(식 65)로, Berthoud &amp; Valette와 Likhanskii 등의 휴리스틱 3-구동-차 증발 형태를 특수 사례로 명시적으로 복원한다 - 자신의 기여가 혼합물 변수 정식화가 아니라 다중 온도 체적 평균 유도임을 강조한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "체적 평균은 다공성 매질의 액-증기 상변화 유동에 대해 국소 열적 비평형을 명시적으로 유지하는 거시적 <span class=\"term\">3-방정식 모델</span>을 산출하며, 비평형 항에 포화 온도가 명시적으로 나타난다."}, {"type": "bullet", "text": "스케일링 이론의 매력적 특징은 거시 온도와 유효 물성에 의존하는 거시 수준 <span class=\"term\">증발률의 폐합형</span>을 추가 현상론적 관계 없이 유도한다는 점이다."}, {"type": "bullet", "text": "유효 수송 계수는 대표 단위 셀 위에서 풀어야 하는 <span class=\"term\">여섯 개의 폐합 문제</span>를 통해 공극 규모 물리와 연결된다."}, {"type": "bullet", "text": "폐합 문제는 단순 단위 셀(층상 셀과 Chang 셀)에 대해 풀려 유효 물성의 첫 추정치를 제공했다."}, {"type": "bullet", "text": "이 단위 셀과 순수 확산 과정에 대해, 3-방정식 예측과 공극 규모 수치 실험이 매우 잘 일치하여 폐합 가정과 단순화를 뒷받침한다."}, {"type": "bullet", "text": "이 일치는 3-방정식 모델의 실용적 가치를, 특히 큰 거시 규모 온도차가 예상되는 과열 다공성 구조 재침수 문제(원자력 심각 사고 해석)에서 보여준다."}, {"type": "bullet", "text": "저자들은 이것이 부분적 검증임을 강조한다. 대류 상변화 과정과 더 복잡한 단위 셀로의 확장, 그리고 유효 계수의 수치 상관식 개발이 향후 방향으로 제시된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "이상 유동 문제가 열전달 문제와 분리(decoupled)된다고 가정하여 상 속도를 알려진 장(known field)으로 취급한다. 저자들은 이 분리 가정이 특히 격렬한 비등(intense boiling)의 경우 지나치게 과감할 수 있음을 인정한다.", "source_quote": "We acknowledge that the above decoupling assumption may be too drastic in many situations, especially in the case of intense boiling, and this will require further analyses involving direct simulation over a significant number of pores.", "source_section": "method"}, {"claim": "준정적(quasi-static) 공극 규모 가정(공극 규모에서 액-증기 계면이 정지해 있다고 봄)이 채택되는데, 이는 액-증기 시스템, 특히 국소 열적 비평형 상황에서 상당히 논쟁의 여지가 있으며, 거시적 기술에 미치는 영향은 미해결 문제로 남는다.", "source_quote": "While the quasi-static approximation may be physically relevant for some transport processes with phase change in porous media [...], it is obviously quite debatable for liquid-vapor systems especially for local thermal non-equilibrium situations. However, its impact on the quality of the macroscopic description still remains an open question.", "source_section": "discussion"}, {"claim": "정량적 데이터 부족으로 인해 상변화율이 온도 편차에 미치는 영향을 폐합 수준에서 무시한다. 저자들은 이것이 거시 규모 열전달을 과소평가할 수 있음을 인정한다.", "source_quote": "We acknowledge that such a simplifying assumption may result in underestimated macro-scale heat transfers but we insist on the fact that this does not mean that the phase change rate is neglected at the macroscopic level.", "source_section": "discussion"}, {"claim": "검증은 부분적일 뿐이다: 순수 확산 상변화 과정과 단순 1차원 단위 셀을 다룰 뿐, 대류나 복잡한 3차원 형상은 다루지 않는다.", "source_quote": "We must remind the reader that this is a partial validation obtained for purely diffusive processes. Work is under way to obtain direct numerical simulations with convection processes.", "source_section": "results"}, {"claim": "공극 규모 토폴로지와 상 분포가 유효 계수에 강하게 영향을 미치고 시간·공간 특성 척도로 포착하기 어렵기 때문에, 준정상(quasi-steady) 폐합 제약의 타당성을 일반적으로 평가하기는 어렵다.", "source_quote": "As a result, a general discussion about the validity of the constraints (39) is extremely difficult and, in most cases, the validity of a quasi-steady approximation is examined through pore-scale numerical simulations.", "source_section": "discussion"}], "future_works": [{"claim": "현재 검증이 순수 확산 사례에 국한되어 있으므로, 직접 공극 규모 수치 시뮬레이션을 통해 대류 상변화 과정으로 검증을 확장한다.", "source_quote": "Work is under way to obtain direct numerical simulations with convection processes.", "source_section": "results"}, {"claim": "다양한 공극 규모 구성에 대한 직접 이상 유동 공극 규모 시뮬레이션으로부터 거시 규모 응용에 사용할 수 있는 유효 계수의 수치 상관식을 개발한다.", "source_quote": "From these calculations, our objective is to develop numerical correlations for the effective coefficients that can be used for macro-scale applications.", "source_section": "discussion"}, {"claim": "단순 형상에 대한 결과의 앙상블 평균이나 네트워크 모델 같은 전략을 통해 더 복잡한(무작위, 다공극) 단위 셀을 다룬다.", "source_quote": "several strategies can be develop to deal with very complicated geometries such as ensemble averaging of obtained results on simple geometries or as proposed by Ahmadi et al. [1] the use of network models.", "source_section": "discussion"}, {"claim": "같은 체적 분율로 이어지는 서로 다른 액-증기 계면 진화 이력이 서로 다른 유효 계수를 만들어내는지를 확인한다(완전 폐합 이론 가정의 검증 필요).", "source_quote": "different history of the interface evolution may lead to the same volume fractions with very different effective properties values. This important effect must be checked in future developments.", "source_section": "method"}], "motivation_resolution": {"motivating_problems": ["다공성 매질에서 상변화를 동반한 이상 유동에 대한 국소 열적 평형(단일 온도) 가정은 강한 제약(큰 물성 대비, 상당한 발열, 과열된 핵 잔해층 재침수 같은 급속 증발-응축) 하에서, 큰 상간 온도차가 존재하기 때문에 성립하지 않는다.", "이상 다공성 매질에 대한 기존의 3-방정식(3-온도) 모델들은 휴리스틱하게 구성되었거나(따라서 유효 계수가 공극 규모 물리에서 유도되지 않아 잘못된 해석의 위험), Petit 등의 모델처럼 상변화를 고려하지 않았다.", "이러한 비평형 모델의 유효 수송 계수(열교환 계수, 분산 텐서)를 결정하는 공극 규모 기반의 포괄적 방법이 없었으며, 이상 다공성 유동에서 이 계수들을 실험으로 결정하는 것은 극히 어렵거나 불가능하다.", "휴리스틱 모델은 거시적 증발률을 표현하기 위해 추가적인 현상론적 관계가 필요했으며, 일관된 폐합형 유도가 없었다."], "addressed_by_this_work": ["관련 비평형 항을 갖춘 일반화된 3-온도 거시 모델이 공극 규모 방정식으로부터 체적 평균을 통해 엄밀하게 유도되어, 고체·액체·증기 사이의 국소 열적 평형 가정을 제거한다.", "거시적 유효 계수를 공극 규모 형상 및 물리와 연결하는 여섯 개의 공극 규모 폐합 문제가 정식화되어, 모든 유효 계수가 피팅이 아니라 대표 단위 셀로부터 계산 가능해진다.", "거시적 증발률의 폐합형이 폐합 해석으로부터 직접 얻어지며, 이는 편차 표현과 일관되고 추가적인 현상론적 관계를 요구하지 않는다.", "단순 단위 셀과 순수 확산 상변화에 대해, 3-방정식 모델의 평균 온도와 포화도 예측이 직접 공극 규모 수치 시뮬레이션과 매우 잘 일치하여 접근법과 폐합 가정을 검증한다."], "remaining_unresolved": ["대류 상변화 과정 및 복잡한 3차원/무작위 단위 셀에 대한 검증은 아직 달성되지 않았다(순수 확산, 단순 1D 셀에 한정).", "준정적·준정상 폐합 가정은 액-증기 LTNE 시스템에 대해 여전히 논쟁의 여지가 있으며, 그 타당 영역은 미해결 문제다.", "상변화율이 온도 편차에 미치는 영향을 무시하면 거시 규모 열전달을 과소평가할 수 있으나, 정량적 데이터 부족으로 폐합 수준에서 상변화율의 중요성을 아직 평가할 수 없다.", "주어진 체적 분율에 대해 계면 이력 효과가 유효 계수를 비유일하게 만드는지를 여전히 확인해야 한다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
