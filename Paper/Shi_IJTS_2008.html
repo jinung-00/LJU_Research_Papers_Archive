@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Optimized structure of two layered porous media with genetic algorithm for transpiration cooling</title>
+    <meta name="keywords" content="transpiration cooling, layered porous structure, genetic algorithm, structural optimization, local thermal non-equilibrium (LTNE), porosity, two-phase porous media, Bejan number">
+    <meta name="paper-authors" content="Junxiang Shi, Jianhua Wang">
+    <meta name="paper-journal" content="International Journal of Thermal Sciences, Vol. 47(7), 2008, pp. 1595-1601 · DOI: 10.1016/j.ijthermalsci.2008.01.010">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Optimized structure of two layered porous media with genetic algorithm for transpiration cooling</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Junxiang Shi, Jianhua Wang</div>
+            <div class="journal">International Journal of Thermal Sciences, Vol. 47(7), 2008, pp. 1595-1601 · DOI: 10.1016/j.ijthermalsci.2008.01.010</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 논문은 <span class="term">유전 알고리즘(GA)</span>을 <span class="term">단순화된 국소 열적 비평형(LTNE) 모델의 해석해</span>에 결합하여 증산냉각에 사용되는 <span class="term">2층 다공성 구조</span>를 최적화한다. 냉각제는 일정 압력차 또는 일정 질량유량으로 주입되며, 최적화는 전체 무게 및 합성 비용 제약 하에서 고온면 온도를 최소화한다. 다섯 개의 유전자가 다공도, 조성, 층 두께비를 인코딩하고; GA 적합도는 해석적 고온면 온도에 무게/비용 페널티 항을 더해 구성된다. 결과는 (고온측에 가까운) 둘째 층의 열전도도와 다공도가 고온측 온도를 지배하는 반면, (저온측에 가까운) 첫째 층은 열전도도 영향이 미미하고 일정 압력 조건에서만 다공도를 통해 고온측에 영향을 줌을 보인다. 본 연구는 GA + 해석적-LTNE를 다층 증산냉각 구조의 지능형 설계 도구로 입증하며, 단상 해석적-LTNE 계보를 구조 최적화로 확장한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">layered porous structure</span><span class="keyword-chip">genetic algorithm</span><span class="keyword-chip">structural optimization</span><span class="keyword-chip">local thermal non-equilibrium (LTNE)</span><span class="keyword-chip">porosity</span><span class="keyword-chip">two-phase porous media</span><span class="keyword-chip">Bejan number</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">증산냉각은 높은 열유속 하의 구조물에 대해 허용 가능한 고온면 온도를 달성하는 것을 목표로 하며, 극초음속 연소기, 가스터빈 블레이드, 극저온 로켓 엔진에 사용된다. 대부분의 연구는 다공성 기지를 균질로 다루었으나, 다층 구조는 어려운 다중 제약 설계 문제를 대가로 냉각 및 비용 이점을 제공한다. 많은 열전달 최적화에서 성공한 유전 알고리즘이 설계 도구로 제안된다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">수학적 기반은 Wang and Wang의 단일층 해석적 LTNE 해와 Wolfersdorf의 2층 효율 분석, Alazmi-Vafai 투과율을 가진 운동량(Darcy-Forchheimer) 폐쇄, 펌핑 동력을 위한 Bejan 수, Hwang의 열전달계수 상관식을 활용한다. GA 열전달 선례(Wildi-Tremblay &amp; Gosselin, Ozkol, Younes)가 최적화 틀을 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">단순화된 LTNE 방정식을 저온측, 고온측, 계면 연속 경계조건과 함께 층별로 해석적으로 풀어, 고온면 고체 온도를 두 다공도, 두 전도도, 두께비의 함수로 산출한다. 다섯 개 유전자 염색체가 이 설계 변수를 인코딩하고; GA 적합도는 해석적 고온면 온도에 무게 및 합성 비용 페널티 항을 결합하여 선택, 교차, 변이를 통해 500회 반복 동안 진화시킨다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">일정 압력차(Be=10^11) 하에서, 무제약 최적해는 두 층 모두에 구리를 선택하고 첫째 층 다공도를 상한 0.8로 둔다; 비용 제약을 추가하면 첫째 층이 철로 전환되고, 무게 제약을 추가하면 두 층 모두 알루미늄으로 전환된다. 일정 질량유량(M=4E4) 하에서는 다공도/두께가 전도도와 열전달계수에만 영향을 주고 유량에는 영향을 주지 않으므로 최적 결과가 현저히 다르다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">최적화는 두 층 사이의 비대칭을 드러낸다: 둘째(고온측) 층의 조성과 다공도가 고온면 온도를 지배하는 반면, 첫째(저온측) 층의 영향은 약하다 — 일정 질량유량에서 특히 그렇다. GA는 수렴을 가속하기 위해 최고 전도도 재료에 먼저 고정되는 경향이 있어, 일부 제약 최적해가 자유 최적해와 다른 이유를 설명한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">단순화된 해석적 LTNE 해에 결합된 GA가 다층 증산냉각 구조의 사용 가능한 지능형 설계 도구임을 보인다. 서로 다른 제약 하에서 최적 다공도, 재료, 두께는 다르나, 둘째(고온측) 층의 조성과 다공도가 고온면 온도에 일관되게 지배적 영향을 미친다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 7 / total 10</span></summary>
+            <ol class="ref-list"><li>J. H. Wang, H. N. Wang, A discussion of transpiration cooling problems through an analytical solution of local thermal non-equilibrium model, ASME J. Heat Transfer, 128, 2006, pp. 1093-1098</li><li>J. V. Wolfersdorf, Effect of coolant side heat transfer on transpiration cooling, J. of Heat and Mass Transfer, 41, 2005, pp. 327-337</li><li>D. Greuel, A. Herbertz, O. J. Haidn, M. Ortelt, H. Hald, Transpiration cooling applied to C/C liners of cryogenic liquid rocket engines, AIAA 2004-3682</li><li>J. A. Landis, J. W. Bowman, Numerical study of a transpiration cooled rocket nozzle, AIAA Meeting Paper 96-2580, 1996</li><li>P. Wildi-Tremblay, L. Gosselin, Layered porous media architecture for maximal cooling, Int. J. Heat and Mass Transfer, 50, 2007, pp. 464-478</li><li>C. P. Lee, R. E. Schafrik, R. Darolia, Multi-layer thermal barrier coating with transpiration cooling, US Patent 6511762 B1, 2000</li><li>A. Bejan, Convection Heat Transfer, 3rd ed., Wiley, 2004 (Chapter 12)</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "증산냉각 시스템 설계의 궁극적 목표는 높은 열유속 하에서 허용 가능한 고온면 온도이다; 대부분의 기존 연구는 다공성 구조를 균질 또는 단일층으로 다루었다."}, {"type": "bullet", "text": "Greuel 등과 Landis &amp; Bowman은 균질 구조를 연구하여 열전도도, 다공도, 특성 크기, 두께가 모두 고온면 온도에 영향을 줌을 보였으며, 그 관계는 단순한 함수로 포착하기 어렵다."}, {"type": "bullet", "text": "Wolfersdorf는 2층 다공성 구조를 조사하여 냉각 효율에 대한 해석해를 제시했고; Lee 등은 다공성 및 비다공성 층을 순응형 냉각 구조에 결합하는 특허를 등록했다."}, {"type": "bullet", "text": "다층 다공성 구조는 냉각 최적화와 비용 절감에 뚜렷한 이점이 있으나, 상호 제약(조성, 두께, 다공도, 전체 무게 및 비용) 하에서 설계하는 것은 새로운 도전이다."}, {"type": "bullet", "text": "유전 알고리즘 — 고도로 병렬적이고 무작위적이며 자기 적응적인 탐색 방법 — 은 열전달 최적화를 포함한 많은 지능형 최적화 문제(Wildi-Tremblay &amp; Gosselin, Ozkol, Younes)에 성공적으로 적용되었다."}, {"type": "bullet", "text": "기존 GA 열전달 최적화는 국소 열평형 모델이나 다른 형상을 사용했다; LTNE 기반 다층 증산 최적화가 여전히 필요했다."}, {"type": "bullet", "text": "본 논문은 단순화된 LTNE 모델의 해석해를 GA 염색체 적합도로 사용하고, 일정 압력차와 일정 질량유량에서 각각 두 다공성 층을 최적화한다.", "figure_refs": [1]}]}, "related_works": {"content": [{"type": "bullet", "text": "내부 다공성 구조는 충전층으로 모델링된다; 공극 Reynolds 수가 1~2 차수이므로 관성력이 무시할 수 없어, 냉각제 유동이 Darcy-Forchheimer 운동량 방정식을 만족한다."}, {"type": "formula", "label": "식 (1) — Darcy-Forchheimer 운동량 방정식", "latex": "\\nabla p = -\\frac{\\mu_f}{K_i} u - \\frac{\\rho_f F_i}{\\sqrt{K_i}}|u|u, \\quad i=1,2", "description": "냉각제를 구동하는 압력 구배가 각 층 i에서 Darcy(점성) 및 Forchheimer(관성) 저항과 균형을 이룬다; $K_i$ 투과율, $F_i$ Forchheimer 계수."}, {"type": "formula", "label": "식 (2) — 투과율 및 Forchheimer 계수(Alazmi-Vafai)", "latex": "K_i = \\frac{d_p^2 \\varepsilon_i^3}{150(1-\\varepsilon_i)^2}, \\qquad F_i = \\frac{1.75}{\\sqrt{150\\,\\varepsilon_i^3}}", "description": "Alazmi와 Vafai 이후, 공극 직경 $d_p$ 와 층 다공도 $\\varepsilon_i$ 의 함수로서의 충전층 투과율 및 관성 계수이다."}, {"type": "bullet", "text": "압력차가 고정될 때 다공성 구조를 통해 냉각제를 구동하는 데 필요한 펌핑 동력을 추정하기 위해 Bejan 수가 채택된다."}, {"type": "formula", "label": "식 (3) — Bejan 수", "latex": "\\mathrm{Be} = \\frac{H^2 \\Delta P}{\\alpha_f \\mu_f}", "description": "일정 압력차에서 설계를 비교하는 데 사용되는 무차원 압력 강하(펌핑 동력) 수; 낮은 Be는 낮은 압력 손실을 의미한다."}, {"type": "bullet", "text": "충전층의 열전달계수(Reynolds 수 &gt; 350)는 Hwang의 상관식에서 가져온다."}, {"type": "formula", "label": "식 (7) — Hwang 열전달계수 상관식", "latex": "h_{v,i} = \\frac{20.346(1-\\varepsilon_i)\\varepsilon_i^2 k_f}{d_p}\\left(1.064\\left(\\frac{d_p}{?}\\right)\\mathrm{Pr}^{0.33}\\mathrm{Re}^{0.59}\\right)", "description": "다공도와 공극 Reynolds/Prandtl 수의 함수로서의 체적 열전달계수. ⚠️ 식 (7) — 괄호 안 길이 척도 항 하나가 추출 시 모호함; 괄호 안 길이 비를 제외하고 페이지 이미지에서 고신뢰도로 옮김(원본 확인 필요)."}, {"type": "bullet", "text": "단순화된 LTNE 지배 방정식(식 5-6)은 유효 고체-유체 전도도 비가 1보다 훨씬 크므로 유체 열 확산을 무시하여 Wang and Wang을 따른다."}, {"type": "formula", "label": "식 (14)-(15) — 무차원 단순화 LTNE 방정식", "latex": "\\frac{d^2 \\theta_s}{dY^2} = \\mathrm{Bi}_{v,i}(\\theta_s - \\theta_f); \\qquad M\\frac{d\\theta_f}{dY} = \\mathrm{Bi}_{v,i}\\,\\kappa_i\\,(\\theta_s - \\theta_f)", "description": "층 i별 무차원 고체(전도 대 계면 교환) 및 유체(대류 대 계면 교환) 방정식; 유체 전도가 무시되므로 유체 방정식은 1차이다."}]}, "method": {"content": [{"type": "bullet", "text": "경계조건: 저온측은 고체 구배와 M-스케일 유체 온도를 Bi_c(식 16-17)에 관계짓고; 고온측은 고체 구배를 고정(식 18)하며; 계면은 두 상의 온도 및 구배 연속(식 19-21)을 강제한다."}, {"type": "formula", "label": "식 (16)-(18) — 저온측 및 고온측 BC", "latex": "Y=0:\\;\\frac{d\\theta_s}{dY}=\\mathrm{Bi}_c\\,\\theta_s; \\quad Y=0:\\;M\\theta_f=\\mathrm{Bi}_c\\,\\kappa_1\\,\\theta_s; \\quad Y=1:\\;\\kappa_2\\frac{d\\theta_s}{dY}=1", "description": "저온면 대류 결합(고체 및 유체)과 부과된 고온면 열유속(무차원)이다."}, {"type": "formula", "label": "식 (19)-(21) — Y=γ 에서의 계면 연속", "latex": "\\theta_{s}|_{Y=\\gamma^-}=\\theta_{s}|_{Y=\\gamma^+}; \\quad \\theta_{f}|_{Y=\\gamma^-}=\\theta_{f}|_{Y=\\gamma^+}; \\quad \\left.\\frac{d\\theta_s}{dY}\\right|_{Y=\\gamma^-}=\\lambda_{12}\\left.\\frac{d\\theta_s}{dY}\\right|_{Y=\\gamma^+}", "description": "두 층 사이 계면에서 고체 및 유체 온도 연속과 전도도 가중 열유속 연속($\\gamma=h/H$ 는 두께비)."}, {"type": "bullet", "text": "층별 일반해는 두 지수 합에 상수항을 더한 것이며, 진폭 K_{i,(1,2)} 가 유체를 고체와 관계짓고, 지수 k_{i,(1,2)} 는 층 매개변수에서 나온다."}, {"type": "formula", "label": "식 (22)-(24) — 층별 해석해", "latex": "\\theta_{s,i} = K_{i,1}C_{i,1}e^{k_{i,1}Y} + K_{i,2}C_{i,2}e^{k_{i,2}Y} + C_{i,3}; \\quad k_{i,(1,2)} = \\frac{-\\mathrm{Bi}_{v,i}\\kappa_i/M \\pm \\sqrt{(\\mathrm{Bi}_{v,i}\\kappa_i/M)^2 + 4\\mathrm{Bi}_{v,i}}}{2}; \\quad K_{i,(1,2)} = 1 + \\frac{M}{\\mathrm{Bi}_{v,i}\\kappa_i}k_{i,(1,2)}", "description": "층별 닫힌 형태 고체 온도; 적분 상수 $C_{i,j}$ 는 식 (16)-(21)로 고정되고, 지수와 진폭 인자는 각 층의 Biot 수와 전도도 비에서 나온다."}, {"type": "bullet", "text": "따라서 고온면 고체 온도는 두 층 다공도, 두 전도도, 두께비에 의존하며 — 전통적 최적화에 너무 복잡한 관계이다(식 25)."}, {"type": "formula", "label": "식 (25) — 고온면 온도 의존성", "latex": "\\theta_s(Y=1) = f(\\varepsilon_1, \\varepsilon_2, k_{s,1}, k_{s,2}, \\gamma)", "description": "최적화 목표: 다섯 설계 변수의 음함수로서의 무차원 고온면 온도로, 구배법이 아닌 GA를 동기화한다."}, {"type": "bullet", "text": "다섯 유전자가 두 다공도(각 7비트), 두 조성(각 2비트: 00=Al, 01=Cu, 10=Fe, 11=null), 한 두께비(7비트)를 인코딩한다; 7비트 다공도는 &lt;1% 상대 오차를 준다."}, {"type": "formula", "label": "다공도 디코딩 — 유전자에서 값으로", "latex": "\\varepsilon = \\frac{\\mathrm{pr}}{127}(\\varepsilon_{\\max} - \\varepsilon_{\\min}) + \\varepsilon_{\\min}", "description": "7비트 유전자(십진값 pr, 0-127)를 $\\varepsilon_{\\min}=0.2$ 와 $\\varepsilon_{\\max}=0.8$ 사이의 다공도로 디코딩한다."}, {"type": "bullet", "text": "GA 적합도는 해석적 고온면 온도에 무게 및 합성 비용 페널티 계수 g_w, g_c 를 결합하여, 비용/무게 한계를 위반하는 설계에 페널티를 준다."}, {"type": "formula", "label": "식 (26) — GA 적합도 함수", "latex": "f = a\\theta + g_c\\left((C - C_0)/C_0\\right) + g_w\\left((W - W_0)/W_0\\right)", "description": "적합도 = 증폭된 고온면 온도 + 정규화된 비용 및 무게 페널티 항; $C_0$, $W_0$ 는 비용 및 무게 한계, $a$ 는 증폭 계수이다."}, {"type": "bullet", "text": "GA 설정: 염색체 개체군 500, 교차 확률 0.8, 변이 확률 0.1, 조기 성숙 방지를 위한 중복 없는 안정 재생산; 각 최적화는 500회 반복. 표로 정리된 전도도, 밀도, 합성 비용을 가진 세 후보 금속(Al, Cu, Fe)을 사용한다."}]}, "results": {"content": [{"type": "bullet", "text": "일정 압력차(Be=10^11)에서 무게/비용 제약 없이, 최적해는 두 층 모두에 구리(최고 전도도)를 선택하며 첫째 층 다공도가 상한 0.8에 도달한다.", "figure_refs": [2]}, {"type": "bullet", "text": "높은 다공도는 투과율과 냉각제 질량유량을 높이나 유효 고체 전도도를 낮춘다 — 다공도는 경쟁 인자이다; 첫째 층에서는 냉각제 유량 이득이 전도도 손실을 능가하여 다공도가 0.8로 구동된다.", "figure_refs": [2]}, {"type": "bullet", "text": "합성 비용 제약(&lt;5.0)을 부과하면 첫째 층이 철로 전환되고 둘째 층은 구리로 유지되어, 거의 최적의 온도를 유지하면서 비용을 낮춘다."}, {"type": "bullet", "text": "무게 제약(&lt;0.25)과 비용 제약을 부과하면 두 층 모두 두 다공도를 가진 알루미늄이 되어, 낮은 무게와 허용 가능한 비용을 주나 비용 전용 최적해보다 높은 온도를 준다."}, {"type": "bullet", "text": "Cu/Fe(표 3)와 Al/Al(표 4) 셋째 데이터 구조의 온도 분포는, 둘째 층에서 고체와 유체 온도가 저온측을 향해 빠르게 떨어지고 고체-유체 차이가 첫째 층보다 훨씬 큼을 보인다.", "figure_refs": [3]}, {"type": "bullet", "text": "일정 질량유량(M=4E4)에서는 다공도와 두께가 더 이상 유량에 영향을 주지 않고 전도도와 열전달계수에만 영향을 주므로 최적 결과가 일정 압력 경우와 다르다; 최저 Bejan 수(최저 압력 손실) 설계가 선호된다."}, {"type": "bullet", "text": "일정 질량유량 무게/비용 제약(무게&lt;2, 비용&lt;15) 하에서 최저 압력 손실 설계가 최선이다; 둘째 층은 일관되게 구리이고 다공도가 케이스 간 매우 가까운 반면, 첫째 층 다공도는 고온면 온도에 거의 영향 없이 크게 변한다."}]}, "discussion": {"content": [{"type": "bullet", "text": "구리가 알루미늄보다 전도도가 높고 철이 낮으므로, Cu 둘째 층이 Al보다 더 나은 냉각 효율을 달성한다; 둘째 층은 열 확산과 상간 열교환이 더 중요하므로 지배적이다.", "figure_refs": [3]}, {"type": "bullet", "text": "일정 질량유량에서는 첫째 층 다공도가 고온면 온도에 상대적으로 작은 영향을 미치며, 표 5와 6의 온도가 첫째 층 다공도의 큰 차이에도 거의 같다."}, {"type": "bullet", "text": "최적화가 무제약일 때, GA는 수렴을 가속하기 위해 다공성 기지 조성을 최고 전도도 재료에 먼저 고정한다; 이는 무제약 일정 질량유량 경우에 Fe-Cu 조합이 나타나지 않는 이유를 설명한다."}, {"type": "bullet", "text": "비용 제약 집합의 평균 비용과 무게 제약 집합의 평균 무게가 크게 떨어지나, 무게 제약 평균 온도는 비용 제약보다 훨씬 높다."}, {"type": "bullet", "text": "다공도(투과율/유량 대 유효 전도도)와 두께(투과율 대 유효 전도도)의 경쟁적 성질이 각 층이 다른 최적 다공도와 두께에 정착하는 이유를 설명한다."}, {"type": "bullet", "text": "높은 유효 열전도도는 다공성 구조가 고온측에서 더 멀리 열을 전도하게 하고 공극 내 냉각제-기지 열교환을 강화하여, 구리가 둘째 층을 지배하는 이유를 정당화한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "결합 GA + 해석해 방법은 다층 다공성 증산냉각 구조 설계에 사용 가능하다; 최적화 목표는 최저 고온면 온도, 최소 압력 강하, 또는 최소 냉각제 질량유량일 수 있다."}, {"type": "bullet", "text": "서로 다른 제약 하에서 각 층의 최적 다공도, 재료, 두께가 다르다."}, {"type": "bullet", "text": "압력차가 일정할 때, 첫째 층 다공도는 냉각제 질량유량에 뚜렷한 영향을 미치므로 가능한 한 커야 한다."}, {"type": "bullet", "text": "냉각제 질량유량이 일정할 때, 첫째 층 다공도는 고온면 온도에 미미한 영향만 미친다."}, {"type": "bullet", "text": "일정 압력과 일정 질량유량 조건 모두에서, 둘째 층의 조성과 다공도가 첫째 층보다 고온면 온도에 더 중요한 영향을 미친다."}, {"type": "bullet", "text": "이 방법은 USTC 단상 해석적-LTNE 계보를 경계조건 분석에서 층상 다공성 매질의 구조 최적화로 확장한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "최적화는 유체 냉각제의 열 확산(전도)을 무시하는 단순화된 LTNE 해석해에 의존하며, 이는 유효 고체-유체 전도도 비가 1보다 훨씬 클 때에만 유효하다.", "source_quote": "When the thermal conductivity of the porous structure is much larger than that of coolant, but the porosity is not very large, the effective conductivity ratio of solid structure to fluid coolant is much larger than 1, Wolfersdorf [4] as well as Wang and Wang [9] neglected the thermal diffusion of the fluid coolant, and the local thermal non-equilibrium model was simplified.", "source_section": "method"}, {"claim": "실제 충전층의 다공도는 물리적으로 0.2595와 0.4764 사이에서만 변하나, 최적화는 다공도 영향을 연구하기 위해 충전층 한계를 넘어 0.8까지의 다공도를 허용한다.", "source_quote": "Although the porosity of packed beds only can vary between the limits 0.2595 and 0.4764, for analyzing the influence of the porosities of each porous layers, respectively, the maximum and minimum value of the ratio are limited to 0.8 and 0.2, respectively, in this work.", "source_section": "method"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["대부분의 증산냉각 연구는 다공성 구조를 균질 또는 단일층으로 다루어 다층 설계가 충분히 탐구되지 않았다.", "다층 다공성 구조는 냉각을 최적화하고 비용을 줄일 수 있으나, 조성·두께·다공도·무게·비용의 상호 제약 하에서 설계하는 것은 어렵고 비평활한 최적화 문제이다.", "다층 증산냉각 구조에 맞춤화된 지능형 최적화 방법이 없었다(기존 GA 열전달 연구는 평형 모델이나 다른 형상을 사용했다)."], "addressed_by_this_work": ["단순화된 해석적 LTNE 해에 결합된 GA가 두 다공성 층의 조성, 다공도, 두께를 최적화하여 고온면 온도를 최소화한다.", "적합도 함수가 무게 및 합성 비용 페널티 계수를 내장하여 최적화가 전체 무게/비용 제약을 준수한다.", "최적 설계는 둘째(고온측) 층의 전도도와 다공도가 지배함을 밝혀, 다층 구조에 대한 구체적 설계 규칙을 제공한다."], "remaining_unresolved": ["단순화된 일정 물성·유체 전도 무시 LTNE 모델을 넘어 완전 결합 2상/가변 물성 모델로의 확장.", "최적화가 2층 및 충전층 형태 내부 구조에 한정됨; 다층 또는 비충전층 아키텍처는 미해결."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
