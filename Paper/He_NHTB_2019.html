@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Model comparison, thermal nonequilibrium characteristic and boundary conditions discussion of two-phase flow with phase change in porous media</title>
+    <meta name="keywords" content="two-phase flow porous media, phase change, separated phase model, SPM, two-phase mixture model, TPMM, semi-mixed model, SMM, local thermal non-equilibrium, LTNE, boundary conditions, transpiration cooling, numerical">
+    <meta name="paper-authors" content="Fei He, Jianhua Wang, Wenjie Dong, Nan Wu">
+    <meta name="paper-journal" content="Numerical Heat Transfer, Part B: Fundamentals, Vol. 76, No. 2, 2019, pp. 88-105 · DOI: 10.1080/10407790.2019.1642708">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Model comparison, thermal nonequilibrium characteristic and boundary conditions discussion of two-phase flow with phase change in porous media</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Fei He, Jianhua Wang, Wenjie Dong, Nan Wu</div>
+            <div class="journal">Numerical Heat Transfer, Part B: Fundamentals, Vol. 76, No. 2, 2019, pp. 88-105 · DOI: 10.1080/10407790.2019.1642708</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 다공성 매질 내 상변화를 동반한 이상유동(two-phase flow)을 기술하는 세 가지 수학적 모델 - <span class="term">분리상 모델(separated phase model, SPM)</span>, <span class="term">이상혼합 모델(two-phase mixture model, TPMM)</span>, 최근 개발된 <span class="term">준혼합 모델(semi-mixed model, SMM)</span> - 을 나란히 비교한다. 세 모델은 모두 <span class="term">국소 열적 비평형(local thermal non-equilibrium, LTNE)</span> 형태(유체 에너지식 + 별도의 고체 에너지식)로 정식화된다. 1차원 정상상태 증산냉각형 문제(가열된 다공성 슬래브에 액체 물을 주입)에 대해 각 모델마다 독립적으로 자체 작성한 유한차분 솔버를 구축한다. 핵심 결론은 SPM과 SMM이 항상 매우 유사한 온도·포화도 분포(약 2% 이내)를 주는 반면, TPMM은 과도하게 두꺼운 이상영역(경향 TPMM &gt; SPM &gt; SMM)과 뚜렷이 다른 유체 온도를 예측한다는 것이며, 이는 단상/이상영역 경계에서 <span class="term">유효확산계수 $C_h$ 가 비현실적(허위)으로 폭증</span>(약 10자릿수까지)하는 데서 비롯된 수치적 인공물이다. 이어 신뢰할 수 있는 SMM을 이용해 경계조건을 논의한다: 세 가지 저온측 경계조건은 다공성 매질이 얇을 때만 유의미하게 달라지고(이때만 저온측 효과가 고온측에 전달), 세 가지 고온측 경계조건 중 1·3형은 항상 적용 가능하나 2형(열전도도에 의한 열유속 분배, 식 15)은 매우 작은 공극률에서 유체 온도를 고체 온도보다 높게 만들어 적용 불가가 된다. 끝으로 LTNE 고체-유체 온도차를 정량화한다: 그 차이는 이상/증기영역 경계에서 최대가 되며, 입자 직경이 클수록·공극률이 클수록 커지고 고체 열전도도가 높을수록 작아진다.</div>
+            <div class="keywords"><span class="keyword-chip">two-phase flow porous media</span><span class="keyword-chip">phase change</span><span class="keyword-chip">separated phase model</span><span class="keyword-chip">SPM</span><span class="keyword-chip">two-phase mixture model</span><span class="keyword-chip">TPMM</span><span class="keyword-chip">semi-mixed model</span><span class="keyword-chip">SMM</span><span class="keyword-chip">local thermal non-equilibrium</span><span class="keyword-chip">LTNE</span><span class="keyword-chip">boundary conditions</span><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">numerical</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공성 매질 내 상변화 이상유동은 여러 응용(지열 회수, PEM 연료전지, 건물 에너지, 전자부품 냉각, 원자로 안전, 증산냉각)의 기반이지만 메커니즘은 여전히 잘 이해되지 않고 실험이 어려워, 수학적 모델과 수치 기법이 지배적이다. 이런 모델로 SPM, TPMM, 그리고 새로운 SMM이 존재하나 거의 비교된 적이 없어 모델 선택의 지침이 없다. 본 논문은 지정된 운전 조건에서 이상유동에 대한 합리적 모델과 합리적 경계조건을 규명하고, 고체-유체 열적 비평형 특성을 정량적으로 평가하는 것을 목표로 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">모델 계보가 명시적으로 기술되며, 이는 본 논문과 같은 USTC 그룹에 뿌리를 둔다: SPM은 Bau와 Torrance의 3영역 분류를 따르고, 여기서 사용된 TPMM 정식화는 정확히 Shi와 Wang [24]이 Wang-Beckermann의 원래 혼합 모델로부터 유도한 형태이며, SMM은 Dong과 Wang [20]이 도입한 모델이다. 경계조건 논의는 저온측 BC에 대해 Colladay/Stepka, Burch, Martiny 등, Rodriguez를, 고온측의 세 가지 열유속 분배에 대해 Vafai(Alazmi와 Vafai)를 끌어오며, Landis가 고체 &gt; 유체 타당성 기준을 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">물리 모델은 두께 L의 1차원 다공성 슬래브로, 저온측에서 액체 물을 주입(질량유속 $m_c$, 온도 $T_c$)하고 고온측에 규정된 열유속 Q를 가해 액체/이상/증기 영역을 형성한다. 세 모델 모두 LTNE(유체 에너지식 + 체적 교환항 $q_{sf}$ 로 결합된 별도의 고체 에너지식)로 작성되며 동일한 구성관계(모세관압/Leverett-J, 3차 상대투과도, 유효전도도, Wakao형 열전달계수, Rohsenow형 비등 소스항)를 공유한다. SPM은 실제 상별 변수를 유지하고 경계를 추적한다; TPMM은 혼합 압력, 혼합 엔탈피 H, 고체 온도를 이류보정계수와 유효확산계수 $C_h$ 와 함께 푼다; SMM은 SPM의 분리된 질량/운동량은 유지하되 유체 에너지식을 단조한 혼합 비엔탈피 $H_f$ 로 쓴다. 모델들은 자체 작성한 유한차분 프로그램(2차 풍상 이류, 중심차분 확산, 소스 선형화)으로 풀며, SPM은 완전 결합, TPMM/SMM은 SIMPLE + Gauss-Seidel로 순차적으로 푼다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">1형 저온측·3형 고온측 BC를 사용해, 세 모델을 여러 질량유속과 열유속 범위에서 비교한다. 세 모델 모두 같은 정성적 온도 형태(액체에서 완만한 상승, 이상에서 거의 평탄, 증기에서 급상승)를 주지만, SPM과 SMM은 약 1.6-1.7% 이내로 일치하는 반면 TPMM은 최대 약 8% 차이를 보이며 훨씬 두꺼운 이상영역(TPMM &gt; SPM &gt; SMM)을 낸다. 과도하게 두꺼운 TPMM 이상영역은 영역 경계에서 유효확산계수가 약 10자릿수까지 허위로 증가하는 데 기인한다. 이어 LTNE 고체-유체 온도차를 정량화한다: LTE에서는 이상·증기영역에서 고체 온도가 크게 잘못 예측되는 반면, LTNE-SMM은 고체가 유체(상변화점에 머무름)보다 높게 가열됨을 보이며, 그 차이는 이상/증기 경계에서 최대가 되고 질량유속·입자 직경·공극률이 클수록 커지지만 고체 전도도가 높을수록 줄어든다. 끝으로 저온측·고온측 BC를 평가한다: 저온측 BC 선택은 얇은 매질에서만 중요하고, 2형 고온측 BC는 작은 공극률에서 적용 불가이다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">비교는 명확한 실무 권장을 준다: SPM과 SMM은 신뢰할 수 있고 상호 일관적인 반면, TPMM은 그 혼합 엔탈피 유효확산계수가 영역 경계에서 허위로 폭증해 이상영역을 과도하게 두껍게 만들므로 주의해 사용해야 한다. SMM은 실무에서 가장 매력적인데, SPM의 경계 추적과 TPMM의 허위 수치를 모두 회피하면서 정확성을 유지하기 때문이며, 이것이 BC 연구의 주력 모델로 선택된 이유이다. BC 논의는 물리적 어림법(저온측 BC는 얇은 매질에서만 중요; 고온측 BC 중 전도도 분배형은 낮은 공극률에서 비물리적)을 주고, LTNE 연구는 이상 상변화가 고체 온도에 대해 열적 비평형을 불가피하게 만들며 그 차이가 입자 직경·공극률·고체 전도도로 제어됨을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 SPM과 SMM이 다공성 매질 내 상변화 이상유동에 대해 일관되게 유사한 결과를 주는 반면, TPMM은 유효확산계수의 허위 증가 때문에 과도하게 두꺼운 이상영역을 낸다고 결론짓는다. 고체와 유체 사이의 열적 비평형은 고려되어야 하며, 입자 직경이 크고 고체 전도도가 높은 상황에서 가장 유의미하다. 경계조건 중 저온측 BC는 얇은 매질에서만 중요하고, 세 고온측 BC 유형은 고온측 근처를 제외하면 가까우나 그곳에서 1·3형은 항상 적용 가능하고 2형은 작은 공극률에서 적용 불가이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 35</span></summary>
+            <ol class="ref-list"><li>C.Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media - I. Formulation, Int. J. Heat Mass Transf. 36(11), 2747-2758, 1993</li><li>W.J. Dong, J.H. Wang, A new model and its application to investigate transpiration cooling with liquid coolant phase change, Transp. Porous Media 122(3), 575-593, 2018</li><li>J.X. Shi, J.H. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transp. Porous Media 87(3), 703-716, 2011</li><li>H.H. Bau, K. Torrance, Boiling in low-permeability porous materials, Int. J. Heat Mass Transf. 25(1), 45-55, 1982</li><li>J.H. Wang, J.X. Shi, A discussion of boundary conditions of transpiration cooling problems using analytical solution of LTNE model, ASME J. Heat Transf. 130(1), 014504, 2008</li><li>B. Alazmi, K. Vafai, Analysis of variants within the porous media transport models, ASME J. Heat Transf. 122(2), 303, 2000</li><li>F. Lindner, P. Nuske, K. Weishaupt, R. Helmig, C. Mundt, M. Pfitzner, Transpiration cooling with local thermal nonequilibrium: model comparison in multiphase flow in porous media, J. Porous Media 19(2), 131-153, 2016</li><li>K. Wei, J.H. Wang, M. Mao, Model discussion of transpiration cooling with boiling, Transp. Porous Media 94(1), 303-318, 2012</li><li>H.Y. Li, K.C. Leong, L.W. Jin, J.C. Chai, Transient two-phase flow and heat transfer with localized heating in porous media, Int. J. Therm. Sci. 49(7), 1115-1127, 2010</li><li>G. Chavent, A new formulation of diphasic incompressible flows in porous media, in Applications of Methods of Functional Analysis to Problems in Mechanics, Springer, 258-270, 1976</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다공성 매질 내 이상유동은 지열 에너지 회수, 고분자 전해질막 연료전지, 건물 에너지 기술, 전자부품 냉각, 원자로 안전 해석, 증산냉각 등 여러 분야에 걸쳐 있어, 미세구조 내 상변화는 중요하지만 불완전하게 이해된 문제이다."}, {"type": "bullet", "text": "다공성 매질 내 상변화 실험은 극도로 정교해야 하고 측정이 모호하기 때문에, 통상 수학적 모델링과 수치 시뮬레이션이 동원된다 - 이는 어느 모델을 신뢰할지 면밀히 살펴야 할 동기가 된다."}, {"type": "bullet", "text": "Bau와 Torrance는 매질 내 증발 과정을 세 영역(액체, 이상, 증기)으로 나누었다; 이를 바탕으로 <span class=\"term\">분리상 모델(SPM)</span>은 세 묶음의 보존식을 작성해 상변화 경계조건으로 결합한다 - 변수 면에서 정확하지만 경계 추적과 다수의 결합 비선형식이 필요하다."}, {"type": "bullet", "text": "Wang과 Beckermann은 혼합 변수를 도입해 SPM의 영역별 식을 하나의 통합 식으로 결합했다 - 이것이 <span class=\"term\">이상혼합 모델(TPMM)</span> 이며, 경계 추적을 제거하고 식 수를 줄이지만 도입된 과도한 혼합 변수에서 비현실적(허위) 수치 현상이 발생한다."}, {"type": "bullet", "text": "Dong과 Wang은 최근 <span class=\"term\">준혼합 모델(SMM)</span> 을 제안했는데, 단상/이상 전이에 걸쳐 열역학적 상태의 단조함수가 되는 혼합 비엔탈피를 도입하여 TPMM의 허위 수치와 SPM의 경계 추적을 모두 회피한다."}, {"type": "bullet", "text": "세 모델 모두 널리 쓰이지만 이들을 비교한 연구가 거의 없어 확신 있는 선택이 어렵다; 또한 선행 경계조건 분석(Wang과 Shi의 다섯 가지 고온측 BC)은 단상유동만 다루었고 이상유동 결과에 대한 BC 영향은 연구되지 않았다."}, {"type": "bullet", "text": "따라서 본 논문은 서로 다른 저온측·고온측 BC 하에서 SPM, TPMM, SMM을 포괄적으로 비교하고, 고체-유체 열적 비평형 특성과 그 영향 인자(고체 재료, 다공성 구조, 운전 조건)를 정량적으로 평가한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "SPM 근간: Bau와 Torrance가 매질 내 증발의 액체/이상/증기 3영역 그림을 정립했고, SPM은 이를 영역별 분리 보존식으로 이산화해 상변화 경계에서 결합한다."}, {"type": "bullet", "text": "TPMM 근간: Wang과 Beckermann의 혼합 변수 정식화; 본 논문에서 쓰인 구체적 TPMM 식 묶음은 Shi와 Wang [24]이 제안한 형태이다(같은 그룹의 초기 증산냉각 LTNE-TPMM 연구)."}, {"type": "bullet", "text": "SMM 근간: 모델은 Dong과 Wang [20](SMM 기원 논문, 본 아카이브의 형제 논문 Dong_TIPM_2018)에서 직접 가져왔으며, 그 혼합 비엔탈피 $H_f$ 가 여기서 재사용된다."}, {"type": "bullet", "text": "저온측 BC 출처: 1형은 Colladay와 Stepka 및 Burch, 2형은 Martiny 등, 3형은 Rodriguez에서 가져온 것으로, 주로 저온측에서 고체-유체 열전달을 어떻게 다루는가에서 차이가 난다(표 5)."}, {"type": "bullet", "text": "고온측 BC 출처: 세 가지 열유속 분배는 Vafai(Alazmi와 Vafai의 다공성 매질 수송모델 변형 분석을 통해)에 귀속된다; Landis는 고체 열전도도가 클 때 고온측에서 고체 온도가 유체 온도보다 높아야 한다는 물리적 기준을 제공한다."}, {"type": "bullet", "text": "TPMM 인공물에 대한 보강 근거: Li 등과 Wei 등은 유효확산계수가 이상/단상 경계에서 심하게(최대 약 10자릿수) 변한다고 보고했고, Lindner 등 [34]은 그 계수를 평활화하면 두께를 부분적으로 보정할 수 있음을 보였다."}]}, "method": {"content": [{"type": "bullet", "text": "물리 모델: 두께 L의 다공성 슬래브, 고온면에 열유속 Q 노출, 저온측에서 질량유속 $m_c$·온도 $T_c$ 로 액체 냉각제 주입; 매질은 액체·이상(혼합)·증기 영역으로 나뉜다(그림 1). 세 모델 모두 LTNE로 제시 - 유체용 1개와 고체용 1개의 에너지식.", "figure_refs": [1]}, {"type": "bullet", "text": "SPM(표 1): 이상영역에서 액체·증기 보존식을 분리하고, 단상영역에서는 단일 상의 식으로 축소(상변화가 없는 곳에서는 상간 질량 소스 $m_i$ 가 소멸); 1차 변수는 실제 포화도, 유체 온도, 고체 온도이다."}, {"type": "formula", "label": "표 1 - LTNE-SPM 보존식", "latex": "\\nabla\\!\\cdot(\\rho_i \\mathbf{u}_i) = m_i,\\ \\textstyle\\sum_i m_i = 0; \\quad \\mathbf{u}_i = -K\\frac{k_{ri}}{\\mu_i}(\\nabla p_i - \\rho_i \\mathbf{g}); \\quad \\nabla\\!\\cdot(\\rho_i \\mathbf{u}_i h_i) = \\nabla\\!\\cdot(k_{i,\\mathrm{eff}}\\nabla T) + q_{si}; \\quad \\nabla\\!\\cdot(k_{s,\\mathrm{eff}}\\nabla T_s) = q_{sf},\\ q_{sf}=q_{sl}+q_{sv}", "description": "상별 질량, 확장 Darcy 운동량, 유체 에너지식($i=l,v$)과 총 고체-유체 교환 $q_{sf}$ 로 결합된 고체 에너지식. 분리 형태는 물리적으로 실제인 상별 변수를 유지하지만 상변화 경계 추적이 필요하다."}, {"type": "bullet", "text": "TPMM(표 2): 영역별 식을 혼합 밀도 $\\rho$, 혼합 속도 $\\mathbf{u}$, 혼합 엔탈피 H를 써서 전 영역에 걸친 하나의 식으로 병합; 1차 변수는 혼합 압력, 혼합 엔탈피, 고체 온도가 된다 - 사용된 정식화는 Shi와 Wang [24]의 것이다."}, {"type": "formula", "label": "표 2 - LTNE-TPMM 보존식", "latex": "\\nabla\\!\\cdot(\\rho \\mathbf{u}) = 0; \\quad \\rho\\mathbf{u} = -\\frac{K}{\\mu}(\\nabla p - \\rho_k \\mathbf{g}); \\quad \\nabla\\!\\cdot(\\gamma_h \\mathbf{u} H) = \\nabla\\!\\cdot(\\Gamma_h \\nabla H) + \\nabla\\!\\cdot\\!\\Big(f(s)\\frac{K\\lambda_v h_{lv}}{\\nu_v}\\mathbf{g}\\Big) + q_{sf}; \\quad \\nabla\\!\\cdot(k_{s,\\mathrm{eff}}\\nabla T_s) = q_{sf}", "description": "통합된 혼합 질량·운동량·유체 에너지·고체 에너지식. $\\gamma_h$ 는 이류보정계수, $\\Gamma_h$ 는 유효확산계수로, 후자가 영역 경계에서 허위로 증가하는 항이며 TPMM의 과도하게 두꺼운 이상영역의 원인이다."}, {"type": "formula", "label": "TPMM 유효확산계수 및 혼합 압력", "latex": "\\Gamma_h = \\frac{1}{1+(1-\\rho_v/\\rho_l)h_{v,sat}/h_{lv}}\\,D + k_{f,\\mathrm{eff}}\\frac{dT}{dH}, \\qquad p = \\frac{p_l+p_v}{2} + \\frac{1}{2}\\int_{s_c}^{s}\\big(\\lambda_v(\\xi)-\\lambda_l(\\xi)\\big)\\frac{dp_c}{d\\xi}\\,d\\xi", "description": "유효확산계수 $\\Gamma_h$ (본문에서 $C_h$ 로 지칭)는 모세관 확산 D와 전도 $k_{f,\\mathrm{eff}}\\,dT/dH$ 를 결합한다; Chavent 혼합 압력(식 2)이 혼합 속도를 구동한다. $\\Gamma_h$ 는 이상/단상 경계에서 약 10자릿수까지 도약할 수 있다."}, {"type": "bullet", "text": "SMM(표 3): SPM의 분리된 질량·운동량식(실제 상별 변수)을 유지하되, 모든 영역에서 유효한 단조한 단일 혼합 비엔탈피 $H_f$ 로 유체 에너지식을 쓴다 - Dong-Wang [20] 구성."}, {"type": "formula", "label": "식 (6) - SMM 혼합 비엔탈피 및 식 (7) 단상 에너지 형태", "latex": "H_f = \\frac{s\\rho_l}{s\\rho_l+(1-s)\\rho_v}h_l + \\frac{(1-s)\\rho_v}{s\\rho_l+(1-s)\\rho_v}h_v, \\qquad \\nabla\\!\\cdot(\\rho_i \\mathbf{u}_i H_f) = \\nabla\\!\\cdot\\!\\Big(\\frac{k_{i,\\mathrm{eff}}}{c_{p,i}}\\nabla H_f\\Big) + q_{sf}", "description": "$H_f$ 는 $s=1$ 일 때 $h_l$, $s=0$ 일 때 $h_v$ 와 같아 액체·증기 영역에서 $h_l,h_v$ 를 대체하고 이상영역에서 단조성을 유지한다 - TPMM의 혼합 엔탈피 H와의 핵심 차이이다."}, {"type": "formula", "label": "식 (8)-(9) - $H_f$ 로부터 유체 온도·포화도 복원 (SMM)", "latex": "T = \\begin{cases}(H_f-h_{l,sat})/c_{p,l}+T_{sat} & H_f \\le h_{l,sat}\\\\ T_{sat} & h_{l,sat}\\le H_f \\le h_{v,sat}\\\\ (H_f-h_{v,sat})/c_{p,v}+T_{sat} & h_{v,sat}\\le H_f\\end{cases}, \\quad s = \\begin{cases}1 & H_f\\le h_{l,sat}\\\\ \\dfrac{\\rho_v(h_{v,sat}-H_f)}{\\rho_l(H_f-h_{l,sat})+\\rho_v(h_{v,sat}-H_f)} & h_{l,sat}\\le H_f\\le h_{v,sat}\\\\ 0 & h_{v,sat}\\le H_f\\end{cases}", "description": "에너지식을 푼 후 혼합 비엔탈피 $H_f$ 로부터 실제 유체 온도 T와 액체 포화도 s를 구하는 구간별 대수 복원(이상 영역 밴드에서 비단조·의사물리적인 TPMM의 식 4-5와 비교)."}, {"type": "bullet", "text": "세 모델이 공유하는 공통 구성관계(표 4): Leverett J 함수를 쓴 모세관압, 3차 상대투과도 $k_{rl}=s^3,\\ k_{rv}=(1-s)^3$, 유효전도도 $k_{s,\\mathrm{eff}}=(1-\\varepsilon)k_s,\\ k_{f,\\mathrm{eff}}=\\varepsilon s k_l + \\varepsilon(1-s)k_v$, Wakao형 유체-고체 계수, 이상영역의 Rohsenow 핵비등 소스항, 선형 비엔탈피."}, {"type": "formula", "label": "표 4 - 핵심 구성관계 (Leverett-J, 상대투과도, 유효전도도)", "latex": "J(s) = 1.417(1-s) - 2.120(1-s)^2 + 1.263(1-s)^3, \\quad k_{rl}=s^3,\\ k_{rv}=(1-s)^3, \\quad k_{s,\\mathrm{eff}}=(1-\\varepsilon)k_s,\\ k_{f,\\mathrm{eff}}=\\varepsilon s k_l+\\varepsilon(1-s)k_v", "description": "모세관압 J 함수(Udell/Leverett 흡수 상관식), 3차 상대투과도, 공극률/포화도 가중 유효전도도; SPM·TPMM·SMM에 걸쳐 동일하므로 모델 차이는 에너지 정식화에만 국한된다."}, {"type": "bullet", "text": "수치 기법: 고정 균일 격자 위 자체 작성 유한차분 프로그램 - 이류는 2차 풍상, 확산은 중심차분, 소스는 $S=S_c+S_p T$ 로 선형화; 반복 간 $T_s$, $T_f$, p의 상대 변화가 $10^{-6}$ 미만일 때 수렴. 격자 독립성 시험으로 SPM·SMM은 100셀, TPMM은 400셀로 고정(TPMM은 더 미세한 격자가 필요)."}, {"type": "bullet", "text": "해법 전략: SPM은 완전 결합(모든 균형식을 한 행렬에 모아 동시에 푼다); TPMM과 SMM은 순차적으로 - 속도/압력을 먼저 SIMPLE로, 이어 선형 고체·유체 에너지식을 Gauss-Seidel로 풀며, 상변화 없음 초기 추정에서 시작해 수렴까지 반복한다."}, {"type": "bullet", "text": "기준 파라미터(표 6-7): 액체 물 냉각제(잠열 $2.257\\times10^6$ J/kg), 고온측 열유속 $q=1.5\\times10^6$ W/m^2, 질량유속 $m=0.4$ kg/(m^2 s), 두께 $L=0.1$ m, 공극률 $\\varepsilon=0.35$, 고체 전도도 $k_s=30$ W/(m K), 입자 직경 $d_p=5\\times10^{-4}$ m, 저온측 냉각제 온도 $T_c=300$ K."}]}, "results": {"content": [{"type": "bullet", "text": "질량유속에 따른 모델 비교(그림 2): 세 모델 모두 온도 형태를 공유하나 SMM이 액체영역에서 가장 낮고 증기영역에서 가장 높은 온도를 준다; SPM과 SMM은 1.6% 이내로 일치하는 반면 SMM 대 TPMM은 7.7%에 이른다($m=0.5$ kg/(m^2 s) 에서). 이상영역 두께 순서는 질량유속과 무관하게 일관되게 TPMM &gt; SPM &gt; SMM이다.", "figure_refs": [2]}, {"type": "bullet", "text": "열유속에 따른 모델 비교(그림 3): 열유속이 증가해도 SPM과 SMM의 온도장은 유사하게 유지(&lt;1.7% 차이)된다; TPMM은 약간 더 낮은 온도를 예측하며 SPM-TPMM 최대 차이는 8%이고, TPMM &gt; SPM &gt; SMM 이상영역 두께 경향이 지속된다.", "figure_refs": [3]}, {"type": "bullet", "text": "TPMM 불일치의 근본 원인: TPMM의 이상영역이 과도하게 두꺼운 이유는 시뮬레이션에서 유효확산계수 $C_h$ 의 비현실적(허위) 증가 때문이다 - 이상/단상 경계에서 심하게, 심지어 약 10자릿수까지 변하며(Li 등, Wei 등) 상변화를 지연시켜 이상영역을 두껍게 한다; $C_h$ 의 평활화(Lindner 등)로 부분 보정할 수 있다."}, {"type": "bullet", "text": "LTE 대 LTNE(그림 4, SMM 사용): LTE-SMM과 LTNE-SMM은 거의 동일한 유체 온도를 주지만, LTNE는 뚜렷한 고체-유체 차이를 드러낸다 - 고체는 계속 가열되고 유체는 상변화점에 머물며 잠열을 흡수한다; 그 차이는 이상/증기 경계에서 최대가 되어 증기영역으로 스며들며, 질량유속이 0.3에서 0.5 kg/(m^2 s) 로 증가하면 고온측 고체-유체 차이가 8% 커진다. LTE는 유체는 잘 주지만 고체 온도는 부정확하며 - 정작 엔지니어가 가장 관심을 두는 것은 고체 온도이다.", "figure_refs": [4]}, {"type": "bullet", "text": "입자 직경의 영향(그림 5): 고체-유체 온도차는 이상영역 시작에서 급격히 상승해 이상/증기 경계에서 최대가 된다; $d_p$ 를 $5\\times10^{-4}$ 에서 $2\\times10^{-3}$ m로 키우면 차이가 3배(국소 최대 약 200 K)가 되는데, 큰 입자가 더 작은 유체-고체 열전달계수와 비표면적을 주기 때문이다.", "figure_refs": [5]}, {"type": "bullet", "text": "공극률의 영향(그림 6): 높은 공극률은 비표면적을 줄여 열적 비평형을 증폭하지만, 그 정도는 완만하다 - $\\varepsilon$ 이 0.25-&gt;0.35일 때 8.7%, 0.35-&gt;0.45일 때 13% 증가.", "figure_refs": [6]}, {"type": "bullet", "text": "고체 전도도의 영향(그림 7): 높은 $k_s$ 는 증기영역을 확장하고 고체-유체 열전달을 줄여 온도차를 축소한다 - $k_s$ 가 10에서 50 W/(m K) 로 오르면 50% 감소.", "figure_refs": [7]}, {"type": "bullet", "text": "저온측 BC 영향(그림 8-10, SMM 사용): 세 저온측 BC 유형은 열유속을 바꿔도 거의 동일한 유체 온도(차이 &lt;1%)를 준다; 차이는 고체 전도도가 커질수록 증가(증기영역이 저온측으로 확장)하나 $k_s=80$ W/(m K) 에서도 &lt;3%에 머문다; 매질이 얇아질 때에만 저온측 BC 효과가 고온측에 유의미하게 도달한다.", "figure_refs": [8, 9, 10]}, {"type": "bullet", "text": "고온측 BC 영향(그림 11-13): 온도장은 고온측 근처를 제외하면 일치한다 - 1형은 급변이 없고, 2형은 급강하, 3형은 급상승; Landis 기준(고온측에서 고체 온도가 유체 온도보다 높아야 함)에 따르면 2형은 $\\varepsilon=0.1$ 에서 $T_s-T_f&lt;0$ 까지 나타나는데, 식 (15)가 유체 온도구배를 고체 구배의 $(1-\\varepsilon)/\\varepsilon$ 배 - 1보다 훨씬 큼 - 로 만들어 유체가 고체를 추월하기 때문이다.", "figure_refs": [11, 12, 13]}, {"type": "formula", "label": "식 (15) - 고온측 BC 2형 열유속 분배 (작은 공극률에서 적용 불가)", "latex": "k_{s,e}\\frac{dT_s}{dy}=q_s,\\quad k_{f,e}\\frac{dT_f}{dy}=q_f,\\quad q_f+q_s=q,\\quad \\frac{q_f}{q_s}=\\frac{\\varepsilon k_f}{(1-\\varepsilon)k_s}", "description": "고온측 BC 2형은 열유속을 (공극률 가중) 열전도도로 분배한다. 작은 공극률에서 유체-고체 온도구배 비 $(1-\\varepsilon)/\\varepsilon$ 가 1보다 훨씬 커져 고온측에서 $T_f&gt;T_s$ 를 유발한다 - 비물리적으로 판정되어 매우 작은 $\\varepsilon$ 에서 적용 불가($\\varepsilon&gt;0.5$ 에서만 합리적)."}]}, "discussion": {"content": [{"type": "bullet", "text": "모델 선택: SPM과 SMM은 항상 잘 일치하고 신뢰할 수 있다; TPMM이 이상치이며 그 편차는 물리적 효과가 아니라 수치적 인공물이다 - 따라서 상변화 이상유동에는 SPM 또는 (바람직하게는) SMM을 써야 한다."}, {"type": "bullet", "text": "TPMM이 실패하는 이유: 통합 혼합 정식화가 이상/단상 경계에서 약 10자릿수까지 변하는 유효확산계수를 도입하며; 이 허위 증가가 상변화를 지연시켜 이상영역을 부풀리고, 계수 평활화로만 부분적으로 완화될 수 있다."}, {"type": "bullet", "text": "SMM이 선호되는 이유: 단조한 혼합 비엔탈피 $H_f$ 가 단상/이상 전이를 통해 매끄럽게 거동하고(TPMM 같은 허위 확산 폭증 없음) SPM의 실제 상별 질량/운동량을 계승하므로, 정확성과 경계 추적이 없는 단순 계산을 결합한다 - 이로써 BC 연구의 기준 모델로 사용된다."}, {"type": "bullet", "text": "저온측 BC 물리: 저온측 근처의 열전달은 고온측에 비해 작아, 매질이 충분히 얇거나(또는 고체 전도도가 충분히 높아) 저온측 영향이 고온측에 전파되지 않는 한 저온측 BC 선택은 고온측 장에 거의 영향을 주지 않는다."}, {"type": "bullet", "text": "고온측 BC 물리: Landis 기준($k_s&gt;k_f$ 일 때 고온측에서 고체가 유체보다 뜨거움)이 세 BC를 구별한다 - 1·3형은 항상 적용 가능하고 거의 일치하는 반면, 2형의 전도도 가중 열유속 분배는 작은 공극률에서 비물리적으로 큰 유체 온도구배를 강제해 그곳에서 적용 불가가 된다($\\varepsilon&gt;0.5$ 에서만 수용 가능)."}, {"type": "bullet", "text": "LTNE 필요성: 유체가 상변화 온도에 머무는 동안 고체는 계속 가열되므로, 이상유동에서 고체-유체 온도차는 본질적으로 유의미하다; LTE는 유체는 잘 주지만 고체 온도는 부정확하고, 고체 온도가 관심 공학량이므로 이상 상변화 문제에서는 LTNE를 유지해야 한다."}, {"type": "bullet", "text": "LTNE 영향 인자: 열적 비평형은 입자 직경이 클수록(더 작은 열전달계수와 비표면적)·공극률이 클수록(더 작은 비표면적) 증폭되고, 고체 전도도가 높을수록(증기영역 확장, 고체-유체 열전달 감소) 줄어든다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "SPM과 SMM의 수치 결과는 항상 유사하지만, TPMM은 유체의 온도·상 분포에서 유의미한 차이를 보인다."}, {"type": "bullet", "text": "TPMM이 예측한 이상영역은 과도하게 두꺼우며, 이는 수치 시뮬레이션에서 유효확산계수 $C_h$ 의 비현실적(허위) 증가로 인한 것이다."}, {"type": "bullet", "text": "상변화 이상유동에서는 고체-유체 열전달을 반드시 고려해야 한다; 열적 비평형 특성은 입자 직경이 크고 전도도가 높은 다공성 매질에서 특히 유의미하다."}, {"type": "bullet", "text": "서로 다른 저온측 BC의 효과는 다공성 매질이 얇을 때에만 나타나고 고온측에 전달된다."}, {"type": "bullet", "text": "세 고온측 BC 유형 하의 온도 분포는 꽤 가까워 보이지만 고온측 근처에서 상당히 다르다: 1·3형은 항상 적용 가능하고, 2형은 작은 공극률 $\\varepsilon$ 에서 적용 불가이다."}, {"type": "bullet", "text": "계보 주석: 이 논문은 USTC(He / Wang / Dong) 그룹이 본 아카이브의 모델 계보를 정면으로 판정한 것이다 - 공통 LTNE 틀 아래 Shi-Wang의 TPMM [24](Shi_TIPM_2011)과 Dong-Wang의 SMM [20](Dong_TIPM_2018)을 맞붙여 SMM의 손을 들어주며, 같은 그룹의 이후 수정 LTNE-TPMM 연구(Su_IJHMT_2019)는 TPMM 쪽을 구제하기 위해 개발된 것이다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "연구 전체가 1차원 정상상태 문제에 한정되어 다차원 및 과도(transient) 효과는 다루지 않는다.", "source_quote": "One-dimensional steady-state problem of two-phase flow in porous media is considered in this article.", "source_section": "method"}, {"claim": "TPMM이 여기서는 신뢰할 수 없음을 보였으나, 제안된 해결책(유효확산계수의 평활화)은 선행 연구에서 인용만 했을 뿐 본 논문에서 구현·검증하지는 않았다.", "source_quote": "According to the simulated results by [34], the thickness of two-phase region obtained by TPMM can be corrected to some extent by smoothing the effective diffusion coefficient.", "source_section": "results"}, {"claim": "비교는 순수하게 수치적이다: 어느 모델의 이상영역 두께와 온도장이 물리적으로 옳은지를 검증할 실험 데이터는 사용되지 않았다.", "source_quote": "In the scope of phase change in porous media, experiments are often required to be extremely sophisticated and measurements are usually ambiguous and elusive. Therefore, mathematical model and numerical approach are usually resorted to in the literature.", "source_section": "introduction"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["다공성 매질 내 상변화 이상유동에는 세 가지 경쟁 모델(SPM, TPMM, SMM)이 모두 사용되고 있으나 이들을 비교한 연구가 거의 없어, 어느 모델을 선택할지 확신을 가질 수 없다.", "모델을 닫고 풀기 위해서는 적절한 경계조건이 필요하지만, 선행 경계조건 분석(예: Wang과 Shi의 다섯 가지 고온측 BC)은 단상유동에 대해서만 유도되었으며, 이상유동 결과에 대한 BC의 영향은 연구되지 않았다.", "고체 매질에 열원/열흡수원이 존재할 때 - 특히 큰 잠열로 인해 이상영역 내 유체 온도구배가 작거나 0인 점을 고려할 때 - 유체와 고체 사이의 국소 열적 비평형 특성과 그 영향 인자들이 충분히 연구되지 않았다."], "addressed_by_this_work": ["세 모델을 공통 LTNE 틀과 공유 구성관계로 정식화하고 독립적인 유한차분 코드로 풀어 비교한다: SPM과 SMM은 잘 일치하는 반면 TPMM은 벗어나며, 그 편차를 기계론적으로(유효확산계수의 허위 증가) 설명함으로써 모델 선택의 구체적 근거를 제시한다(SPM 또는 SMM 권장).", "문헌의 세 가지 저온측 BC와 세 가지 고온측 BC를 신뢰할 수 있는 SMM으로 평가한다; 저온측 BC는 얇은 매질에서만 중요하고, 타당성 기준(고온측에서 고체 온도가 유체 온도보다 높아야 함)에 따르면 2형 고온측 BC는 작은 공극률에서 실패하는 반면 1·3형은 항상 적용 가능하다.", "고체-유체 온도차를 입자 직경·공극률·고체 열전도도의 함수로 계산·정량화하여, LTNE 효과가 이상/증기영역 경계에서 최대가 되고 입자 직경이 클수록·공극률이 클수록 증폭되며 고체 열전도도가 높을수록 줄어듦을 보인다."], "remaining_unresolved": ["어느 모델이 물리적으로 옳은지는 간접적으로 논증될 뿐(TPMM의 두꺼운 이상영역을 인공물로 규정), 실험 측정으로 결론지어지지 않았다.", "TPMM에 대한 권장 보정(유효확산계수 평활화)은 선행 문헌에 맡겨져 있고 본 논문에서 실증되지 않았다.", "다차원 및 과도 이상 증산냉각 구성은 1차원 정상상태 범위 밖이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
