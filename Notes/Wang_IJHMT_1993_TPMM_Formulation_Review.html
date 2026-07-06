@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<!--
+  Wang_IJHMT_1993_TPMM_Formulation_Review_v2.html
+  ==================================================
+  W&B 1993 Part I (TPMM Formulation) — 유도 스터디 리뷰 v2
+  Status    : COMPLETE — §1–4 논문 원문 정리 + ⑤ 리뷰 종합 · 유도 팝업 8 (KaTeX 오류 0)
+  Restruct  : 논문 원문 장 구성 정렬 (§1 Intro / §2 Formulation / §3 Discussion / §4 Concl + 부록: 스터디 총괄)
+              paper §2 소절 확정: §2 도입(eqs 1–6) · 2.1 SFM(7–13) · 2.2 mass(14) · 2.3 momentum(15–19)
+              · 2.4 liquid mass(20–33) · 2.5 energy(34–49) · 2.6 constitutive(50–57) · 2.7 IC/BC(58–63)
+              §3 소절: 3.1 Analogy to multicomponent mixture theory · 3.2 Specific examples · 3.3 General
+              methodology for numerical solutions — 3.2 제목은 추출 텍스트에서 유실(글리프 손상 영역),
+              p.2755 우단을 이미지 렌더링해 복원 확정 (2026-07-04)
+  Origin    : Wang_IJHMT_1993_TPMM_Formulation_Review.html (v1 · 원본 보존, 콘텐츠 이관 예정)
+  Sources   : v1 리뷰 · tmp/WB1993_Pseudo_Mixture_Pressure.html (의사압력 완전판)
+              · tmp/Shi_TIPM_2011_LTNE_TPMM_Derivation_Note.html (STEP 형식 표본)
+  ==================================================
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<title>1993 · Wang &amp; Beckermann · TPMM Formulation</title>
+<style>
+  :root {
+    --navy-deep:#09093F; --navy:#0F172A; --navy-mid:#1E3A5E; --navy-soft:#3A3A65;
+    --slate:#475569; --gray-text:#7F7F7F; --bg-table-head:#EDEDED;
+    --border:#E2E8F0; --border-mid:#A5A5A5;
+    --pl-xbold:'Paperlogy 8 ExtraBold','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --pl-bold:'Paperlogy 7 Bold','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --pl-med:'Paperlogy 5 Medium','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --mono:ui-monospace,'Cascadia Code',Consolas,'D2Coding',monospace;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:#fff; color:var(--navy);
+    font-family:var(--pl-med); word-break:keep-all; overflow-wrap:break-word; line-height:1.65; }
+  .doc-header { position:sticky; top:0; z-index:50; background:#fff;
+    border-bottom:1px solid var(--border); box-shadow:0 1px 3px rgba(15,23,42,0.04); }
+  .doc-header-inner { max-width:1080px; margin:0 auto; padding:16px 32px;
+    display:flex; align-items:center; gap:20px; }
+  .doc-brand { font-family:var(--pl-xbold); font-size:11pt; font-weight:800;
+    color:var(--navy-mid); letter-spacing:0.06em; padding-right:16px; border-right:2px solid var(--navy-mid);
+    text-align:center; line-height:1.7; }
+  .doc-heading { display:flex; flex-direction:column; gap:2px; }
+  .doc-meta { font-family:var(--pl-bold); font-size:11.5pt; font-weight:700; color:var(--navy-mid); letter-spacing:0.02em; }
+  .doc-title { font-family:var(--pl-xbold); font-size:16pt; font-weight:800; color:var(--navy); letter-spacing:0.02em; }
+  .doc-date { margin-left:auto; padding:4px 12px; border:1px solid var(--border-mid);
+    border-radius:4px; font-size:10pt; color:var(--navy-mid); }
+  main { max-width:1080px; margin:0 auto; padding:24px 32px 80px; }
+  h2 { font-family:var(--pl-bold); font-size:18pt; font-weight:700; color:var(--navy-soft);
+    margin:34px 0 8px; padding-bottom:10px; border-bottom:2px solid var(--navy-mid); scroll-margin-top:105px; }
+  h2:first-of-type { margin-top:0; }
+  h2 .num { display:inline-block; font-family:var(--pl-xbold); font-size:11pt; color:#fff;
+    background:var(--navy-mid); border-radius:6px; padding:2px 11px; margin-right:10px; vertical-align:3px; }
+  h3 { font-family:var(--pl-bold); font-size:13.5pt; font-weight:700; color:var(--navy);
+    margin:22px 0 8px; padding-left:12px; border-left:4px solid var(--navy-mid); scroll-margin-top:105px; }
+  p { margin:8px 0; font-size:11.5pt; color:#1e293b; }
+  ul,ol { margin:8px 0; padding-left:24px; font-size:11.5pt; color:#1e293b; }
+  li { margin-bottom:5px; }
+  code { font-family:var(--mono); font-size:0.88em; background:#f1f5f9; padding:1px 6px;
+    border-radius:3px; color:var(--navy-mid); }
+  strong { color:var(--navy); }
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:10.5pt; }
+  th,td { padding:8px 11px; border-bottom:1px solid var(--border); vertical-align:top; text-align:center; color:#1e293b; }
+  th { background:var(--bg-table-head); font-family:var(--pl-xbold); font-weight:800;
+    color:var(--navy); font-size:9.5pt; letter-spacing:0.03em; }
+  td.l, th.l { text-align:left; }
+  tr.hi td { background:#f0fdf4; font-weight:700; }
+  blockquote { margin:12px 0; padding:12px 18px; background:#f8fafc;
+    border-left:4px solid var(--navy-mid); border-radius:0 6px 6px 0; font-size:11pt; }
+  blockquote.note-ok { background:#f0fdf4; border-left-color:#16a34a; }
+  blockquote.note-warn { background:#fffbeb; border-left-color:#ca8a04; }
+  blockquote.note-info { background:#eff6ff; border-left-color:#1d4ed8; }
+  blockquote.key { background:#eef2ff; border-left-color:#4338ca; }
+  blockquote.erratum { background:#fef2f2; border-left-color:#dc2626; }
+  .tldr-box { background:#eff6ff; border-left:4px solid #1d4ed8; border-radius:4px;
+    padding:12px 16px; margin:10px 0 20px 0; font-size:11pt; line-height:1.6; }
+  .tldr-box::before { content:"핵심 요약"; display:inline-block; font-family:var(--pl-bold);
+    font-weight:700; font-size:9pt; color:#fff; background:#1d4ed8; padding:1px 8px;
+    border-radius:3px; margin-right:8px; vertical-align:1px; letter-spacing:0.5px; }
+  .metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:14px 0; }
+  .metric-card { text-align:center; padding:16px 12px; border-radius:10px; border:1px solid var(--border); background:#fff; }
+  .metric-card .mv { font-family:var(--pl-xbold); font-size:22pt; font-weight:800; color:var(--navy-mid); }
+  .metric-card .ml { font-size:9.5pt; color:var(--slate); margin-top:4px; }
+  .pill { display:inline-block; padding:1px 9px; border-radius:999px; font-size:9pt; font-weight:600; }
+  .pill.ok { background:#dcfce7; color:#16a34a; }
+  .pill.info { background:#dbeafe; color:#1d4ed8; }
+  .pill.warn { background:#fef3c7; color:#b45309; }
+  .pill.err { background:#fee2e2; color:#dc2626; }
+
+  /* ===== TOC (2-column · 논문 장 정렬 · 그룹이 열에 흐름) ===== */
+  .toc {
+    background:#fff; border:1px solid var(--border);
+    border-radius:8px; padding:14px 22px; margin:8px 0 18px;
+    column-count:2; column-gap:36px;
+  }
+  .toc .toc-title { font-family:var(--pl-bold); font-weight:700; color:var(--navy); font-size:11pt; margin-bottom:6px;
+    column-span:all; }
+  .toc-group { margin:0 0 4px; counter-reset:tocitem; break-inside:avoid; }
+  .toc-group-title { font-family:var(--pl-bold); font-weight:700; font-size:10.5pt; color:var(--navy-mid); margin-top:8px; letter-spacing:0.02em; }
+  .toc ol { margin:4px 0; padding-left:0; list-style:none; }
+  .toc li { counter-increment:tocitem; margin-bottom:3px; font-size:10.5pt; }
+  .toc li::before { content:counter(tocitem, decimal-leading-zero) ". "; color:var(--navy-mid); font-family:var(--pl-bold); }
+  .toc a { color:var(--navy-mid); text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  /* paper-numbered group: 논문 소절 번호가 항목 텍스트에 있으므로 자동 카운터 제거 */
+  .toc-group.paper li { counter-increment:none; }
+  .toc-group.paper li::before { content:""; }
+
+  /* ===== Tab card UI (5-tab) ===== */
+  .tab-cards { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:14px 0; }
+  .tab-card { border:1px solid var(--border); border-radius:10px; padding:14px 12px;
+    background:#fff; display:flex; flex-direction:column; gap:6px;
+    cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; }
+  .tab-card:hover { transform:translateY(-2px); box-shadow:0 4px 8px rgba(15,23,42,0.08); }
+  .tab-card.active { background:#fefce8; border-color:#ca8a04; box-shadow:0 0 0 2px rgba(202,138,4,0.15); }
+  .tc-title { font-family:var(--pl-bold); font-size:11pt; font-weight:700; color:var(--navy); }
+  .tc-desc { font-size:9pt; color:var(--slate); line-height:1.45; }
+  .tc-pill-row { display:flex; gap:6px; margin-top:2px; flex-wrap:wrap; }
+  .tab-pane { display:block; }
+  .tab-pane[hidden] { display:none; }
+
+  /* ===== Equation block ===== */
+  .eq-block { background:#f8fafc; border:1px solid var(--border); border-radius:8px;
+    padding:14px 18px; margin:12px 0; font-size:10.5pt;
+    line-height:1.8; color:var(--navy); overflow-x:auto; }
+  .eq-block .eq-label { font-family:var(--pl-bold); font-size:9.5pt; color:var(--slate);
+    display:block; margin-bottom:4px; }
+
+  /* ===== STEP 유도 블록 (의사압력 노트 형식 계승) ===== */
+  .step { margin:10px 0; padding:10px 14px; background:#fff; border:1px solid var(--border);
+    border-left:3px solid var(--navy-mid); border-radius:0 6px 6px 0; font-size:11pt; line-height:1.7; }
+  .step .no { display:inline-block; font-family:var(--pl-xbold); font-size:8.5pt; color:#fff;
+    background:var(--navy-mid); border-radius:4px; padding:1px 8px; margin-right:8px; vertical-align:1px;
+    letter-spacing:0.04em; white-space:nowrap; }
+
+  /* ===== Placeholder (골격 단계 전용 — 본문 채우면 제거) ===== */
+  .ph { margin:10px 0; padding:12px 16px; border:2px dashed var(--border-mid); border-radius:8px;
+    background:#fafafa; font-size:10.5pt; color:var(--slate); line-height:1.7; }
+  .ph::before { content:"PLACEHOLDER"; display:inline-block; font-family:var(--pl-xbold); font-size:8pt;
+    color:#fff; background:var(--border-mid); border-radius:3px; padding:1px 7px; margin-right:8px;
+    letter-spacing:0.06em; vertical-align:1px; }
+  .ph .src { color:var(--navy-mid); }
+
+  /* ===== Expandable section — 원 h2 디자인 유지, 토글만 추가 ===== */
+  .sec-block { margin:0; scroll-margin-top:105px; }
+  .sec-block > summary { cursor:pointer; list-style:none; user-select:none;
+    display:flex; align-items:center;
+    font-family:var(--pl-bold); font-size:18pt; font-weight:700; color:var(--navy-soft);
+    margin:34px 0 8px; padding-bottom:10px; border-bottom:2px solid var(--navy-mid);
+    transition:color .15s; }
+  .sec-block > summary::-webkit-details-marker { display:none; }
+  .sec-block > summary::marker { content:""; }
+  .sec-block > summary:hover { color:var(--navy); }
+  .tab-pane .sec-block:first-of-type > summary { margin-top:0; }
+  .sec-block > summary .num { display:inline-block; font-family:var(--pl-xbold); font-size:11pt;
+    color:#fff; background:var(--navy-mid); border-radius:6px; padding:2px 11px;
+    margin-right:10px; flex:0 0 auto; }
+  .sec-block .exp-icon { order:2; display:inline-block; font-size:10pt; color:var(--navy-mid);
+    margin-left:auto; transition:transform .25s; flex:0 0 auto; }
+  .sec-block[open] > summary .exp-icon { transform:rotate(90deg); }
+  .sec-block .sec-body { padding:0 0 6px; animation:secFade .25s ease; }
+  /* nested sub-section (논문 목차엔 없으나 리뷰가 소절 안에서 구분한 세부 단계) */
+  .subsec { font-family:var(--pl-bold); font-size:12.5pt; font-weight:700; color:var(--navy);
+    margin:22px 0 6px; padding-left:12px; border-left:4px solid var(--navy-soft); scroll-margin-top:105px;
+    display:flex; align-items:baseline; gap:8px; }
+  .subsec .sub-tag { display:inline-block; font-family:var(--pl-xbold); font-size:8pt; color:#fff;
+    background:var(--navy-soft); border-radius:4px; padding:1px 8px; letter-spacing:0.04em; white-space:nowrap; }
+  /* nested toggle (토글 안의 토글) — sec-block보다 가벼운 헤더 */
+  .subtoggle { margin:12px 0 0; }
+  .subtoggle > summary { cursor:pointer; list-style:none; user-select:none;
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--pl-bold); font-size:12.5pt; font-weight:700; color:var(--navy);
+    padding:6px 0 6px 12px; border-left:4px solid var(--navy-soft); scroll-margin-top:105px;
+    transition:color .15s; }
+  .subtoggle > summary::-webkit-details-marker { display:none; }
+  .subtoggle > summary::marker { content:""; }
+  .subtoggle > summary:hover { color:var(--navy-mid); }
+  .subtoggle > summary .exp-icon { order:2; margin-left:auto; font-size:9pt; color:var(--navy-soft);
+    transition:transform .25s; flex:0 0 auto; }
+  .subtoggle[open] > summary .exp-icon { transform:rotate(90deg); }
+  .subtoggle:not([open]) > *:not(summary) { display:none; }
+
+  /* ===== 유도 팝업 (derivation popup / modal) ===== */
+  .deriv-btn { display:inline-block; font-family:var(--pl-bold); font-size:9.5pt; font-weight:700;
+    color:var(--navy-mid); background:#eef2ff; border:1px solid #c7d2fe; border-radius:6px;
+    padding:2px 10px; margin-left:6px; cursor:pointer; vertical-align:1px; transition:background .15s, border-color .15s; }
+  .deriv-btn:hover { background:#e0e7ff; border-color:#4338ca; }
+  .pop-overlay { position:fixed; inset:0; z-index:100; background:rgba(15,23,42,0.55);
+    display:flex; align-items:center; justify-content:center; padding:24px; }
+  .pop-overlay[hidden] { display:none; }
+  .pop-box { background:#fff; border-radius:12px; width:100%; max-width:840px; max-height:86vh;
+    overflow-y:auto; box-shadow:0 20px 50px rgba(15,23,42,0.35); }
+  .pop-head { position:sticky; top:0; background:#fff; z-index:1;
+    display:flex; align-items:center; gap:12px; padding:16px 22px; border-bottom:1px solid var(--border); }
+  .pop-title { font-family:var(--pl-bold); font-size:13pt; font-weight:700; color:var(--navy); }
+  .pop-close { margin-left:auto; flex:0 0 auto; border:1px solid var(--border); background:#fff;
+    border-radius:6px; width:30px; height:30px; font-size:13pt; line-height:1; color:var(--slate);
+    cursor:pointer; transition:background .15s, color .15s; }
+  .pop-close:hover { background:#f1f5f9; color:var(--navy); }
+  .pop-body { padding:16px 22px 24px; }
+  .pop-body > :first-child { margin-top:0; }
+  .expand-controls { display:flex; justify-content:flex-end; gap:8px; margin:6px 0 0; }
+  .expand-controls button { font-family:var(--pl-med); font-size:9.5pt; color:var(--navy-mid);
+    background:#fff; border:1px solid var(--border); border-radius:6px; padding:4px 12px;
+    cursor:pointer; transition:background .15s, border-color .15s; }
+  .expand-controls button:hover { background:#f8fafc; border-color:var(--navy-mid); }
+  @keyframes secFade { from { opacity:0; transform:translateY(-3px); } to { opacity:1; transform:translateY(0); } }
+
+  @media (max-width:1000px) { .tab-cards { grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:900px) { .tab-cards { grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:700px) {
+    .metric-grid { grid-template-columns:1fr; }
+    .tab-cards { grid-template-columns:1fr; }
+    .toc { column-count:1; }
+    main { padding:16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="doc-header-inner">
+    <span class="doc-brand">Paper<br>Review</span>
+    <div class="doc-heading">
+      <span class="doc-meta">1993 · Wang &amp; Beckermann</span>
+      <span class="doc-title">Two-Phase Mixture Model (TPMM) — Formulation</span>
+    </div>
+    <span class="doc-date">2026-07-04</span>
+  </div>
+</header>
+
+<main>
+
+  <div class="tldr-box">
+    Wang &amp; Beckermann (1993, <em>IJHMT</em> 36(11):2747–2758)은 다공체 2상 유동을 <strong>다상 혼합물(multiphase mixture)</strong>로
+    재정식화한 고전이다. 두 상을 이성분 혼합물의 구성원으로 보고 혼합 밀도·속도·<strong>의사압력</strong>(Chavent)을 정의하면,
+    고전 SFM에서 <strong>추가 가정 없이</strong> 질량·운동량·에너지 보존식이 유도되며 미분방정식 수가 SFM 대비 <strong>거의 절반</strong>으로 준다.
+    상별 유동은 뭉개지지 않고 대수식 (32)(33)으로 복원되고(그 편차 = 확산 질량유속 $\vec j$ = 상간 slip), 등온 2상에서 에너지식이
+    조성식으로 환원돼 단상·2상을 <strong>한 방정식으로 푸는 single-domain</strong> 정식화가 선다.
+    본 리뷰는 §1–4를 논문 원문대로 정리하고(주요 유도는 <strong>팝업</strong>), ⑤에 리뷰 종합(Static/Kinetic 렌즈·검산·솔버 함의)과
+    원문에서 발견한 <strong>인쇄 오식 2건</strong>(eq 31 부호 · eq 60 $K/\nu_v$)을 담았다.
+  </div>
+
+  <!-- ===== TOC (5그룹 · 논문 장 정렬) ===== -->
+  <div class="toc">
+    <div class="toc-title">목차</div>
+    <div class="toc-group paper">
+      <div class="toc-group-title">1. Introduction</div>
+      <ol>
+        <li><a href="#s-meta">1.1 Paper Info &amp; Legacy</a></li>
+        <li><a href="#s-intro">1.2 Background &amp; Proposal</a></li>
+        <li><a href="#s-nomen">1.3 Nomenclature</a></li>
+      </ol>
+    </div>
+    <div class="toc-group paper">
+      <div class="toc-group-title">2. Formulation of the Model</div>
+      <ol>
+        <li><a href="#s-mixvar">2.0 Multiphase mixture &amp; mean properties</a></li>
+        <li><a href="#s-sfm">2.1 Separate flow model</a></li>
+        <li><a href="#s-mass">2.2 Conservation of mass</a></li>
+        <li><a href="#s-mom">2.3 Conservation of momentum</a></li>
+        <li><a href="#s-liquid">2.4 Conservation of liquid mass</a></li>
+        <li><a href="#s-energy">2.5 Conservation of energy</a></li>
+        <li><a href="#s-const">2.6 Constitutive relationships</a></li>
+        <li><a href="#s-bc">2.7 Initial/boundary conditions</a></li>
+      </ol>
+    </div>
+    <div class="toc-group paper">
+      <div class="toc-group-title">3. Discussion</div>
+      <ol>
+        <li><a href="#s-t1">3.1 Analogy to multicomponent mixture theory</a></li>
+        <li><a href="#s-apps">3.2 Specific examples</a></li>
+        <li><a href="#s-numerics">3.3 General methodology for numerical solutions</a></li>
+      </ol>
+    </div>
+    <div class="toc-group paper">
+      <div class="toc-group-title">4. Conclusions</div>
+      <ol>
+        <li><a href="#s-concl">4.1 Conclusions</a></li>
+      </ol>
+    </div>
+    <div class="toc-group paper">
+      <div class="toc-group-title">5. 스터디 총괄 (부록)</div>
+      <ol>
+        <li><a href="#s-dual">5.1 Static/Kinetic 이중 체계</a></li>
+        <li><a href="#s-audit">5.2 검증 · Errata 총괄</a></li>
+        <li><a href="#s-solver">5.3 본인 솔버에의 함의</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ===== Tab Cards (5탭) ===== -->
+  <div class="tab-cards">
+    <div class="tab-card active" data-tab="intro">
+      <div class="tc-title">1. Introduction</div>
+      <div class="tc-desc">서지·유산 · §1 배경과 제안(SFM→TPMM) · Nomenclature</div>
+    </div>
+    <div class="tab-card" data-tab="form">
+      <div class="tc-title">2. Formulation</div>
+      <div class="tc-desc">평균 물성·의사압력 → SFM → 질량·운동량·조성식 → 에너지 → 구성관계·경계조건 (유도는 팝업)</div>
+    </div>
+    <div class="tab-card" data-tab="disc">
+      <div class="tc-title">3. Discussion</div>
+      <div class="tc-desc">다성분 이론과의 유사성(Table 1) · 응용 예시(1D·Lipinski) · 수치 방법론</div>
+    </div>
+    <div class="tab-card" data-tab="concl">
+      <div class="tc-title">4. Conclusions</div>
+      <div class="tc-desc">2상 유동의 두 지문 · 이득 · 논문이 밝힌 향후 과제</div>
+    </div>
+    <div class="tab-card" data-tab="study">
+      <div class="tc-title">5. 스터디 총괄</div>
+      <div class="tc-desc">Static/Kinetic 렌즈 · 검증·Errata(오식 2건) · 본인 솔버 함의</div>
+    </div>
+  </div>
+
+  <div class="expand-controls">
+    <button type="button" onclick="setAllSections(true)">전체 펼치기</button>
+    <button type="button" onclick="setAllSections(false)">전체 접기</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- TAB 1: §1 Introduction                                        -->
+  <!-- ============================================================ -->
+  <section class="tab-pane active" data-tab="intro">
+
+  <details class="sec-block" id="s-meta" open>
+    <summary><span class="exp-icon">▶</span><span class="num">1.1</span>Paper Info &amp; Legacy</summary>
+    <div class="sec-body">
+      <table>
+        <tbody>
+          <tr><th class="l" style="width:150px;">Title</th><td class="l">A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media — I. Formulation</td></tr>
+          <tr><th class="l">Authors · Venue</th><td class="l">Chao-Yang Wang, C. Beckermann · <em>Int. J. Heat Mass Transfer</em> <strong>36</strong>(11), 2747–2758 (1993)</td></tr>
+          <tr><th class="l">Companion</th><td class="l"><strong>Part II</strong> (동권 2759–2768) — 수직 가열판 압력구동 비등류에 적용 (경계층 유사해).
+            중력·에너지식이 없어 <strong>본편의 $\rho_\kappa$·$\Gamma_h$ 검증은 Part I(본 논문)에서만 가능</strong>.</td></tr>
+          <tr><th class="l">Legacy</th><td class="l">Wang의 <strong>M² (multiphase mixture) 모델</strong>로 확장(1996)되어 PEM 연료전지 물 관리의 표준이 됨.
+            본 연구 계보에서는 <strong>Shi &amp; Wang 2011이 LTE→LTNE로 개조</strong>한 LTNE–TPMM의 원전 — 상변화 증산냉각 해석의 기반.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-intro" open>
+    <summary><span class="exp-icon">▶</span><span class="num">1.2</span>Background &amp; Proposal</summary>
+    <div class="sec-body">
+
+      <h3>배경 — 다공체 2상 유동의 응용 스펙트럼</h3>
+      <p>다공체 내 2상 유동은 여러 공학 분야를 관통하는 중요한 주제로, 논문은 그 폭을 응용 목록으로 제시한다:
+        지열 시스템 · 오일 저류층 공학 · 원자로 사고후 해석 · 다상 packed-bed 반응기 · 고준위 핵폐기물 처분 ·
+        다공성 히트파이프 · 건조(drying) · 응축 강화 · 축열(thermal energy storage).</p>
+
+      <h3>전통적 접근 — Separate Flow Model (SFM)과 그 한계</h3>
+      <p>기존에는 연속체 기반의 <strong>SFM</strong>으로 접근했다: 기체·액체를 각자의 열역학·수송 물성과 서로 다른 유속을 갖는
+        별개 유체로 보고, <strong>상별 보존식 + 계면조건</strong>으로 기술하며, 다른 상의 존재로 줄어든 유효 유동 단면을 반영하는
+        <strong>상대투과도(relative permeability)</strong>가 핵심 개념이다.</p>
+      <blockquote class="note-warn">
+        <strong>동기 — SFM의 불편함</strong>: 본질적 비선형성 탓에 정해(exact solution)는 1D의 소수 문제(예: Buckley–Leverett)에 국한되고,
+        실무(다차원·중력·모세관)는 수치해석이 필요하다. 그런데 SFM은 풀어야 할 미분방정식 수가 <strong>단상의 거의 2배</strong>여서
+        수치 구현에 불편하고 다차원에서 더 심각해진다 — 그 결과 임기응변식 변형 정식화가 난립해 왔다.
+      </blockquote>
+
+      <h3>이 논문의 제안 — Two-Phase Mixture Model</h3>
+      <p>목표는 <strong>물리적으로 의미 있고 실용적인</strong> 새 정식화다. 두 상을 <strong>이성분 혼합물(binary mixture)의 구성원</strong>으로
+        보되, 통상의 multicomponent mixture와 구별해 <strong>multiphase mixture</strong>로 명명한다. 여기서 상은 <em>유한한 계면적</em>을
+        갖는 구별·분리 가능한 성분이며, 그 혼합물은 조성이 매끄럽게 변하는 단일 물질로 취급된다(multicomponent = 서로 다른 화학 성분).</p>
+      <blockquote class="key">
+        핵심 주장: 보존식을 고전 <strong>SFM으로부터 추가 가정 없이 유도</strong>하며, 그 대가로 <strong>주요 변수(미분방정식) 수가 크게 감소</strong>한다.
+        multicomponent mixture 이론과의 유비 덕에 일반적 <strong>과도(transient)·다차원</strong> 2상 유동 해석이 한결 다루기 쉬워진다.
+      </blockquote>
+
+      <h3>로드맵</h3>
+      <p>이후 SFM에 기반한 일관된 2상 혼합 모델을 질량·운동량·에너지 보존식과 경계·초기조건까지 전개하고, multicomponent 수송과의
+        유비를 짚는다. 특정 사례에서는 새로운 물리적 통찰도 제공한다. 짝 논문 <strong>Part II</strong>는 이 모델을 다공체 내
+        수직 가열판 인접 <strong>압력구동 비등류(경계층형 2상 유동)</strong>에 적용해 능력을 입증한다.</p>
+
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-nomen" open>
+    <summary><span class="exp-icon">▶</span><span class="num">1.3</span>Nomenclature (p.2748)</summary>
+    <div class="sec-body">
+
+      <details class="subtoggle" open>
+        <summary><span class="exp-icon">▶</span>Roman symbols</summary>
+      <table>
+        <tbody>
+          <tr><td class="l" style="width:90px;">$c$</td><td class="l">비열 (specific heat)</td></tr>
+          <tr><td class="l">$c_k$</td><td class="l">multicomponent mixture에서 성분 $k$의 농도</td></tr>
+          <tr><td class="l">$D$</td><td class="l">모세관 확산계수 (eq 25)</td></tr>
+          <tr><td class="l">$f$</td><td class="l">hindrance function (eq 26)</td></tr>
+          <tr><td class="l">$\mathbf g$</td><td class="l">중력 벡터</td></tr>
+          <tr><td class="l">$h$</td><td class="l">엔탈피 (enthalpy)</td></tr>
+          <tr><td class="l">$h_{fg}$</td><td class="l">상변화 잠열 (latent heat)</td></tr>
+          <tr><td class="l">$\vec j$</td><td class="l">확산 질량유속 (diffusive mass flux)</td></tr>
+          <tr><td class="l">$J$</td><td class="l">모세관압 함수 (capillary pressure function)</td></tr>
+          <tr><td class="l">$k_r$</td><td class="l">상대투과도 (relative permeability)</td></tr>
+          <tr><td class="l">$k_{eff}$</td><td class="l">유효 열전도도 (effective thermal conductivity)</td></tr>
+          <tr><td class="l">$K$</td><td class="l">절대투과도 (absolute permeability)</td></tr>
+          <tr><td class="l">$\dot m$</td><td class="l">질량 소스 (mass source)</td></tr>
+          <tr><td class="l">$\mathbf n$</td><td class="l">경계 법선 단위벡터</td></tr>
+          <tr><td class="l">$p$</td><td class="l">압력 (pressure)</td></tr>
+          <tr><td class="l">$q$</td><td class="l">벽 열유속 (wall heat flux)</td></tr>
+          <tr><td class="l">$\dot Q$</td><td class="l">체적 발열률 (volumetric heat generation rate)</td></tr>
+          <tr><td class="l">$s$</td><td class="l">액상 포화도 (liquid saturation)</td></tr>
+          <tr><td class="l">$S$</td><td class="l">정규화 액상 포화도 (eq 52)</td></tr>
+          <tr><td class="l">$S_\Phi$</td><td class="l">일반 소스항 (general source term)</td></tr>
+          <tr><td class="l">$t$</td><td class="l">시간</td></tr>
+          <tr><td class="l">$T$</td><td class="l">온도</td></tr>
+          <tr><td class="l">$u$</td><td class="l">$x$-방향 겉보기(Darcy) 속도</td></tr>
+          <tr><td class="l">$\mathbf u$</td><td class="l">겉보기(Darcy) 속도 벡터</td></tr>
+          <tr><td class="l">$x$</td><td class="l">데카르트 좌표</td></tr>
+        </tbody>
+      </table>
+      </details>
+
+      <details class="subtoggle" open>
+        <summary><span class="exp-icon">▶</span>Greek symbols</summary>
+      <table>
+        <tbody>
+          <tr><td class="l" style="width:90px;">$\gamma_h$</td><td class="l">2상 이류 보정계수 (eq 44)</td></tr>
+          <tr><td class="l">$\Gamma_h$</td><td class="l">엔탈피식 확산계수 (eq 45)</td></tr>
+          <tr><td class="l">$\Delta\rho$</td><td class="l">$\rho_l - \rho_v$</td></tr>
+          <tr><td class="l">$\varepsilon$</td><td class="l">공극률 (porosity)</td></tr>
+          <tr><td class="l">$\eta$</td><td class="l">유사변수 (similarity variable)</td></tr>
+          <tr><td class="l">$\lambda$</td><td class="l">상대 이동도 (relative mobility)</td></tr>
+          <tr><td class="l">$\mu$</td><td class="l">점성계수 (viscosity)</td></tr>
+          <tr><td class="l">$\nu$</td><td class="l">동점성계수 (kinematic viscosity)</td></tr>
+          <tr><td class="l">$\rho$</td><td class="l">밀도 (density)</td></tr>
+          <tr><td class="l">$\sigma$</td><td class="l">표면장력 (surface tension)</td></tr>
+          <tr><td class="l">$\Phi$</td><td class="l">임의의 장 변수 (any field variable)</td></tr>
+          <tr><td class="l">$\Omega$</td><td class="l">열용량비 (heat capacitance ratio, eq 43)</td></tr>
+        </tbody>
+      </table>
+      </details>
+
+      <details class="subtoggle" open>
+        <summary><span class="exp-icon">▶</span>Subscripts · Superscript</summary>
+      <table>
+        <tbody>
+          <tr><td class="l" style="width:90px;">$c$</td><td class="l">모세관 (capillary)</td></tr>
+          <tr><td class="l">$k$</td><td class="l">성분 (component)</td></tr>
+          <tr><td class="l">$l$</td><td class="l">액체 (liquid)</td></tr>
+          <tr><td class="l">$n$</td><td class="l">법선 (normal)</td></tr>
+          <tr><td class="l">$r$</td><td class="l">상대투과도 (relative permeability)</td></tr>
+          <tr><td class="l">$s$</td><td class="l">고체 매트릭스 (solid matrix)</td></tr>
+          <tr><td class="l">$sat$</td><td class="l">포화 상태 (saturated state)</td></tr>
+          <tr><td class="l">$v$</td><td class="l">증기/기체 (vapor or gas)</td></tr>
+          <tr><td class="l">$\alpha$</td><td class="l">multiphase mixture의 구성원 $\alpha$</td></tr>
+          <tr><td class="l">$\kappa$</td><td class="l">'kinetic' 물성</td></tr>
+          <tr><td class="l">$\Phi$</td><td class="l">$\Phi$에 관련된 (pertinent to $\Phi$)</td></tr>
+          <tr><td class="l">$0$ <span style="color:var(--slate);font-size:9pt;">(위첨자)</span></td><td class="l">기준 (reference)</td></tr>
+        </tbody>
+      </table>
+      </details>
+
+    </div>
+  </details>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- TAB 2: §2 Formulation (도입 eqs 1–6 · §2.1–2.7)                -->
+  <!-- ============================================================ -->
+  <section class="tab-pane" data-tab="form" hidden>
+
+  <details class="sec-block" id="s-mixvar" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.0</span>Multiphase mixture &amp; mean properties (eqs 1–6)</summary>
+    <div class="sec-body">
+
+      <h3>다상 혼합물(multiphase mixture)과 두 기초 가정</h3>
+      <p>정식화는 두 상을 <strong>유한한 계면적</strong>을 갖는 이성분 혼합물의 구성원(constituents)으로 보는 데서 출발한다.
+        통상의 multicomponent mixture(서로 다른 화학 성분)와 달리, 여기서 구성원은 상(phase)이며 계면적이 무시할 수 없이 유한하다.
+        이로부터 두 기초 가정이 따라온다:</p>
+      <ul>
+        <li><strong>상호침투 연속체</strong> — 임의 위치 <strong>r</strong>을 두 상이 동시에 점유할 수 있는 연속체로 본다(Fig. 1).</li>
+        <li><strong>REV 스케일 분리</strong> — 미분형 모델의 기준 제어체적은 어떤 상 요소의 최대 치수보다는 크되, 시스템 특성 길이보다는 훨씬 작아야 한다.</li>
+      </ul>
+
+      <h3>평균 혼합 물성 (eqs 1–5)</h3>
+      <div class="eq-block">
+        <span class="eq-label">(1)(2) — 혼합 밀도 · 혼합 속도</span>
+        $$\rho = \rho_l s + \rho_v(1-s), \qquad \rho\mathbf u = \rho_l\mathbf u_l + \rho_v\mathbf u_v$$
+        <span class="eq-label">(3) — 평균 동점성 · (4)(5) 상대 이동도</span>
+        $$\frac{1}{\nu(s)} = \frac{k_{rl}}{\nu_l} + \frac{k_{rv}}{\nu_v}, \qquad
+          \lambda(s) = \frac{\nu(s)\,k_{rl}}{\nu_l}, \qquad \lambda_v(s) = 1-\lambda(s) = \frac{\nu(s)\,k_{rv}}{\nu_v}$$
+      </div>
+      <p>$s$는 <strong>액상 포화도</strong>(공극 중 액체가 차지하는 부피분율), $\mathbf u$는 유체·다공체 전체 단면 기준
+        <strong>겉보기(Darcian) 속도</strong>다. 겉보기 속도는 상 부피분율을 통해 내재속도와 연결되므로, (2)는 혼합 속도가
+        상 내재속도의 <em>질량가중 평균 × 공극률</em>임을 뜻한다.</p>
+
+      <h3>의사 혼합 압력 (eq 6)</h3>
+      <p>모세관력 때문에 액·기 압력이 달라 혼합 압력을 지정하기가 까다로운데, 논문은 <strong>수정된 Chavent 압력 변수</strong>[19]로
+        이를 우회한다:</p>
+      <div class="eq-block">
+        <span class="eq-label">(6) — 의사 혼합 압력 (pseudo mixture pressure)</span>
+        $$p = \frac{p_l + p_v}{2} + \frac{1}{2}\int_0^{p_c}\big[\lambda_v(\zeta) - \lambda(\zeta)\big]\,d\zeta$$
+      </div>
+      <p>여기서 $p_c = p_v - p_l$은 표면장력에 의한 두 상 압력차(모세관압)다. 모세관력이 무시될 만하면 $p = p_l = p_v$이고,
+        $s\to1$(순 액체)·$s\to0$(순 증기) 극한에서 각 단상 압력으로 환원되어 혼합물 이론과 정합적이다. 논문은 이 정의가
+        뒤에서 <strong>혼합물의 운동량 보존식을 크게 단순화</strong>함을 보인다(→ 2.3).
+        <button type="button" class="deriv-btn" data-pop="pop-pseudo">유도 보기 ▸</button></p>
+
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-sfm" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.1</span>Separate flow model (SFM) — eqs 7–13</summary>
+    <div class="sec-body">
+      <p>정식화는 두 상 유동을 상별로 기술하는 고전 <strong>SFM</strong>(Scheidegger[4]·Bear[5])에서 출발한다. 비혼합·비압축 2상 유동의 지배식은:</p>
+      <div class="eq-block">
+        <span class="eq-label">(7)(8) — 상별 질량 보존 · (9) 이체(내부 상변화) 조건</span>
+        $$\rho_l\!\left[\varepsilon\frac{\partial s}{\partial t} + \nabla\!\cdot\mathbf u_l\right] = \dot m_l, \qquad
+          \rho_v\!\left[\varepsilon\frac{\partial(1-s)}{\partial t} + \nabla\!\cdot\mathbf u_v\right] = \dot m_v, \qquad
+          \dot m_l + \dot m_v = 0$$
+        <span class="eq-label">(10)(11) — 상별 Darcy (물체 가속 포함)</span>
+        $$\mathbf u_l = -\frac{K k_{rl}}{\mu_l}(\nabla p_l - \rho_l\mathbf g), \qquad
+          \mathbf u_v = -\frac{K k_{rv}}{\mu_v}(\nabla p_v - \rho_v\mathbf g)$$
+        <span class="eq-label">(12)(13) — 모세관압 정의 · Leverett $J$-함수 폐합</span>
+        $$p_c = p_v - p_l, \qquad p_c = \sigma\sqrt{\tfrac{\varepsilon}{K}}\;J(s)$$
+      </div>
+      <ul>
+        <li>$\dot m_l,\dot m_v$는 내부 상변화·화학반응에서 오는 질량 소스이며, 외부 소스/싱크가 없으면 (9)로 상쇄된다.</li>
+        <li>(7)(8)은 <strong>다공 골격 비변형 · 유체 비압축</strong>을 가정한다. $K$는 절대투과도, $k_r$는 상대투과도, $\sigma$는 계면장력.</li>
+        <li>식 (7)–(13)은 미지장 $\mathbf u_l,\mathbf u_v,p_l,p_v,s$에 대한 완결계를 이룬다 — TPMM은 이를 등가 변형해 변수를 줄인다.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-mass" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.2</span>Conservation of mass — eq 14</summary>
+    <div class="sec-body">
+      <p>상별 질량식 (7)+(8)을 더하면 혼합물 연속식을 얻는다. 증기 생성은 액체 소모의 대가((9))이므로 소스항이 상쇄되어:</p>
+      <div class="eq-block">
+        <span class="eq-label">(14) — 혼합물 연속식</span>
+        $$\varepsilon\frac{\partial\rho}{\partial t} + \nabla\!\cdot(\rho\mathbf u) = 0$$
+      </div>
+      <p>이는 단상 유동의 연속식과 형태가 완전히 같다. 다만 혼합 밀도 $\rho(s)$가 포화도에 따라 크게 변하므로, 논문은
+        다상 혼합물 유동을 <strong>압축성(compressible)</strong>으로 분류해야 한다고 명시한다.
+        <button type="button" class="deriv-btn" data-pop="pop-mass">유도 보기 ▸</button></p>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-mom" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.3</span>Conservation of momentum — eqs 15–19</summary>
+    <div class="sec-body">
+      <p>상별 Darcy식 (10)(11)에 각 상 밀도를 곱해 더하고, 의사압력 정의에서 나오는 항등식 (16) $\lambda\nabla p_l + \lambda_v\nabla p_v = \nabla p$를
+        쓰면, 혼합물 운동량식이 단상 Darcy와 같은 꼴로 접힌다:</p>
+      <div class="eq-block">
+        <span class="eq-label">(17)(18) — 혼합물 Darcy · 혼합 점성</span>
+        $$\mathbf u = -\frac{K}{\mu(s)}\big[\nabla p - \rho_\kappa(s)\,\mathbf g\big], \qquad \mu(s) = \rho(s)\,\nu(s)$$
+        <span class="eq-label">(19) — 운동학적(kinetic) 혼합 밀도</span>
+        $$\rho_\kappa(s) = \rho_l\,\lambda(s) + \rho_v\,\lambda_v(s)$$
+      </div>
+      <p>물체력 항 앞에 등장하는 밀도는 (1)의 정적(static) 밀도 $\rho(s)$가 <strong>아니라</strong> 상대 이동도에 의존하는
+        <strong>운동학적 밀도</strong> $\rho_\kappa(s)$다. 두 밀도는 일반적으로 서로 다르다 — 저장·플럭스에는 $\rho$가, 중력항에는 $\rho_\kappa$가 등장한다.
+        <button type="button" class="deriv-btn" data-pop="pop-mom">유도 보기 ▸</button></p>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-liquid" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.4</span>Conservation of liquid mass — eqs 20–33</summary>
+    <div class="sec-body">
+      <p>(14)와 (17)로 $\mathbf u,p$의 지배식을 얻었지만, 모든 평균 물성이 포화도 $s$에 의존하므로 $s$에 대한 방정식이 하나 더 필요하다.
+        이는 상별 질량식의 <strong>차</strong> (7)−(8)에서 유도되며, 최종적으로 조성(액상 질량) 보존식이 된다:</p>
+      <div class="eq-block">
+        <span class="eq-label">(24)–(26) — 총 확산 질량유속 $\vec j$ 와 두 수송계수</span>
+        $$\vec j = -D(s)\,\nabla s + \frac{K}{\nu_v}f(s)\,\Delta\rho\,\mathbf g, \qquad
+          D(s) = \frac{K}{\nu(s)}\lambda(1-\lambda)\big[-p_c'(s)\big], \qquad f(s) = k_{rv}(s)\,\lambda(s)$$
+        <span class="eq-label">(27) — 조성(액상 질량) 보존식</span>
+        $$\varepsilon\frac{\partial(\rho_l s)}{\partial t} + \nabla\!\cdot\!\big[\rho\mathbf u\,\lambda(s)\big] = -\nabla\!\cdot\vec j + \dot m_l$$
+      </div>
+      <ul>
+        <li><strong>$D(s)$</strong> = 모세관유도 <em>확산</em> 플럭스 계수(capillary diffusion coefficient). $J'<0$이면 항상 $D>0$.</li>
+        <li><strong>$f(s)$</strong> = 중력유도 <em>이주(migrating)</em> 플럭스의 hindrance function (침강 이론 유비, ref.[25]) — 구배 무관.</li>
+        <li>2상계에서는 $s_l + s_v = 1$이므로 조성식 (27) 하나로 충분하다.</li>
+      </ul>
+      <button type="button" class="deriv-btn" data-pop="pop-comp">유도 보기 ▸ (20)→(27)</button>
+
+      <h3 class="subsec" id="s-recover"><span class="sub-tag">28–33</span>상 복원 (phase recovery)</h3>
+      <p>(14)(17)(27)은 상별 기본 변수를 지웠지만, 혼합물과 각 상의 상대 운동 사이엔 <strong>대수적 관계</strong>가 존재해 언제든 복원된다:</p>
+      <div class="eq-block">
+        <span class="eq-label">(30)(31) — 상별 압력구배 복원</span>
+        $$\nabla p_v = \nabla p + \lambda\,\nabla p_c, \qquad \nabla p_l = \nabla p - (1-\lambda)\,\nabla p_c$$
+        <span class="eq-label">(32)(33) — true = virtual ± diffusive</span>
+        $$\rho_l\mathbf u_l = \lambda\,\rho\mathbf u + \vec j, \qquad \rho_v\mathbf u_v = (1-\lambda)\,\rho\mathbf u - \vec j$$
+      </div>
+      <p>$\rho_\alpha\mathbf u_\alpha$는 각 상의 <strong>실제(true)</strong> 질량유량, $\lambda_\alpha\rho\mathbf u$는 혼합류에 실린 <strong>가상(virtual)</strong> 질량유량이며,
+        그 편차가 확산 질량유속 $\pm\vec j$다. 편의로 도입된 $\vec j$가 사후에 뚜렷한 물리적 신분을 얻는다. 상별 유동이
+        <strong>뭉개지지 않고(not smeared out)</strong> 대수적으로 복원되므로 — 이것이 단순 mixture model이 아닌 <strong>two-phase</strong> mixture model인 이유다.
+        <button type="button" class="deriv-btn" data-pop="pop-recover">유도 보기 ▸ (28)–(33)</button></p>
+      <blockquote class="note-info">
+        <strong>$\vec j$ = 상간 slip(상대운동)의 대수적 표현.</strong> 두 상이 같은 속도로 흐르면(slip 없음) 실제=가상이라 $\vec j = 0$;
+        상대운동이 있을 때만 $\vec j \ne 0$이다. 즉 $\vec j$는 액↔증기 <strong>역류(counter-current) slip</strong>을 질량유속으로 담은 양으로,
+        총 질량엔 기여하지 않고($+\vec j,-\vec j$ 상쇄) 조성과 (에너지식에선) 잠열·현열을 나른다.<br>
+        여기가 TPMM의 묘수다 — SFM은 상별 운동량식 <strong>2개로 두 속도(=slip)를 직접</strong> 풀지만,
+        TPMM은 <strong>혼합 운동량식 1개 + slip을 대수량 $\vec j$로</strong> 표현해 변수를 절반으로 줄이면서도 상별 유동을 (32)(33)으로 복원한다.
+        <span style="color:var(--slate);">(※ 이 slip은 <em>상간</em> 상대운동으로, 2.7 (58)의 <em>벽면</em> slip과는 다른 개념이다.)</span>
+      </blockquote>
+      <blockquote class="erratum">
+        <strong>인쇄 오식 (eq 31)</strong> — 원문 인쇄본은 $\nabla p_l = \nabla p \,{\color{#dc2626}+}\,(1-\lambda)\nabla p_c$로 적혀 있으나,
+        (28)(29)를 연립해 풀면 부호는 <strong>$-$</strong>가 맞다 ($\nabla p_l = \nabla p - (1-\lambda)\nabla p_c$). 자세한 판정은 ⑤ 검증·Errata 참조.
+      </blockquote>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-energy" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.5</span>Conservation of energy — eqs 34–49</summary>
+    <div class="sec-body">
+      <p>비등온 유동엔 온도장을 정하는 방정식이 하나 더 필요하다. 고체 골격+다상 혼합물 전체계의 총 에너지 보존에
+        <strong>국소 열역학 평형(LTE, $T = T_s = T_l = T_v$)</strong>을 적용하고, 이류항을 혼합류 성분과 상대 운동 성분으로 분해((36))하면
+        혼합변수만의 에너지식을 얻는다:</p>
+      <div class="eq-block">
+        <span class="eq-label">(35) — 엔탈피 datum ($h_l|_{T=0}=0$, $(h_v-h_l)|_{T_{sat}}=h_{fg}$)</span>
+        $$h_l = c_l T, \quad h_s = c_s T, \quad h_v = c_v T + \big[(c_l - c_v)T_{sat} + h_{fg}\big]$$
+        <span class="eq-label">(37)(38) — 운동학적 · 정적 혼합 엔탈피</span>
+        $$h_\kappa = \lambda h_l + (1-\lambda)h_v \;\;(\text{kinetic}), \qquad \rho h = \rho_l s\,h_l + \rho_v(1-s)h_v \;\;(\text{static})$$
+        <span class="eq-label">(41) — 혼합변수만의 에너지식 (저장=static, 이류=kinetic)</span>
+        $$\frac{\partial}{\partial t}\big[\varepsilon\rho h + (1-\varepsilon)\rho_s c_s T\big] + \nabla\!\cdot(\rho\mathbf u\,h_\kappa)
+          = \nabla\!\cdot(k_{eff}\nabla T) + \nabla\!\cdot\big[(h_v - h_l)\vec j\,\big] + \dot Q$$
+      </div>
+      <p>(41)은 단상 다성분 혼합물의 고전 에너지식과 매우 닮았다. RHS 둘째 항 $(h_v-h_l)\vec j$는 상대 상 운동에 의한
+        <strong>현열+잠열</strong> 수송이며, (41)은 단상·2상 부영역이 공존하는 전 영역에서 유효하다.
+        <button type="button" class="deriv-btn" data-pop="pop-energy">유도 보기 ▸ (34)→(41)</button></p>
+
+      <h3 class="subsec" id="s-iso"><span class="sub-tag">2.5.1</span>Isothermal two-phase flows — 등온 2상 (eqs 42–48)</h3>
+      <p>단성분 2상 상변화에서는 열역학 관계상 2상역이 거의 등온이다. 온도구배가 없으면 (41)은 2상역에서
+        <strong>조성식 (27)로 항등적으로 환원</strong>된다 — 열수송이 오직 상변화(질량전달)로만 일어나기 때문이다.
+        (41)이 단상역에선 온도식, 2상역에선 포화도식이 되는 <strong>통합(unified) 정식화</strong>임을 이용하면, 다영역 문제를
+        하나의 방정식으로 푸는 <strong>단일영역(single-domain) 방법</strong>이 선다. 이때 (41)은 변수 하나(혼합 엔탈피 $h$)의 식으로 변형된다:</p>
+      <div class="eq-block">
+        <span class="eq-label">(42) — 엔탈피 단일변수식</span>
+        $$\Omega\frac{\partial(\rho h)}{\partial t} + \nabla\!\cdot(\gamma_h\,\rho\mathbf u\,h)
+          = \nabla\!\cdot(\Gamma_h\nabla h) + \nabla\!\cdot\big[\Gamma_h(h - h_{v,sat})\nabla\ln\rho\big]
+          + \nabla\!\cdot\!\Big[f(s)\frac{K\Delta\rho\,h_{fg}}{\nu_v}\mathbf g\Big] + \dot Q$$
+        <span class="eq-label">(43)–(45) — 새 계수: 열용량비 · 이류 보정 · 확산계수</span>
+        $$\Omega = \varepsilon + \frac{\rho_s c_s(1-\varepsilon)}{\rho}\frac{dT}{dh}, \qquad
+          \gamma_h = \frac{h_\kappa}{h}, \qquad \Gamma_h = \frac{\rho D}{\rho_l} + k_{eff}\frac{dT}{dh}$$
+        <span class="eq-label">(46)(47) — $h \leftrightarrow (T,s)$ 사상 (구간별)</span>
+        $$T = \begin{cases}h/c_l & h\le h_{l,sat}\\ T_{sat} & h_{l,sat}&lt;h\le h_{v,sat}\\ T_{sat}+\dfrac{h-h_{v,sat}}{c_v} & h&gt;h_{v,sat}\end{cases}
+          \qquad s = \begin{cases}1\\ \dfrac{\rho}{\rho_l}\dfrac{h_{v,sat}-h}{h_{fg}}\\ 0\end{cases}$$
+      </div>
+      <p>(46)(47)로 $h$ 하나에서 $T,s$가 유일하게 정해진다. 단상역에선 $\gamma_h=1$이고 RHS 2·3항이 소멸해 익숙한 단상 식으로 환원된다.
+        이동 경계 추적·계면 정합이 불필요해 기존 수치 알고리즘에 그대로 얹힌다.
+        <button type="button" class="deriv-btn" data-pop="pop-single">유도 보기 ▸ (41)→(42), $\Omega\,\gamma_h\,\Gamma_h$</button></p>
+
+      <h3 class="subsec" id="s-noniso"><span class="sub-tag">2.5.2</span>Nonisothermal two-phase flows — 비등온 2상 (eq 49)</h3>
+      <p>불포화 다공체 수송처럼 두 상이 서로 다른 화학 성분(예: 물+공기)이면 2상역 온도가 균일하지 않다. 이때는 (35)를 (41)에
+        대입해 <strong>온도형</strong> 에너지식을 쓴다(상변화는 고려하지 않음):</p>
+      <div class="eq-block">
+        <span class="eq-label">(49) — 온도형 에너지식</span>
+        $$\frac{\partial}{\partial t}\big[\varepsilon\rho c\,T + (1-\varepsilon)\rho_s c_s T\big] + \nabla\!\cdot(\rho\mathbf u\,c_\kappa T)
+          + (c_l - c_v)\,\vec j\cdot\nabla T = \nabla\!\cdot(k_{eff}\nabla T) + \dot Q$$
+      </div>
+      <p>비열이 다르면($c_l \ne c_v$) 확산 질량유속 $\vec j$가 <strong>현열까지 수송</strong>하는 항 $(c_l-c_v)\vec j\cdot\nabla T$이 살아난다.</p>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-const" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.6</span>Constitutive relationships — eqs 50–57</summary>
+    <div class="sec-body">
+      <p>보존식계의 폐합에는 상대투과도 $k_{rl},k_{rv}$, 모세관압 함수 $J(s)$, 유효 열전도도 $k_{eff}$의 구성식이 필요하다.</p>
+      <div class="eq-block">
+        <span class="eq-label">(50)–(52) — 상대투과도 (멱함수) · 정규화 포화도</span>
+        $$k_{rl} = S^n, \qquad k_{rv} = (1-S)^n, \qquad S = \frac{s - s_{li}}{1 - s_{li}}$$
+      </div>
+      <ul>
+        <li>$s_{li}$ = 비가역(잔류) 액상 포화도 — 배수로는 제거되지 않고 <strong>증발로만</strong> 사라진다. 정규화 $S$는 $[0,1]$.</li>
+        <li>지수 $n$: 지열계는 단순·정확성 때문에 선형 $n{=}1$[1,30,31], 석유·원자력 안전은 3차 $n{=}3$[6,32,33]가 흔하다.</li>
+      </ul>
+      <div class="eq-block">
+        <span class="eq-label">(53)–(55) — $J$-함수 상관식 (다가·이력)</span>
+        $$J = 1.417(1-S) - 2.120(1-S)^2 + 1.263(1-S)^3 \quad\text{(Udell, imbibition [26])}$$
+        $$J = 0.48 + 0.036\ln\frac{1-s}{s} \quad\text{(Grosser, drainage [35])}$$
+      </div>
+      <p>$J$-함수는 일반적으로 <strong>다가(multivalued)</strong> — 실험값이 drainage/imbibition 두 극한 곡선 사이에 놓인다(이력).
+        해석자가 어느 가지를 쓸지 정해야 하지만, 본 정식화는 특정 상관식에 <strong>얽매이지 않는다</strong>: 모든 $J$가 $s$ 증가에 대해 감소하므로
+        모세관 확산계수 $D$가 항상 양($D>0$)이기 때문이다.</p>
+      <div class="eq-block">
+        <span class="eq-label">(56)(57) — 유효 열전도도 (두 모델)</span>
+        $$k_{eff} = k_s(1-\varepsilon) + k_l\varepsilon s + k_v\varepsilon(1-s), \qquad
+          k_{eff} = k_{sv} + \sqrt{s}\,(k_{sl} - k_{sv})$$
+      </div>
+      <p>(56)은 가장 거친 부피가중 추정, (57)은 더 정교한 형태($k_{sv}$: $s{=}0$, $k_{sl}$: 완전 포화)[38]. 더 정교한 상관식도 문헌에 있다[39].</p>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-bc" open>
+    <summary><span class="exp-icon">▶</span><span class="num">2.7</span>Initial/boundary conditions — eqs 58–63</summary>
+    <div class="sec-body">
+      <p>초기조건은 보통 알려져 있거나 정상해에서 취한다. 수력학 경계조건은 여러 유형이 가능하다:</p>
+      <ul>
+        <li><strong>불투과 벽 (58)</strong> $\mathbf u\cdot\mathbf n = 0$ — 벽 통과 질량교환 없음. Darcy를 썼으므로 접선 방향 <strong>slip은 허용</strong>된다.</li>
+        <li>투과면에서는 <strong>일정 질량유량</strong> 또는 <strong>일정 압력</strong>을 직접 부과할 수 있다.</li>
+        <li><strong>포화도 BC</strong>: 값 또는 구배를 지정. 응축·비등류의 3영역(순액–2상–순증기)에서는 증기측 경계 $s=0$, 반대측 $s=1$.</li>
+      </ul>
+      <div class="eq-block">
+        <span class="eq-label">(59)(60) — 등온 2상 가열/냉각면: 열유속이 전부 상변화로</span>
+        $$\vec j\cdot\mathbf n = -\frac{q}{h_{fg}} \qquad\Longleftrightarrow\qquad
+          -D\frac{\partial s}{\partial n} + \frac{K}{\nu_v}f(s)\,\Delta\rho\,g_n = -\frac{q}{h_{fg}}$$
+        <span class="eq-label">(62)(63) — $h$-정식화 경계조건</span>
+        $$h = h_w, \qquad \Gamma_h\frac{\partial h}{\partial n} + \Gamma_h(h - h_{v,sat})\frac{\partial\ln\rho}{\partial n}
+          + f(s)\frac{K\Delta\rho\,h_{fg}}{\nu_v}g_n = -q$$
+      </div>
+      <p>(59)–(63)은 고전 물질전달의 제2종(Neumann) 경계조건에 해당한다. $q=0$이면 단열 조건이 되고, 단상역에서 (63)의 2·3항은 소멸해 익숙한 형태로 환원된다.</p>
+      <blockquote class="erratum">
+        <strong>인쇄 오식 (eq 60)</strong> — 인쇄본의 중력항 $f(s)\Delta\rho\,g_n$은 차원이 질량플럭스가 아니다(시간 차원 부족).
+        (24)의 $\vec j$ 정의와의 정합상 앞에 <strong>$K/\nu_v$</strong>가 붙어야 한다(위 정정형). 자세한 판정은 ⑤ 검증·Errata 참조.
+      </blockquote>
+    </div>
+  </details>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- TAB 3: §3 Discussion                                          -->
+  <!-- ============================================================ -->
+  <section class="tab-pane" data-tab="disc" hidden>
+
+  <details class="sec-block" id="s-t1" open>
+    <summary><span class="exp-icon">▶</span><span class="num">3.1</span>Analogy to multicomponent mixture theory</summary>
+    <div class="sec-body">
+      <p>본 모델은 고전 SFM에서 추가 근사 없이 엄밀히 유도된, <strong>SFM과 등가인 대안 정식화</strong>다. 논문은 Table 1에서 이 다상 혼합물
+        모델을 다공체 내 <strong>다성분(multicomponent) 혼합물</strong> 모델과 나란히 놓는다. 처음부터 다상 혼합물을 다성분 혼합물과 닮게
+        구성했으므로 두드러진 <strong>유사성</strong>이 나타나며, 두 모델의 차이는 <strong>유한 계면적</strong>과 <strong>구성원 간 큰 물성차</strong> 둘뿐이다.</p>
+      <table>
+        <thead><tr><th class="l">보존식</th><th class="l">Multiphase mixture (본 논문)</th><th class="l">Multicomponent mixture</th></tr></thead>
+        <tbody>
+          <tr><td class="l">질량</td><td class="l">$\varepsilon\partial_t\rho + \nabla\!\cdot(\rho\mathbf u) = 0$</td><td class="l">동일 형태</td></tr>
+          <tr><td class="l">운동량</td><td class="l">$\mathbf u = -\tfrac{K}{\mu}[\nabla p - \underline{\rho_\kappa}\,\mathbf g]$</td><td class="l">중력항 밀도 = $\rho$ (kinetic 구분 없음)</td></tr>
+          <tr><td class="l">조성</td><td class="l">포화도 $s$ 기준, 확산유속 $\vec j$ (모세관+<u>중력</u>)</td><td class="l">농도 $c_k$ 기준, Fick 확산</td></tr>
+          <tr><td class="l">에너지</td><td class="l">$\cdots + \nabla\!\cdot[\underline{(h_v-h_l)\vec j}\,]$</td><td class="l">$+(c_l-c_v)\vec j\cdot\nabla T$ (현열만)</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:10pt;color:var(--slate);">밑줄 = 두 모델의 차이(논문 Table 1의 강조와 대응). 이 차이가 세 가지 함의를 낳는다:</p>
+      <ol>
+        <li><strong>훨씬 강한 변물성 문제</strong> — 액·기 물성차가 커서 다성분 유동보다 변물성 정도가 심하다. 향후 해석·수치 연구에 상당한 어려움이 예고된다.</li>
+        <li><strong>중력유도 이주 플럭스</strong> — 중력하에서 큰 밀도차가 구성원 간 질량 확산에 기여하며, 이 항은 <em>농도구배와 무관</em>(모세관 확산과 대비). 모세관력이 작은 고투과 매질에선 중력이 지배해 <strong>상 분리·유동 편중</strong>(다상 반응기 등)을 일으킨다 — 두 구동력의 상대 크기로 판정.</li>
+        <li><strong>$\vec j$의 현열 수송</strong> — 에너지식 (49)에서, 두 구성원의 비열이 다르면($c_l\ne c_v$) 질량 확산이 혼합물의 <em>현열</em>까지 나른다.</li>
+      </ol>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-apps" open>
+    <summary><span class="exp-icon">▶</span><span class="num">3.2</span>Specific examples</summary>
+    <div class="sec-body">
+      <h3>1D 상변화 유동 — 변수 절감</h3>
+      <p>첫 예는 상변화가 있는 1차원 2상 유동이다. 2상역을 등온으로 보면 에너지식 대신 액상 질량식을 쓰며, 연속식과 조성식이
+        1D 방정식 세트 (64)로 축약된다. TPMM은 <strong>미지수 $u,s$에 대한 방정식 2개</strong>만 필요하고, 상별 속도 $\mathbf u_l,\mathbf u_v$는
+        (32)(33)으로 대수적으로, 압력분포는 운동량식으로 사후에 얻는다. 반면 SFM은 $u_l,u_v,p_l,p_v$에 대한
+        <strong>미분방정식 4개</strong>(상별 연속 2 + 상별 운동량 2)를 연립하고 $s$는 모세관압 함수 (12)(13)로 반복적으로 구해야 한다.</p>
+
+      <h3>Boltzmann 유사해</h3>
+      <p>내부 상변화와 중력유도 질량유속을 무시하면 지배식이 (65)로 더 단순해진다. 속도 경계조건이 $t^{-1/2}$로 변하면
+        유사변수 $\eta = x/\sqrt{t}$(<strong>Boltzmann 변환</strong>)로 (65)가 상미분방정식으로 환원된다. Doughty &amp; Pruess[43]가 이를 써서
+        원통좌표 2상 유동의 정확해를 얻었다.</p>
+
+      <h3>바닥·체적 가열 정상류 → Lipinski 방정식</h3>
+      <p>바닥/체적 가열로 유도되는 정상 2상 유동에서는, 연속 요구와 불투과면 조건 (58) 때문에 <strong>혼합 속도가 사라진다</strong>($\mathbf u=0$).
+        그러면 (64)는 순수 counterflow로 단순화되고, 등온 2상역에서 질량 소스 $\dot m_l = \dot Q/h_{fg}$를 넣어 적분하면 고전
+        <strong>Lipinski 방정식</strong>(원자로 잔해층 dryout, (67))이 특수해로 도출된다.
+        <button type="button" class="deriv-btn" data-pop="pop-lipinski">유도 보기 ▸ (64)→(67)</button></p>
+
+      <blockquote class="note-info">
+        추가로, 2상에도 <strong>경계층(boundary-layer) 유동</strong>이 존재하나 SFM의 번거로운 형식 탓에 고전 경계층 이론만큼 엄밀히
+        다뤄진 적이 없었다. 짝 논문 <strong>Part II</strong>[24]가 본 정식화로 2상 경계층을 다루는 첫 시도다.
+      </blockquote>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-numerics" open>
+    <summary><span class="exp-icon">▶</span><span class="num">3.3</span>General methodology for numerical solutions</summary>
+    <div class="sec-body">
+      <p>본 정식화는 SFM 대비 미분방정식 수를 <strong>거의 절반</strong>으로 줄여, 특히 다차원 문제의 수치 구현에 유리하다.
+        각 보존식이 단일 표준형(Patankar 일반형)으로 표현되므로 기존 단상 수치 알고리즘을 재사용할 수 있다:</p>
+      <div class="eq-block">
+        <span class="eq-label">일반 수송형 — $\Phi$: 종속변수, $D_\Phi$: 확산계수, $S_\Phi$: 소스항</span>
+        $$\frac{\partial}{\partial t}(\cdots) + \nabla\!\cdot(\cdots) = \nabla\!\cdot(D_\Phi\nabla\Phi) + S_\Phi$$
+      </div>
+      <p>다만 논문은 정직한 경고를 단다: 수송식계가 <strong>강한 비선형</strong>이고 <strong>물성이 급변</strong>하므로 단상보다 수치해 확보가 더 어렵다.</p>
+      <blockquote class="note-ok">
+        <strong>Single-domain 이점</strong> — 2상·단상 부영역이 인접한 conjugate 문제에서, SFM은 영역별 방정식이 달라 다영역 해법이 필요하고
+        미지의 <strong>이동 경계 추적</strong>(moving grid·좌표 사상)이라는 난제를 안는다. 반면 통합 정식화는 전 영역에서 유효하므로
+        <strong>계면을 명시적으로 다룰 필요가 없고</strong>, 이동 격자·내부 계면 경계조건이 모두 불필요해진다.
+      </blockquote>
+    </div>
+  </details>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- TAB 4: §4 Conclusions                                         -->
+  <!-- ============================================================ -->
+  <section class="tab-pane" data-tab="concl" hidden>
+
+  <details class="sec-block" id="s-concl" open>
+    <summary><span class="exp-icon">▶</span><span class="num">4.1</span>Conclusions</summary>
+    <div class="sec-body">
+      <p>다공체 2상 유동을 <strong>다상 혼합물 유동</strong>으로 개념화했다. 제시한 일관된 모델은 계면적과 구성원 간 물성차가 사라지는
+        극한에서 고전 <strong>다성분 혼합물 이론</strong>으로 환원되며, 동시에 <strong>SFM과 등가</strong>다.</p>
+      <h3>2상 유동임을 드러내는 두 지문</h3>
+      <p>유도된 보존식은 상 요소의 유한 크기와 큰 물성차를 담으며, 이는 두 가지로 명시적으로 드러난다:</p>
+      <ul>
+        <li>중력하 밀도차에 의한 <strong>확산 질량유속</strong> $\vec j$ (조성식·운동량의 $\rho_\kappa$),</li>
+        <li>두 상의 <strong>엔탈피 차</strong>를 통한 질량전달의 에너지 수송 기여 ($(h_v-h_l)\vec j$).</li>
+      </ul>
+      <h3>이득</h3>
+      <ul>
+        <li>미분방정식 수를 SFM 대비 <strong>거의 절반</strong>으로 줄여 보통 수준의 계산 자원으로도 수치 시뮬레이션이 가능.</li>
+        <li>단상 다성분 유동과의 <strong>유사성</strong>이 여러 문제(1D 상변화·2상 경계층·단상+2상 결합 단일영역)에 새로운 통찰 제공.</li>
+        <li>혼합물 거동만 다루면서도 <strong>상별 특성을 뭉개지 않음</strong> — 다상 혼합물과 분리 가능한 상들 사이의 단순 대수 관계 덕분.</li>
+      </ul>
+      <h3>향후 과제 (논문 명시)</h3>
+      <ul>
+        <li>다양한 실용 문제에의 적용,</li>
+        <li>다성분 2상 유동(예: 액–증기–공기계)으로의 확장,</li>
+        <li>관성 및 기타 비-Darcy 효과의 포함.</li>
+      </ul>
+      <blockquote class="note-info">짝 논문 <strong>Part II</strong>[24]가 이 모델을 수직 가열판 인접 압력구동 비등류(경계층형)에 적용한다.
+        후대 계보(Wang의 M² 모델·Shi&nbsp;2011 LTNE–TPMM 등)는 각 논문의 리뷰에서 다룬다.</blockquote>
+    </div>
+  </details>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- TAB 5: 스터디 총괄 (부록)                                        -->
+  <!-- ============================================================ -->
+  <section class="tab-pane" data-tab="study" hidden>
+
+  <blockquote class="note-info" style="margin-top:0;">
+    ①~④는 <strong>논문 원문</strong>을 정리한 것이고, ⑤는 이 논문을 공부하며 얻은 <strong>리뷰어의 종합·발견·활용</strong>(논문엔 없는 층)이다.
+    다른 논문(Shi&nbsp;2011 LTNE–TPMM)과의 계보 대조는 해당 논문 리뷰에서 다룬다 — 여기서는 §4의 legacy 언급으로 갈음한다.
+  </blockquote>
+
+  <details class="sec-block" id="s-dual" open>
+    <summary><span class="exp-icon">▶</span><span class="num">5.1</span>Static / Kinetic 이중 변수 체계</summary>
+    <div class="sec-body">
+      <p>본문 유도를 관통하는 이 논문의 문법은 <strong>"있는 것(점유·질량 가중, static)"과 "흐르는 것(이동도 $\lambda$ 가중, kinetic)"을
+        처음부터 별도 기호로 관리</strong>한다는 것이다. 같은 이분법이 네 곳에서 반복된다:</p>
+      <table>
+        <thead><tr><th class="l">양</th><th>static (점유·질량 가중)</th><th>kinetic (이동도 $\lambda$ 가중)</th><th class="l">비고</th></tr></thead>
+        <tbody>
+          <tr><td class="l">밀도</td><td>$\rho = \rho_l s + \rho_v(1-s)$ (1)</td><td>$\rho_\kappa = \rho_l\lambda + \rho_v\lambda_v$ (19)</td><td class="l">저장·플럭스 vs 중력항</td></tr>
+          <tr><td class="l">압력</td><td>— (불필요)</td><td>$p$ — Chavent 의사압력 (6)</td><td class="l">압력은 Darcy 구배 자리에만 등장 → kinetic 하나면 충분</td></tr>
+          <tr><td class="l">질량유량</td><td>true: $\rho_\alpha\mathbf u_\alpha$</td><td>virtual: $\lambda_\alpha\rho\mathbf u$</td><td class="l">차이 = $\pm\vec j$ (확산 질량유속)</td></tr>
+          <tr><td class="l">엔탈피</td><td>$\rho h = \rho_l s h_l + \rho_v(1-s)h_v$ (38)</td><td>$h_\kappa = \lambda h_l + \lambda_v h_v$ (37)</td><td class="l">비율 = $\gamma_h$ (44)</td></tr>
+        </tbody>
+      </table>
+      <p><strong>왜 밀도는 둘, 압력은 하나인가</strong> — Darcy 세계에서 압력은 상태방정식·저장항에 불참하고 오직 유동 구배 자리 하나에만 등장하므로
+        kinetic $p$ 하나로 충분하다. 반면 밀도는 저장(→ static $\rho$)과 중력(→ kinetic $\rho_\kappa$) 양쪽에 등장해 두 벌이 필요하다.
+        "흐름은 흐르는 것만 느낀다"가 운동량식 (17)에 일관되게 관철된다.</p>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-audit" open>
+    <summary><span class="exp-icon">▶</span><span class="num">5.2</span>검증 · Errata 총괄</summary>
+    <div class="sec-body">
+      <p>손 유도로 전 식을 재검산하는 과정에서, 30년 된 고전의 <strong>인쇄 오식 2건</strong>을 발견했다. 둘 다 저자들이 유도에서는 올바른 형태를
+        썼고 특정 인쇄식 한 줄에만 국소적인 오식이다.</p>
+      <table>
+        <thead><tr><th>#</th><th class="l">위치</th><th class="l">오류 → 정정</th><th class="l">판정 도구</th></tr></thead>
+        <tbody>
+          <tr><td>①</td><td class="l">eq (31)</td><td class="l">$\nabla p_l = \nabla p\,{\color{#dc2626}+}\,(1-\lambda)\nabla p_c$ → $\nabla p_l = \nabla p\,\mathbf{-}\,(1-\lambda)\nabla p_c$</td><td class="l">(28)(29) 연립 · 샌드위치 성질 · 하류 (32) 정합</td></tr>
+          <tr><td>②</td><td class="l">eq (60)</td><td class="l">중력항 $f(s)\Delta\rho\,g_n$ → $\dfrac{K}{\nu_v}f(s)\Delta\rho\,g_n$</td><td class="l"><strong>차원 분석</strong> · (24) $\vec j$ 정의와의 내부 정합</td></tr>
+        </tbody>
+      </table>
+      <blockquote class="note-ok">
+        <strong>만능 검산기.</strong> 차원 검사 · 극한 검사($s\to0,1$에서 $\lambda\lambda_v\to0$) · 단상 환원($\gamma_h\to1$, 전도 → $k_{eff}\nabla T$) ·
+        샌드위치 성질($p_l\le p\le p_v$)은 30년 고전의 오식까지 잡아낸 검산 도구다 — 본인 코드 검증에도 그대로 쓸 수 있다.
+      </blockquote>
+    </div>
+  </details>
+
+  <details class="sec-block" id="s-solver" open>
+    <summary><span class="exp-icon">▶</span><span class="num">5.3</span>본인 솔버(graded porosity)에의 함의</summary>
+    <div class="sec-body">
+      <p>이 논문에서 <strong>직접</strong> 끌어낼 수 있는, graded-porosity 상변화 솔버 구현 교훈:</p>
+      <ul>
+        <li><strong>$\Gamma$ 계열 코딩</strong> — (45)에서 스케일 인자 $\rho/\rho_l$는 <strong>모세관 확산항 $D$에만</strong> 붙고 전도부는 무보정이다.
+          $\Gamma$를 코딩할 때 단상 극한에서 정확히 $k_{eff}\nabla T$로 환원되는지 <strong>회귀검사</strong>로 걸어둘 것.</li>
+        <li><strong>폐합 손잡이 4개</strong>($k_r$ 지수 $n$ · 잔류 포화도 $s_{li}$ · $J$-함수 이력 가지(drainage/imbibition) · $k_{eff}$ 모델)의 출처·기본값을 명시 선언.
+          모델의 최소 요구는 <strong>$J'&lt;0$</strong>($\Rightarrow D>0$)뿐이다.</li>
+        <li><strong>중력항은 파라미터 스위치</strong>로 유지 — $g=0$이면 $f,\rho_\kappa$가 동반 퇴장해 무중력/수평 형태로 자동 축소된다(기동 가속도·자세 대응).</li>
+        <li><strong>조건부 항등식 주의</strong> — 단일변수화 (42)–(45)는 영역별 항등식 $\frac{dT}{dh}\times\partial\rho\equiv0$(단상: $\rho$ 상수 / 2상: $dT/dh=0$) 위에서만 성립.
+          압축성·2성분(비등온 2상)으로 확장하면 이 트릭이 깨지므로 재검토 대상.</li>
+      </ul>
+    </div>
+  </details>
+
+  </section>
+
+</main>
+
+<!-- ============================================================ -->
+<!-- 유도 팝업 (derivation popups)                                  -->
+<!-- ============================================================ -->
+<div class="pop-overlay" id="pop-pseudo" hidden>
+  <div class="pop-box">
+    <div class="pop-head">
+      <span class="pop-title">의사압력 유도 — 왜 (6)인가, 그리고 $\nabla p = \lambda\nabla p_l + \lambda_v\nabla p_v$ (16)</span>
+      <button type="button" class="pop-close" aria-label="닫기">✕</button>
+    </div>
+    <div class="pop-body">
+
+      <p><strong>목표.</strong> 운동량식을 하나로 접으려면 혼합 압력 구배가 <em>이동도 가중</em>이어야 한다:
+        $\nabla p \overset{!}{=} \lambda\nabla p_l + \lambda_v\nabla p_v$. 그런데 가중치 $\lambda(s)$가 위치에 따라 변하므로,
+        이 조합은 <strong>일반적으로 어떤 스칼라의 구배가 아니다.</strong></p>
+
+      <p><strong>순진한 가중평균은 실패한다.</strong> 아무 가중 조합 $P = w_l p_l + w_v p_v$의 구배는
+        $\nabla P = w_l\nabla p_l + w_v\nabla p_v + (p_l\nabla w_l + p_v\nabla w_v)$이고, 마지막 <strong>잉여항</strong>
+        $(p_l w_l' + p_v w_v')\nabla s$이 남아 원하는 형태를 깨뜨린다. Chavent의 해법은 가중을 <em>적분 경로</em>에 싣는 것:</p>
+
+      <div class="eq-block">
+        <span class="eq-label">(6) — 적분형 정의 ($p_c = p_v - p_l$, 기준 $s_0{=}1 \Rightarrow p_c{=}0$)</span>
+        $$p = \frac{p_l + p_v}{2} + \frac12\int_0^{p_c}\big[\lambda_v(\zeta) - \lambda(\zeta)\big]\,d\zeta$$
+      </div>
+
+      <div class="step"><span class="no">STEP 1</span>
+        <strong>적분항을 연다 (미적분 기본정리 + 연쇄율).</strong> 적분의 상한 $p_c$만이 공간 의존($p_c = p_c(s(\mathbf r))$)이므로
+        $$\nabla\!\left[\tfrac12\int_0^{p_c}(\lambda_v-\lambda)\,d\zeta\right]
+          = \tfrac12\big[\lambda_v(p_c) - \lambda(p_c)\big]\,\nabla p_c.$$
+        따라서 $\displaystyle \nabla p = \frac{\nabla p_l + \nabla p_v}{2} + \frac12(\lambda_v - \lambda)\,\nabla p_c.$
+      </div>
+
+      <div class="step"><span class="no">STEP 2</span>
+        <strong>$\nabla p_c = \nabla p_v - \nabla p_l$ 대입, $\lambda + \lambda_v = 1$로 접는다.</strong>
+        $$\nabla p = \tfrac12(\nabla p_l + \nabla p_v) + \tfrac12(\lambda_v - \lambda)(\nabla p_v - \nabla p_l).$$
+        $\nabla p_l$ 계수 $=\tfrac12 - \tfrac12(\lambda_v-\lambda) = \tfrac12(1-\lambda_v+\lambda) = \lambda$,
+        $\nabla p_v$ 계수 $=\tfrac12 + \tfrac12(\lambda_v-\lambda) = \tfrac12(1+\lambda_v-\lambda) = \lambda_v$. 그러므로
+        $$\boxed{\;\nabla p = \lambda\nabla p_l + \lambda_v\nabla p_v\;}\qquad (16)\;\checkmark$$
+        잉여항 없이 목표 형태가 정확히 달성된다.
+      </div>
+
+      <blockquote class="note-ok">
+        <strong>샌드위치 성질.</strong> (6)에서 $p_c = \int_0^{p_c}(\lambda+\lambda_v)\,d\zeta$를 쓰면
+        $$p - p_l = \int_0^{p_c}\lambda_v\,d\zeta \ge 0, \qquad p_v - p = \int_0^{p_c}\lambda\,d\zeta \ge 0
+          \;\;\Rightarrow\;\; p_l \le p \le p_v.$$
+        의사압력은 유동 지분($\lambda$)이 정한 자리에 앉는 구동 퍼텐셜이며, 단상 극한에서 실제 상 압력으로 환원된다.
+      </blockquote>
+
+    </div>
+  </div>
+</div>
+
+<!-- 2.2 질량 (14) -->
+<div class="pop-overlay" id="pop-mass" hidden>
+  <div class="pop-box">
+    <div class="pop-head"><span class="pop-title">질량 보존 유도 — (7)+(8) $\Rightarrow$ (14)</span><button type="button" class="pop-close" aria-label="닫기">✕</button></div>
+    <div class="pop-body">
+      <div class="step"><span class="no">STEP 1</span><strong>상별 질량식 (7)(8)을 더한다.</strong>
+        $$\rho_l\!\Big[\varepsilon\tfrac{\partial s}{\partial t}+\nabla\!\cdot\mathbf u_l\Big]
+          + \rho_v\!\Big[\varepsilon\tfrac{\partial(1-s)}{\partial t}+\nabla\!\cdot\mathbf u_v\Big] = \dot m_l + \dot m_v.$$
+        우변은 이체 조건 (9) $\dot m_l+\dot m_v=0$로 사라진다.</div>
+      <div class="step"><span class="no">STEP 2</span><strong>비압축 상($\rho_l,\rho_v$ 상수)이라 시간·발산 안으로 넣는다.</strong>
+        $$\varepsilon\frac{\partial}{\partial t}\big[\rho_l s + \rho_v(1-s)\big] + \nabla\!\cdot(\rho_l\mathbf u_l + \rho_v\mathbf u_v) = 0.$$</div>
+      <div class="step"><span class="no">STEP 3</span><strong>혼합 정의 (1)(2)를 알아본다.</strong>
+        $\rho = \rho_l s + \rho_v(1-s)$, $\rho\mathbf u = \rho_l\mathbf u_l + \rho_v\mathbf u_v$ 이므로
+        $$\boxed{\;\varepsilon\frac{\partial\rho}{\partial t} + \nabla\!\cdot(\rho\mathbf u) = 0\;}\qquad(14)\;\checkmark$$
+        정의가 잔여항 없이 정확히 접힌다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2.3 운동량 (15)-(17) -->
+<div class="pop-overlay" id="pop-mom" hidden>
+  <div class="pop-box">
+    <div class="pop-head"><span class="pop-title">운동량 유도 — (10)(11) $\Rightarrow$ (15) $\Rightarrow$ (17)</span><button type="button" class="pop-close" aria-label="닫기">✕</button></div>
+    <div class="pop-body">
+      <div class="step"><span class="no">STEP 1</span><strong>각 Darcy식에 상 밀도를 곱한다.</strong> $\rho_l/\mu_l = 1/\nu_l$이므로
+        $$\rho_l\mathbf u_l = -\frac{K k_{rl}}{\nu_l}(\nabla p_l - \rho_l\mathbf g), \qquad
+          \rho_v\mathbf u_v = -\frac{K k_{rv}}{\nu_v}(\nabla p_v - \rho_v\mathbf g).$$</div>
+      <div class="step"><span class="no">STEP 2</span><strong>더한다.</strong> $\rho\mathbf u = \rho_l\mathbf u_l + \rho_v\mathbf u_v$이고
+        $\dfrac{k_{rl}}{\nu_l} = \dfrac{\lambda}{\nu}$, $\dfrac{k_{rv}}{\nu_v} = \dfrac{\lambda_v}{\nu}$ (정의 3–5)이므로
+        $$\rho\mathbf u = -\frac{K}{\nu}\big[\lambda\nabla p_l + \lambda_v\nabla p_v - (\lambda\rho_l + \lambda_v\rho_v)\mathbf g\big].\qquad(15)$$</div>
+      <div class="step"><span class="no">STEP 3</span><strong>(16) $\lambda\nabla p_l + \lambda_v\nabla p_v = \nabla p$와 (19) $\rho_\kappa = \lambda\rho_l + \lambda_v\rho_v$를 투입.</strong>
+        $$\rho\mathbf u = -\frac{K}{\nu}\big[\nabla p - \rho_\kappa\mathbf g\big]
+          \;\;\xrightarrow{\;\div\,\rho,\;\mu=\rho\nu\;}\;\;
+          \boxed{\;\mathbf u = -\frac{K}{\mu(s)}\big[\nabla p - \rho_\kappa(s)\mathbf g\big]\;}\quad(17)\;\checkmark$$</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2.4 조성식 (20)-(27) -->
+<div class="pop-overlay" id="pop-comp" hidden>
+  <div class="pop-box">
+    <div class="pop-head"><span class="pop-title">조성식 유도 — (7)−(8) $\Rightarrow$ (27)</span><button type="button" class="pop-close" aria-label="닫기">✕</button></div>
+    <div class="pop-body">
+      <div class="step"><span class="no">STEP 1</span><strong>상별 질량식의 차 (7)−(8).</strong> 액상 저장·유동을 분리해내는 출발점이며, 상별 Darcy 플럭스가 남는다 (20).</div>
+      <div class="step"><span class="no">STEP 2</span><strong>기저 변환 (21).</strong> 상별 압력구배를 혼합 압력·모세관압으로 바꾼다:
+        $$\lambda_v\nabla p_l - \lambda\nabla p_v = -2\lambda\lambda_v\nabla p_c + (\lambda - \lambda_v)\nabla p.$$</div>
+      <div class="step"><span class="no">STEP 3</span><strong>운동량 (17)로 $\nabla p$를 청산하고 연속식 (14)를 투입</strong>한다(원문 "several algebraic manipulations" → (23)).
+        모세관·중력 항이 하나의 <strong>총 확산 질량유속</strong>으로 모인다:
+        $$\vec j = \frac{K\lambda\lambda_v}{\nu}\big[\nabla p_c + \Delta\rho\,\mathbf g\big]
+          = -\underbrace{\frac{K}{\nu}\lambda(1-\lambda)(-p_c')}_{D(s)}\nabla s + \frac{K}{\nu_v}\underbrace{k_{rv}\lambda}_{f(s)}\Delta\rho\,\mathbf g.\quad(24\text{–}26)$$</div>
+      <div class="step"><span class="no">STEP 4</span><strong>(9)로 $\dot m_v$를 $\dot m_l$로 환산해 정리</strong>하면 조성 보존식이 된다:
+        $$\boxed{\;\varepsilon\frac{\partial(\rho_l s)}{\partial t} + \nabla\!\cdot[\rho\mathbf u\,\lambda(s)] = -\nabla\!\cdot\vec j + \dot m_l\;}\quad(27)\;\checkmark$$</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2.4 상 복원 (28)-(33) -->
+<div class="pop-overlay" id="pop-recover" hidden>
+  <div class="pop-box">
+    <div class="pop-head"><span class="pop-title">상 복원 유도 — (28)(29) $\Rightarrow$ (30)–(33)</span><button type="button" class="pop-close" aria-label="닫기">✕</button></div>
+    <div class="pop-body">
+      <div class="step"><span class="no">STEP 1</span><strong>두 관계에서 출발.</strong> 의사압력 정의에서 (28) $\nabla p = \lambda\nabla p_l + (1-\lambda)\nabla p_v$,
+        모세관압에서 (29) $\nabla p_c = \nabla p_v - \nabla p_l$.</div>
+      <div class="step"><span class="no">STEP 2</span><strong>$\nabla p_l,\nabla p_v$에 대해 연립.</strong> (29)에서 $\nabla p_v = \nabla p_l + \nabla p_c$를 (28)에 넣으면
+        $\nabla p = \nabla p_l + (1-\lambda)\nabla p_c$. 따라서
+        $$\nabla p_l = \nabla p - (1-\lambda)\nabla p_c\;\;(31), \qquad \nabla p_v = \nabla p + \lambda\nabla p_c\;\;(30).$$
+        <span style="color:#dc2626;">(인쇄본 (31)의 $+$ 부호는 오식 — 위가 정정형.)</span></div>
+      <div class="step"><span class="no">STEP 3</span><strong>이를 SFM Darcy에 되넣고 혼합류와 연결</strong>하면 상별 실제 유량이 복원된다:
+        $$\boxed{\;\rho_l\mathbf u_l = \lambda\,\rho\mathbf u + \vec j, \qquad \rho_v\mathbf u_v = (1-\lambda)\,\rho\mathbf u - \vec j\;}\quad(32)(33)\;\checkmark$$
+        편차 $\pm\vec j$가 곧 확산 질량유속이다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2.5 에너지 (34)-(41) -->
+<div class="pop-overlay" id="pop-energy" hidden>
+  <div class="pop-box">
+    <div class="pop-head"><span class="pop-title">에너지식 유도 — (34)+(36) $\Rightarrow$ (41)</span><button type="button" class="pop-close" aria-label="닫기">✕</button></div>
+    <div class="pop-body">
+      <div class="step"><span class="no">STEP 1</span><strong>총 에너지 보존 (34).</strong> LTE($T=T_s=T_l=T_v$)로 고체+2상을 한 온도로 묶고,
+        저장(고체 현열 + 유체 엔탈피)·이류·전도·발열로 구성한다.</div>
+      <div class="step"><span class="no">STEP 2</span><strong>이류항 분해 (36).</strong> "평균×평균 + 편차 상관"의 정준 분해:
+        $$\sum_\alpha \rho_\alpha\mathbf u_\alpha h_\alpha = \rho\mathbf u\,h_\kappa + \sum_\alpha (h_\alpha - h_\kappa)(\rho_\alpha\mathbf u_\alpha - \lambda_\alpha\rho\mathbf u).$$
+        상 복원 (32)(33)을 편차에 넣으면 편차합 $= (h_l - h_v)\vec j$ 로 정확히 닫힌다.</div>
+      <div class="step"><span class="no">STEP 3</span><strong>조립.</strong> 이류는 $\rho\mathbf u h_\kappa$(kinetic), 편차는 RHS로 옮겨 $(h_v-h_l)\vec j$ 플럭스가 된다:
+        $$\boxed{\;\frac{\partial}{\partial t}[\varepsilon\rho h + (1-\varepsilon)\rho_s c_s T] + \nabla\!\cdot(\rho\mathbf u h_\kappa)
+          = \nabla\!\cdot(k_{eff}\nabla T) + \nabla\!\cdot[(h_v-h_l)\vec j] + \dot Q\;}\quad(41)\;\checkmark$$</div>
+    </div>
+  </div>
+</div>
+
+<!-- 2.5.1 단일변수화 (42)-(45) -->
+<div class="pop-overlay" id="pop-single" hidden>
+  <div class="pop-box">
+    <div class="pop-head"><span class="pop-title">단일변수화 유도 — (41) $\Rightarrow$ (42), $\Omega\cdot\gamma_h\cdot\Gamma_h$</span><button type="button" class="pop-close" aria-label="닫기">✕</button></div>
+    <div class="pop-body">
+      <p>목표는 (41)의 세 항(저장·이류·전도+모세관 잠열)을 모두 <strong>혼합 엔탈피 $h$ 하나</strong>로 다시 쓰는 것이다.</p>
+      <div class="step"><span class="no">저장 → $\Omega$</span>
+        고체 현열 $(1-\varepsilon)\rho_s c_s T$를 $T\to h$ 연쇄율로 바꾸면 저장항 계수
+        $$\Omega = \varepsilon + \frac{\rho_s c_s(1-\varepsilon)}{\rho}\frac{dT}{dh}.\quad(43)$$</div>
+      <div class="step"><span class="no">이류 → $\gamma_h$</span>
+        이류가 $h_\kappa$(kinetic)로 실려 있으므로 $h$로 환산하는 보정계수
+        $$\gamma_h = \frac{h_\kappa}{h}.\quad(44)\qquad(\text{단상역에서 }\gamma_h = 1)$$</div>
+      <div class="step"><span class="no">전도+잠열 → $\Gamma_h$</span>
+        $(h_v-h_l)\vec j$의 모세관부 $-h_{fg}D\nabla s$에, 사상 (47)의 음함수 미분
+        $\rho_l h_{fg}\nabla s = \rho[(h_{v,sat}-h)\nabla\ln\rho - \nabla h]$를 대입하면 <strong>$h_{fg}$가 상쇄</strong>되며
+        정상 확산항과 $\nabla\ln\rho$ 보정항이 동시에 태어난다:
+        $$\Gamma_h = \frac{\rho D}{\rho_l} + k_{eff}\frac{dT}{dh}.\quad(45)$$</div>
+      <blockquote class="note-warn">스케일 인자 $\rho/\rho_l$는 <strong>확산항 $D$에만</strong> 곱해지고 전도부 $k_{eff}\,dT/dh$는 무보정이다
+        — 단상 극한에서 정확히 $k_{eff}\nabla T$로 환원되어야 하기 때문. (관련 검증은 ⑤ 검증·Errata.)</blockquote>
+    </div>
+  </div>
+</div>
+
+<!-- 3.2 Lipinski (64)-(67) -->
+<div class="pop-overlay" id="pop-lipinski" hidden>
+  <div class="pop-box">
+    <div class="pop-head"><span class="pop-title">Lipinski 방정식 도출 — 정상 counterflow (64)$\Rightarrow$(67)</span><button type="button" class="pop-close" aria-label="닫기">✕</button></div>
+    <div class="pop-body">
+      <div class="step"><span class="no">STEP 1</span><strong>혼합 속도 소멸.</strong> 바닥/체적 가열의 정상 1D 문제에서 연속식 (14)와 불투과면 조건 (58) $\mathbf u\cdot\mathbf n=0$에 의해
+        전 영역에서 $\mathbf u = 0$. 순물질 이동이 없는 <strong>counterflow</strong>만 남는다.</div>
+      <div class="step"><span class="no">STEP 2</span><strong>조성식 (27)의 축약.</strong> $\mathbf u=0$·정상이면 (27)은 $-\dfrac{d j}{dx} + \dot m_l = 0$.
+        등온 2상역에서 입금 열은 전량 상변화로 가므로 $\dot m_l = \dot Q/h_{fg}$.</div>
+      <div class="step"><span class="no">STEP 3</span><strong>1D 확산유속.</strong> (24)에서 (중력 $g$ 방향 1D)
+        $$j = -D(s)\frac{ds}{dx} + \frac{K}{\nu_v}f(s)\,\Delta\rho\,g.$$</div>
+      <div class="step"><span class="no">STEP 4</span><strong>적분 + 경계조건 (59).</strong> STEP 2의 balance를 적분하고 벽 조건 $j\!\cdot\!\mathbf n = -q/h_{fg}$를 적용하면
+        포화도 분포와 열유속을 잇는 대수 관계 — 고전 <strong>Lipinski 방정식 (67)</strong>[6](입자층 비등·dryout 모델)이 특수해로 나온다.</div>
+      <blockquote class="note-ok">기존 dryout 고전식을 특수해로 재현 — 모델의 <strong>일관성 검증</strong>이자 위력의 시연.</blockquote>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Tab switching ===== -->
+<script>
+function setAllSections(open) {
+  document.querySelectorAll("details.sec-block, details.subtoggle").forEach(function(d) { d.open = open; });
+}
+function switchTab(target, scrollTop) {
+  document.querySelectorAll(".tab-card").forEach(function(c) {
+    c.classList.toggle("active", c.getAttribute("data-tab") === target);
+  });
+  document.querySelectorAll(".tab-pane").forEach(function(p) {
+    var isActive = p.getAttribute("data-tab") === target;
+    p.hidden = !isActive;
+    p.classList.toggle("active", isActive);
+  });
+  if (scrollTop !== false) window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.querySelectorAll(".tab-card").forEach(function(card) {
+  card.addEventListener("click", function() {
+    switchTab(card.getAttribute("data-tab"));
+  });
+});
+/* Jump to an in-page anchor: switch to its tab, open its (or its ancestor's) toggle, scroll */
+function goToAnchor(hash) {
+  var el = document.getElementById(hash.slice(1));
+  if (!el) return;
+  var pane = el.closest(".tab-pane");
+  if (pane) switchTab(pane.getAttribute("data-tab"), false);
+  if (el.tagName.toLowerCase() === "details") el.open = true;      // target is a toggle
+  var ownerDetails = el.closest("details.sec-block");              // target nested inside a toggle
+  if (ownerDetails) ownerDetails.open = true;
+  setTimeout(function(){ el.scrollIntoView({ behavior:"smooth", block:"start" }); }, 30);
+}
+/* TOC links + cross-references inside body text (e.g. placeholder → other tab) */
+document.querySelectorAll('.toc a[href^="#"], .sec-body a[href^="#"]').forEach(function(a) {
+  a.addEventListener("click", function(e) {
+    e.preventDefault();
+    goToAnchor(this.getAttribute("href"));
+  });
+});
+
+/* ===== Derivation popups ===== */
+function closeAllPops() {
+  document.querySelectorAll(".pop-overlay:not([hidden])").forEach(function(ov) { ov.hidden = true; });
+}
+document.querySelectorAll(".deriv-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    var ov = document.getElementById(btn.getAttribute("data-pop"));
+    if (ov) ov.hidden = false;
+  });
+});
+document.querySelectorAll(".pop-overlay").forEach(function(ov) {
+  ov.addEventListener("click", function(e) { if (e.target === ov) ov.hidden = true; });   // click backdrop
+  var x = ov.querySelector(".pop-close");
+  if (x) x.addEventListener("click", function() { ov.hidden = true; });
+});
+document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeAllPops(); });
+</script>
+
+</body>
+</html>
