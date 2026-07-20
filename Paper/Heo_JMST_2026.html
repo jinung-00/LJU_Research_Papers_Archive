@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Experimental investigation into the effect of coolant temperature on transpiration cooling in lattice structures</title>
+    <meta name="keywords" content="transpiration cooling, phase change, vapor blockage, flow instability, lattice structure, SC-BCC lattice, permeability, coolant temperature, 3D printing, experimental">
+    <meta name="paper-authors" content="Jaeseung Heo, Jaehan Cho, Reynolds Addo-Akoto, Jinung Lee, Sung Jin Kim, Jae-Hung Han">
+    <meta name="paper-journal" content="Journal of Mechanical Science and Technology, Vol. 40, No. 2, 2026, pp. 1445-1457 · DOI: 10.1007/s12206-026-0158-4">
+    <meta name="paper-tier" content="3">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Experimental investigation into the effect of coolant temperature on transpiration cooling in lattice structures</div>
+                <span class="tier-badge tier-3">Tier 3 — 미등록</span>
+            </div>
+            <div class="authors">Jaeseung Heo, Jaehan Cho, Reynolds Addo-Akoto, Jinung Lee, Sung Jin Kim, Jae-Hung Han</div>
+            <div class="journal">Journal of Mechanical Science and Technology, Vol. 40, No. 2, 2026, pp. 1445-1457 · DOI: 10.1007/s12206-026-0158-4</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">KAIST 항공우주 연구실의 본 실험 연구는 개방형 고온 공기(673 K) 풍동에서 3D 프린팅된 <span class="term">SC-BCC 격자</span> 다공성 판을 대상으로, 액체 물의 상변화를 동반한 <span class="term">증산냉각(transpiration cooling)</span>에서 <span class="term">냉각제 온도</span>가 성능을 어떻게 지배하는지를 규명한다. 공극률(~50%)은 거의 동일하지만 투과율이 크게 다른 세 가지 스트럿 기반 격자 형상 — <span class="term">octa-radial</span>($6.67\times10^{-10}\,\mathrm{m^2}$), <span class="term">diagonal</span>($2.18\times10^{-9}\,\mathrm{m^2}$), <span class="term">pyramidal</span>($1.02\times10^{-8}\,\mathrm{m^2}$) — 을 비교한다. 핵심 결과는 구리 열교환기로 냉각제 온도를 능동적으로 낮추면 매질 내부에서 물이 포화점 아래로 유지되어 <span class="term">증기 폐색(vapor blockage)</span>이 억제되고 주기적 건조/재충전 <span class="term">유동 불안정(flow instability)</span>이 제거되며, 그 결과 표면 평균 냉각효율이 약 65%에서 약 95%로 상승한다는 것이다. diagonal(중간 투과율) 격자가 가장 균일한 냉각을 제공하며, 저투과율 octa-radial은 증기 폐색을, 고투과율 pyramidal은 고온 가스 침투와 내부 과열을 겪는다. 저자들은 안정적인 액체 증산냉각에서 냉각제 온도 제어 자체가 — 이를 달성하는 특정 장치가 아니라 — 가장 중요한 매개변수라고 결론짓고, 외부 열교환기의 비행 실용적 대안으로 재생냉각(regenerative cooling)을 제안한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">phase change</span><span class="keyword-chip">vapor blockage</span><span class="keyword-chip">flow instability</span><span class="keyword-chip">lattice structure</span><span class="keyword-chip">SC-BCC lattice</span><span class="keyword-chip">permeability</span><span class="keyword-chip">coolant temperature</span><span class="keyword-chip">3D printing</span><span class="keyword-chip">experimental</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">재사용 무인 비행체는 재진입 시 앞전 열유속이 10 MW/m^2를 초과하는 공력 가열에 노출되어 열보호 시스템(TPS)에 대한 수요를 촉발한다. 능동형 TPS 방식 중 증산냉각은 낮은 냉각제 소모와 높은 효율로 두드러지지만, 물 같은 액체 냉각제는 상변화와 그에 따른 증기 폐색 문제를 야기한다. 서론은 본 연구의 목표를 제시한다: 적층제조된 SC-BCC 격자와 능동적 냉각제 온도 제어를 이용해 증기 폐색과 그로 인한 유동 불안정을 억제한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 냉각제 선택, AM 제작 다공성 매질, 스트럿 기반 격자 유형, 상변화 불안정에 관한 기존 증산냉각 문헌 속에 자신을 위치시킨다. AM 다공성 판이 소결 판보다 우수함을 보인 연구, 투과율/열전도도 절충이 좋은 SC-BCC 격자, 그리고 본 연구가 3D 프린팅 격자로 확장하는 소결 매질의 진동성 상변화 거동 관찰에 기반한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">단위 셀 2 mm, 고정 공극률 ~50%의 세 SC-BCC 기반 격자 다공성 판(octa-radial, diagonal, pyramidal)을 Rigid 10K 레진으로 SLA 3D 프린팅했다. 이들을 가열 개방형 풍동(고온 공기 673 K, 11 m/s, Re ~11600-12100)에서 탈이온수를 냉각제로 하여 피스톤 펌프로 공급하며 시험했고, 냉각제 챔버 주위 구리 셸 열교환기로 간접 냉각을 제공했다. 표면 온도는 IR 카메라, 챔버/판 온도는 K형 열전대로 측정했으며, 투과율은 정상 압력강하 측정으로부터 Darcy 법칙으로 구하고 냉각 성능은 취출비 F와 냉각효율 eta로 정량화하며 불확도 분석을 수행했다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">열교환기 작동 시 챔버 및 판 하부 온도(TC1, TC2)가 373 K 미만으로 유지되어 냉각제가 매질 내부에서 액체 상태를 유지하고 증기는 상부 표면에만 국한되어 안정적이고 균일한 냉각을 주었다; 열교환기가 없으면 ~90초 후 온도가 포화점을 넘어 상승하여 증기 형성과 챔버로 확장되는 과열 증기를 나타냈다. 취출비를 높이면 열교환기와 함께 냉각이 개선·안정화되었으나, 열교환기가 없으면 표면 온도가 급상승하고 F=0.20%에서 octa-radial과 diagonal 격자가 뚜렷한 열 진동을 보였다. 표면 평균 냉각효율은 F=0.11%에서 열교환기 사용 시 ~93-95%, 미사용 시 ~61-63%였다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고찰은 관찰된 거동을 투과율이 지배하는 냉각제 공급과 증기/고온 가스 수송 간 경쟁으로 귀속하며, Huang 등의 증기 폐색 메커니즘으로 해석한다. 저투과율(octa-radial)은 높은 내부 유동 저항이 증기 폐색 중 냉각제 유입을 제한하여 불균일 냉각을 낳고, 고투과율(pyramidal)은 증기 폐색은 줄지만 개방 형상으로 고온 주류 가스가 침투해 내부 과열을 일으킨다. 중간 투과율 diagonal 격자는 두 실패 모드를 모두 피해 가장 균일한 냉각과 최고 효율을 주며, 형상 간 비교의 기준으로 사용된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 냉각제 온도가 3D 프린팅 격자에서 안정적 액체 증산냉각을 위한 단일 최중요 매개변수라고 결론짓는다: 열교환기로 이를 능동적으로 낮추면 냉각제가 액체로 유지되고 증기 폐색이 방지되며 냉각효율이 ~65%에서 ~95%로 상승한다. 격자 형상은 실패 모드를 설정한다(저투과율 octa-radial의 증기 폐색, 고투과율 pyramidal의 고온 가스 침투, 중간 투과율 diagonal의 균일 냉각). 증기 폐색이 주기적 건조/재충전 불안정을 유발하며, 전이 가능한 핵심 통찰은 특정 외부 열교환기가 아니라 낮은 냉각제 온도 자체가 — 어떤 수단으로든, 이상적으로는 비행 중 재생냉각으로 — 중요하다는 것이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 27</span></summary>
+            <ol class="ref-list"><li>A. van Foreest, M. Sippel, A. Gulhan, B. Esser, B. A. C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, Journal of Thermophysics and Heat Transfer, 23(4), 2009, 693-702</li><li>G. Huang, Y. Zhu, Z. Liao, X. L. Ouyang, P. X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, International Journal of Heat and Mass Transfer, 114, 2017, 1201-1213</li><li>Y. Luan, F. He, J. Wang, Y. Wu, G. Zhu, An experimental investigation on instability of transpiration cooling with phase change, International Journal of Thermal Sciences, 156, 2020, 106498</li><li>G. Huang, Z. Min, L. Yang, P. X. Jiang, M. Chyu, Transpiration cooling for additive manufactured porous plates with partition walls, International Journal of Heat and Mass Transfer, 124, 2018, 1076-1087</li><li>J. H. Jeong, J. Heo, S. Lee, S. J. Kim, J. H. Han, Numerical prediction of permeability and effective thermal conductivity in simple cubic and body-centered truss structures, Journal of Fluids Engineering, 147(9), 2025, 091502</li><li>F. He, N. Wu, Z. Zhou, J. Wang, Experimental investigation on transpiration cooling using propylene glycol aqueous solution, International Journal of Thermal Sciences, 164, 2021, 106890</li><li>N. Wu, J. Wang, W. Dong, R. Ding, An experimental investigation on combined sublimation and transpiration cooling for sintered porous plates, International Journal of Heat and Mass Transfer, 116, 2018, 685-693</li><li>T. Tancogne-Dejean, D. Mohr, Elastically-isotropic truss lattice materials of reduced plastic anisotropy, International Journal of Solids and Structures, 138, 2018, 24-39</li><li>L. Shen et al., An experimental investigation on transpiration cooling with phase change under supersonic condition, Applied Thermal Engineering, 105, 2016, 549-556</li><li>Q. Mi, S. Yi, D. Gang, X. Lu, X. Liu, Research progress of transpiration cooling for aircraft thermal protection, Applied Thermal Engineering, 236, 2024, 121360</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "재사용 무인 비행체(RUV)는 소모성 발사체 대비 큰 비용 절감을 제공하지만 대기권 재진입 중 극심한 공력 가열에 노출되며 앞전 열유속이 10 MW/m^2를 초과하여 열보호 시스템(TPS)이 요구된다."}, {"type": "bullet", "text": "TPS는 <span class=\"term\">수동형</span>, <span class=\"term\">반수동형</span>, <span class=\"term\">능동형</span>으로 구분된다; 수동형(단열)과 반수동형(융삭)은 영구 변형이나 일회성 소모의 한계가 있는 반면, 능동형 비융삭 방식은 재료 손실이 없어 본질적으로 재사용에 적합하다."}, {"type": "bullet", "text": "능동형 방식 중 <span class=\"term\">증산냉각</span> — 냉각제를 다공성 벽을 통해 고온 표면으로 보내 냉각제가 열을 흡수하고 벽 온도를 낮춤 — 은 다른 능동형 방식(예: 막냉각)보다 냉각제 소모가 적고 효율이 높다."}, {"type": "bullet", "text": "냉각제는 기체 기반과 액체 기반으로 분류된다; 기체 중에서는 비열이 큰 헬륨이 가장 우수하지만, 액체 물은 매우 큰 잠열 덕분에 전반적으로 기체를 능가하며 다만 냉각 중 상변화를 요구한다."}, {"type": "bullet", "text": "상변화는 <span class=\"term\">증기 폐색</span>을 일으킨다: 공극 내 급속한 증기 형성이 국소 유동 저항과 압력을 높여 액체 유입을 방해하며, 낮은 유량에서는 증기 폐색 영역의 반복적 형성/해소가 <span class=\"term\">유동 불안정</span>(주기적 건조·재충전)과 냉각 불균일을 초래한다.", "figure_refs": [1]}, {"type": "bullet", "text": "소결 다공성 매질은 본질적으로 불균일한 공극 구조(Shen 등)를 가져 공극 폐색과 국소 냉각 저하를 유발한다; 적층제조(AM)는 정밀하게 맞춤화된 공극 형상과 구배를 가능하게 하여 냉각제 분포를 개선한다(Huang 등, Min 등)."}, {"type": "bullet", "text": "증산냉각 중 냉각제 온도가 비등점에 도달할 수 있다는 최근 인식은 냉각제를 차게 유지할 필요성을 촉발한다; 따라서 본 연구는 취출비와 열교환기 작동을 변화시키며 개방형 고온 공기 풍동에서 SC-BCC 격자 구조체를 평가하고 IR로 열 분포를 촬영한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "냉각제 종류 연구: Liu 등은 기체 냉각제(공기, N2, Ar, He)를 비교해 비열이 큰 헬륨이 최적임을 밝혔고, van Foreest 등은 증산냉각 노즈콘에서 액체 물과 기체 질소를 실험 비교하여 물이 큰 잠열로 우수함을 보였다."}, {"type": "bullet", "text": "소결 매질의 불균일성: Shen 등은 소결에 의한 공극 변동으로 공극 폐색과 냉각 불균일을 보고했고, Li 등은 C/C-SiC 복합 다공성 매질에서 국소 냉각 불균일을 관찰했다."}, {"type": "bullet", "text": "AM 다공성 매질: Huang 등은 AM 제작 다공성 판이 특히 낮은 냉각제 유량에서 소결 금속보다 더 균일한 냉각을 제공함을 보였고, Min 등은 복잡한 내부 공극을 가진 3D 프린팅 증산 구조가 기존 설계보다 높은 효율을 달성함을 보였다."}, {"type": "bullet", "text": "격자 계열: 스트럿 기반 격자(SC, BCC, octahedron, SC-BCC, kelvin)는 공극률 조정 유연성, 제작 용이성, 높은 강성 덕분에 skeletal/sheet TPMS보다 선호된다; SC-BCC는 단순입방 단위의 방향성 연결성과 체심 스트럿의 공간 충전성을 결합한다."}, {"type": "bullet", "text": "투과율/전도도 절충: Jeong 등은 스트럿-로드 직경비 1:1인 SC-BCC 구조가 투과율과 유효 열전도도 사이의 유리한 절충을 달성함을 보였으며, 이는 여기서 시험한 형상의 근거가 된다."}, {"type": "bullet", "text": "상변화 불안정: 상변화를 동반한 증산냉각의 진동 거동은 소결 다공성 매질에 대해 보고되었으며(Huang 등, He 등, Lv 등), 본 연구는 동일 현상이 3D 프린팅 격자 구조에서 발생하는지 및 그 방식을 조사한다."}, {"type": "bullet", "text": "냉각제의 비등점 도달: 최근 연구들(Wu 등, Huang 등, He 등)은 증산냉각 중 냉각제가 비등점에 도달하여 국소 증기 폐색을 일으키고 효율을 낮출 수 있음을 보여, 냉각제 온도를 낮게 유지하는 시스템의 필요성을 부각한다."}]}, "method": {"content": [{"type": "bullet", "text": "핀 연결성과 비접촉 표면적을 변화시키기 위해 SC-BCC 기저에서 세 격자 형상을 도출했다: <span class=\"term\">octa-radial</span>, <span class=\"term\">diagonal</span>, <span class=\"term\">pyramidal</span>. 모두 단위 셀 길이 2 mm(SLA 최소 안정 형상)와 고정 공극률 50%를 사용해 형상/투과율 효과를 분리했다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "시료는 저조도 SLA 프린터(Formlabs 3+)로 Rigid 10K 레진(최소 인쇄 공극 ~50 um)에 인쇄한 뒤, IPA 초음파 이중 세척과 353 K·130분 후경화를 거쳤다. 상면 36x36 mm, 하면 40x40 mm, 다공성 영역 30x30 mm, 판 두께 8 mm; 측정 공극률은 octa-radial/diagonal/pyramidal 각각 48.4/48.8/48.7%."}, {"type": "bullet", "text": "시험 장치: 10 kW 전기 히터와 링 블로워가 40x40 mm 사각 통로로 고온 공기를 공급했다; 주류는 673 K, 11 m/s로 Re ~11610-12140(입구에서 0.066-0.069 m), 무냉각 기준 Nusselt 수 Nu_x = 31.7-32.4(평판 상관식)를 준다.", "figure_refs": [4, 5]}, {"type": "formula", "label": "기준 평판 Nusselt 상관식", "latex": "Nu_x = 0.332\\,Re_x^{1/2}\\,Pr^{1/3}", "description": "증산냉각이 없는 기준 열전달(Nu_x = 31.7-32.4)을 계산하는 데 사용한 표준 층류 평판 국소 Nusselt 상관식."}, {"type": "bullet", "text": "냉각제는 디지털 수조에서 일정 온도로 유지된 탈이온수이며 2헤드 피스톤 펌프로 공급되었다. 냉각 중 냉각제를 차게 유지하기 위해 구리 10x10 mm 셸 구조 <span class=\"term\">열교환기</span>가 냉각제 챔버를 감싸 냉각수를 순환시켜 주입 전 간접 냉각을 제공했다.", "figure_refs": [5]}, {"type": "bullet", "text": "계측: IR 카메라(지점 P1)가 표면 온도 분포를 기록했고, K형 열전대 TC1(다공성 판 바로 아래)과 TC2(챔버 내부)가 내부 온도를, 압력 센서가 챔버-대기 압력차를 감시했다. 각 케이스는 상온에서 600초 예열 후 400초 측정했고, 각 조건은 n=3 반복하여 변동계수 Cv &lt; 2%였다.", "figure_refs": [6, 7]}, {"type": "bullet", "text": "각 격자의 투과율 K는 체적유량 1.0e-8~3.0e-8 m^3/s 범위의 정상상태 압력강하 측정(선형 DeltaP-Q, 즉 층류/Darcy 유동)에서 구했으며, K = 6.67e-10 m^2(octa-radial), 2.18e-9 m^2(diagonal), 1.02e-8 m^2(pyramidal)이다.", "figure_refs": [8]}, {"type": "formula", "label": "식 (1) — Darcy 투과율", "latex": "K = \\frac{Q\\,\\mu_f\\,L}{A\\,\\Delta P}", "description": "Darcy 법칙으로부터의 투과율: Q 체적유량, mu_f 유체 동점성계수, L 시료 두께, A 단면적, DeltaP 압력차. 선형 DeltaP-Q 관계는 격자 내 층류 유동을 확인했다."}, {"type": "formula", "label": "식 (2) — 취출비 F", "latex": "F = \\frac{\\dot m_c}{\\dot m_\\infty} = \\frac{\\rho_c u_c}{\\rho_\\infty u_\\infty}", "description": "취출비: 냉각제 대 주류 질량 플럭스의 비(rho_c u_c 대 rho_infty u_infty)로, 무차원 냉각제 질량유량 매개변수로 사용된다."}, {"type": "formula", "label": "식 (4), (7) — 냉각효율 eta", "latex": "\\eta = \\frac{T_\\infty - \\bar{T}_w}{T_\\infty - T_c}", "description": "표면 평균 냉각효율: T_infty 주류 온도, bar T_w 표면 평균 다공성 벽 온도, T_c 냉각제 온도. eta = 1이면 벽이 냉각제 온도까지 냉각됨을 뜻한다."}, {"type": "bullet", "text": "불확도 분석은 성분 상대 불확도의 표준 제곱합제곱근(RSS) 전파(F와 eta에 대한 논문의 식 3, 5)를 사용했으며, Table 2의 계측기 정확도를 반영해 도출 매개변수 불확도는 F 5.31%, eta 4.53% 이내였다."}]}, "results": {"content": [{"type": "bullet", "text": "열교환기 효과(F=0.11%): 열교환기 사용(w/HE) 시 TC1(판 아래)과 TC2(챔버 내부)가 373 K 미만으로 유지되어 냉각제가 매질 전반에서 액체를 유지하고 (주류 접촉에 의한) 증기가 상부 표면에만 국한되어 안정적·균일한 냉각을 주었다.", "figure_refs": [9, 10, 12]}, {"type": "bullet", "text": "열교환기 미사용(w/o HE) 시 TC1이 ~90초 동안 ~373 K 포화점 근처에 머문 뒤 상승하여 매질 내부의 증기 형성과 과열 증기 발생을 표시했다; 증기가 공극 전반으로 퍼지고 챔버로 확장되어, 내부 증기 형성 방지에서 열교환기의 결정적 역할을 확인했다.", "figure_refs": [11, 12]}, {"type": "bullet", "text": "취출비 효과(w/HE): F를 0.07%에서 0.11%로 높이면 표면 온도가 급격히 낮아지고 안정화되었다 — F=0.07%에서는 온도가 서서히 상승(냉각제 부족)한 반면, F=0.11%에서는 표면 온도가 거의 일정하게 유지되어 냉각제 질량유량 증가에 의한 냉각 향상을 보였다.", "figure_refs": [13, 14]}, {"type": "bullet", "text": "열교환기 없이 냉각제 부족은 매질을 과열 증기 상태로 만들었다: F=0.11%에서 온도가 급상승했고, F=0.20%에서 octa-radial과 diagonal은 진동성 열 거동을 보인 반면 pyramidal은 지속적으로 고온(과열 증기)을 유지하여, 냉각이 형상과 F의 결합에 의존함을 보였다.", "figure_refs": [15, 16]}, {"type": "bullet", "text": "실용 취출비 구간: F=0.07-0.20% 내에서 F가 커질수록 성능이 개선되지만, 과도한 F는 냉각제를 낭비(탑재 비실용적)하고 너무 낮은 F는 건조에 접근하여 증기 폐색과 구조 손상을 유발한다; 시험 범위는 효과와 소모의 균형점이다(연구 특화, 일반화 불가)."}, {"type": "bullet", "text": "진동 현상(w/o HE, F=0.20%): 주기는 액체 유입 -&gt; 국소 기화 -&gt; 증기 팽창 -&gt; 액적 배출 -&gt; 재충전이며; diagonal 격자는 가열 ~77초/냉각 ~79.5초, octa-radial은 가열 ~101초/냉각 ~48.5초 위상을 보였다. F=0.20%의 diagonal에 대한 IR 촬영은 t=0/50/100/200/300초에서 주기적 표면 온도 거동을 확인했다.", "figure_refs": [16, 17, 18]}, {"type": "bullet", "text": "챔버 압력: 모든 케이스에서 최대 챔버-대기 압력차가 1.8 kPa 미만이었고, 저투과율 구조가 열교환기 유무와 무관하게 일관되게 약간 높은 내부 압력을 보였다.", "figure_refs": [19]}, {"type": "bullet", "text": "냉각효율 표(표면 평균, t=300초): w/HE·F=0.11%에서 94.7%(octa-radial), 95.1%(diagonal), 93.5%(pyramidal); w/o HE·F=0.11%에서는 62.2/62.6/61.3%에 그쳤다. 열교환기는 고정 F=0.11%에서 형상과 무관하게 효율을 ~32.5/32.5/32.2% 높였다.", "figure_refs": [22]}]}, "discussion": {"content": [{"type": "bullet", "text": "투과율이 냉각 분포를 지배한다: 투과율 감소는 다공성 표면의 냉각제 분포에 영향을 주는 증기 폐색을 유발하는 경향이 있으며; 저투과율 octa-radial은 F나 열교환기 상태와 무관하게 불균일한 표면 온도를 보였고, 이는 열교환기 사용 저 F(F=0.07%, w/HE)에서 가장 뚜렷했다.", "figure_refs": [20, 22]}, {"type": "bullet", "text": "증기 폐색 메커니즘(Huang 등 기반): 최저 투과율 구조에서는 증기 폐색 중 높은 내부 유동 저항이 두드러져 냉각제 유입을 제한하고 냉각제가 표면에 도달하는 것을 막는 고압 증기 영역을 형성한다 — octa-radial 격자의 IR 불균일로 시각적으로 확인되었다.", "figure_refs": [20, 21]}, {"type": "bullet", "text": "고투과율 절충: pyramidal 격자(최고 투과율)는 증기 폐색이 감소했으나 개방 형상으로 고온 주류 가스의 침투가 증가하여 지속적으로 내부 과열을 보이고 과열 증기 상태를 유지했다.", "figure_refs": [21, 22]}, {"type": "bullet", "text": "diagonal이 최적: 중간 투과율 diagonal 구조는 증기 축적 없이, 그리고 과도한 고온 가스 유입 없이 부드러운 냉각제 흐름을 허용하여 가장 균일한 냉각과 최고 효율을 주며, 비교 기준 형상으로 채택된다."}, {"type": "bullet", "text": "F=0.11%에서 상대 효율 비교: diagonal 기준 대비 octa-radial과 pyramidal은 (w/HE) 각각 0.40%, 1.60%만 낮았으나, w/o HE에서 F가 커지면 격차가 크게 벌어져 pyramidal은 높은 F에서 diagonal보다 20.7% 낮아진 반면 octa-radial은 0.90% 이내에 머물러, 열적 안정화가 없을 때 형상 선택이 가장 중요함을 강조한다.", "figure_refs": [22]}, {"type": "bullet", "text": "형상-F 결합 효과: 진동은 고 F·w/o HE에서 octa-radial과 diagonal에만 나타났고 지속 고온의 pyramidal에는 없었는데, 이는 불안정·과열·균일 냉각이 격자 형상(투과율)과 취출비의 상호작용으로 선택되며 어느 하나만으로 결정되지 않음을 보인다."}, {"type": "bullet", "text": "냉각제 온도의 우선성: 열교환기의 ~32% 효율 이득이 형상과 거의 무관했으므로, 저자들은 냉각제 온도 제어(매질 내부에서 물을 포화점 아래로 유지)가 지배적 레버이며 형상은 균일성과 실패 모드를 결정하는 2차적이지만 중요한 요인이라고 주장한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "냉각제 온도가 가장 영향력 있는 매개변수다: 열교환기가 냉각제 온도를 크게 낮춰 매질 내 액체 상 냉각제를 유지하고 증기 폐색을 방지하여, 특히 높은 취출비에서 냉각효율을 ~65%에서 ~95%로 높였다."}, {"type": "bullet", "text": "냉각 거동은 형상에 따라 달랐다: octa-radial(최저 투과율)은 저 F에서 증기 폐색으로 국소 과열했고; pyramidal(최고 투과율)은 고온 공기 유입으로 내부 과열했으며; diagonal(중간 투과율)은 증기 축적 없는 안정적 냉각제 흐름으로 균일 냉각을 달성했다."}, {"type": "bullet", "text": "상변화에 의한 증기 폐색이 불안정한 냉각제 공급과 주기적 건조/재충전 거동을 유발했으며, 이는 냉각제가 매질 내에서 증발할 때 국소 유동 저항이 증가하며 발생했다."}, {"type": "bullet", "text": "열교환기의 역할은 냉각제 온도를 낮춰 증기 형성을 방지하는 것이며; 핵심 통찰은 특정 온도 제어 방법이 아니라 냉각제 온도 제어 자체가 결정적 매개변수라는 점이다."}, {"type": "bullet", "text": "유입 냉각제가 구조물을 예냉하고 내부 열교환기 역할을 하는 재생냉각이 비행 실용적 대안으로 제안되며, 챔버/라인 단열과 최적화된 주입 전략도 함께 제시된다."}, {"type": "bullet", "text": "범위: 결과는 (잠열이 우수한) 물에 특화되지만, 증기 폐색과 투과율 의존 메커니즘은 상변화를 겪는 다른 액체 냉각제로 확장될 것으로 기대되나 기체 냉각제에는 적용되지 않는다. 본 연구는 KRIT(재사용 무인 우주비행체 연구센터)와 국방과학연구소의 지원을 받았다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "여기서 찾은 최적 취출비(blowing ratio) 구간(F = 0.07-0.20%)은 본 연구 조건에 특화된 것이어서 일반화할 수 없다.", "source_quote": "The current experimental range (F = 0.07 % to 0.20 %) represents an optimal balance between cooling effectiveness and practical coolant consumption required for aerospace applications. This range is also tailored to this study and cannot be generalized.", "source_section": "results"}, {"claim": "잠열이 큰 물을 냉각제로 사용한 결과에 특화되어 있어, 정량적 결론이 다른 냉각제에는 그대로 적용되지 않을 수 있다.", "source_quote": "While these findings are specific to water coolant due to its superior latent heat properties under certain conditions, the fundamental mechanisms of vapor blockage and permeability-dependent cooling behavior are expected to apply to other liquid coolants undergoing phase change, but not gaseous coolants.", "source_section": "conclusion"}, {"claim": "여기서 사용한 외부 열교환기 자체는 실제 항공우주 비행체에 적합하지 않을 수 있으며, 전이 가능한 통찰은 근본 메커니즘(낮은 냉각제 온도)뿐이다.", "source_quote": "While the external heat exchanger demonstrated excellent effectiveness, alternative approaches may be more suitable for practical aerospace applications.", "source_section": "conclusion"}], "future_works": [{"claim": "유입 냉각제가 주입 전에 구조물을 예냉하여 내부 열교환기 역할을 하는 재생냉각을 도입해, 냉각제 온도를 낮게 유지하는 비행 실용적 방법으로 활용한다.", "source_quote": "These findings suggest that regenerative cooling, which inherently acts as an internal heat exchanger, could offer similar thermal stabilization by maintaining low coolant temperatures within porous structures for lattice structure applications.", "source_section": "conclusion"}, {"claim": "냉각제 챔버·공급 라인의 단열 강화와 냉각제 주입 전략 최적화를 저온 냉각제 유지의 대안 접근으로 추구한다.", "source_quote": "These alternatives include regenerative cooling systems where the incoming coolant pre-cools the structure before injection, enhances thermal insulation of coolant chambers and supply lines, and optimizes coolant injection strategies.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["액체 냉각제(예: 물)는 증산냉각에 높은 잠열 냉각을 제공하지만, 동반되는 상변화가 국소 유동 저항을 높이고 액체 유입을 방해하는 증기 폐색을 유발한다.", "낮은 냉각제 유량에서는 증기 폐색 영역이 반복적으로 형성·해소되어 주기적 건조/재충전 유동 불안정과 냉각 불균일을 발생시킨다.", "기존 소결 다공성 매질은 공극 구조가 불균일하여 그 자체로 공극 폐색과 국소 냉각 성능 저하를 유발한다.", "증산냉각 중 냉각제가 비등점에 도달할 수 있다는 최근 인식은 냉각제 온도를 능동적으로 낮게 유지할 필요성을 부각한다.", "적층제조된 격자 형상(및 그 투과율)이 3D 프린팅 다공성 판의 상변화 냉각과 어떻게 상호작용하는지 실험적으로 규명할 필요가 있다."], "addressed_by_this_work": ["열교환기로 냉각제 온도를 낮추면 매질 내부에서 물이 포화점 아래로 유지되어 증기 형성이 억제되고 냉각효율이 ~65%에서 ~95%로 상승함을 실험으로 입증했다.", "냉각제 온도를 안정화하면 주기적 건조/재충전 진동이 제거됨을 보이고 진동 시간 척도를 정량화했다(diagonal 가열 ~77초/냉각 ~79.5초, octa-radial ~101초/~48.5초).", "적층제조(SLA 3D 프린팅)로 공극률은 거의 같지만 투과율이 뚜렷이 다른 세 SC-BCC 격자를 제작하여 투과율 효과를 공극률과 분리했다.", "투과율이 거동을 지배함을 규명했다: 저투과율 octa-radial → 증기 폐색과 불균일 냉각, 고투과율 pyramidal → 고온 가스 침투와 내부 과열, 중간 diagonal → 균일하고 안정적인 냉각."], "remaining_unresolved": ["일반화 가능한 취출비 설계 구간이 확립되지 않았다(F = 0.07-0.20% 범위는 연구 특화).", "정량적 결과가 물 이외의 다른 액체 냉각제로 확장되는지(그리고 기체 냉각제에서 어떻게 실패하는지)는 메커니즘적으로 주장되었을 뿐 검증되지 않았다.", "낮은 냉각제 온도를 유지하는 비행 실용적 수단(재생냉각, 챔버/라인 단열)이 제안되었으나 본 연구에서 실험적으로 입증되지는 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
