@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media—II. Application to pressure-driven boiling flow adjacent to a vertical heated plate</title>
+    <meta name="keywords" content="two-phase mixture model, capillary porous media, boiling flow, boundary layer, similarity solution, liquid saturation, dryout heat flux, capillary diffusion, phase change, numerical">
+    <meta name="paper-authors" content="Chao-Yang Wang, C. Beckermann">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 36, No. 11, 1993, pp. 2759-2768 · DOI: 10.1016/0017-9310(93)90095-N">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="01_Fundamentals">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media—II. Application to pressure-driven boiling flow adjacent to a vertical heated plate</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Chao-Yang Wang, C. Beckermann</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 36, No. 11, 1993, pp. 2759-2768 · DOI: 10.1016/0017-9310(93)90095-N</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 후속 논문은 Part I에서 개발한 <span class="term">이상 혼합물 모델(two-phase mixture model, TPMM)</span>을, 모세관 다공성 매질에 매립된 수직 가열판을 따라 흐르는 <span class="term">압력 구동 이상 비등 유동</span>에 적용하여 그 유용성을 입증한다. 정상·등온·부력 무시·외부 압력차 구동을 가정하면 일반 혼합물 방정식이 혼합물 속도, 유사 압력, 액체 포화도에 대한 방정식계로 축약된다. 이 정식화가 고전적 대류 물질전달과 강한 유사성을 가진다는 점은, 높은 이상 <span class="term">Peclet 수</span>에서 이상 유동이 표면 위 얇은 <span class="term">모세관 경계층</span>에 국한됨을 시사한다; 경계층 근사와 <span class="term">상사 변환(similarity transformation)</span>을 도입하면 편미분방정식이 상미분방정식으로 축약되어 Gear 강성 해법과 슈팅으로 수치 적분된다. 평균 혼합물 물성이 (상수 물성의 단상 경계층과 달리) 액체 포화도에 따라 강하게 변하므로, 포화도 분포는 부호가 바뀌는 복잡한 곡률을 보이며 벽 포화도가 건조 한계로 낮아질수록 이상층이 두꺼워진다. 모델은 개별 상의 유동장도 대수적으로 복원하며, 벽 열유속 분포와 $\bar{Q}_{\mathrm{dry}}\propto Pe_{2\phi}^{1/2}$로 스케일되는 평균 건조 열유속을 준다. 참고: 이는 OCR 텍스트가 심하게 손상된 오래된 스캔 Pergamon 논문으로, 여기의 모든 식은 원본 페이지 이미지를 직접 읽어 전사했으며 일부 손상 구간 항목은 사용자 검증을 위해 표시(FLAG)되었다.</div>
+            <div class="keywords"><span class="keyword-chip">two-phase mixture model</span><span class="keyword-chip">capillary porous media</span><span class="keyword-chip">boiling flow</span><span class="keyword-chip">boundary layer</span><span class="keyword-chip">similarity solution</span><span class="keyword-chip">liquid saturation</span><span class="keyword-chip">dryout heat flux</span><span class="keyword-chip">capillary diffusion</span><span class="keyword-chip">phase change</span><span class="keyword-chip">numerical</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Part I의 이상 혼합물 모델을 학술적·공학적으로 흥미로운 문제에 실증하기 위해, 본 논문은 다공성 매질에 매립된 고온체를 따라 흐르는 이상 비등 유동을 해석한다 — 지열 저류층, 원자로 잔해 냉각, 고준위 핵폐기물 저장소, 히트파이프에 관련된다. 기존 해석 연구는 모세관력을 무시하여 증기와 액체를 완전히 분리된 두 단상 층으로 취급했으나, 실험 증거는 모세관 효과를 포함해야 함을 보여 진정한 이상 혼합 영역의 해석을 요구한다. 본 논문은 비등 온도의 순수 액체가 고온 표면을 따라 강제되어 부분적으로 증기로 비등하는 특수한 경우를, 부력이 없고 표면 액체 포화도가 일정한 압력 구동 유동으로 한정하여 다룬다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 Part I(자체 정식화)과 다공성 매질 비등/응축 및 상사해 문헌 위에 직접 세워진다. 표준 구성 관계 — Fatt-Klikoff 3차 상대투과율과 Leverett 데이터에 맞춘 Leverett-J 함수 — 를 채택하고, 상사 접근을 다공성 매질 이상 유동의 기존 상사해와 함께 위치시킨다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Part I 혼합물 방정식에서 출발해, 비등 유동을 네 가정(정상, 이상 영역 전반 등온, 부력 없는 압력 구동, 표면만 가열) 아래 단순화하여 혼합물 질량·Darcy형 혼합물 운동량·액체 질량(포화도) 방정식을 얻는다. 이를 무차원화하며 이상 Peclet 수를 도입하고, 이 수가 크므로 고전적 경계층 근사로 축약하여 상사 변환을 허용하는 방정식계를 만들고, 편미분방정식을 유동함수와 포화도에 대한 두 상미분방정식으로 변환한다. 3차 상대투과율과 Leverett J 함수가 계를 닫으며, IMSL Gear 강성 해법과 슈팅으로 적분하고 건조 특이점 처리를 위한 벽 근처 해석 급수를 보강한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">밀도 효과가 유동함수에 흡수되므로 상사해는 액체/증기 점성비($\bar{v}=0.01466$, 대기압 물-증기)에만 의존한다. 액체 포화도 분포는 (일반 대류 물질전달의 단조 볼록 프로파일과 달리) 부호가 바뀌는 복잡한 곡률을 보이고, $s\to1$ 근처에서 날카로운 경계층 가장자리를 가지며, 벽 포화도가 낮아질수록 이상층이 두꺼워진다. 스케일된 축방향 속도는 벽으로 갈수록 점차 소멸(가변 점성 감속, Brinkman 효과 아님)하고, 횡방향 속도는 양의 변위 유동이다. 개별 증기·액체 유동장은 대수적으로 복원되며, 벽 열유속 $Q_x$는 벽 포화도가 건조 한계 $1.451\times10^{-3}$로 감소할수록 커진다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">결과는 이상 혼합물 모델이 강하게 결합된 이상 비등 경계층 문제를 다루기 쉬운 상사 문제로 바꾸면서도 물리를 충실히 유지함을 확인한다: 포화도에 따른 강한 물성 변화가 질적으로 새로운 포화도 프로파일 형태와, 어떤 Brinkman 항이 아니라 순전히 유동-포화도 결합의 결과인 겉보기 벽 근처 무슬립을 낳는다. 개별 상 유동장을 (뭉개지 않고) 제공하고 물리적으로 타당한 건조 스케일링을 주는 능력은, 정식화가 일반적이고 실용적이라는 Part I의 주장을 뒷받침하지만, 높은 결합은 여전히 완전한 닫힌 형태 해를 배제한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">모세관 다공성 매질 내 가열판에 인접한 압력 구동 비등 유동을 Part I의 이상 혼합물 모델로 해석했다. 새 정식화 안에서 이상 경계층 유동이 예상되어 단상 유체역학과 유사한 경계층 근사로 유도되었고, 문제가 지배방정식을 상미분방정식으로 축약하는 상사 변환을 허용함을 보였다. 예시적 물-증기 계산은 포화도 분포, 이상 혼합물 및 개별 상 유동장, 벽 포화도에 대한 벽 열유속 의존성을 주었다. 부력 구동 및 압력/부력 복합 구동(대향류) 이상 유동으로의 확장이 향후 과제로 제시된다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 19</span></summary>
+            <ol class="ref-list"><li>C.-Y. Wang and C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media—I. Formulation, Int. J. Heat Mass Transfer 36, 2747-2758, 1993</li><li>E. M. Parmentier, Two-phase natural convection adjacent to a vertical heated surface in a permeable medium, Int. J. Heat Mass Transfer 22, 849-855, 1979</li><li>P. Cheng and A. K. Verma, The effect of subcooled liquid in film boiling about a vertical heated surface in a porous medium, Int. J. Heat Mass Transfer 24, 1151-1160, 1981</li><li>C. Doughty and K. Pruess, A similarity solution for two-phase fluid and heat flow near a high-level waste package emplaced in porous media, Int. J. Heat Mass Transfer 33, 1205-1222, 1990</li><li>K. S. Udell, Heat transfer in porous media considering phase change and capillarity — the heat pipe effect, Int. J. Heat Mass Transfer 28, 485-495, 1985</li><li>I. Fatt and W. A. Klikoff, Effect of fractional wettability on multiphase flow through porous media, AIME Trans. 216, 246-251, 1959</li><li>M. C. Leverett, Capillary behavior in porous solids, AIME Trans. 142, 152-169, 1941</li><li>F. P. Tsai, Dryout heat flux in a volumetrically heated porous bed, Ph.D. Dissertation, University of California at Los Angeles, 1987</li><li>V. X. Tung and V. K. Dhir, Experimental study of boiling heat transfer from a sphere embedded in a liquid-saturated porous medium, ASME J. Heat Transfer 112, 736-743, 1990</li><li>IMSL, International Mathematical and Statistical Library, 1984</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "목적은 Part I의 이상 혼합물 모델의 유용성을 실질 문제에 실증하는 것이다: 다공성 매질에 매립된 가열체를 따라 흐르는 이상 비등 유동으로, 학술적·공학적으로 모두 흥미롭다."}, {"type": "bullet", "text": "문제를 촉발하는 응용에는 지열 저류층의 화성 관입 냉각, 노심 손상 원자로 잔해로부터의 열에너지 제거, 고준위 핵폐기물 지질 저장소, 히트파이프 내부 수송이 포함된다."}, {"type": "bullet", "text": "선구적 해석 연구(Parmentier; Cheng-Verma)는 정지 액체 다공성 매질 내 수직 가열판 근처 비등을 모델링했고, Orozco 등은 원통/구로 확장했으며, 이후 과냉각·주류·판 기울기·비Darcy 항이 추가되었으나 모두 모세관력을 무시했다."}, {"type": "bullet", "text": "모세관력을 무시하면 증기와 액체가 완전히 분리된 것으로 — 뚜렷한 계면으로 나뉜 두 단상 층으로 — 가정되어 문제가 단상 지배방정식으로 크게 단순화되고 해석해가 가능해지지만, 본질적 이상 특성을 무시하는 대가를 치른다."}, {"type": "bullet", "text": "최근 실험 증거는 데이터와의 정량적 일치를 위해 이론 모델에 모세관 효과를 포함해야 함을 강하게 시사한다; 따라서 (모세관성을 유지할 때 나타나는) 이상 혼합 영역 내부 수송 현상의 해석이 요구되며, 이것이 본 연구의 대상이다.", "figure_refs": [1]}, {"type": "bullet", "text": "구체적 경우: 비등 온도의 순수 액체가 일정 속도로 고온 표면을 따라 강제되어 부분적으로 증기로 비등하며 고체에 인접한 이상 영역을 형성한다; 해석은 표면에서 일정 액체 포화도를 가정한 압력 구동 유동(부력 없음)에 한정된다.", "figure_refs": [1]}, {"type": "bullet", "text": "건조 조건은 벽 액체 포화도가 0에 접근할 때(판에서 액체가 완전 증발) 발생하며, 이는 풀비등의 임계 열유속과 유사하다; 그 너머로는 순수 증기막이 형성되어 용융으로 성장한다. 본 해석은 건조 이전 영역에 한정되나 건조 이후 영역은 전통적 막유동 해석과 연결 가능하다."}]}, "related_works": {"content": [{"type": "bullet", "text": "기초 토대: Part I(Wang-Beckermann, ref [1])이 일반 혼합물 수송 방정식, 평균 물성 정의, 총 확산 질량 플럭스, 그리고 본 응용 논문 전반에 사용되는 대수적 상 복원 관계를 제공한다."}, {"type": "bullet", "text": "가열 표면 근처 다공성 매질 비등: Parmentier와 Cheng-Verma(수직판, 정지 액체), Orozco 등(원통/구), 그리고 과냉각·주류·기울기·비Darcy 효과 후속 연구 — 모두 모세관성을 무시한 기존 해석적 처리로 인용된다."}, {"type": "bullet", "text": "모세관성/히트파이프 효과 문헌: 모세관 효과가 이상(히트파이프) 영역을 지배함을 확립한 Udell 등 관련 연구로, 본 모델에서 모세관 확산 항의 유지를 정당화한다."}, {"type": "bullet", "text": "상사해 선례: Doughty-Pruess는 다공성 매질 내 핵폐기물 패키지 근처 이상 유체·열 유동의 상사해를 얻었으며, 이는 여기서 사용한 상사 변환의 선례다."}, {"type": "bullet", "text": "채택된 구성 관계: Fatt-Klikoff의 3차 상대투과율($k_{rl}=S^3$, $k_{rv}=(1-S)^3$)과 Leverett의 실험 데이터에 경험적으로 맞춘 Leverett 모세관 압력 함수 $J(s)$."}, {"type": "bullet", "text": "건조 이후 막유동 해석(refs [13,14])은 건조를 넘어 확장하는 경로로 인용되며, Tsai의 체적 가열 다공성 층 건조 측정[19]은 가장 근접한(그러나 직접 적용 불가한) 검증 데이터로 언급된다."}]}, "method": {"content": [{"type": "bullet", "text": "Part I에서 가져온 평균 물성 정의: 혼합물 밀도 $\\rho(s)$와 평균 동점성계수 $\\nu(s)$는 포화도 의존적이며, 총 확산 질량 플럭스는 (여기서 중력 이동 무시) 순수 모세관 확산 형태 $\\mathbf{j}=-D(s)\\nabla s$로 축약된다.", "figure_refs": [1]}, {"type": "formula", "label": "식 (1)-(2) — 평균 혼합물 밀도와 동점성계수", "latex": "\\rho(s) = \\rho_l\\gamma(s) \\equiv \\rho_l\\left[1 - \\frac{\\Delta\\rho}{\\rho_l}(1-s)\\right], \\qquad \\nu(s) = \\nu_l\\beta(s) \\equiv \\nu_l\\left[k_{rl}(s) + \\frac{\\nu_l}{\\nu_v}k_{rv}(s)\\right]^{-1}", "description": "포화도 가중 평균 밀도와 이상 혼합물의 평균 동점성계수; $\\gamma(s),\\beta(s)$는 평균 밀도·점성 계수, $\\Delta\\rho=\\rho_l-\\rho_v$."}, {"type": "formula", "label": "식 (3)-(5) — 확산 질량 플럭스, 모세관 확산계수, 상대 이동도", "latex": "\\mathbf{j} = -D(s)\\nabla s, \\qquad D(s) = \\frac{K}{\\nu(s)}\\lambda(s)[1-\\lambda(s)]\\left[-\\frac{\\mathrm{d}p_c(s)}{\\mathrm{d}s}\\right] \\equiv D_c\\hat{D}, \\qquad \\lambda(s) = \\frac{k_{rl}(s)}{k_{rl}(s) + \\bar{v}\\,k_{rv}(s)}", "description": "모세관 확산 질량 플럭스와, 상수부 $D_c$에 무차원 인자 $\\hat{D}$를 곱한 형태로 분리된 모세관 확산계수 $D(s)$; $\\lambda$는 상대 이동도, $\\bar{v}=\\nu_l/\\nu_v$는 액체/증기 동점성비(식 6)."}, {"type": "formula", "label": "식 (7)-(8) — 상수부와 무차원 모세관 확산계수", "latex": "D_c = (\\varepsilon K)^{1/2}\\sigma/\\nu_l, \\qquad \\hat{D}(s) = \\frac{\\lambda(s)[1-\\lambda(s)]}{\\beta(s)}\\left[-\\frac{\\mathrm{d}J(s)}{\\mathrm{d}s}\\right]", "description": "상수부 $D_c$(공극률 $\\varepsilon$, 절대 투과율 $K$, 표면장력 $\\sigma$)와, 모세관 함수 $J(s)$를 통해 모든 가변 인자를 모은 무차원 $\\hat{D}(s)$."}, {"type": "formula", "label": "식 (9)-(12) — 단순화된 지배방정식 (혼합물 질량·운동량·액체 질량)", "latex": "\\nabla\\!\\cdot(\\rho\\mathbf{u}) = 0, \\quad \\mathbf{u} = -\\frac{K}{\\rho(s)\\nu(s)}\\nabla p, \\quad \\nabla\\!\\cdot[\\rho\\mathbf{u}\\lambda(s)] = -\\nabla\\!\\cdot\\mathbf{j}, \\quad \\frac{\\mathrm{d}\\lambda}{\\mathrm{d}s}\\rho\\mathbf{u}\\!\\cdot\\!\\nabla s = D_c\\nabla\\!\\cdot(\\hat{D}\\nabla s)", "description": "정상·등온·부력 없는·표면 가열 조건 하에서: 혼합물 연속, Darcy형 혼합물 운동량(유사 압력 $p$), 그리고 $\\mathbf{j}$로 다시 쓴 포화도의 대류-확산형 액체 질량 방정식."}, {"type": "bullet", "text": "판 길이 $L$과 주류 속도 $u_\\infty$로 무차원화하면 식 (13)-(15)를 얻고 이상 Peclet 수가 정의된다; 그 크기는 (실제 $D_c\\hat{D}_{\\max}$가 아닌 상수부 $D_c$로 설정) 저투과율 매질에서 1보다 훨씬 클 수 있다(Table 1)."}, {"type": "formula", "label": "식 (16) — 이상 Peclet 수", "latex": "Pe_{2\\phi} = \\frac{\\rho_l u_\\infty L}{D_c}", "description": "모세관 확산계수의 상수부 $D_c$에 기반한 이상 Peclet 수; 큰 $Pe_{2\\phi}$가 경계층 근사를 정당화한다."}, {"type": "bullet", "text": "경계조건: 선단부와 이상 영역 외부에서 액체 포화도는 1이고 벌크 액체는 일정 속도로 흐른다($x^*=0$에서 $u^*=1,\\,s=1$); 벽에서 법선 혼합물 속도는 0이고 국소 벽 열유속을 통해 일정 표면 포화도 $s_w$가 부과되어(식 18) 상사 변환을 가능하게 한다. $s_w=0$은 벽에서의 건조에 해당한다."}, {"type": "formula", "label": "식 (19)-(22) — 벽 에너지 균형과 무차원 벽 열유속", "latex": "q_w = h_{fg}(-j_w), \\quad j_w = -D_c\\hat{D}\\left.\\frac{\\partial s}{\\partial Y}\\right|_{Y=0}, \\quad Q_x = \\frac{q_w x}{h_{fg}D_c}, \\quad Q_x = -\\hat{D}\\,x^*\\left.\\frac{\\partial s}{\\partial Y}\\right|_{Y^*=0}", "description": "벽 열유속은 잠열에 벽에서의 확산 질량 플럭스를 곱한 값과 같다; $Q_x$는 무차원 국소 벽 열유속이다. (페이지 이미지에서 전사; 손상 스캔이므로 벽 근처 $j_w$·$Q_x$의 정확한 스케일링은 원본과 대조 검증 필요.)"}, {"type": "bullet", "text": "경계층 축약: 작은 매개변수 $\\varepsilon = 1/\\sqrt{Pe_{2\\phi}}\\ll 1$(식 23)와 스케일링 $Y=y^*/\\varepsilon,\\,X=x^*,\\,U=u^*,\\,V=v^*/\\varepsilon,\\,P=p^*$(식 24)로 $\\varepsilon$ 차수 정렬을 하면, 이상 유동과 포화도 변화를 얇은 벽 근처 층에 국한하는 경계층 방정식 (25)-(28)을 얻는다."}, {"type": "formula", "label": "식 (31)-(35) — 상사 변환과 축약 상미분방정식", "latex": "\\gamma(s)U = F'(\\eta), \\quad s = s(\\eta), \\quad \\eta = Y/X^{1/2}, \\quad (\\beta(s)F')' = 0, \\quad (\\hat{D}s')' + \\tfrac{1}{2}\\frac{\\mathrm{d}\\lambda(s)}{\\mathrm{d}s}F s' = 0", "description": "상사 변수 $\\eta=Y/X^{1/2}$와 유동함수 $F$가 경계층 편미분방정식을 $F$와 $s$에 대한 두 결합 상미분방정식(식 34, 35)으로 축약한다; 경계조건은 $\\eta=0$에서 $F=0,s=s_w$, $\\eta=\\eta_\\delta$에서 $F'=1,s=1$(식 36-37)."}, {"type": "formula", "label": "식 (38)-(40) — 구성 관계 (상대투과율, 정규화 포화도, Leverett J 함수)", "latex": "k_{rl} = S^3, \\quad k_{rv} = (1-S)^3, \\quad S = \\frac{s - s_{li}}{1 - s_{li}}, \\quad J(s) = 1.417(1-S) - 2.120(1-S)^2 + 1.263(1-S)^3", "description": "정규화 포화도 $S$의 Fatt-Klikoff 3차 상대투과율(비가역 포화도 $s_{li}$를 0으로 두어 $S=s$)과 Leverett 데이터에 맞춘 Leverett J 함수."}, {"type": "bullet", "text": "수치 절차: 식 (34)-(35)는 벽 근처에서 포화도가 지수적으로 성장하므로 IMSL DGEAR(Gear 강성 해법, 가변 스텝)로 푼다; 슈팅 절차가 층 외부에서 포화도가 1이 될 때까지 $s'(0)$를 추정한다. 적분 길이 $\\eta=2$가 적절했고, $s_w&lt;0.15$가 되면 4차 Runge-Kutta DVERK는 실패했다.", "figure_refs": [2, 3]}, {"type": "formula", "label": "식 (41)-(43) — 건조 특이점을 위한 벽 근처 해석 급수", "latex": "\\beta(s)F' = 1, \\qquad F = \\bar{v}\\,\\eta, \\qquad s = a_0\\,\\eta^{1/4} - \\frac{24}{77[-J'(0)]}\\eta^2 + \\cdots \\quad (\\eta \\ll 1)", "description": "건조 시($s_w\\to0$) 모세관 확산계수가 소멸하고 $\\eta=0$에서 문제가 특이해진다; 벽 근처 급수(슈팅 목표로 $s'(0)$ 대신 상수 $a_0$ 사용)가 시작값을 공급한다. FLAG: 급수의 $\\eta$ 선두 지수($1/4$로 판독)와 수치 계수는 손상 스캔에서 온 것이므로 원본과 대조 검증 필요."}]}, "results": {"content": [{"type": "bullet", "text": "해는 점성비 $\\bar{v}$에만 의존한다; 계산은 대기압 물-증기계($\\bar{v}=0.01466$)를 사용한다. 밀도비는 물리적으로 영향이 크지만, 유동함수(식 31)가 이미 밀도 효과를 포함하고 속도 결과가 적절히 스케일되므로 여기서는 나타나지 않는다."}, {"type": "bullet", "text": "포화도 분포(Fig. 4)는 여러 단계에서 곡률 부호가 바뀌는 복잡한 형태를 가지며 — 대류 물질전달 문제의 유일하게 음인 곡률과 대비 — 이는 특정 포화도에서 극대값까지 보이는(Fig. 3) 고비선형 평균 수송 물성에 기인한다.", "figure_refs": [3, 4]}, {"type": "bullet", "text": "모세관 확산계수가 $s\\to1$에서 작아지므로 포화도 분포는 비교적 날카로운 경계층 가장자리를 보인다; 이상 경계층은 벽 포화도가 감소할수록 확장되며, 그 두께는 $\\eta_\\delta$($s=0.99$인 $\\eta$ 값)로 정량화된다.", "figure_refs": [4]}, {"type": "formula", "label": "식 (44) — 이상 경계층 두께", "latex": "\\delta^* = \\eta_\\delta\\left(\\frac{x^*}{Pe_{2\\phi}}\\right)^{1/2}", "description": "층 가장자리 상사 변수로부터의 무차원 이상 영역 두께; $\\eta_\\delta$ 값은 Table 2에 표로 제시된다(예: $s_w=0$에서 1.689, $s_w=0.8$에서 0.850)."}, {"type": "bullet", "text": "스케일된 축방향 혼합물 속도 $\\gamma u^*$(Fig. 5)는 포화도처럼 벽으로 갈수록 점차 감소한다: 액체 조성이 줄면 혼합물 동점성계수가 상승(증기가 동점성적으로 훨씬 큼)하여 유동을 감속시키며; 건조 근처에서 벽 근처 혼합물은 축방향으로 거의 정지한다. 이 겉보기 무슬립은 유동-포화도의 강한 결합에서 비롯하며 Darcy 법칙의 Brinkman 수정이 아니다.", "figure_refs": [5]}, {"type": "bullet", "text": "양의 스케일된 횡방향 속도(Fig. 6)는 층 외부로의 변위 유동이며, 벽 포화도가 낮아질수록 더 많은 유체가 변위된다 — 층 내부에서 증발한 액체가 더 높은 점성의 혼합물을 형성해 연속성에 의해 바깥으로 밀려나며, 이는 단상 경계층의 점성 변위와 유사하다.", "figure_refs": [6]}, {"type": "bullet", "text": "개별 상 유동장은 Part I의 대수 관계 $\\rho_l\\mathbf{u}_l=\\mathbf{j}+\\lambda\\rho\\mathbf{u}$와 $\\rho_v\\mathbf{u}_v=-\\mathbf{j}+(1-\\lambda)\\rho\\mathbf{u}$로 혼합물 해에서 복원된다; Fig. 7은 증기가 주로 수직으로(벽 근처에서 횡방향 생성) 이동하고 액체 속도가 증발하며 벽에서 소멸하는 공류(co-current) 상향 이상 유동을 보인다.", "figure_refs": [7]}, {"type": "formula", "label": "식 (45)-(48) — 상 플럭스 관계와 명시적 성분 형태", "latex": "\\rho_l\\mathbf{u}_l = \\mathbf{j} + \\lambda\\rho\\mathbf{u}, \\qquad \\rho_v\\mathbf{u}_v = -\\mathbf{j} + (1-\\lambda)\\rho\\mathbf{u}", "description": "Part I의 대수적 상 복원 관계로, $\\bar\\rho=\\rho_v/\\rho_l$와 함께 $u_l^*,v_l^*$ 및 $\\bar\\rho u_v^*,\\bar\\rho v_v^*$의 명시적 $x$·$y$ 성분 형태(식 47-48)로 무차원화된다. FLAG: 전체 식 (47)-(48) 성분 표현은 $\\varepsilon$ 차수 보정항을 포함하는데 이 스캔 원본에서 부분적으로만 판독 가능하여, 원본 대조 검증 전까지 여기서는 생략한다."}, {"type": "bullet", "text": "벽 열유속(Fig. 8): $Q_x/\\sqrt{Pe_{2\\phi}X}$는 벽 포화도가 감소할수록 커지며 건조 한계 상수 $1.451\\times10^{-3}$로 수렴한다; 여러 $s_w$에 대한 비례계수는 Table 2에 표로 제시된다.", "figure_refs": [8]}, {"type": "formula", "label": "식 (49)-(52) — 벽 열유속, 건조, 평균 건조 열유속", "latex": "\\frac{Q_x}{\\sqrt{Pe_{2\\phi}X}} = \\hat{D}(s_w)[s'(0)]\\;(s_w\\neq0), \\quad \\frac{Q_x}{\\sqrt{Pe_{2\\phi}X}} = 0.2415\\,a_0^{5}\\;(s_w=0), \\quad \\frac{\\bar{Q}}{\\sqrt{Pe_{2\\phi}}} = 2\\hat{D}(s_w)[s'(0)], \\quad \\bar{Q}_{\\mathrm{dry}} = 2.9\\times10^{-3}Pe_{2\\phi}^{1/2}", "description": "상사해로부터의 국소 벽 열유속, 그 특이(건조) 형태, 벽 평균 열유속, 그리고 $Pe_{2\\phi}^{1/2}$로 스케일되는 평균 건조 열유속. FLAG: 특이 경우 $a_0$의 지수(5로 판독)와 $\\bar{Q}_{\\mathrm{dry}}$의 상수는 손상 스캔에서 온 것이므로 원본 대조 검증 필요."}]}, "discussion": {"content": [{"type": "bullet", "text": "혼합물 정식화가 다공성 매질 내 고전적 대류 물질전달과 강한 유사성을 갖는 점이 경계층 처리와 상사해를 가능하게 하며 — 번거로운 분리유동모델과 달리 모델이 이상 경계층 유동을 깔끔히 드러낸다는 Part I의 주장을 검증한다."}, {"type": "bullet", "text": "단상 경계층과의 근본 차이는 평균 혼합물 수송 물성이 액체 포화도에 따라 급격히 변한다는 것으로, 이는 상수 물성 가정을 금하고 더 정교한(수치) 절차를 요구한다; 이것이 부호가 바뀌는 포화도 프로파일 곡률의 물리적 기원이다.", "figure_refs": [3, 4]}, {"type": "bullet", "text": "벽 근처 축방향 무슬립 같은 거동은 Darcy 법칙의 Brinkman 수정이 아님이 명시적으로 경고된다; 그것은 유동장과 액체 포화도장의 강한 상호관계, 즉 혼합물의 가변 동점성계수에서 비롯하는 진정한 이상 효과다.", "figure_refs": [5]}, {"type": "bullet", "text": "횡방향 변위 유동(증발이 혼합물 점성을 높이며 유체가 바깥으로 밀림)은 단상 점성 변위를 반영하여, 혼합물 모델이 상변화를 반영하면서도 인식 가능한 경계층 물리를 재현함을 보인다.", "figure_refs": [6]}, {"type": "bullet", "text": "모델은 개별 상 정보를 뭉개지 않고 유지한다: 대수적 상 복원 관계가 단일 혼합물 해로부터 증기·액체 유동장(공류 상향, 벽 근처 횡방향 증기 생성, 벽에서 소멸하는 액체)을 재구성한다.", "figure_refs": [7]}, {"type": "bullet", "text": "벽 열유속 결과는 구체적 공학 출력 — $\\bar{Q}_{\\mathrm{dry}}\\propto Pe_{2\\phi}^{1/2}$로 스케일되는 건조 열유속 — 을 주지만, 이 구성에 대한 실험 데이터 부재로 현재 검증이 불가능하여 모델 예측으로 남는다."}, {"type": "bullet", "text": "다루기 쉬움에도 불구하고 강한 유동-포화도 결합은 이상 문제를 완전 해석적으로 풀 수 없게 만든다; 반해석적 상사 + 수치 적분(건조 시 특별한 벽 근처 급수 포함)이 혼합물 모델이 가능케 하는 실용적 경로다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "Part I의 이상 혼합물 모델이 모세관 다공성 매질에 매립된 가열판에 인접한 압력 구동 비등 유동에 성공적으로 적용되어 그 실용성을 확인했다."}, {"type": "bullet", "text": "틀 안에서 이상 경계층 유동이 예상되었고, 고전적 단상 경계층 이론과 유사한 근사를 사용해 경계층 방정식계가 유도되었다."}, {"type": "bullet", "text": "문제가 지배방정식을 상미분방정식으로 축약하는 상사 변환을 허용함을 보였고, 표준 구성 관계로 대표적 물-증기계에 대해 수치 적분되었다."}, {"type": "bullet", "text": "포화도 분포, 이상 혼합물 유동장, 개별 상 유동장, 그리고 (건조 한계를 포함한) 벽 포화도에 대한 벽 열유속 의존성에 대한 결과가 제시되었다."}, {"type": "bullet", "text": "고체 표면에 인접한 순수 부력 구동 비등 또는 응축 유동으로의 적용은 간단하다고 언급되며 향후 발표로 남겨진다."}, {"type": "bullet", "text": "압력·부력 복합 구동 이상 유동은 모델이 대향류 유동 패턴을 예측할 수 있는지 시험하기 위해 추가 연구로 제안된다. 본 연구는 미국 국립과학재단(NSF 지원금 CTS-8957149)의 부분 지원을 받았다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "해석은 건조(dryout) 이전 영역에 한정되며, 건조 이후(증기막) 영역은 여기서 풀지 않는다.", "source_quote": "Although the present analysis is restricted to the regime prior to dryout, it is, nevertheless, possible to deal with the post-dryout regime by combining the present results with traditional film flow analyses such as those given in refs. [13, 14].", "source_section": "introduction"}, {"claim": "정식화는 부력을 무시하고 — 압력 구동 유동만 고려 — 표면에서 일정(균일) 액체 포화도를 가정한다.", "source_quote": "The present investigation is limited to pressure-driven two-phase flow, while buoyancy effects are not taken into account. Furthermore, a constant liquid saturation is assumed to be present at the surface.", "source_section": "introduction"}, {"claim": "이 구성에 대한 적절한 실험 데이터가 없어 건조 열유속 예측의 검증이 현재로서는 불가능하다.", "source_quote": "Validation of the dryout prediction, equation (52), is not possible at the present time due to a lack of suitable experimental data, although measurements of the dryout heat flux are available for a volumetrically heated porous bed [19].", "source_section": "conclusion"}, {"claim": "유동장과 액체 포화도장 사이의 강한 결합 때문에 이상 문제는 완전한 해석해가 불가능하여 수치 적분이 필요하다.", "source_quote": "It is because of this high degree of coupling that a two-phase problem like that considered here is not amenable to analytical solutions.", "source_section": "results"}], "future_works": [{"claim": "혼합물 모델을 고체 표면에 인접한 순수 부력 구동 비등 또는 응축 유동에 적용하며, 이는 향후 발표로 미룬다.", "source_quote": "Application of the mixture model to the analysis of a related class of two-phase flow problem, namely purely buoyancy-driven boiling or condensing flows adjacent to a solid surface, is straightforward. These problems also have many important technological applications, and will be the subject of a future publication.", "source_section": "conclusion"}, {"claim": "모델이 대향류(counter-current) 유동 패턴을 예측할 수 있는지 시험하기 위해 압력·부력 복합 구동 이상 유동을 연구한다.", "source_quote": "In addition, combined pressure- and buoyancy-driven two-phase flows deserve further study in order to test the ability of the present model to predict a counter-current flow pattern.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["다공성 매질 내 가열 표면을 따라 흐르는 비등에 관한 기존 해석 연구들은 모세관력을 무시하여, 증기와 액체를 뚜렷한 계면으로 나뉜 완전히 분리된 단상 층으로 취급했다.", "모세관 효과를 포함해야 데이터와 일치함을 보이는 실험 증거가 늘어나면서, 모세관력을 유지할 때 나타나는 진정한 이상(혼합) 영역 내부의 수송 해석이 요구되었다.", "추상적인 Part I 이상 혼합물 모델이 다룰 수 있고 풀리는 문제를 낳음을 보이는, 실질적으로 관련된 구체적 실증이 필요했다.", "체계적인 이상 경계층 이론이 존재하지 않았다; 번거로운 분리유동모델(SFM)이 이상 유동의 깔끔한 경계층 처리를 가로막았다."], "addressed_by_this_work": ["혼합물 모델은 모세관 확산을 명시적으로(모세관 확산계수 D(s)) 유지하며, 분리된 단상 층을 가정하지 않고 완전한 이상 혼합 영역을 해석한다.", "반해석적 상사해를 얻는다: 높은 이상 Peclet 수에서 유효한 경계층 근사가 지배방정식을 상미분방정식으로 축약하고, 이를 Gear 강성 적분기와 슈팅으로 풀어 포화도·속도장을 얻는다.", "모델은 이상 혼합물 물성, (대수적으로 복원되는) 개별 상 유동장, 이상 경계층 두께, 그리고 건조 한계를 포함한 벽 열유속 분포를 정량적으로 제공한다.", "새 틀 안에서 체계적 이상 경계층의 존재가 확립되어 최초의 상세한 그러한 해를 제공하고 Part I의 다루기 쉬움(tractability) 주장을 확증한다."], "remaining_unresolved": ["부력 구동 및 압력/부력 복합 구동(대향류) 이상 유동은 향후 과제로 남는다.", "건조 이후 증기막 영역은 여기서 풀지 않는다(전통적 막유동 해석과 연결만 가능).", "이 압력 구동 구성에 대한 건조 열유속 예측은 실험적으로 미검증 상태로 남는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
