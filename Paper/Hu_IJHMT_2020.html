@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>A modified energy equation model for flow boiling in porous media and its application to transpiration cooling at low pressures with transient effect</title>
+    <meta name="keywords" content="flow boiling in porous media, transpiration cooling, multiphase mixture model, kinetic enthalpy, vapor blockage, low pressure, transient effect, non-uniform heat flux, porous structure design, numerical">
+    <meta name="paper-authors" content="Haowei Hu, Peixue Jiang, Xiaolong Ouyang, Cheng Zhao, Ruina Xu">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 158, 2020, Art. 119745 · DOI: 10.1016/j.ijheatmasstransfer.2020.119745">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">A modified energy equation model for flow boiling in porous media and its application to transpiration cooling at low pressures with transient effect</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Haowei Hu, Peixue Jiang, Xiaolong Ouyang, Cheng Zhao, Ruina Xu</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 158, 2020, Art. 119745 · DOI: 10.1016/j.ijheatmasstransfer.2020.119745</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 수치 연구는 <span class="term">다상 혼합물 모델(MPMM)</span>(Wang-Beckermann)의 에너지 방정식을 <span class="term">운동 엔탈피 $h_k$</span>를 주 변수로 사용하여 재구성하며 — $h_k$를 이렇게 사용한 것은 처음 — 저압·과도 효과 하에서 다공성 매질의 <span class="term">유동 비등(flow boiling)</span>과 상변화 <span class="term">증산냉각(transpiration cooling)</span>을 모델링한다. 이 재구성은 단상/이상 전이에서의 비물리적 점프와 $h$-$s$ 비단조 경향을 제거하고, 부드러운 전이를 유지하며, (비등온) 이상 영역의 온도 구배를 보존하고, 포화도-엔탈피 관계를 명시적으로 만들며, 결정적으로 원래 MPMM의 이류 계수 $\gamma_h$(분모에 포화도 $s$가 있어 고비선형이며 이상 영역에서 발산 유발)를 단순 질량유속 $\rho\mathbf{u}$로 대체하여 수렴성과 정확도를 크게 개선한다. 실험(최대 오차 5.5%)으로 검증되었으며, <span class="term">저압</span>에서 비등점이 크게 이동(10 kPa에서 10 kPa당 약 15 K 대 100 kPa에서 약 3 K)하여 이상 영역이 뚜렷이 비등온이 되고 단상 영역 대비 <span class="term">역전된 온도 구배</span>(N자형 온도 분포)를 가짐을 보인다. 또한 경계의 <span class="term">비균일 열유속</span>이 비균일 질량유속 분포를 유발함을 보인다: 고열유속 측이 먼저 기화하여 유동 저항이 급증(증기 점성 ~50배 액체)하고, 냉각제가 저열유속 측으로 측방 우회하여 우선 유로를 형성하며, 굶주린 고유속 측이 과열되어 — <span class="term">증기 폐색</span>이 국소 소손(&gt;900 K)과 열보호 실패를 일으킨다. 세 가지 해법이 제안된다: 조율된 다공성 판 구조(공극률/입자 직경 구배), 과도 질량유속 조율, 그리고 열유속 구역별 저장조 챔버 분할.</div>
+            <div class="keywords"><span class="keyword-chip">flow boiling in porous media</span><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">multiphase mixture model</span><span class="keyword-chip">kinetic enthalpy</span><span class="keyword-chip">vapor blockage</span><span class="keyword-chip">low pressure</span><span class="keyword-chip">transient effect</span><span class="keyword-chip">non-uniform heat flux</span><span class="keyword-chip">porous structure design</span><span class="keyword-chip">numerical</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공성 매질의 유동 비등은 지열 시스템, 히트파이프, 항공우주 열제거를 뒷받침하며, 상변화 증산냉각은 고열유속 열보호의 유망한 추세다. 모세관 구동 증기 포집/돌파와 고비선형 수송 방정식 때문에 상 분포와 상변화 열전달 예측이 어렵다. 다상 혼합물 모델(MPMM)은 액체와 기체를 단일 혼합물로 취급해 방정식 수를 줄이지만, 기존 MPMM 정식화는 이상 영역을 등온으로, 물성을 일정으로 가정하여 — 비등점이 크게 이동하는 저압에서 무효다. 본 논문은 더 나은 수렴성과 정확도를 위해 운동 엔탈피로 MPMM 에너지 방정식을 재구성하고, 증산냉각의 저압·과도·증기 폐색 거동을 연구할 것을 제안한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 MPMM 계보(Wang-Beckermann, Wang-Cheng)와 비단조성·과열 영역 불확정성·계면 점프·명시적 s-h 관계를 다룬 연속적 엔탈피/운동 엔탈피 정련에 기반한다. 또한 실험적 증산냉각·증기 폐색 문헌(Huang 등), 구조 최적화 연구(Shi-Wang, Dong 등, Wu 등), 그리고 LTE-대-LTNE 모델링 배경에 의존한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">MPMM 보존 방정식(연속, 운동 밀도를 갖는 Darcy 운동량, 원래 혼합물 엔탈피 에너지 방정식)에서 출발하여, 본 논문은 에너지 방정식을 근사 없이 운동 엔탈피 형태(식 4)로 재배열하는데, 그 이류 계수는 단순히 질량유속이어서 원래 이류 계수의 발산 유발 포화도-분모 항을 피한다. 과도·확산·소스 계수(식 5-7)와 운동 엔탈피 대비 상대 이동도·온도의 명시적 조각별 관계(식 8-9)가 모델을 완성하며, 평활화가 전이에서 도함수를 연속으로 유지한다. 모델은 Xenon 램프 소결 청동 실험(최대 오차 5.5%)으로 검증되고 COMSOL Multiphysics(FEM, BDF 시간 전진, MUMPS, Newton 반복)에서 세분 구조 격자로 풀리며, 연구 조건에 LTE가 허용 가능한 것으로 가정된다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">결과는 세 결합 거동을 다룬다. 과도/저압: 저압에서 비등점이 크게 이동(10 kPa에서 10 kPa당 약 15 K)하여 이상 영역이 매우 비등온이 되고 단상 영역 대비 역전된 온도 구배(N자형 분포)를 가지며; 하중 변화(열유속 증가 또는 압력 감소)는 정상상태 도달에 수십 초가 걸리고 압력 변화가 열유속 변화보다 큰 영향을 준다. 증기 폐색: 비균일 열유속(1~0.5 MW/m^2) 하에서 고열유속 측이 먼저 기화하고 유동 저항이 급증(증기 점성 ~50배 액체)하여 냉각제가 저유속 측으로 측방 우회해 우선 유로를 형성하며, 굶주린 고유속 측이 900 K를 넘어 과열(국소 소손)한다. 해법: 조율된 공극률/입자 직경 구배, 과도 질량유속 제어(타이밍 민감), 저장조 챔버 분할이 모두 판을 균일한 ~330 K로 회복시킨다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고찰은 운동 엔탈피 재구성을 수치적·물리적 진전 모두로 규정한다: 수치적으로는 포화도-분모 비선형성과 계면 점프를 제거해 강건한 수렴을 주고, 물리적으로는 저압에서 필수적인 이상 온도 구배를 보존한다. 저압 역전 구배는 압력 의존 포화 온도의 직접적 결과로, 증기 폐색 실패는 비균일 가열 하 점성 구동 유동 재분포 불안정으로 해석한다. 세 해법은 단일 설계 원리 — 판을 따라 국소 열유속-대-질량유속 비(따라서 증기 포화도와 유동 저항)를 균일하게 유지 — 로 통합된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">저압 다공성 매질 유동 비등을 위해 운동 엔탈피 에너지 방정식을 갖는 수정 다상 혼합물 모델이 제안된다. 이는 과도 이상 온도 구배를 예측하고, 수렴성과 정확도를 개선하며, 부드러운 단상/이상 전이로 비물리적 점프를 제거한다. 상변화 증산냉각에 적용하여, 강한 저압 효과(10 kPa에서 3 mm당 15 K)와 역전된 이상 온도 구배, 하중 과도 하 수십 초의 응답 지연, 그리고 고온측을 굶주리게 하여 소손시킬 수 있는 비균일 열유속 하 증기 폐색을 보인다. 질량유속과 공극률을 제어해 폐색을 피할 수 있다: 적절한 공극률/입자 직경 구배(식 11)와 저장조 챔버 분할이 측방 유동을 효과적으로 억제한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 42</span></summary>
+            <ol class="ref-list"><li>C. Y. Wang and C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media—I. Formulation, Int. J. Heat Mass Transf. 36, 2747, 1993</li><li>C. Y. Wang and P. Cheng, A multiphase mixture model for multiphase, multicomponent transport in porous media, Part I, Int. J. Heat Mass Transf. 39, 3607-3618, 1996</li><li>C. Y. Wang, A fixed-grid numerical algorithm for two-phase flow and heat transfer in porous media, Numerical Heat Transfer, 1997</li><li>G. Huang, Y. H. Zhu, Z. Y. Liao, X. L. Ouyang, P. X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transf. 114, 1201-1213, 2017</li><li>O. R. Alomar, M. A. A. Mendes, D. Trimis, S. Ray, Simulation of complete liquid-vapour phase change process inside porous evaporator using local thermal non-equilibrium model, Int. J. Therm. Sci. 94, 228-241, 2015</li><li>H. Y. Li, K. C. Leong, L. W. Jin, J. C. Chai, Transient behavior of fluid flow and heat transfer with phase change in vertical porous channels, Int. J. Heat Mass Transf. 53, 5209-5222, 2010</li><li>S. Ray and O. R. Alomar, Simulation of liquid-vapour phase change process inside porous media using modified enthalpy formulation, Int. J. Therm. Sci. 105, 123-136, 2016</li><li>W. J. Dong, J. H. Wang, S. Y. Chen, B. C. Ai, X. G. Luo, Modelling and investigation on heat transfer deterioration during transpiration cooling with liquid coolant phase-change, Appl. Therm. Eng. 128, 381-392, 2018</li><li>J. X. Shi and J. H. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transp. Porous Med. 87, 703-716, 2011</li><li>N. Wu, J. H. Wang, F. He, L. Chen, B. C. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transf. 127, 882-891, 2018</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다공성 매질의 유동 비등은 널리 사용된다(지열 시스템, 히트파이프, 항공우주 열제거); 상 분포와 가스-액체-고체 결합 이해는 운전 매개변수 최적화를 돕지만, 모세관 구동 증기 포집과 돌파가 정확한 예측을 큰 도전으로 만든다."}, {"type": "bullet", "text": "두 모델링 계열이 있다: 각 상에 보존 방정식을 쓰고 계면을 추적하는 다상 유동 모델(MPM, 방정식이 많고 질량원 결정이 어려움)과, 혼합물 엔탈피로 액체·기체를 혼합물로 취급해 방정식 수를 줄이는 <span class=\"term\">다상 혼합물 모델(MPMM)</span>(Wang-Beckermann; Wang-Cheng가 수정, 효율성으로 널리 사용)."}, {"type": "bullet", "text": "MPMM 혼합물 엔탈피는 점진적으로 정련되었다: 단상-이상 전이 시 $h$-$s$ 비단조 경향 제거(Wang 등), 과열 증기 영역의 불확정항 회피(Wang), 단상/이상 계면의 비물리적 점프 제거(Li 등; Alomar 등), 그리고 $s$-$h$ 관계 명시화(Alomar 등)."}, {"type": "bullet", "text": "새로운 저압 응용(항공우주 비행체, 소형 냉각 시스템, 이상 열사이펀)은 저압 상변화 증산냉각 연구를 촉발하며, 10 kPa에서 ~10 kPa 압력 강하마다 비등점이 ~15 K(100 kPa에서는 ~3 K만) 이동하여 상변화 영역이 더 이상 등온이 아니고 상간 물성차가 커진다."}, {"type": "bullet", "text": "상변화 증산냉각 중 저장조를 통해 다공성 판으로 펌핑된 액체 냉각제가 비등하여 벽열을 제거하고 증기가 주류에 보호막을 형성하지만; 가열측의 <span class=\"term\">증기 폐색</span>과 동적 응답 지연이 냉각 효과를 낮추고 다공성 벽을 소손시킬 수 있다."}, {"type": "bullet", "text": "기존 MPMM 연구는 이상 영역 온도 구배를 무시하고 밀도·포화 엔탈피·점성·잠열을 일정으로 가정하는데 — 온도/압력차가 클 때 부적절하며, 비등점과 물성이 유체 압력에 따라 크게 변해 상변화 과정을 복잡하게 만든다."}, {"type": "bullet", "text": "본 논문은 운동 엔탈피 $h_k$로 MPMM 에너지 방정식을 재구성하여 수렴성을 높이고 계산 시간을 줄이며, 비등온 영역·이상 열전달·큰 물성 변화를 고려한다; 이후 증산냉각(열유속 0.5-1 MW/m^2, 질량유속 0.5-0.55 kg/m^2s, 압력 10-100 kPa)을 역전 온도 구배, 과도 응답, 증기 폐색 메커니즘을 포함해 모사하고 세 가지 정량 해법을 제안한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "MPMM 토대: Wang과 Beckermann이 이상/다상 혼합물 모델을 도입했고; Wang과 Cheng이 다상·다성분 수송으로 확장하여, 본 논문이 수정하는 혼합물 엔탈피 에너지 방정식을 확립했다."}, {"type": "bullet", "text": "엔탈피 정식화 정련: Wang 등은 전이 시 h-s 비단조 경향을 제거했고; Wang은 과열 증기 불확정항을 회피했으며; Li 등과 Alomar 등은 비물리적 계면 점프를 제거했고; Alomar 등은 s-h 관계를 명시화했다 — 본 연구가 h_k를 주 변수로 채택하여 정점을 이루는 계보다."}, {"type": "bullet", "text": "실험적 증산냉각·증기 폐색 증거: Huang 등은 소결 다공성 판에서 가열측 증기 폐색과 동적 응답 지연을 관찰했고; 기타 실험(Ma 등; Wang 등)은 상변화 냉각 거동과 냉각 방식 비교를 기록한다."}, {"type": "bullet", "text": "구조 설계와 비균일성: Shi와 Wang은 유전 알고리즘으로 2층 다공성 매질을 최적화했고; Dong 등은 상변화 증산냉각 중 열전달 악화를 모델링했으며; Wu 등은 비균일 투과율로 노즈콘 냉각을 최적화했고; 측방 유동 억제를 위한 저장조 챔버 분할(Xiong 등)은 해법 (3)의 근거다."}, {"type": "bullet", "text": "LTE 대 LTNE 배경: 국소 열평형은 이 사례들의 작은 고체-유체 온도차에 허용 가능(선행 문헌 지지)한 것으로 채택되며, LTNE(Jiang과 Ren)는 큰 온도차나 넓은 과열 증기 영역의 대안으로 언급된다."}, {"type": "bullet", "text": "구성 관계 폐쇄: 모세관 압력의 Leverett J 함수(Leverett, 1941), 투과율의 Carman-Kozeny 관계, 그리고 이산요소법 유효 열전도도 모델(Ouyang 등)이 수치 모델을 닫는다."}]}, "method": {"content": [{"type": "bullet", "text": "MPMM 보존 방정식: 혼합물 연속과 운동 밀도 $\\rho_k$를 갖는 Darcy형 운동량; 혼합물 밀도 $\\rho=\\rho_l s_l+\\rho_v s_v$, 총 질량유속 $\\rho\\mathbf{u}=\\rho_l\\mathbf{u}_l+\\rho_v\\mathbf{u}_v$, 상대 이동도 $\\lambda_i$, 혼합물 점성 $\\nu(s)$는 Wang-Beckermann을 따른다."}, {"type": "formula", "label": "식 (1)-(2) — MPMM 연속과 Darcy 운동량", "latex": "\\varepsilon\\frac{\\partial\\rho}{\\partial t} + \\nabla\\!\\cdot(\\rho\\mathbf{u}) = 0, \\qquad \\rho\\mathbf{u} = -\\frac{K}{\\nu}\\left(\\nabla p - \\rho_k\\mathbf{g}\\right)", "description": "혼합물 질량 보존(공극률 $\\varepsilon$)과, 절대 투과율 $K$·혼합물 동점성 $\\nu$·중력항 앞의 운동 밀도 $\\rho_k=\\rho_l\\lambda_l+\\rho_v\\lambda_v$를 갖는 Darcy 운동량."}, {"type": "formula", "label": "식 (3) — 원래 MPMM 혼합물 엔탈피 에너지 방정식", "latex": "\\Omega\\frac{\\partial(\\rho h)}{\\partial t} + \\nabla\\!\\cdot(\\gamma_h\\,\\mathbf{u}\\rho h) = \\nabla\\!\\cdot(\\Gamma_h\\nabla h) + \\nabla\\!\\cdot\\!\\big[\\Gamma_h(h-h_{v,\\mathrm{sat}})\\nabla\\ln\\rho\\big] + \\nabla\\!\\cdot\\!\\left[f(s)\\frac{K\\Delta\\rho\\,h_{fg}}{\\nu_v}\\mathbf{g}\\right] + \\dot Q", "description": "원래 혼합물 엔탈피 에너지 방정식; 그 이류 계수 $\\gamma_h$는 분모에 포화도 $s$를 고비선형으로 담고 있어 이상 영역에서 발산을 유발할 수 있다."}, {"type": "bullet", "text": "모델 수정(핵심 기여): 원래 혼합물 엔탈피 $\\rho h$ 대신 <span class=\"term\">운동 엔탈피</span> $h_k=\\lambda_l h_l+\\lambda_v h_v$를 주 변수로 사용한다. 이류항이 $(\\rho\\mathbf{u})\\!\\cdot\\!\\nabla h_k$가 되므로($\\nabla\\!\\cdot(\\rho\\mathbf{u}h_k)=(\\rho\\mathbf{u})\\!\\cdot\\!\\nabla h_k + h_k\\nabla\\!\\cdot(\\rho\\mathbf{u})$에서 둘째 항을 연속식으로 제거), 발산 유발 포화도 분모가 제거되고 수렴이 개선된다."}, {"type": "formula", "label": "식 (4) — 수정된 운동 엔탈피 에너지 방정식", "latex": "\\Omega_k\\frac{\\partial h_k}{\\partial t} + (\\rho\\mathbf{u})\\!\\cdot\\!\\nabla h_k = \\nabla\\!\\cdot\\Gamma_k(h_k) + \\gamma_k", "description": "네 항: 과도($\\Omega_k\\,\\partial h_k/\\partial t$), 이류($(\\rho\\mathbf{u})\\!\\cdot\\!\\nabla h_k$, 계수가 단순 질량유속), 확산($\\nabla\\!\\cdot\\Gamma_k(h_k)$), 소스($\\gamma_k$). 식 3에서 추가 가정 없이 수학적 변환으로 유도되며; 이상 영역의 온도 구배를 보존한다."}, {"type": "formula", "label": "식 (6)-(7) — 확산 계수와 소스 항", "latex": "\\Gamma_k(h_k) = \\left[\\frac{K\\lambda_l\\lambda_v}{\\nu}\\frac{\\mathrm{d}p_c}{\\mathrm{d}\\lambda} + k_{\\mathrm{eff}}\\frac{\\mathrm{d}T}{\\mathrm{d}h_k}\\right]\\nabla h_k + \\frac{K\\lambda_l\\lambda_v}{\\nu}h_{fg}\\Delta\\rho\\,\\mathbf{g}, \\qquad \\gamma_k = \\dot Q", "description": "모세관 압력 구배 항과 유효 전도 항(이상 영역에서 $k_{\\mathrm{eff}}\\nabla T$를 보존하여 저압 비등온 구배를 보장)에 중력 항을 더한 확산 계수; 소스 항은 체적 열원. 과도 계수 $\\Omega_k$(식 5)는 고체 열용량과 상변화 물성 도함수를 모은다."}, {"type": "formula", "label": "식 (8)-(9) — 운동 엔탈피로부터의 명시적 상대 이동도와 온도", "latex": "\\lambda_l = \\begin{cases} 1, & (h_{v,\\mathrm{sat}}-h_k)/h_{fg}(p) > 1 \\\\ (h_{v,\\mathrm{sat}}-h_k)/h_{fg}(p), & 0 < (h_{v,\\mathrm{sat}}-h_k)/h_{fg}(p) < 1 \\\\ 0, & (h_{v,\\mathrm{sat}}-h_k)/h_{fg}(p) < 0 \\end{cases}, \\quad T = \\begin{cases} h_k/c_{pl} + T_{\\mathrm{sat},0}, & \\lambda_l = 1 \\\\ T_{\\mathrm{sat}}(p), & 0 < \\lambda_l < 1 \\\\ \\dfrac{h_k + c_{pv}T_{\\mathrm{sat}}(p) - h_{fg}(p) - c_{pl}(T_{\\mathrm{sat}}(p)-T_{\\mathrm{sat},0})}{c_{pv}}, & \\lambda_l = 0 \\end{cases}", "description": "운동 엔탈피로부터 상대 이동도(액체/이상/증기)와 온도로의 명시적·단일값 사상; 이상 분기에서 $T=T_{\\mathrm{sat}}(p)$가 압력 의존적이며, 이것이 저압 역전 온도 구배를 만든다. 이 명시성이 기존 정식화의 암시적 s-h 문제를 제거한다."}, {"type": "bullet", "text": "평활성과 단상 일관성: 액체 영역에서 $\\lambda_l=s_l=1$이므로 $h_k=h_l$이고 식 4가 단상 에너지 방정식으로 축약된다($\\Gamma_k\\to k_{\\mathrm{eff}}\\nabla T$); 평활화 함수가 전이에서 충분히 작은 범위에 걸쳐 1차 도함수를 연속으로 유지하여 비물리적 점프를 제거한다."}, {"type": "bullet", "text": "실험 검증: 소결 청동 다공성 시편(직경 40 mm, 높이 100 mm, 공극률 0.318, 입자 직경 0.2 mm)을 Xenon 램프(~0.21 MW/m^2)로 가열하고 T형 열전대 7개로 측정; 수정 모델이 벽 온도 측정과 최대 상대 오차 5.5%로 일치했다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "수치 설정: 냉각 모듈(다공성 판 + 저장조 + 불투과성 고체)을 COMSOL Multiphysics 5.3(FEM)에서 방정식을 PDE로 표현하고 BDF 암시적 시간 전진(10^-5~0.5 s), MUMPS 직접 해법, 고비선형 Newton 반복으로 $\\rho$·$p$·$h_k$를 동시 갱신하며 푼다; 투과율은 Carman-Kozeny, $k_{\\mathrm{eff}}=5.5$ W/m/K, 증기는 이상기체. 균일 펌프 공급이 비균일 열유속 하 다공성 판 입구에서 비균일해질 수 있으므로 저장조를 포함한다.", "figure_refs": [3, 4]}, {"type": "bullet", "text": "격자 독립성과 LTE 범위: 고온 출구와 판-저장조 계면 근처를 세분한 구조 격자; 270x410 노드 선택(더 성긴/고운 격자 대비 ~2%/0.4% 이내). 연구된 저압·중간 온도차 사례(작은 고체-유체 온도차, 선행 문헌 지지)에 LTE가 허용 가능한 것으로 판단; LTNE는 큰 온도차나 넓은 과열 증기 영역에만 적용된다."}]}, "results": {"content": [{"type": "bullet", "text": "저압 비등점 이동: 10 kPa 외부 압력에서 ~10 kPa 변화마다 비등점이 ~15 K 이동(100 kPa에서는 ~3 K만)하므로, 3 mm 이상 구간에서 온도차가 10 kPa에서 ~15 K 대 100 kPa에서 ~1 K — 저압에서 이상 영역이 극도로 비등온이다.", "figure_refs": [5, 6]}, {"type": "bullet", "text": "역전 온도 구배 / N자형: 이상 유체가 국소(압력 의존) 비등점에 머무는 반면 압력이 유동 방향으로 감소하므로, 이상 영역 온도가 유동 방향으로 감소한다 — 단상 영역 구배 및 판으로 유입되는 외부 열유속과 반대 — 실험에서 관찰된 N자형 온도 분포를 만든다.", "figure_refs": [6]}, {"type": "bullet", "text": "과도 응답 지연: 100 s에 걸쳐 0~1 MW/m^2로 램프된 열유속(Case 2)은 램프 후 ~5 s에 정상상태에 도달하는 반면, 100~10 kPa로 100 s에 걸쳐 램프된 압력(Case 3)은 ~25 s 더 걸린다 — 이착륙 중 압력 변화가 열유속 변화보다 상변화 과정에 더 큰 영향을 주며, 과온/진동 위험의 냉각 지연을 나타낸다.", "figure_refs": [7]}, {"type": "bullet", "text": "증기 폐색 메커니즘(Case 4 대 5, 비균일 1~0.5 MW/m^2): 고온단에서 판이 빠르게 이상 영역에 진입; 증기가 형성되면 국소 유동 저항이 증기 포화도와 함께 급증(증기 점성 ~50배 액체)하여, 냉각제가 고열유속 측에서 저열유속 측으로 측방 유동하며 우선 유로를 형성 — 고열유속 측이 더 적은 냉각제를 받는다(증기 폐색).", "figure_refs": [8, 9]}, {"type": "bullet", "text": "열보호 실패: 질량유속 0.5 kg/m^2s(균일 1 MW/m^2에서는 충분하나 비균일 유속 하에서는 부족)로, Case 4의 굶주린 고온측이 50 s 후 900 K를 넘어 계속 상승(국소 소손)하는 반면, 충분히 공급된 Case 5는 ~330 K로 25 s 후 안정 유지된다.", "figure_refs": [8]}, {"type": "bullet", "text": "해법 1 — 다공성 구조 설계: 공극률(또는 입자 직경) 구배를 입력 열유속에 맞춰 조율(식 11)하면 판을 따라 유동 저항이 균일해진다; 포화도 균형이 $s_v \\sim q/\\dot m$을 주고, Carman-Kozeny($K\\propto \\varepsilon^3/(1-\\varepsilon)^2\\,d_p^2$)를 통해 고열유속 영역에 더 높은 공극률을 배정하여 국소 최고 온도를 ~900 K(일정 공극률)에서 ~335 K로 낮춘다.", "figure_refs": [10, 11]}, {"type": "formula", "label": "식 (10) — 증기 포화도 대 열유속/질량유속 균형", "latex": "s_v = \\frac{qA - \\dot m\\,c_{pl}(T_{\\mathrm{sat}}-T_{in})}{\\dot m\\,h_{fg}} \\;\\sim\\; \\frac{q}{\\dot m}", "description": "증기 포화도가 국소 열유속-대-질량유속 비 $q/\\dot m$에 비례함을 보이는 경계 포화도 균형; 경계를 따라 $s_v$(따라서 점성)를 균일하게 유지하는 것이 구조나 질량유속을 열유속 프로파일에 맞추도록 동기부여하는 설계 목표다."}, {"type": "bullet", "text": "해법 1 주의: 식 11은 최적 공극률 분포다; 고열유속 측 공극률을 이를 크게 넘어 밀면 그곳 유동 저항이 너무 낮아져 역 우선 유로가 형성되고, 오히려 저열유속 측에서 증기 폐색이 나타난다(온도 재상승).", "figure_refs": [10]}, {"type": "bullet", "text": "해법 2 — 과도 질량유속 제어: 질량유속을 조기(Case 9, 5-15 s, 증기 포화도·저항 차이가 아직 작고 질량유속 편차 &lt;20%일 때)에 올리면(0.5~0.55 kg/m^2s) 폐색을 효과적으로 제거하지만, 늦게(Case 10, 20 s 후) 우선 유로와 큰 압력강하가 형성된 뒤에는 냉각제가 저온측으로 몰려 과도한 추가 냉각제(항공기에 불리한 무게/부피)를 요구한다 — 타이밍이 결정적이다.", "figure_refs": [12]}, {"type": "bullet", "text": "해법 3 — 저장조 챔버 분할: 총 수량을 바꾸지 않고 저장조를 둘(질량유속비 8:5, Case 11) 또는 셋(8:6:5, Case 12)으로 나누면 측방 유동이 자발적으로 억제되고 장(field)이 안정된 ~330 K 최고값 근처로 유지된다; 세 챔버가 둘보다 더 부드러운 전이와 더 균일한 온도/질량유속 분포를 준다.", "figure_refs": [13]}]}, "discussion": {"content": [{"type": "bullet", "text": "수치적 진전: 원래 이류 계수(이상 영역에서 발산할 수 있는 고비선형 분모의 포화도 $s$)를 단순 질량유속 $\\rho\\mathbf{u}$로 대체하고, 명시적 s-h_k 사상과 계면 평활화를 더한 것이 개선된 수렴과 계산 시간 감소를 준다."}, {"type": "bullet", "text": "물리적 충실도: 이상 확산 항에 $k_{\\mathrm{eff}}\\nabla T$를 보존(식 6)하면 저압에서 비등온 이상 영역과 온도 구배가 유지되는데, 이는 기존 등온-이상 MPMM 가정이 버리는 것 — 비등점이 압력에 따라 크게 변할 때의 핵심 정확도 이득이다."}, {"type": "bullet", "text": "저압 역전 구배: 이상 유체가 국소 압력 의존 포화 온도에 고정되고 압력이 유동 방향으로 떨어지므로, 이상 영역 온도가 유동 방향으로 감소(단상 대비 역전)하며, 이것이 관찰된 N자형 온도 프로파일의 물리적 기원이다."}, {"type": "bullet", "text": "유동 불안정으로서의 증기 폐색: ~50배 증기/액체 점성비는 어떤 국소 기화도 저항을 급격히 높이며, 비균일 가열 하 냉각제가 가장 뜨거운 영역에서 멀어지는 우선 유로를 자기조직한다 — 국소 소손과 열보호 실패로 이어지는 양의 되먹임 굶주림이다."}, {"type": "bullet", "text": "통합 설계 원리: 증기 포화도가 $q/\\dot m$에 비례(식 10)하므로 세 해법 모두 이 비를 균일하게 유지하려 한다 — 구조 설계는 투과율을 열유속 프로파일에 맞춰 균등화하고, 질량유속 조율은 뜨거운 영역에 더 많은 냉각제를 공급하며, 챔버 분할은 공급을 재분배 — 각각 유동 저항을 균일하게 유지하고 측방 유동을 억제한다."}, {"type": "bullet", "text": "과도/운용 함의: 압력 변화가 열유속 변화보다 상변화 과정에 더 영향을 주고 시스템이 재안정에 수십 초를 요하므로, 이착륙 같은 하중 과도 중 과온을 피하려면 냉각을 제때 작동시키고 (우선 유로가 형성되기 전에) 질량유속을 조기에 조율해야 한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "저압 상변화는 압력 구배를 따라 비등온 이상 영역과 상간 물성차 증대를 주며; 운동 엔탈피를 갖는 수정 MPMM이 저압 다공성 매질 유동 비등 연구를 위해 제안된다."}, {"type": "bullet", "text": "운동 엔탈피 모델은 저압에서 과도 이상 온도 구배를 효과적으로 예측하고, 수렴성과 정확도를 높이며, 단상과 이상 영역 사이의 부드러운 전이를 유지하면서 비물리적 점프를 제거한다."}, {"type": "bullet", "text": "저압 효과: 10 kPa에서 이상 영역 온도차가 3 mm 이내 ~15 K에 이르고 이상 온도 구배가 단상 영역 대비 역전된다; 하중 과도(열유속/외부 압력)는 정상상태 도달에 수십 초의 응답 지연을 유발한다."}, {"type": "bullet", "text": "비균일 열유속 하에서 증산냉각 효과가 증기 폐색으로 약화된다: 더 높은 열유속이 더 낮은 냉각제 공급을 낳고(증기 형성 시 높은 유동 저항), 폐색 위치는 다른 곳보다 몇 배 뜨거워지고 유량은 한 자릿수 낮아진다."}, {"type": "bullet", "text": "증기 폐색을 피하려면 질량유속과 공극률을 제어할 수 있다: 입력 열유속에 따라 적절한 공극률·입자 직경 구배를 설계(식 11)하고, 저장조를 분배 질량유속의 여러 챔버로 나누면 측방 유동을 효과적으로 피한다 — 산업 응용과 운전 조건 설계를 안내하는 기초 지식을 제공한다."}, {"type": "bullet", "text": "본 연구는 중국 국가자연과학기금 우수청년과학자(Grant No. 51722602)와 칭화대학 이니셔티브 과학연구 프로그램의 지원을 받았다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "본 연구는 국소 열평형(LTE) 가정을 사용하며, 이는 고체-유체 온도차가 작을 때만 허용된다; 큰 온도차나 넓은 과열 증기 영역은 국소 열비평형(LTNE) 처리를 요구한다.", "source_quote": "For this case, the assumption of local thermal equilibrium is acceptable to be used. If the temperature difference between the solid and fluid is large and the superheated vapor region covers a wide range inside the porous plate, local thermal non-equilibrium method will be applied to consider the heat transfer process between the solid and fluid phase.", "source_section": "method"}, {"claim": "증산냉각 중 주류(main flow) 효과는 직접 모델링되지 않고, 다공성 판 내부 상변화 과정에 집중하기 위해 비균일 열유속 경계조건으로 단순화된다.", "source_quote": "This effect is simplified as a non-uniform heat flux boundary condition to put more focus on the phase change process inside the porous plate in this paper.", "source_section": "method"}, {"claim": "최적 공극률 구배 설계(식 11)에는 한계가 있다: 공극률 구배가 이 최적값을 크게 초과하면 냉각제 유동이 역전되어 오히려 저열유속 측에서 증기 폐색이 발생할 수 있다.", "source_quote": "once the porosity gradient is far beyond this value, the reversal trend of coolant may occur ... an inverse favorable channel toward this side may form, which makes temperature rise again and vapor blockage may occur on the low-heat-flux side.", "source_section": "results"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["상변화 증산냉각은 동적 응답 지연, 저압에서의 강한 비등점 변화, 증기 폐색을 겪으며, 비선형 수송 방정식은 수렴이 어렵다.", "기존 MPMM 구현은 이상 영역의 온도 구배를 무시하고 물성(밀도, 포화 엔탈피, 점성, 잠열)을 일정하게 가정하는데, 이는 온도/압력차가 크거나 (비등점이 크게 변하는) 저압에서 부적절하다.", "증기 폐색을 피하기 위해 더 나은 구조를 설계하고 질량유속을 열유속에 맞춰 조율하도록, 적용 열유속과 운전 매개변수(다공성 구조, 질량유동 분포) 사이의 정량적 지침이 필요하다."], "addressed_by_this_work": ["운동 엔탈피 h_k를 주 변수로 MPMM 에너지 방정식을 재구성하여 비물리적 점프와 h-s 비단조 경향을 제거하고, 부드러운 단상/이상 전이를 유지하며, 비등온 이상 온도 구배를 보존하고, s-h_k 관계를 명시화하며, 수렴성을 개선(이류 계수가 단순 질량유속 rho*u가 됨)했다.", "수정 모델을 실험(최대 상대 오차 5.5%)으로 검증하고, 현실적 증산냉각 경계조건(열유속 0.5-1 MW/m^2, 질량유속 0.5-0.55 kg/m^2s, 압력 10-100 kPa)에 적용했다.", "저압 역전 온도 구배(N자형)를 규명하고, 과도 응답 지연(수십 초)을 정량화하며, 비균일 열유속 하 증기 폐색 메커니즘을 설명했다.", "세 가지 정량적 해법을 제안했다: 조율된 다공성 판 구조(식 11의 공극률/입자 직경 구배), 과도 질량유속 조율, 열유속 구역별 저장조 챔버 분할."], "remaining_unresolved": ["LTE 가정이 적용성을 제한한다; 큰 고체-유체 온도차나 넓은 과열 증기 영역은 여기서 풀지 않은 LTNE 모델을 여전히 요구한다.", "주류 효과는 비균일 열유속 경계조건으로 간접 표현될 뿐 명시적으로 모델링되지 않는다.", "공극률 구배 구조 설계는 민감하다: 최적 구배를 넘으면 우선 유로가 역전되며, 논문은 이를 지적하나 강건한 설계 규칙으로 완전히 해결하지는 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
