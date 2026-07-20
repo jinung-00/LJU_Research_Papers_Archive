@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced sandwich structures for thermal protection systems in hypersonic vehicles: A review</title>
+    <meta name="keywords" content="thermal protection system, sandwich structure, hypersonic vehicle, lattice cores, corrugated cores, honeycomb cores, foam cores, ceramic matrix composite, high-temperature alloys, active cooling">
+    <meta name="paper-authors" content="Vinh Tung Le, Ngoc San Ha, Nam Seo Goo">
+    <meta name="paper-journal" content="Composites Part B: Engineering, Vol. 226, 2021, Art. 109301 · DOI: 10.1016/j.compositesb.2021.109301">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Advanced sandwich structures for thermal protection systems in hypersonic vehicles: A review</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Vinh Tung Le, Ngoc San Ha, Nam Seo Goo</div>
+            <div class="journal">Composites Part B: Engineering, Vol. 226, 2021, Art. 109301 · DOI: 10.1016/j.compositesb.2021.109301</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 논문은 극초음속 비행체의 <span class="term">열보호 시스템(TPS)을 위한 샌드위치 구조</span>에 관한 포괄적 리뷰로, 증산냉각 논문이 아니라 구조/재료 리뷰이다(증산냉각은 여러 능동 냉각 방식 중 하나로 잠깐만 등장). TPS 냉각 유형(<span class="term">수동</span>, <span class="term">반수동</span>, <span class="term">능동</span>)과 샌드위치 코어 아키텍처(허니컴, 주름형/프리즘, 격자 트러스, 접힘형, 폼, 생체모사, 다층 코어)로 분야를 정리하며, 구조·재료 설계, 열/열기계 성능, 제조를 다룬다. 각 유형에 대해 설계 틀을 제시한다: 수동 설계는 열저항 네트워크 모델을 이용해 온도/강도/좌굴/처짐 제약 하에 면적 밀도를 최소화하고; 반수동은 히트파이프와 융삭을 다루며; 능동 냉각은 냉각제를 개방 코어 공극으로 통과시키고 무차원 열전달·펌핑동력 지수로 최적화한다. 고온 재료(Inconel/Nb-Cb752/Mo-Re 등 초합금, C/SiC·SiC/SiC·C/C-SiC·ZrB2-SiC 등 CMC)와 제조 경로(전통 접합, CVI/LSI/PIP 밀도화/소결, 적층제조)를 개관한다. 마지막으로 도전과제와 향후 방향을 제시한다: 순환 열기계 하중 하 피로/재사용성, 진동/충격/음향 거동, 대형 복잡 CMC 격자 부품의 AM, 통합 융삭+구조 TPS, 내장 센서 다기능 TPS.</div>
+            <div class="keywords"><span class="keyword-chip">thermal protection system</span><span class="keyword-chip">sandwich structure</span><span class="keyword-chip">hypersonic vehicle</span><span class="keyword-chip">lattice cores</span><span class="keyword-chip">corrugated cores</span><span class="keyword-chip">honeycomb cores</span><span class="keyword-chip">foam cores</span><span class="keyword-chip">ceramic matrix composite</span><span class="keyword-chip">high-temperature alloys</span><span class="keyword-chip">active cooling</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">진입/재진입 시 Mach &gt; 5로 비행하는 극초음속 비행체는 극심한 공력 가열에 직면하여, 구조를 온도 한계 내로 유지하면서 경량·재사용·정비 가능해야 하는 열차폐 — 열보호 시스템(TPS) — 를 요구한다. 서론은 TPS 재료의 역사적 발전(AVCOAT/PICA/SIRCA 등 융삭재, 재사용 타일/초합금, 현대 UHTC/CMC)을 개관하고, 저밀도와 고온 사용성·하중 지지를 결합한 통합 샌드위치 아키텍처가 신흥 추세라고 주장한다. 리뷰 범위를 제시한다: 다양한 TPS 유형을 위한 샌드위치 구조의 새로운 설계와 활용.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 더 넓은 샌드위치 구조 및 TPS 문헌 속에 자신을 위치시키며, 일반 샌드위치 구조 리뷰와 구별되는 TPS 초점을 둔다. TPS를 수동·반수동·능동 냉각 유형으로, 코어 아키텍처를 분류 체계로 확립하고, 기초적 금속 TPS(Blosser)와 CMC/고온 구조(Glass) 연구 및 셀룰러 재료 역학(Wadley)에 기반한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 TPS 샌드위치 유형 전반에 사용되는 설계/해석 틀을 제시한다. 수동 설계는 온도·응력·좌굴·처짐 제약 하에 면적 밀도를 최소화하며, 유효 열전도도를 위한 열저항 네트워크 모델(직렬/병렬 페이스시트+코어 저항)과 공력 압축 하중에 대한 해석적 파괴/좌굴 기준을 사용한다. 반수동 히트파이프는 열·구조적으로 해석된다(증기 압력·열구배 응력 대 벽 항복). 능동 냉각은 냉각제를 개방 코어 공극으로 통과시키고 무차원 열전달·펌핑동력 지수로 평가하여, 최대 고체-대-유입 냉각제 온도차를 최소화하도록 구조를 최적화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰의 핵심 종합은 냉각 유형별로 샌드위치 구성을 조사한다. 수동 냉각 TPS는 허니컴(금속 Inconel/PM2000 최대 ~1310-1473 K, 정사각 C/C-SiC 코어), 주름형/프리즘 코어(사다리꼴 Ti-6Al-4V, ZrO2/ZrB2 UHTC 1873 K, C/SiC, PCM 충전, 융삭 통합), 격자 트러스 코어(피라미드형 C/SiC 1873 K, 에어로겔 충전으로 차폐 ~35%-&gt;~70%), 접힘형, 폼(SiC 세라믹 폼 고열유속), 생체모사(가문비나무 줄기 경사 튜브, 갑오징어뼈 파동), 다층 코어를 상세히 다룬다. 반수동 TPS는 히트파이프(Mo-Re/Inconel/Nb, 리튬/나트륨 작동유체, Mach 5-8)와 융삭(허니컴/폼 코어 융삭 차폐)을 다룬다. 능동 TPS는 주름형·격자(사면체/Kagome/X형)·폼 코어를 통한 대류 냉각과 간략한 대류-증산 결합 폼 코어 사례를 다룬다. 대표 면적 밀도, 사용 온도, 차폐 백분율이 전반에 걸쳐 표로 제시된다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">비교 고찰은 코어 아키텍처·재료·제조 전반의 절충을 종합한다. 주기적 코어(격자, 주름)는 비강도/비강성에서 확률적 폼을 대체로 능가(신장 지배 대 굽힘 지배)하는 반면, 폼은 열경로와 냉각제 유동 이점을 준다; 격자 코어는 낮은 상대 밀도, 높은 비강도, 수동 단열과 능동 냉각 모두를 위한 개방 유동 경로의 최상 조합을 준다. 재료 선택은 CMC의 초고온 능력을 금속 대비 제조 난이도와 절충하며, 리뷰는 재료 데이터베이스를 편찬한다. 제조는 전통 접합(저렴, 대규모, 약한 고온 접합)을 밀도화/소결(CMC용 CVI/LSI/PIP)과 적층제조(복잡 기하이나 공극률/크기 한계)와 절충하며, 종종 하이브리드 경로를 요구한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 샌드위치 아키텍처를 이용한 통합 TPS가 지난 10년간 두드러졌으며, 코어 아키텍처와 고온 재료가 최대 열 하중과 하중 지지 요구로 선택되고 저전도 단열재 충전이 핵심 역할을 한다고 결론짓는다. 중심 미해결 과제로, 다수의 설계 특성 전반에서 최소 면적 밀도와 우수한 열/기계 성능을 갖춘 최적의 저총비용 샌드위치 TPS 제작을 지목한다. 향후 방향은 수동(피로/재사용성, 진동/충격/음향, 복잡 토폴로지 AM), 반수동(Mach 10용 UHTC+초합금 히트파이프; 통합 융삭+구조 TPS), 능동(대형 곡면 격자 코어 AM; X형 격자)에 걸치며, 진단/수리와 내장 센서 다기능 TPS를 포함한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 20 / total 295</span></summary>
+            <ol class="ref-list"><li>M. L. Blosser, Development of metallic thermal protection systems for the reusable launch vehicle, NASA Technical Memorandum 110296, 1996</li><li>D. E. Glass, Ceramic matrix composite (CMC) thermal protection systems (TPS) and hot structures for hypersonic vehicles, AIAA 2008-2682, 2008</li><li>S. Bapanapalli, B. V. Sankar, M. L. Blosser, optimization procedure for integral TPS using a corrugated-core sandwich structure (University of Florida / NASA), 2007</li><li>H. N. G. Wadley, Multifunctional periodic cellular metals, Phil. Trans. R. Soc. A, 2006</li><li>K. Wei et al., Thermal and mechanical behaviors of C/SiC and ZrB2-SiC UHTC lattice/corrugated core sandwich structures (up to 1873 K)</li><li>L. Valdevit et al., Optimal active cooling performance of metallic sandwich panels with prismatic cores, Int. J. Heat Mass Transfer, 2008</li><li>L. Valdevit et al., Materials selection for the fuel-cooled combustor liner of a hypersonic vehicle (rectangular corrugated core), 2008</li><li>A. Ortona et al., Fabrication of ceramic-matrix-composite / SiC ceramic foam core sandwich structures (PIP)</li><li>T. Suzuki, T. Aoki, T. Ogasawara, K. Fujita, Nonablative lightweight thermal protection system for Mars Aeroflyby Sample collection mission, Acta Astronaut., 2017</li><li>R. Kanimba et al., Cuttlebone-inspired lightweight TPS sandwich structure (random/sinusoidal wave cores)</li><li>H. Lin, K. Hu et al., Norway-spruce-inspired gradient hollow-tube integral TPS (Ti-6Al-4V, SLM)</li><li>K. Bapanapalli et al., ABAQUS optimization of corrugated-core sandwich TPS under 4 W/cm^2</li><li>N. Rakow, A. Waas, Thermomechanical response of actively cooled metal foam sandwich panels, 2005</li><li>S. Ferrari et al., High-temperature ceramic TPS with active cooling via foam core (SiC lattice foam), leading edge</li><li>V. T. Le, N. S. Goo, Design, fabrication, and testing of metallic thermal protection systems for spaceplane vehicles, J. Spacecraft Rockets, 2021</li><li>O. Uyanna, H. Najafi, Thermal protection systems for space vehicles: a review on technology development, current challenges and future prospects, Acta Astronaut., 2020</li><li>H. Bohrk, Heat flux reduction by transpiration-cooling of CMCs for space applications, Adv. Compos. Mater., 2017</li><li>J. Buursink, K. Sudmeijer, radiation cooling system combining convective and transpiration cooling with a water-saturated porous foam core</li><li>M. Heidenreich et al., C/C-SiC square-honeycomb and folded-core sandwich structures via LSI</li><li>T. Tancogne-Dejean, D. Mohr, Elastically-isotropic truss lattice materials of reduced plastic anisotropy, Int. J. Solids Struct., 2018</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "TPS는 대기권 진입/재진입(Mach &gt; 5) 중 극심한 공력 가열로부터 극초음속 비행체를 보호하는 열차폐이며, 경량·재사용·정비 가능 비행체의 핵심 요소다; TPS 두께는 온도를 한계 내로 유지하도록 궤적 전체 총 가열 하중으로 결정된다.", "figure_refs": [1]}, {"type": "bullet", "text": "두 재진입 전략이 서로 다른 TPS 요구를 규정한다: 캡슐(탄도) 재진입은 짧지만 매우 높은 열유속(&gt;100 W/cm^2)을 겪고, 우주비행기(양력) 재진입은 더 길지만 노즈캡·앞전을 제외하면 낮은 열유속(&lt;20 W/cm^2)을 겪는다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "TPS 재료는 초기 융삭재(탄소 페놀릭, AVCOAT 5026-39)에서 재사용 Inconel/C-C/실리카 타일을 거쳐 현대 경량 고온 재료(TUFROC, C/SiC·SiC/SiC CMC, UHTC)와 구조 통합 샌드위치 아키텍처로 진화했다.", "figure_refs": [4]}, {"type": "bullet", "text": "TPS는 우주비행체 구조 질량의 최대 ~50%를 차지할 수 있어 TPS 질량 감소가 허용 탑재량을 크게 늘린다; 미래 추세는 심우주 임무(화성, 금성)를 위해 경량 구조와 고온 사용성을 결합하는 것이다.", "figure_refs": [5]}, {"type": "bullet", "text": "전형적 샌드위치 구조는 외부 페이스시트와 경량 코어로 구성되며(I-빔처럼: 페이스시트 = 플랜지, 코어 = 웹) 우수한 비강도/비강성을 준다; 코어는 허니컴, 셀룰러(주름형, 폼, 접힘형) 또는 격자/트러스일 수 있고 상대 밀도로 특성화된다.", "figure_refs": [6, 7, 8, 9]}, {"type": "bullet", "text": "복합재 페이스시트는 고온 환경에서(CMC/CFRP/기능경사재의 결함으로부터) 박리와 페이스시트/코어 디본딩에 직면하여, 열팽창 불일치와 내부 응력을 피하기 위한 단일재 첨단제조 샌드위치 또는 다중재 설계를 촉발한다."}, {"type": "bullet", "text": "리뷰는 특히 다양한 TPS 유형과 다양한 코어 구성을 위한 샌드위치 구조의 새로운 설계와 활용에 집중하며, 각 냉각 방식의 대표 구성에 대한 설계 매개변수와 열-기계 하중 하 거동을 소개한다.", "figure_refs": [10]}]}, "related_works": {"content": [{"type": "bullet", "text": "TPS는 냉각 전략에 따라 수동(히트싱크, 고온 구조, 단열), 반수동(히트파이프, 융삭), 능동(대류, 증산, 막냉각)으로 분류되며, 열유속이 증가함에 따라 수동 -&gt; 히트파이프/반수동 -&gt; 능동의 선호 순서를 가진다.", "figure_refs": [11, 12]}, {"type": "bullet", "text": "Blosser 등의 기초적 금속 TPS 연구는 Inconel 초합금 허니컴 샌드위치 판(최대 ~1100 K)을 개발했고, 2003년 별도 스킨과 단열을 대체하는 최초의 통합 다기능 샌드위치 구조를 제안했다."}, {"type": "bullet", "text": "CMC 및 고온 구조 문헌(Glass)은 극초음속 비행체용 세라믹 매트릭스 복합재 TPS와 고온 구조를 확립했고; Wei 등은 ~1873 K까지 사용 가능한 C/SiC 및 ZrB2-SiC-흑연 UHTC 주름형/격자 코어를 연구했다."}, {"type": "bullet", "text": "셀룰러 재료 역학(Wadley; Royal Society 리뷰)이 코어 분류 — 허니컴, 주름형(사다리꼴, 다이아몬드), 격자(피라미드형, 사면체, Kagome, X형) — 와 비강도/비강성 비교의 상대 밀도 기반을 뒷받침한다.", "figure_refs": [8, 9]}, {"type": "bullet", "text": "리뷰는 기존 일반 샌드위치 구조 리뷰와 명시적으로 범위를 구분하여, TPS 응용에 주의를 한정하고 각 냉각 방식의 샌드위치 구성에 대한 대표 설계 매개변수를 소개한다."}, {"type": "bullet", "text": "응용 맥락은 재사용 우주비행기(X-33, Hopper, Dream Chaser)와 캡슐(Mercury/Gemini/Apollo, Orion, Dragon2, Starliner)에 걸치며, 그들의 역사적 TPS 선택(수동 금속 판, 융삭 열차폐, 허니컴 샌드위치)이 리뷰된 재료/구조 절충을 구성한다.", "figure_refs": [4, 33]}]}, "method": {"content": [{"type": "bullet", "text": "수동 TPS 설계 목표: 통합 TPS로 작동하는 샌드위치의 최소 면적 밀도(단위 표면적당 무게)를 얻는 것으로, 열(보호 성능)과 기계(압축 강도) 두 특성 집합을 사용한다. 대표 사례는 단열재로 채운 피라미드형 격자 트러스 코어로, 다섯 기하 변수(페이스시트 두께 t, 트러스 직경 d, 트러스 길이 l, 트러스 각 theta, 단위 셀 길이 L)로 기술된다.", "figure_refs": [13]}, {"type": "formula", "label": "식 (1) — TPS 샌드위치의 면적 밀도", "latex": "\\rho_{\\mathrm{areal}} = \\frac{V_{\\mathrm{solid}}\\,\\rho_{\\mathrm{solid}} + V_{\\mathrm{insulation}}\\,\\rho_{\\mathrm{insulation}}}{A_{\\mathrm{surface}}}", "description": "면적(질량) 밀도: 고체(트러스/주름/폼) 질량과 단열재 질량의 합을 TPS 표면적으로 나눈 값; 수동 TPS 최적화에서 최소화되는 주요 지표."}, {"type": "bullet", "text": "열저항 네트워크 모델(Fig. 13c): 총 유효 저항 R_eff = 2 R_f + R_c로, 페이스시트 저항 R_f가 코어 저항 R_c와 직렬이며; 코어 내에서 네 트러스 저항과 단열층 저항이 병렬로 결합한다. 유효 열전도도 k_eff는 R_eff에서 따르고, 차폐 성능은 고온-저온 온도차 비이다.", "figure_refs": [13]}, {"type": "formula", "label": "식 (2)-(3) — 총 열저항과 페이스시트 저항", "latex": "R_{\\mathrm{eff}} = 2R_f + R_c, \\qquad R_f = \\frac{t}{k_f\\,A_f}", "description": "단열재로 채운 샌드위치의 총 직렬/병렬 열저항; R_f는 페이스시트 전도 저항(두께 t, 페이스시트 전도도 k_f, 면적 A_f). 코어 저항 R_c는 네 트러스 전도 경로와 단열층을 병렬로 결합한다."}, {"type": "bullet", "text": "공력 압축 하중 하 기계 기준: 트러스 코어의 두 파손 모드(파괴, 좌굴)가 임계 하중 식으로 포착된다; 낮은 상대 밀도(가는 트러스)는 좌굴을 활성화하며, 공력 형상을 유지하려면 더 두꺼운 트러스로 회피한다.", "figure_refs": [13]}, {"type": "formula", "label": "식 (5)-(6) — 피라미드형 트러스 코어의 임계 파괴·좌굴 하중", "latex": "P_F = \\sigma_y\\,\\bar{\\rho}\\,\\sin^2\\theta, \\qquad P_B = \\tfrac{1}{2}\\sin\\theta\\cos^2\\theta\\,E_s\\,\\bar{\\rho}^2", "description": "임계 파괴 하중(고체 압축 강도 sigma_y, 상대 밀도 bar-rho, 트러스 각 theta)과 좌굴 하중(고체 탄성계수 E_s). 이들이 면적 밀도 최적화의 기계 제약을 설정한다. (2단 레이아웃에서 전사한 계수 형태; 원본과 대조 검증 요망.)"}, {"type": "bullet", "text": "수치 설계 절차(Fig. 15): FE 도구(예: ABAQUS)가 하부 페이스시트 온도 제약(모재 사용 온도), 최대 응력 제약(모재 항복), 처짐 제약(공력 표면 유지 위해 대각 길이의 &lt;1%, 섬유 단열재 보호 위해 TPS 두께의 &lt;10%) 하에서 면적 밀도를 최소화한다.", "figure_refs": [15, 17]}, {"type": "bullet", "text": "반수동 히트파이프 틀: 앞전 팁에 열유속을 가하고 복사 경계조건을 적용; 열 모델의 온도가 구조 모델로 전달되어 증기 압력과 열구배 응력을 벽 항복 강도와 비교해 히트파이프를 치수화한다(Table 1이 설계·재료·Mach·온도 범위 요약).", "figure_refs": [27, 29]}, {"type": "bullet", "text": "능동 냉각 틀: 냉각제가 개방 코어 공극(주름 채널, 폼, 격자)을 통과하며; 성능은 Nusselt 수, Reynolds 수, 마찰계수로 정량화되고, 펌핑동력(f_H Re_H^3에 비례)을 부과량으로 사용하여 최대 고체-대-유입 냉각제 온도차를 최소화하도록 구조를 최적화한다.", "figure_refs": [34, 35]}, {"type": "formula", "label": "식 (8) — 무차원 능동 냉각 지표", "latex": "Nu_H = \\frac{h\\,H}{k}, \\qquad Re_H = \\frac{\\rho\\,U\\,H}{\\mu}, \\qquad f_H = \\frac{\\Delta P/L}{\\rho U^2/2}\\,H", "description": "개방셀 코어 능동냉각 샌드위치의 열제거(Nusselt), 유동(Reynolds), 마찰계수 지표로 코어/셀 높이 H 기반; Nu_H / (f_H Re_H^3)이 클수록 펌핑동력당 열효율이 높다."}]}, "results": {"content": [{"type": "bullet", "text": "허니컴 코어: X-33 우주비행기에 사용된 육각형 Inconel 617/PM2000 코어 샌드위치는 최대 작동 온도를 ~1310-1473 K로 높이며 처짐을 판 대각의 1% 미만으로 유지; 정사각 C/C-SiC 허니컴 코어(Heidenreich 등)는 15-65 mm 코어 높이에서 ~4-10 kg/m^2 면적 무게를 준다.", "figure_refs": [16]}, {"type": "bullet", "text": "주름형/프리즘 코어: Bapanapalli-Sankar-Blosser가 사다리꼴 주름 통합 TPS 최적화를 확립(Ti-6Al-4V/베릴륨, ~65% 차폐, 면적 무게 17-24 kg/m^2); Wei 등은 1873 K까지의 ZrO2/ZrB2 UHTC 코어를 제안; Cao 등은 상변화 재료를 추가(~14% 면적 무게 감소); Shi 등은 융삭재를 통합; 편조 석영/페놀릭 코어는 95.5% 열 단열에 도달했다.", "figure_refs": [17, 18]}, {"type": "bullet", "text": "격자 트러스 코어: Wei 등의 피라미드형 C/SiC 코어(1873 K)는 4 mm 높이에서 에어로겔 충전으로 정상상태 차폐를 35%에서 70.1%로 높였다; 비압축(15.3 MPa/(g/cm^3))·굽힘(260 MPa/(g/cm^3)) 강도가 ZrO2 주름 코어를 능가; 최적화 면적 밀도가 ~17.2 kg/m^2까지 낮아졌다.", "figure_refs": [19, 20]}, {"type": "bullet", "text": "접힘형 코어: 오리가미 같은 접힘 코어(아라미드/CFRP, C/C-SiC &gt;2273 K)는 개방 환기 채널과 +/-45도 섬유 배향에서 높은 전단 응력을 제공; 수동 TPS용 M-패턴 접힘 코어는 ~55% 차폐로 ~35 kg/m^2 면적 밀도에 도달했다.", "figure_refs": [21, 22]}, {"type": "bullet", "text": "폼 코어: SiC 세라믹 폼 코어(NASA)는 균열 없이 ~150 W/cm^2와 1273 K 페이스시트 구배를 견딤; CMC/SiC 폼 샌드위치(Ortona 등)는 ~10.8-17.9 kg/m^2 면적 밀도에 도달; 폼 코어는 손상 허용성과 에너지 흡수를 주지만 주기적 코어보다 전단 강도가 낮다.", "figure_refs": [23, 24]}, {"type": "bullet", "text": "생체모사 및 다층 코어: 가문비나무 영감 경사 중공 튜브(Ti-6Al-4V, SLM)는 상/하판에서 중심으로 튜브 크기가 감소하는 경사에 대해 최고 비강도와 최저 유효 전도도를 줌; 갑오징어뼈 영감 파동 코어는 높은 압축 강도를 줌; 다층(2층 피라미드) 코어는 최저 열전도도와 최고 열보호를 주었다.", "figure_refs": [20, 25, 26]}, {"type": "bullet", "text": "반수동 히트파이프: 샌드위치형 모세관 히트파이프(D형/사각 주름 또는 허니컴/웹 코어; Mo-Re, Inconel 625/718, Nb Cb-752 벽; 리튬/나트륨 유체)는 Mach 5-8에서 앞전 온도를 균질화하여 최고 정체 온도와 열응력을 줄임(Table 1); 앞전 전체를 증기 공간으로 쓰는 설계가 병렬 모세관 설계를 능가한다.", "figure_refs": [29, 30, 31]}, {"type": "bullet", "text": "반수동 융삭: 허니컴 또는 폼 코어 샌드위치 기저 구조에 접합된 융삭 열차폐(탄소 페놀릭, PICA, AVCOAT, SIRCA)(Apollo/Orion)는 에너지 흡수와 하중 지지를 제공; 폼 코어 CFRP 융삭 시스템(Kubota/Ogasawara)은 단열과 후퇴 저항을 유지하며 &gt;40% 무게 감소를 달성했다(Table 2).", "figure_refs": [32, 33]}, {"type": "bullet", "text": "능동 냉각: 주름형(사다리꼴/삼각/다이아몬드/사각), 격자(사면체/Kagome/X형), 폼 코어를 통한 대류 냉각이 열전달 대 펌핑동력으로 최적화됨; X형 격자는 사면체보다 18-38% 높은 전체 열전달을 줌; 대류+증산 결합 복사 냉각 설계(Buursink-Sudmeijer)는 물 포화 다공성 폼 코어를 사용해 증발과 모세관 재공급으로 복사 손실을 거의 두 배로 늘려 금속 스킨의 고온 사용을 가능케 했다(Table 3).", "figure_refs": [37, 40, 42, 44]}]}, "discussion": {"content": [{"type": "bullet", "text": "주기적 대 확률적 코어(Wadley): 주기적 코어(사면체, 피라미드형, Kagome, X형)는 하중이 신장 지배이므로 굽힘 지배 폼 셀 벽보다 우수한 비강도/비강성을 보임; 그러나 폼은 높은 열전도 경로, 큰 열전달 표면적, 연속적(굴곡진) 냉각제 경로를 제공한다.", "figure_refs": [28, 44]}, {"type": "bullet", "text": "격자 코어가 가장 매력적으로 부상: 최저 코어 상대 밀도, 허니컴 대비 경쟁적-우수 비강도(트러스가 얇은 판보다 좌굴에 강함), 열 소산과 능동냉각 유동에 효과적인 개방 토폴로지; 주름 코어는 주름 방향으로만 강하고 상대 밀도가 높다.", "figure_refs": [8, 28]}, {"type": "bullet", "text": "단열재 충전이 수동 성능에 결정적: 코어 공극을 채우는 저전도 에어로겔/Saffil이 저온측 온도 상승을 크게 줄임(예: 격자 차폐 35%-&gt;70%), 주름형·격자·접힘형·폼 코어 전반의 반복 주제다.", "figure_refs": [19]}, {"type": "bullet", "text": "재료 절충: CMC(C/SiC, SiC/SiC, C/C-SiC, ZrB2-SiC)는 초고온 사용 온도(1873-2273+ K)와 저밀도를 주지만 대규모 제조·접합이 어렵고, 금속 합금(스테인리스강, Inconel, Ti-6Al-4V, Mo-Re, Nb Cb-752)은 제조가 쉽지만 온도가 제한됨; Table 6이 물성과 이력을 설계 데이터베이스로 편찬한다.", "figure_refs": []}, {"type": "bullet", "text": "능동 냉각 유동-구조 결합: 냉각제 속도 증가는 압력 강하와 필요 펌핑동력을 높이며 대류를 개선; 인접 채널의 반대 유동 방향, 챔퍼, 홈진 엔드월, 복잡 격자 혼합이 국소 열전달을 향상하나, 추가 표면적(낮은 공극률)이 무게를 높여 열전달-대-무게 균형이 필요하다.", "figure_refs": [37, 38, 40]}, {"type": "bullet", "text": "제조 절충(Tables 4-5): 전통 접합(브레이징/접착/성형)은 처리량이 높지만 약한 고온 접합과 계면 파손을 줌; 밀도화/소결(CVI 고품질이나 느림; LSI 빠르나 잔류 실리콘; PIP 저온이나 다중 사이클 필요)은 CMC에 적합; 적층제조는 복잡 정밀 코어를 가능케 하나 재료 제한·공극률·최소 벽 두께 한계에 직면하여 종종 하이브리드 AM+소결 경로를 요구한다.", "figure_refs": [45, 46, 47]}, {"type": "bullet", "text": "융삭 TPS 코어 선택은 닫힌 셀을 선호: 주름은 낮은 에너지 흡수와 최대 하중 후 급격한 붕괴를 주고 격자 코어는 비싸므로, 융삭 TPS는 높은 충격 에너지 흡수의 닫힌셀 허니컴 또는 닫힌 폼으로 향한다 — 능동/수동 냉각 TPS와는 다른 최적점이다.", "figure_refs": [28]}]}, "conclusion": {"content": [{"type": "bullet", "text": "샌드위치 아키텍처를 이용한 통합 TPS가 점점 두드러졌다; 적절한 코어(폼, 허니컴, 주름, 격자, 접힘)와 고온 재료는 최대 열 하중과 하중 지지 능력에 따라 선택되며, 저전도 단열재 충전이 열보호에 중요하다."}, {"type": "bullet", "text": "중심 도전과제는, 다수의 결합된 설계 특성(재료, 기하, TRL, 파손/진동, 시험) 전반에서 최소 면적 밀도와 우수한 열/기계 성능을 달성하면서 총 TPS 비용(개발, 시험, 제조, 임무)을 최소화하는 최적 샌드위치 구조 모델을 만드는 것이다."}, {"type": "bullet", "text": "수동 TPS 향후 과제: 열보호를 넘어선 조건 연구(스킨과 비행체 구조를 모두 대체하는 통합 TPS); 재사용성을 위한 열/기계 피로 조사; 진동, 저속/고속 충격, 음향 단열 해석 추가; 고정밀 복잡 셀룰러 토폴로지에 AM 활용."}, {"type": "bullet", "text": "반수동 TPS 향후 과제: Mach 10 샌드위치 히트파이프를 위해 초고온 재료(CMC)와 초합금을 통합(세라믹 커버에 매립된 금속 히트파이프, 열팽창 불일치 관리); 통합 TPS와 융삭재를 결합하여 유망한 새 열차폐 연구 경로로."}, {"type": "bullet", "text": "능동 냉각 향후 과제: AM으로 복잡한 능동냉각 샌드위치 코어를 더 짧은 시간·높은 정밀도로 구현(현재 브레이징으로는 대형 곡면 부품 불가); X형 격자 코어는 우수한 열전달을 주나 브레이징 접합부 진동/열기계 특성화가 필요하다."}, {"type": "bullet", "text": "교차 과제: TPS 안전을 위한 진단·수리 기술(비침습, 자기변형, 광섬유 센서)을 개발하고, 내장 마이크로센서/소자 및 자기장이 다기능 통합 TPS 샌드위치 성능에 미치는 영향을 연구한다. 본 연구는 한국연구재단(NRF)과 건국대학교의 지원을 받았다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "방대한 샌드위치 구조 연구의 리뷰는 주제의 다학제적 폭과 관련 문제의 다양성 때문에 필연적으로 제한되며, 저자들은 TPS를 위한 샌드위치 구조의 새로운 설계와 활용에 좁게 초점을 맞춘다.", "source_quote": "The review of extensive studies on sandwich structures is limited due to its multidisciplinary aspect and diverse range of involved problems.", "source_section": "introduction"}, {"claim": "융삭 TPS에서 코어 구성의 높은 전단/압축 강도를 위한 설계 틀은 본 연구에서 유도되지 않으며, 주요 설계의 요약만 제공된다.", "source_quote": "The design framework for high shear and compressive strengths of core configurations is not reported in the current work. Instead, we provide a summary of several prominent designs of core configurations for high shear and compressive strengths.", "source_section": "results"}, {"claim": "CMC TPS의 파손 해석(결함, 손상 허용성, 피로)과 진동·정밀 제조 같은 특성은 TPS 샌드위치 구조에 대해 아직 조사되지 않았다.", "source_quote": "Failure analysis of CMCs TPS including defects, damage tolerance, and fatigue, has not been discovered failure.", "source_section": "conclusion"}], "future_works": [{"claim": "재사용 우주비행체용 TPS 샌드위치 구조의 재사용성을 보장하기 위해 반복 하중 사이클 하 열·기계 피로를 조사한다.", "source_quote": "Thermal and mechanical fatigue needs to be considered to guarantee the reusability of TPS sandwich structures for reusable space vehicles.", "source_section": "conclusion"}, {"claim": "샌드위치 구조의 가능한 파손을 찾기 위해 진동 해석과 저속/고속 충격 시험을 수행하고, 통합 TPS의 음향 단열을 연구한다.", "source_quote": "we suggest that vibration analysis, low-velocity and high-velocity impact tests should be taken into account to find possible failures in the sandwich structures.", "source_section": "conclusion"}, {"claim": "복잡한 셀룰러 토폴로지의 고정밀·고속 제조에 적층제조(3D 프린팅)를 활용하며, 현재 브레이징으로는 불가능한 대형 곡면 능동냉각 격자 부품을 포함한다.", "source_quote": "for highly accurate and fast manufacturing, additive manufacturing using the 3D printing method is expected to be used in the manufacturing of complex cellular topologies.", "source_section": "conclusion"}, {"claim": "통합(샌드위치) TPS와 융삭 재료를 결합하여 융삭의 열 소산 이점과 통합 TPS의 열보호·고강도 이점을 함께 활용하는, 우주 캡슐 열차폐를 위한 새로운 연구 경로를 제시한다.", "source_quote": "a combination of an integral TPS and ablative materials would be a very promising design that shows the advantage of ablative material in dissipating heat and the advantage of the integral TPS in thermal protection and high strength. We expect this as a new research path for the future of the ablative heat shield of space capsules.", "source_section": "conclusion"}, {"claim": "다기능 통합 TPS를 위한 진단/수리 기술과 내장 센서(비침습, 자기변형, 광섬유)를 개발하고, 마이크로센서/소자 및 자기장이 TPS 샌드위치 성능에 미치는 영향을 연구한다.", "source_quote": "research on investigating the effect of microsensors and devices on the performance of integral TPS sandwich structures is recommended.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["극초음속 비행체는 진입/재진입 시 극심한 공력 가열을 견디면서도 경량·재사용·정비 가능해야 하므로 효과적인 TPS가 필요하다.", "TPS는 우주비행체 질량의 최대 ~50%를 차지할 수 있어, TPS 질량 감소가 원거리 임무의 허용 탑재량을 크게 늘린다.", "경량 구조와 고사용 온도를 결합하고, 하중 지지 샌드위치 구조로 통합된(다기능: 열보호 + 구조 기능) TPS 설계에 대한 수요가 증가한다.", "TPS 샌드위치 구조의 복합재 페이스시트는 고온 환경과 제조 결함 하에서 박리 및 페이스시트/코어 디본딩에 직면한다.", "주어진 위치/열유속에 대한 다수의 코어 아키텍처와 재료 중 선택이 복잡하여 체계적 지침이 필요하다."], "addressed_by_this_work": ["수동/반수동/능동 TPS 전반의 샌드위치 구성(허니컴, 주름형, 격자, 접힘형, 폼, 생체모사, 다층)을 설계 틀과 대표 성능 수치와 함께 포괄적·체계적으로 리뷰한다.", "설계 방법론(온도/응력/좌굴/처짐 제약 하 최소 면적 밀도를 위한 열저항 네트워크 및 수치 최적화, 능동 냉각을 위한 무차원 열전달/펌핑동력 지수)을 정리한다.", "예비 TPS 설계의 출발점으로, 금속/합금·세라믹/복합재·융삭재의 물성과 이력을 담은 재료 데이터베이스(Table 6a-c)를 제공한다.", "복잡한 TPS 코어를 구현하기 위한 제조 경로(전통 접합, CVI/LSI/PIP 밀도화-소결, 적층제조)를 장단점과 함께 개관한다."], "remaining_unresolved": ["순환 열기계 하중 하 피로, 손상 허용성, 재사용성은 TPS 샌드위치 구조에 대해 대체로 미조사 상태로 남는다.", "통합 TPS 샌드위치 구조의 진동·음향 거동은 아직 알려지지 않았다.", "대형 곡면 복잡 CMC 격자 부품의 제조(현재 브레이징 한계 초과)는 아직 해결되지 않았고, 세라믹 AM은 여전히 높은 공극률로 기계적 물성을 제한한다.", "진단/수리 기술과 내장 센서 다기능 TPS는 권장 방향일 뿐 아직 실현되지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
