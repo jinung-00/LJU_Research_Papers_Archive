@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>18Ni300 Maraging Steel Lattice Structures Fabricated via Laser Powder Bed Fusion - Mechanical Behavior and Gas Permeability</title>
+    <meta name="keywords" content="18Ni300 maraging steel, selective laser melting, laser powder bed fusion, lattice structures, gas permeability, simple cubic, body-centered cubic, gyroid, compressive strength, mold venting">
+    <meta name="paper-authors" content="D. F. Oliveira, J. S. Vieira, I. Duarte, G. Vincze, J. M. Oliveira, G. Miranda">
+    <meta name="paper-journal" content="Metals, Vol. 13(12), 2023, Art. 1982 · DOI: 10.3390/met13121982">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">18Ni300 Maraging Steel Lattice Structures Fabricated via Laser Powder Bed Fusion - Mechanical Behavior and Gas Permeability</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">D. F. Oliveira, J. S. Vieira, I. Duarte, G. Vincze, J. M. Oliveira, G. Miranda</div>
+            <div class="journal">Metals, Vol. 13(12), 2023, Art. 1982 · DOI: 10.3390/met13121982</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 <span class="term">18Ni300 마르에이징강 격자 구조</span>(단순입방 SC, 체심입방 BCC, 자이로이드)를 <span class="term">선택적 레이저 용융(SLM/LPBF)</span>으로 설계·제작하고, 사출 금형 기체 배출 벤트를 목표로 압축 기계 거동(시효 전후)과 기체 투과율을 특성화한다. 세 아키텍처의 여러 단위셀 치수는 CAD 다공도 ~48-81%(실험 ~43-80%)를 포괄한다. 본 연구가 인용되는 측정 투과율 값은 <span class="term">SC: $4.9\times10^{-11}$ ~ $2.0\times10^{-10}\,\mathrm{m^2}$</span>, <span class="term">BCC: $2.2\times10^{-11}$ ~ $1.2\times10^{-10}\,\mathrm{m^2}$</span>(자이로이드 $6.7\times10^{-11}$ ~ $1.6\times10^{-10}\,\mathrm{m^2}$)이며, SC가 일관되게 가장 투과성이 높고(완전 개방 단위셀) BCC가 가장 낮다. 첫 최대 압축강도는 54.3-251.5 MPa(제작 상태)에서 시효 후 93.0-453.3 MPa로 상승한다. <span class="term">다공도 커버리지</span>: SC(CAD ~48.5-76.7%)와 BCC(CAD ~50.7-73.5%) 계열은 ~epsilon 0.5까지 내려가므로 - Jeong과 함께 - 이 그룹에서 논문 시편 대역($\varepsilon \approx 0.499$)을 감싸는 두 편 중 하나이다. (주의: 53 MB 원본에도 불구하고 텍스트 추출은 깨끗하고 비손상이었으며, 투과율·다공도 표는 텍스트에서 직접 포착되었다.)</div>
+            <div class="keywords"><span class="keyword-chip">18Ni300 maraging steel</span><span class="keyword-chip">selective laser melting</span><span class="keyword-chip">laser powder bed fusion</span><span class="keyword-chip">lattice structures</span><span class="keyword-chip">gas permeability</span><span class="keyword-chip">simple cubic</span><span class="keyword-chip">body-centered cubic</span><span class="keyword-chip">gyroid</span><span class="keyword-chip">compressive strength</span><span class="keyword-chip">mold venting</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">격자 구조는 물성 조정과 성능 극대화를 위해 여러 분야에서 사용되며, AM은 이를 기존 시스템에 통합하는 것을 가능케 한다. 마르에이징강은 금형·툴링에 매력적이나 복잡한 인서트를 기존 방법으로 만들기 어렵다; LPBF는 기계적 강도를 유지하면서 사출 금형 기체 벤팅에 맞게 투과율을 조정할 수 있는 18Ni300 마르에이징강 격자를 가능케 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">선행 AM 격자 연구는 투과율이 아키텍처(자이로이드 대 직사각 기공, 316L, 마르에이징강)로 조정 가능하며, SLM 공정 파라미터가 결과 기하 정확도와 투과율에 크게 영향을 줌을 보인다. 소결 금속 다공성 인서트가 기존 금형 벤팅 해법이며 AM이 맞춤 투과율로 이를 개선하고자 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">여러 단위셀 치수의 18Ni300 SC, BCC, 자이로이드 격자를 SLM 제작(기존 최적화 파라미터)하고, 투과율에는 자체 개발 장치에 맞는 7.2 mm 직경 시편으로 제작했다. 압축 시험(ISO 13314)을 시효 전후로 수행하고, 다공도는 중량법으로 결정해 CAD와 비교했으며, 투과율은 압력차 0.5-2.5 bar에 걸쳐 평균했다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">SC 구조가 일관되게 최고 투과율(완전 개방 단위셀), BCC가 최저, 자이로이드가 중간이었으며, 높은 다공도(큰 기공)가 높은 투과율을 주었다. SC는 4.9e-11 ~ 2.0e-10 m^2, BCC는 2.2e-11 ~ 1.2e-10 m^2, 자이로이드는 6.7e-11 ~ 1.6e-10 m^2였다. 압축강도와 에너지 흡수는 낮은 다공도에서 상승하고 시효로 크게 향상되었다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">아키텍처가 투과율의 지배적 지렛대이다: 완전 개방 SC 셀이 최고, BCC가 최저, 자이로이드가 중간이며, 투과율은 Darcy 법칙에 따라 다공도에 따라 상승한다. 목표 투과율 범위에서 BCC와 자이로이드는 필요한 기계적 물성에 따라 교환 가능한데, 자이로이드가 동일 다공도에서 기계적으로 우수하기 때문이다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">18Ni300 마르에이징강 SC, BCC, 자이로이드 격자를 작은 치수 편차로 SLM 제작하고 기계적·투과율 거동을 평가했다. 투과율은 아키텍처로 조정 가능하며(SC 최고, BCC 최저), 강도/강성/에너지 흡수는 아키텍처에 의존하고 시효로 향상된다. ~epsilon 0.5-0.77에 걸친 SC/BCC 투과율 값이 논문이 인용하는 물성이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 41</span></summary>
+            <ol class="ref-list"><li>T. Maconachie, M. Leary, B. Lozanovski, X. Zhang, M. Qian, O. Faruque, M. Brandt, SLM lattice structures: Properties, performance, applications and challenges, Mater. Des., 2019</li><li>D. Ali, S. Sen, Finite element analysis of mechanical behavior, permeability and fluid induced wall shear stress of high porosity scaffolds with gyroid and lattice-based architectures, J. Mech. Behav. Biomed. Mater., 2017</li><li>S. Ma, Q. Tang, Q. Feng, J. Song, X. Han, F. Guo, Mechanical behaviours and mass transport properties of bone-mimicking scaffolds consisted of gyroid structures manufactured using selective laser melting, J. Mech. Behav. Biomed. Mater., 2019</li><li>A. Dhinakar, B. E. Li, Y. C. Chang, K. C. Chiu, J. K. Chen, Air permeability of maraging steel cellular parts made by selective laser melting, Materials, 2021</li><li>A. Timercan, V. Sheremetyev, V. Brailovski, Mechanical properties and fluid permeability of gyroid and diamond lattice structures for intervertebral devices, Sci. Technol. Adv. Mater., 2021</li><li>Y. Chen, C. Liu, H. Yan, Y. Fan, J. Wang, Y. Cui, Effect of gas nitriding on 316L stainless steel lattice manufactured via selective laser melting, Surf. Coat. Technol., 2022</li><li>D. F. S. Ferreira, G. Miranda, F. J. Oliveira, J. M. Oliveira, Predictive models for an optimized fabrication of 18Ni300 maraging steel for moulding and tooling by Selective Laser Melting, J. Manuf. Process., 2021</li><li>ISO 13314:2011, Mechanical Testing of Metals - Ductility Testing - Compression Test for Porous and Cellular Metals</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "격자 구조는 전자에서 항공까지 물성 변경과 성능 극대화(흡음, 열 방출, 에너지 흡수, 바이오메디컬)에 사용되며, 특히 AM으로 제작될 때 그러하다.", "figure_refs": []}, {"type": "bullet", "text": "격자는 단위셀의 주기적 반복으로 - 입방/BCC부터 TPMS(자이로이드)까지 - 중량 감소, 비강도 증가, 강성 조절에 쓰인다."}, {"type": "bullet", "text": "분말 베드 융합(PBF)과 직접 에너지 증착이 주요 금속 AM 공정이며, PBF는 박벽 부품에 더 높은 정밀도와 고밀도화(99.5%)를 주어 SLM을 격자 제작에 적합하게 한다."}, {"type": "bullet", "text": "마르에이징강은 시효 경화(455-510 C)로 금속간 화합물 석출을 통해 경화되는 마르텐사이트강으로, 높은 강도/경도에 좋은 인성과 치수 안정성을 주어 툴, 금형, 고강도 부품에 쓰인다."}, {"type": "bullet", "text": "금속 격자는 사출 성형에 탐구되어 왔다: 내부 냉각, 히트싱크, 금형 벤팅, 중량 감소이며, 여러 연구가 아키텍처로 투과율을 조정할 수 있음을 보였다."}, {"type": "bullet", "text": "본 연구는 다양한 치수의 18Ni300 SC, BCC, 자이로이드 격자를 제작하여 금형 벤트를 목표로 압축 성능(시효 전후)과 기체 투과율을 평가한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Davar Ali et al.은 서로 다른 자이로이드와 직사각 기공 격자가 투과율을 조정할 수 있음을 보였다."}, {"type": "bullet", "text": "S. Ma et al.은 SLM이 원하는 투과율과 기계적 물성을 갖는 316L 강 격자를 효율적으로 제작함을 보였다."}, {"type": "bullet", "text": "A. Dhinakar et al.은 SLM 공정 파라미터가 치수/기하 정확도를 통해 제작 격자의 투과율에 크게 영향을 줌을 보였다."}, {"type": "bullet", "text": "널리 쓰이는 산업 금형 기체 벤팅은 성형 시스템에 조립되는 상용 다공성 인서트(흔히 소결 금속)를 사용한다."}, {"type": "bullet", "text": "AM은 특정 금형에 맞는 맞춤 투과율의 박벽 구조화 기하로 이들 부품을 개선할 수 있다."}, {"type": "bullet", "text": "마르에이징강(18Ni300/M300)은 SLM 성형/툴링에 최적화되어 왔으며, 시효 처리가 강도를 높이는 Fe2Mo와 Ni3Ti 금속간 화합물을 생성한다."}]}, "method": {"content": [{"type": "bullet", "text": "SC와 BCC 단위셀은 스트럿(A)과 기공(B) 치수로 정의되며, 15.3-15.9 mm 모서리 큐보이드 시편을 정수 개 단위셀로 제작했다(표 3).", "figure_refs": []}, {"type": "bullet", "text": "CAD 다공도: SC 48.53-76.66%(SC300-SC700), BCC 50.69-73.53%(BCC700-BCC1200), 자이로이드 54.06-80.43%(G700-G300)로, 스트럿/기공 치수로 설정된다.", "figure_refs": []}, {"type": "bullet", "text": "다공도는 각 시편의 질량(강 밀도 8.1 g/cm^3)에서 결정해 CAD 다공도와 비교했으며, 스트럿 기반 구조에서 실험값이 일관되게 낮았다(표 6).", "figure_refs": []}, {"type": "bullet", "text": "투과율 시편(7.2 mm 외경)은 자체 투과율 장치에 맞게 SLM 제작했으며, 결과는 압력차 0.5, 1.0, 1.5, 2.0, 2.5 bar에 걸쳐 평균했다.", "figure_refs": [2]}, {"type": "formula", "label": "식 (3) - 중량법 다공도", "latex": "\\varepsilon_a = \\left(1 - \\frac{M_a}{M_s}\\right)\\times 100", "description": "제작 격자의 질량 $M_a$를 동일 외형 고체편의 질량 $M_s$에 대해 비교하여 구하는 실험(실제) 다공도."}, {"type": "bullet", "text": "압축 시험은 ISO 13314:2011을 따라 시효 경화 전후로 수행했고, 응력-변형 곡선에서 첫 최대 압축강도, 준탄성 구배, 에너지 흡수(변형 0.5까지)를 추출했다.", "figure_refs": [8]}, {"type": "bullet", "text": "투과율은 Darcy 법칙을 따르므로 부과 압력차가 클수록 겉보기 투과율이 낮으며, 값은 실험 다공도의 함수로 보고된다.", "figure_refs": [12]}]}, "results": {"content": [{"type": "bullet", "text": "실험 다공도는 SC와 BCC에서 CAD보다 일관되게 낮았으며(부분 용융 분말), BCC(스트럿 더 많음)에서 편차가 컸다; 자이로이드는 훨씬 작은 편차와 높은 재현성을 보였다.", "figure_refs": []}, {"type": "bullet", "text": "SC 투과율은 4.9e-11(+/-1.4e-13) ~ 2.0e-10(+/-1.2e-12) m^2; BCC 2.2e-11(+/-4.7e-13) ~ 1.2e-10(+/-5.4e-13) m^2; 자이로이드 6.7e-11 ~ 1.6e-10 m^2 - 본 연구가 인용되는 핵심 값이다.", "figure_refs": [12]}, {"type": "bullet", "text": "SC는 완전 개방 단위셀 덕분에 다공도와 무관하게 일관되게 최고 투과율을 달성했다; 스트럿 추가(BCC)는 투과율을 저해하여 최저값을 주었다.", "figure_refs": [12]}, {"type": "bullet", "text": "2.5 bar에서 SC700(1.4e-10 m^2)은 동일 단위셀 치수의 BCC700(2.3e-11 m^2)보다 540% 높은 투과율을 보였다; 압력차 전반에서 차이는 539-795%였다.", "figure_refs": []}, {"type": "bullet", "text": "첫 최대 압축강도는 54.3-251.5 MPa(제작 상태), 시효 후 93.0-453.3 MPa였으며, 에너지 흡수(변형 0.5까지)는 34.8-300.6 MJ/m^3(제작 상태)였다.", "figure_refs": [9, 11]}, {"type": "bullet", "text": "스트럿 기반 강도/에너지는 다공도 감소에 따라 상승했으며, 동일 기공 SC700(다공도 72.44%) 대 BCC700(42.55%)에서 BCC가 훨씬 높은 에너지 흡수(202.08 대 49.37 MJ/m^3)를 주었다(낮은 다공도 때문).", "figure_refs": [11]}, {"type": "bullet", "text": "준탄성 구배는 1.73-10.44 GPa(제작 상태), 시효 후 2.91-14.42 GPa였다; 큰 기공 크기가 SC와 BCC의 구배를 낮췄으며 316L 문헌 값과 유사했다.", "figure_refs": [10]}, {"type": "bullet", "text": "유사 실험 다공도(~68%: SC600, BCC1200, G500)에서 자이로이드 구조가 스트럿 기반 SC/BCC보다 훨씬 높은 강도·강성·에너지 흡수를 보였다.", "figure_refs": []}]}, "discussion": {"content": [{"type": "bullet", "text": "높은 다공도(큰 기공 크기)가 높은 투과율을 주고, 부과 압력차가 클수록 겉보기 투과율이 낮아져 Darcy 법칙과 일치한다.", "figure_refs": [12]}, {"type": "bullet", "text": "SC는 완전 개방 단위셀 덕분에 일관되게 최고 투과율을 달성하며, 스트럿 추가(BCC)는 유동을 저해하고 투과율을 낮춘다."}, {"type": "bullet", "text": "동일 단위셀 치수의 SC와 BCC는 투과율이 크게 다르므로(0.5 bar에서 최대 ~795%) 아키텍처가 치수보다 지배적이다."}, {"type": "bullet", "text": "중간 다공도에서 BCC와 자이로이드는 유사한 투과율을 주므로, 둘 사이의 선택은 필요한 기계적 물성에 따라 할 수 있다."}, {"type": "bullet", "text": "자이로이드는 동일 다공도에서 스트럿 기반 SC/BCC보다 높은 강도/강성/에너지 흡수를 보여, 투과율과 기계적 견고성이 모두 중요한 경우 자이로이드가 유리하다."}, {"type": "bullet", "text": "구조화는 적절한 강도/강성을 유지하면서 기체 투과율을 수정하는 강력한 도구로, 특히 사출 금형 기체 벤팅에 유용하다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "18Ni300 마르에이징강 격자를 성공적으로 SLM 제작하고 기계적 성능과 투과율을 평가·비교했다."}, {"type": "bullet", "text": "SLM 제작 격자는 CAD 대비 작은 치수 편차를 보였다."}, {"type": "bullet", "text": "첫 최대 압축강도, 준탄성 구배, 에너지 흡수는 아키텍처에 강하게 의존하고 시효로 크게 향상되었다."}, {"type": "bullet", "text": "유사 다공도 구조 비교에서 최고 투과율은 SC, 최저는 BCC가 달성했다."}, {"type": "bullet", "text": "SC 투과율 4.9e-11 ~ 2.0e-10 m^2, BCC 2.2e-11 ~ 1.2e-10 m^2(자이로이드 6.7e-11 ~ 1.6e-10 m^2)이며, SC/BCC CAD 다공도는 ~48.5-76.7%와 ~50.7-73.5%를 포괄하여 논문 시편 대역 epsilon ~ 0.5에 도달한다."}, {"type": "bullet", "text": "결과는 사출 성형용 맞춤 투과율 AM 다공성 벤트 설계 도구로 쓰이며; 53 MB 원본 추출이 깨끗하여 인용된 투과율/다공도 값은 신뢰할 수 있다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "스트럿 기반 SC와 BCC 구조에서 실험 측정 다공도가 CAD 다공도보다 일관되게 낮았으며, 이는 부분 용융 분말이 개방셀 크기를 줄였기 때문이다.", "source_quote": "in all groups, the experimental porosity was lower than the CAD porosity. This difference was mainly due to the partially melted powder, which reduced the structures' open-cell size.", "source_section": "results"}, {"claim": "원시/처리 데이터는 진행 중인 연구의 일부이므로 출판 시점에 공유할 수 없다.", "source_quote": "The raw/processed data required to reproduce these findings cannot be shared at this time as the data also form part of an ongoing study.", "source_section": "conclusion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["마르에이징강은 사출 성형에 매력적이나 복잡한 인서트를 기존 절삭 기술로 제작하기 어렵다.", "사출 금형은 기체 배출이 필요하며 흔히 소결 금속 다공성 인서트로 하나, 그 투과율은 조정 불가능하다.", "AM 격자 아키텍처와 치수를 사용해 필요한 기계적 물성을 확보하면서 투과율을 어떻게 조정할지 불명확하다."], "addressed_by_this_work": ["18Ni300 SC, BCC, 자이로이드 격자를 CAD 대비 작은 치수 편차로 SLM 제작하고 투과율과 압축을 특성화했다.", "투과율이 아키텍처와 단위셀 치수로 조정 가능함을 보였다: SC 최고, BCC 최저, 자이로이드 중간; 높은 다공도가 높은 투과율을 준다.", "압축강도, 준탄성 구배, 에너지 흡수를 정량화하고 시효 열처리로 크게 향상시켰다."], "remaining_unresolved": ["부분 용융 분말로 인해 스트럿 기반 구조의 실험 다공도가 CAD보다 낮아 예측 정확도를 제한한다.", "본 연구는 기체(사출 금형 벤팅) 대상이며 액체/냉각제 수송이 아니고, 열 수송은 측정되지 않는다.", "압축과 투과율만 특성화되었으며 다른 사용 중 하중은 다루지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
