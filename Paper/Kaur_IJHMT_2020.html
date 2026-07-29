@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Flow and Thermal Transport Through Unit Cell Topologies of Cubic and Octahedron Families</title>
+    <meta name="keywords" content="metal foam, lattice structure, unit cell topology, Tetrakaidecahedron, Octet, direct numerical simulation, pressure drop, volumetric Nusselt number, interstitial heat transfer, local thermal non-equilibrium">
+    <meta name="paper-authors" content="Inderjot Kaur, Prashant Singh">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 158, 2020, Art. 119784 · DOI: 10.1016/j.ijheatmasstransfer.2020.119784">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Flow and Thermal Transport Through Unit Cell Topologies of Cubic and Octahedron Families</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Inderjot Kaur, Prashant Singh</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 158, 2020, Art. 119784 · DOI: 10.1016/j.ijheatmasstransfer.2020.119784</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 네 가지 개방셀 금속 폼 단위셀 위상 - <span class="term">Tetrakaidecahedron(TKD), Cube, FD-Cube, Octet</span> - 의 유동장, 압력강하, 체적 Nusselt 수를 직접 수치 시뮬레이션으로 비교한다. <span class="term">다공도는 0.986으로 고정</span>되어(각 위상의 섬유 직경을 결정, Octet이 가장 가늘음) 유동에 평행한 면에 주기 경계조건을 부과하며, 이는 유동 방향으로 한 셀 두께의 망상 구조를 나타낸다. 계면 열전달계수는 일정 열유속과 일정 벽온도 섬유 경계조건 모두에 대해 계산된다. 섬유 위 유동 정체가 압력강하 증가와 계면 열전달 향상의 주 동인으로 규명된다: Octet 셀이 최고 압력강하와 최고 Nusselt 수(최대 정체 표면적)를 가지며, TKD, FD-Cube, Cube 순이다. <span class="term">다공도 커버리지</span>: 전체 연구가 단일 매우 높은 다공도($\varepsilon = 0.986$)에서 수행되어 논문 시편 대역($\varepsilon \approx 0.499$)보다 훨씬 높으므로, 결과는 준-단위 다공도 폼만 특성화한다.</div>
+            <div class="keywords"><span class="keyword-chip">metal foam</span><span class="keyword-chip">lattice structure</span><span class="keyword-chip">unit cell topology</span><span class="keyword-chip">Tetrakaidecahedron</span><span class="keyword-chip">Octet</span><span class="keyword-chip">direct numerical simulation</span><span class="keyword-chip">pressure drop</span><span class="keyword-chip">volumetric Nusselt number</span><span class="keyword-chip">interstitial heat transfer</span><span class="keyword-chip">local thermal non-equilibrium</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">개방셀 금속 폼은 높은 유효 전도도와 혼합을 열교환기에 제공하나, 기존 발포는 확률적 Tetrakaidecahedron(TKD) 셀을 낳는다. AM은 이제 조절 가능한 다공도·투과율·표면적의 규칙적 입방·팔면체 계열 격자를 가능케 하며, 효율적 단위셀 설계에는 이들의 기공 규모 유동·열수송 이해가 필요하나 체적 평균 시뮬레이션은 이를 해석할 수 없다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">선행 수치 연구는 Kelvin/Weaire-Phelan 및 BCC/구 중심 TKD 단위셀을 생성해 유효 전도도, 투과율, 마찰계수, Nusselt 수를 예측했다. 연구들은 이상화 단위셀이 실제 폼의 압력강하와 열전달을 정확히 예측하며, 옥텟-트러스 등 위상이 이를 설계 격자로 확장함을 확립했다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">구 중심 TKD는 절단 팔면체에서 구를 빼서 구성하고, Cube·FD-Cube·Octet은 고정 다공도 0.986(alpha = 0.0275)에서 원형 섬유로 구축하며, 이 다공도가 각 위상의 섬유 직경을 결정한다. 직접 시뮬레이션은 유동에 평행한 면에 주기성을(직교면은 속도 입구/영-게이지-압력 출구) 부과하여 한 셀 두께 망상 폼을 나타내며, 격자 독립 메시와 일정 열유속·일정 온도 섬유 열 경계조건 모두를 사용한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Octet 셀은 일부 평면에서 최고 국소 속도를 갖지만 강한 후류 영역을 가져, 최고 압력강하(TKD/FD-Cube/Cube의 1.2/1.3/2.15배)와 최고 체적 Nusselt 수를 낸다. 섬유 위 유동 정체와 충돌이 압력강하와 계면 열전달을 모두 구동하며, Nu_v는 일정 열유속보다 일정 벽온도 경계조건에서 더 높고, 위상별 상관식이 제공된다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">섬유 위 유동 정체와 충돌이 압력강하와 계면 열전달 향상의 통합 메커니즘이다. 고정 다공도에서 유동을 마주하는 최대 섬유 표면적을 가진 Octet 위상이 정체를 극대화하여 두 양을 모두 최대화하며, 그 이점은 공액 열전달에서 더욱 커질 것이다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고정 다공도 0.986에서 네 단위셀 위상의 DNS는 Octet이 최고 압력강하와 체적 Nusselt 수를 가지며, 섬유 유동 충돌이 지배적 향상 메커니즘임을 보인다. 위상별 Nu_v 상관식이 제공되고, Octet은 상대적으로 낮은 펌핑 동력 페널티로 높은 열 방출에 유망하다고 판단된다 - 모두 준-단위 다공도에서.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 36</span></summary>
+            <ol class="ref-list"><li>S. Krishnan, J. Y. Murthy, S. V. Garimella, Direct simulation of transport in open-cell metal foam, J. Heat Transfer, 2006</li><li>K. Boomsma, D. Poulikakos, On the effective thermal conductivity of a three-dimensionally structured fluid-saturated metal foam, Int. J. Heat Mass Transf., 2001</li><li>V. V. Calmidi, R. L. Mahajan, Forced convection in high porosity metal foams, J. Heat Transfer, 2000</li><li>M. Bai, J. N. Chung, Analytical and numerical prediction of heat transfer and pressure drop in open-cell metal foams, Int. J. Therm. Sci., 2011</li><li>S. Cunsolo, M. Iasiello, M. Oliviero, N. Bianco, W. K. Chiu, V. Naso, Lord Kelvin and Weaire-Phelan Foam Models: Heat Transfer and Pressure Drop, J. Heat Transfer, 2016</li><li>P. Ekade, S. Krishnan, Fluid flow and heat transfer characteristics of octet truss lattice geometry, Int. J. Therm. Sci., 2019</li><li>W. H. Hsieh, J. Y. Wu, W. H. Shih, W. C. Chiu, Experimental investigation of heat-transfer characteristics of aluminum-foam heat sinks, Int. J. Heat Mass Transf., 2004</li><li>S. W. Churchill, M. Bernstein, A correlating equation for forced convection from gases and liquids to a circular cylinder in crossflow, J. Heat Transfer, 1977</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "개방셀 금속 폼은 높은 유효 전도도(3D 섬유 상호연결)와 뒤틀림 향상 혼합으로 강제대류 열교환기에 효율적이다.", "figure_refs": []}, {"type": "bullet", "text": "초기 연구는 투과율, 관성계수, 유효 전도도, 계면 열전달계수의 실험적 결정에 집중했으며, 이를 기공/섬유 직경과 결합해 준경험 상관식으로 구성했다."}, {"type": "bullet", "text": "실험 폼 연구(Hwang, Hsieh, Mancin, Paek, Calmidi)는 Nusselt 수·유효 전도도·투과율을 다공도와 기공 밀도에 관계지었으며 일부는 국소 열적 비평형을 언급했다."}, {"type": "bullet", "text": "체적 평균 시뮬레이션은 시스템 수준 해석에 비용 효율적이나 기공/섬유 규모 유동·열수송 정보를 제공하지 못한다."}, {"type": "bullet", "text": "발포는 확률적 TKD 셀(Lord Kelvin의 최소 표면 구조; Weaire-Phelan이 약간 낮은 에너지)을 낳으며, Surface Evolver, CT 스캔, 또는 이상화 CAD 단위셀로 흔히 모델링된다.", "figure_refs": [1]}, {"type": "bullet", "text": "논문은 기존 TKD 기준에 세 AM 실현 가능 섬유 위상(Cube, FD-Cube, Octet)을 고정 다공도에서 더하여, 유동 동역학·압력 손실·체적 Nusselt 수를 비교한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Kelvin과 Weaire-Phelan 모델은 표면 에너지 최소화(Surface Evolver)로 생성되며, BCC와 구 중심 TKD는 더 단순한 CAD 구성이나 여전히 폼 거동을 정확히 예측한다."}, {"type": "bullet", "text": "Boomsma와 Poulikakos는 유체 포화 3D 구조 금속 폼의 유효 열전도도를 유도·검증했으며, 이는 고체상 전도도에 지배된다."}, {"type": "bullet", "text": "Krishnan et al.은 완전 주기 BCC 단위셀에 직접 시뮬레이션을 수행하여 유효 전도도, 정규화 투과율, 마찰계수(vs Brinkman 스크리닝 길이), Nusselt 수를 보고했다."}, {"type": "bullet", "text": "Cunsolo et al.은 Kelvin과 Weaire-Phelan 모델을 비교하여 다공도 0.90 이상에서 Nusselt &lt;5%, 마찰 &lt;10% 차이를 발견해, 고다공도에서 Kelvin 셀로 충분함을 보였다."}, {"type": "bullet", "text": "Bai와 Chung은 구 중심 TKD(다공도 0.97)를 수치 연구하여 압력강하가 실험과 일치함을 보였으며, 이는 여기서 검증에 사용된다."}, {"type": "bullet", "text": "Ekade와 Krishnan은 옥텟-트러스 격자의 정규화 투과율, 유효 전도도, Nusselt 수, 마찰계수를 다공도별로 보고하여 본 Octet 비교에 정보를 준다."}]}, "method": {"content": [{"type": "bullet", "text": "구 중심 TKD는 정팔면체의 여섯 모서리를 잘라 중앙 구를 빼서 생성하며, BCC(곡선 섬유)는 검증에만 사용된다.", "figure_refs": [1, 2]}, {"type": "formula", "label": "TKD 단위셀의 다공도 정의", "latex": "\\varepsilon = \\frac{\\forall_{total}-\\forall_s}{\\forall_{total}},\\qquad \\forall_{total}=s^3", "description": "다공도는 단위 정육면체(모서리 $s$)의 공극률; 고체 체적 $\\forall_s$는 구 반지름 $R = 0.5s(1+\\alpha)$에서 따르며 $\\alpha = 0.0275$에서 $\\varepsilon = 0.986$을 준다."}, {"type": "bullet", "text": "Cube와 FD-Cube(입방 계열)는 모서리/면 대각선에만 섬유가 있고, TKD와 Octet(팔면체 계열)은 복잡한 내부 섬유 연결성을 갖는다. 모두 고정 다공도 0.986에서 원형 섬유를 사용하므로 Octet이 가장 가는 섬유를 갖는다.", "figure_refs": []}, {"type": "bullet", "text": "유동에 평행한 두 면은 주기적이고, 직교 평면은 속도 입구와 영-게이지-압력 출구이므로, 셀은 유동 방향으로 한 단위셀 두께의 망상 폼을 나타낸다.", "figure_refs": []}, {"type": "formula", "label": "식 (14) - 체적 Nusselt 수", "latex": "Nu_v = \\frac{h_{sf}\\,(\\lambda\\,d_c/\\varepsilon)}{\\lambda}", "description": "계면 열전달계수 $h_{sf}$ 기반 체적 Nusselt 수; Iasiello et al.을 따라 다공도로 나눈 셀 직경 $d_c$(단위셀 길이 2.54 mm)가 특성 길이이다."}, {"type": "bullet", "text": "계면 열전달은 섬유에 대한 일정 열유속(식 9)과 일정 벽온도 모두에 대해 계산하며, 공기 물성은 막 온도에서 평가한다.", "figure_refs": [12]}, {"type": "bullet", "text": "검증: 실린더 횡류 섬유 규모가 Churchill-Bernstein 상관식과 6% 이내 일치했고, 완전 주기 BCC 셀(epsilon ~ 0.968)이 Krishnan et al. 온도 등고선과 Nusselt 수를 재현하여 TKD에 대한 신뢰성을 확인했다.", "figure_refs": [13, 15]}]}, "results": {"content": [{"type": "bullet", "text": "TKD는 유동이 사변형 면의 좁은 기공으로 충돌·가속하며 최대 국소 속도를 가지며, 섬유 하류에 저속 재순환 후류가 있다.", "figure_refs": [9]}, {"type": "bullet", "text": "Cube와 FD-Cube는 더 단순한 유동(모서리/면 대각선에만 섬유); FD-Cube의 대각 섬유는 고속 영역을 삼각 구역으로 나누고, Octet의 내부 섬유망은 강한 유동 방향 후류를 동반한 복잡한 유동을 준다.", "figure_refs": [8]}, {"type": "bullet", "text": "TKD 압력강하(0.5-2.3 m/s에서 0.55-25.12 Pa/mm)는 Bai와 Chung과 일치하여 시뮬레이션을 검증했다.", "figure_refs": [11]}, {"type": "bullet", "text": "Octet이 최고 압력강하로 TKD가 근접 추종하고, Cube와 FD-Cube가 최저이다. Octet 압력강하는 각각 TKD, FD-Cube, Cube의 1.2배, 1.3배, 2.15배이며 유동 방향 후류 형성에 의해 구동된다.", "figure_refs": [11]}, {"type": "bullet", "text": "유입 유동을 마주하는 섬유가 정체를 통해 최고 국소 열전달을 주며, 고정 다공도에서 Octet이 가장 많은 정체 사례를 제공하여 최고 계면 열전달을 낸다.", "figure_refs": [12]}, {"type": "formula", "label": "식 (13) - Churchill-Bernstein 검증 상관식", "latex": "Nu_{d_f} = 0.3 + \\frac{0.62\\,Re_{d_f}^{1/2}Pr^{1/3}}{[1+(0.4/Pr)^{2/3}]^{1/4}}\\left[1+\\left(\\frac{Re_{d_f}}{282000}\\right)^{5/8}\\right]^{4/5}", "description": "실린더 횡류에 대한 섬유 직경 기반 Nusselt 상관식으로, 평균 열전달계수 검증에 사용; 시뮬레이션이 Re_df = 2.5-30에서 6% 이내로 일치했다."}, {"type": "formula", "label": "상관식 - 체적 Nusselt 수", "latex": "Nu_v = a\\,Re_c^{b}\\,Pr^{0.4}", "description": "88 &lt;= Re_c &lt;= 405에서 각 위상에 대해 피팅한 체적 Nusselt 상관식; 계수(표 4)는 두 열 경계조건 모두에서 Octet 최고, 이후 TKD, FD-Cube, Cube를 준다."}, {"type": "bullet", "text": "Octet의 Nu_v는 TKD의 1.83-2.02배, FD-Cube의 2.25-2.26배, Cube의 4.59-4.69배이며, Nu_v는 일정 열유속보다 일정 벽온도 경계조건에서 더 높다.", "figure_refs": [16]}]}, "discussion": {"content": [{"type": "bullet", "text": "섬유 뒤(평면 P2) 유동 방향 후류 형성이 유동 저항의 주 결정 요인이므로, Octet의 강하고 광범위한 후류가 최고 압력강하를 준다."}, {"type": "bullet", "text": "유입 유동을 마주하는 섬유가 정체를 통해 최고 국소 열전달을 주는 반면, 후류의 곡선 사변형 면 내벽은 낮은 열전달을 갖는다."}, {"type": "bullet", "text": "고정 다공도에서 Octet 셀은 더 많은 유동 충돌 사례를 낳아 다른 세 위상보다 높은 정체 열전달을 준다."}, {"type": "bullet", "text": "열 경계조건이 사전 고정되어 보고된 열전달은 순수 대류이며, 공액 열전달에서는 최대 상호작용 표면적 덕분에 Octet이 더 나은 성능을 낼 것이다."}, {"type": "bullet", "text": "네 위상 모두에서 정체형 향상이 조사된 저속 범위의 주 열전달 메커니즘이다."}, {"type": "bullet", "text": "단위셀 길이 특성 척도(d_c/epsilon)가 기공/섬유 직경 척도와 달리 위상 전반의 체적 Nusselt 수에 보편적으로 적용 가능한 정규화로 제안된다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "네 위상(TKD, Cube, FD-Cube, Octet)을 특성화했으며, 다공도를 0.986(alpha = 0.0275)으로 고정하여 서로 다른 섬유 직경을 설정했다."}, {"type": "bullet", "text": "Octet이 최고 압력강하, Cube가 최저이며, 섬유 뒤 유동 방향 후류 형성에 지배된다."}, {"type": "bullet", "text": "계면 열전달계수는 일정 열유속과 일정 벽온도에 대해 계산되었으며 Nu_v는 Octet, TKD, FD-Cube, Cube 순으로 높았다."}, {"type": "bullet", "text": "접근 유동의 섬유 벽 충돌이 모든 구성에서 계면 열전달계수를 향상시키는 주 인자이다."}, {"type": "bullet", "text": "위상 및 경계조건별로 Nu_v = a Re_c^b Pr^0.4 상관식(88 &lt;= Re_c &lt;= 405)이 보고된다(표 4 계수)."}, {"type": "bullet", "text": "Octet은 3D 망상 시 상대적으로 낮은 펌핑 동력 페널티로 향상된 열 방출에 유망하나, 전체 연구가 다공도 0.986으로 논문 시편 대역보다 훨씬 높다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "열 경계조건(일정 열유속 또는 벽온도)이 공액으로 풀리지 않고 사전에 고정되었으므로, 대류 열전달계수만 보고된다.", "source_quote": "the reported heat transfer is only accounting for the convective heat transfer coefficient as the thermal boundary conditions were fixed a priori, be it a constant wall heat flux or constant wall temperature.", "source_section": "results"}, {"claim": "단위셀은 유동에 수직인 방향으로만 주기적이고 유동 방향으로 한 셀 두께이므로, 결과는 두꺼운 폼 베드가 아니라 한 셀 두께 망상 구조를 나타낸다.", "source_quote": "The configurations investigated in the present study were periodic in directions normal to the flow. Thus, the flow and thermal characteristics were governed by the impingement effect of the oncoming flow.", "source_section": "results"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["AM은 발포 금속의 확률적 TKD 셀을 넘어 규칙적 개방셀 격자를 가능케 하나, 입방 대 팔면체 계열의 기공 규모 유동·열수송은 이해되지 않았다.", "체적 평균 시뮬레이션은 저렴하나 기공/섬유 규모 유동·열수송을 해석할 수 없다.", "효율적 열교환기 설계에는 높은 투과율·유효 전도도·계면 열전달계수를 갖춘 단위셀 위상이 필요하며 이는 국소 특성화를 요한다."], "addressed_by_this_work": ["고정 다공도에서 네 단위셀 위상의 DNS로 기공 규모 유동장, 압력강하, 체적 Nusselt 수를 두 열 경계조건 모두에 대해 해석한다.", "섬유 위 유동 정체가 압력강하와 계면 열전달을 동시에 향상시키는 공통 메커니즘으로 규명된다.", "각 위상에 대해 Nu_v = a Re_c^b Pr^0.4 상관식(Octet 최고, 이후 TKD, FD-Cube, Cube)을 제공하여 열교환기 설계 순위를 가능케 한다."], "remaining_unresolved": ["모든 결과가 다공도 0.986에 있으며, 낮은 다공도(예: epsilon ~ 0.5)에서의 거동은 특성화되지 않았다.", "공액 열전달이 풀리지 않아, 공액 조건에서 Octet의 예상 추가 이점은 정량화되지 않았다.", "한 셀 두께 주기 표현은 두꺼운 폼 베드의 유동 방향 열경계층 발달을 포착하지 못한다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
