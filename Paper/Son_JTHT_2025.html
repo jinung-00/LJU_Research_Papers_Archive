@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Impact of Triply Periodic Minimal Surface Structure Unit Cell Size on Transpiration Cooling</title>
+    <meta name="keywords" content="transpiration cooling, triply periodic minimal surface, TPMS, Diamond lattice, unit cell size, adiabatic film cooling effectiveness, pressure-sensitive paint, additive manufacturing, gas turbine, injection ratio">
+    <meta name="paper-authors" content="Juchan Son, Yeongmin Pyo, Patrick Richer, Bertrand Jodoin, Zekai Hong">
+    <meta name="paper-journal" content="Journal of Thermophysics and Heat Transfer (AIAA), Vol. 40, No. 1, 2026 (online 2025) · DOI: 10.2514/1.T7212 (also AIAA SciTech 2025, Paper 2025-0329)">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Impact of Triply Periodic Minimal Surface Structure Unit Cell Size on Transpiration Cooling</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Juchan Son, Yeongmin Pyo, Patrick Richer, Bertrand Jodoin, Zekai Hong</div>
+            <div class="journal">Journal of Thermophysics and Heat Transfer (AIAA), Vol. 40, No. 1, 2026 (online 2025) · DOI: 10.2514/1.T7212 (also AIAA SciTech 2025, Paper 2025-0329)</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 <span class="term">삼중 주기 최소곡면(triply periodic minimal surface, TPMS)</span> 격자의 <span class="term">단위셀 크기</span>가 증산 막냉각에 미치는 영향을 실험적으로 조사하며, 이진 <span class="term">압력감응도료(pressure-sensitive paint, PSP)</span>로 단열 막냉각 효율을 매핑한다. 고정 실제 다공도(36%)이나 세 단위셀 크기(1.9, 2.5, 3.1 mm)의 Diamond형 TPMS 쿠폰을 세 주입비($F = 0.68\%, 1.14\%, 1.60\%$)에서 33 m/s 주류(Re = 256,000, 연소기 유사 조건), 질소를 냉각제 대용으로 하여 시험했다. 작은 단위셀 크기가 더 효과적이고 균일한 냉각막을 만든다: 전체 단열 효율이 3.1에서 1.9 mm로 갈 때 0.09-0.13 상승하여, 1.9 mm / $F = 1.60\%$에서 $\bar{\eta}_{ad} = 0.76$(그들의 개선된 분사냉각 설계의 약 2배)에 도달한다. 향상은 작은 셀에서의 얕은 표면 공극(작은 새들 깊이 $\Delta z$)과 다공성 매질 내부의 측방 냉각제 흐름 감소에 기인한다. <span class="term">다공도 커버리지</span>: 시편은 고정 실제 다공도 36%(설계 44-48%)로 논문 시편 대역($\varepsilon \approx 0.499$) 아래이며; 본 논문은 $\varepsilon \approx 0.5$에서의 물성이 아니라 증산냉각 물리(단위셀 크기 효과)로 인용된다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">triply periodic minimal surface</span><span class="keyword-chip">TPMS</span><span class="keyword-chip">Diamond lattice</span><span class="keyword-chip">unit cell size</span><span class="keyword-chip">adiabatic film cooling effectiveness</span><span class="keyword-chip">pressure-sensitive paint</span><span class="keyword-chip">additive manufacturing</span><span class="keyword-chip">gas turbine</span><span class="keyword-chip">injection ratio</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">2000 K를 넘는 터빈 입구 온도는 초합금 한계를 초과하며, 분사냉각이 최신 기술이나 다량의 압축기 공기를 소비한다. 증산냉각은 막 리프트오프 없이 우수한 효율을 약속하지만 기존 다공성 매질은 확률적 기공을 가진다; AM으로 가능한 TPMS 격자가 이상적 결정론적 후보이며, 여기서는 그 단위셀 크기가 증산냉각에 미치는 영향에 집중한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">분사냉각은 광범위하게 최적화되었고(주입각, 복합각, 피치, 홀 크기/형상, 블로잉비) 충돌/분사 결합 방식도 연구되었다. TPMS 기반 증산냉각을 다룬 연구는 소수로, 제트 리프트오프를 회피하고 효율이 단위에 접근할 수 있음을 보였다; 본 연구는 저자들의 선행 TPMS 증산 연구를 단위셀 크기로 확장한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고정 실제 다공도 36%의 세 단위셀 크기(1.9, 2.5, 3.1 mm) Diamond형 TPMS 쿠폰을 SLA 인쇄(25 um 층, 고온 레진)하고, 실제 다공도를 중량법으로 결정했다. 단열 막냉각 효율을 개방 루프 풍동에서 33 m/s 주류(Re = 256,000), 질소 냉각제 대용으로 이진 PSP로 매핑하고, 분사 블로잉비 0.6/1.0/1.4에 맞춘 주입비 F = 0.68/1.14/1.60%에서 측정했다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">백분율 압력강하는 주입비에 따라 상승하고 단위셀 크기 감소에 따라 급격히 상승한다(최대 0.44%). 막냉각 효율은 하류(냉각제 축적), 주입비, 그리고 무엇보다 단위셀 크기 감소에 따라 증가한다. 가장 작은 셀(1.9 mm)이 최고이자 가장 균일한 냉각을 주어 전체 eta_ad = 0.76에 도달하며, 이는 저자들의 개선된 분사 설계의 약 2배이다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">작은 단위셀은 얕은 표면 공극(냉각제가 표면으로 더 쉽게 상승)과 냉각제를 후연으로 잘못 유도하는 내부 측방 흐름 억제를 통해 냉각을 향상시킨다. 주류 방해를 극복하는 데 필요한 압력강하는 작은 셀에 유리하며; 결과는 증산냉각이 분사의 리프트오프 페널티를 회피함을 일관되게 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Diamond형 TPMS 증산냉각의 단위셀 크기 효과를 고정 36% 다공도에서 세 주입비에 걸쳐 분리했다. 막냉각 효율은 주류 방향으로, 주입비에 따라(수확 체감), 그리고 단위셀 크기 감소에 따라 증가하며; 최적 사례는 eta_ad = 0.76(분사의 ~2배)에 도달했다. 경향은 TPMS 유형 전반에 보편적이라 주장되며 프린터빌리티로 한정된다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 58</span></summary>
+            <ol class="ref-list"><li>M. Broumand, J. Son, Y. Pyo, S. Yun, Z. Hong, TPMS-Based Transpiration Cooling for Film Cooling Enhancement, Int. J. Heat Mass Transf., 2024</li><li>Z. Zhou, Y. Lv, F. He, T. Liu, J. Wang, Pore-Scale Investigation of Transpiration Cooling Based on Triply Periodic Minimal Surface, Int. J. Therm. Sci., 2024</li><li>J. Son, M. Broumand, Y. Pyo, P. Richer, B. Jodoin, Z. Hong, Effects of Lattice Orientation Angle on TPMS-Based Transpiration Cooling, J. Eng. Gas Turbines Power, 2025</li><li>L. C. Paitich, P. Richer, B. Jodoin, Y. Pyo, S. Yun, Z. Hong, Directional Effects of Effusion Cooling on the Cooling Film Effectiveness, AIAA Journal, 2022</li><li>Y. Pyo, J. Son, P. Richer, B. Jodoin, M. Broumand, S. Yun, Z. Hong, Isolating Influences of Varying Pitch from the Effects of Non-Zero Compound Angles on Effusion Cooling, Aeronautical Journal, 2025</li><li>E. R. G. Eckert, J. N. B. Livingood, Comparison of Effectiveness of Convection-, Transpiration-, and Film-Cooling Methods with Air as Coolant, NACA TR 1182, 1954</li><li>O. Al-Ketan, M. Ali, M. Khalil, R. Rowshan, K. A. Khan, R. K. Abu Al-Rub, Forced Convection CFD Analysis of Architected and 3D-Printable Heat Sinks Based on Triply Periodic Minimal Surfaces, J. Therm. Sci. Eng. Appl., 2021</li><li>J. C. Ahn, S. Mhetras, J. C. Han, Film-Cooling Effectiveness on a Gas Turbine Blade Tip Using Pressure-Sensitive Paint, J. Heat Transfer, 2005</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "터빈 입구 온도는 엔진 효율 향상을 위해 2000 K 이상으로 상승하여 니켈계 초합금 한계를 초과하고, 연소기 라이너 같은 부품의 효과적 열보호를 요구한다.", "figure_refs": []}, {"type": "bullet", "text": "분사냉각은 최신 기술이나 상당한 고압 압축기 토출 공기를 소비하여, 낮은 냉각제 사용으로 높은 효율을 내는 방법에 대한 수요를 촉진한다."}, {"type": "bullet", "text": "1950년대 제안된 증산냉각은 막 리프트오프 없이 우수한 히트싱크 능력과 넓은 냉각막 형성(경계층 열차단)을 제공한다."}, {"type": "bullet", "text": "냉각제는 다공성 매질(소결 분말, 직조 메시, 용융 주조, 천공판, 복합재)을 통해 증산되며, 선행 연구는 소량 주입도 열전달을 크게 줄이고 주입비 증가와 작은 입자 크기로 향상됨을 보였다."}, {"type": "bullet", "text": "기존 다공성 매질은 확률적 기공 분포로 불균일한 냉각제 흐름, 핫스팟, 강도 저하, 폐색을 야기하여 엔진용 증산냉각 성숙을 제한한다."}, {"type": "bullet", "text": "AM은 주기적 상호연결 채널과 높은 젖음 표면 대 체적비를 갖는 결정론적 다공성 매질로서 TPMS 격자를 가능케 하며; 본 연구는 Diamond형 TPMS 증산냉각에서 단위셀 크기 효과를 분리한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "분사냉각 연구는 주입각(20도 최적), 복합각(30-60도), 피치, 홀 크기/형상, 블로잉비, 밀도비를 막 효율에 대해 최적화했다."}, {"type": "bullet", "text": "충돌/분사 결합(이중벽) 방식은 분사 단독 대비 표면 물질전달을 6-10배 증가시키며, 공액 열전달에서 재료 전도도가 결정적 역할을 한다."}, {"type": "bullet", "text": "분사냉각은 다량의 압축기 공기를 소비하므로, 증산냉각이 가스터빈 고온가스 경로 부품에 가장 이상적인 방법으로 간주된다."}, {"type": "bullet", "text": "Zhou et al.은 TPMS 증산냉각의 기공 규모 조사를 수행하여, 기공-목 형상/크기가 냉각제 흐름 저항과 냉각 효율에 크게 영향을 줌을 발견했다."}, {"type": "bullet", "text": "Broumand et al.은 세 다공도(30/40/50%)의 TPMS 증산냉각을 분사와 비교하여, 제트 리프트오프가 없고 완전 발달 시 효율이 단위에 접근함(최고 주입비에서 5배 이상 향상)을 발견했다."}, {"type": "bullet", "text": "저자들의 선행 연구는 Koch TPMS 유형이 표면 텍스처 배향에 둔감함을 보였으며; 여기서는 단위셀 크기를 분리하기 위해 단순하고 널리 연구된 대표인 Diamond형을 선택한다."}]}, "method": {"content": [{"type": "bullet", "text": "Diamond TPMS 고체망은 레벨셋 방정식으로 정의되며, c = 0에서 50% 설계 다공도를 주고 고체망은 phi &lt; c인 부영역이다.", "figure_refs": [1]}, {"type": "formula", "label": "식 (1) - Diamond형 TPMS 레벨셋 방정식", "latex": "\\phi(x,y,z) = \\sin X\\sin Y\\sin Z + \\sin X\\cos Y\\cos Z + \\cos X\\sin Y\\cos Z + \\cos X\\cos Y\\sin Z = c", "description": "Diamond TPMS 등곡면의 레벨셋 정의로, $X=2\\pi x/\\alpha$ 등 단위셀 길이로 무차원화된다; 상수 $c$가 설계 다공도를 설정하고 고체망은 $\\phi &lt; c$이다."}, {"type": "bullet", "text": "적층제조는 내부 공극을 수축(과경화)시켜 실제 다공도가 설계보다 낮으며, 광학이 아니라 중량법으로 추정했다.", "figure_refs": [2, 3]}, {"type": "formula", "label": "식 (3) - 질량으로부터의 실제 다공도", "latex": "\\varepsilon_a = \\left(1 - \\frac{M_a}{M_s}\\right)\\times 100", "description": "인쇄된 TPMS 격자의 질량 $M_a$를 동일 외형 고체편 $M_s$에 대해 비교하여 구하는 실제 다공도; 내부 구조를 광학으로 측정할 수 없어 사용된다."}, {"type": "bullet", "text": "세 쿠폰(1.9, 2.5, 3.1 mm)은 36% 실제 다공도(설계 48/45/44%)를 공유하며; 기공 크기는 0.61/0.80/0.99 mm, 젖음 면적 대 체적비 30.5/23.7/18.7 cm^2/cm^3, 새들 깊이 Delta-z 0.24/0.28/0.35 mm이다.", "figure_refs": [7, 8]}, {"type": "formula", "label": "식 (5) - PSP를 통한 단열 막냉각 효율", "latex": "\\eta_{ad} \\approx 1 - \\frac{1}{1 + \\frac{MM_c}{MM_{air}}\\left(\\frac{(P_{O2})_{air}}{(P_{O2})_{mix}} - 1\\right)}", "description": "이진 PSP로 측정한 산소 농도/부분압 비로 표현한 단열 효율; $MM_c$, $MM_{air}$는 냉각제/공기 분자량, $(P_{O2})$는 산소 부분압이다."}, {"type": "bullet", "text": "이진 PSP(산소 감응 ~650 nm + 기준 ~550 nm)는 신호 비를 취해 온도 의존성을 제거하며; Formlabs Form3 SLA 프린터(405 nm, 25 um)와 고온 레진(HDT 238 C)으로 쿠폰을 제작했다.", "figure_refs": [11]}, {"type": "formula", "label": "식 (13) - 주입비", "latex": "F = \\frac{\\dot{m}_c}{(\\rho u)_m\\,A_{active}}", "description": "블로잉비 대신 사용되는 주입비 $F$(냉각제 질량유량을 주류 질량유속과 활성 면적의 곱으로 나눔); 증산 다공도가 BR을 부적절하게 낮게 만들기 때문이며, F = 0.68/1.14/1.60%는 분사 BR = 0.6/1.0/1.4에 대응한다."}]}, "results": {"content": [{"type": "bullet", "text": "백분율 압력강하는 주입비에 따라 단조 상승하고 단위셀 크기 감소에 따라 급격히 상승한다(F = 1.60%에서 1.9 mm 0.42% 대 3.1 mm 0.09%), 높은 젖음 면적 대 체적비 lambda에 의해 구동된다.", "figure_refs": [12]}, {"type": "bullet", "text": "단위셀 3.1 -&gt; 2.5 mm 감소는 목(throat) 수를 25% 늘리나 압력강하를 2배 이상으로 하여, 목 면적만으로 delta-P를 설명할 수 없고 내부 점성 흐름(lambda 경유)이 지배한다. 최대 delta-P는 0.44%로 분사의 하한(0.5-2.5%)에 필적한다."}, {"type": "bullet", "text": "2D 효율은 하류로 갈수록(냉각제가 축적되어 막이 두꺼워짐) 그리고 주입비에 따라 상승하며 - BR 0.6을 넘어 제트 리프트오프로 냉각이 저하되는 분사와 다르다.", "figure_refs": [13]}, {"type": "bullet", "text": "막냉각 효율은 모든 주입비에서 단위셀 크기 감소에 따라 증가하며; 가장 작은 셀(1.9 mm)이 최고이다. 전체 eta_ad는 F = 0.68/1.14/1.60%에서 3.1에서 1.9 mm로 갈 때 0.13, 0.11, 0.09 상승한다.", "figure_refs": [13]}, {"type": "bullet", "text": "향상은 작은 셀에서의 얕은 새들 깊이 Delta-z(공극이 덜 함몰)로 냉각제가 상면으로 상승할 수 있는 점, 그리고 높은 젖음 면적 대 체적비와 더 많은 단위셀 층에 기인한다."}, {"type": "bullet", "text": "스팬 평균 효율은 주입비에 따라 신뢰성 있게 증가하며, F = 0.68에서 1.14%로의 이득이 1.14에서 1.60%보다 더 두드러진다(높은 F에서 수확 체감).", "figure_refs": [14]}, {"type": "bullet", "text": "가장 큰 셀(3.1 mm)은 낮은 F에서 선단 부근 초기 상승이 비정상적으로 느린데, 이는 고투과율·저압력강하 격자에서 냉각제를 하류로 수송하는 측방 내부 흐름에 기인한다.", "figure_refs": [14]}, {"type": "bullet", "text": "전체 eta_ad는 단위셀 크기와 주입비의 함수로 표현되며; 최적 사례(1.9 mm, F = 1.60%)는 eta_ad = 0.76에 도달하여 저자들의 개선된 복합각 분사 설계(0.38-0.41)의 ~2배이다.", "figure_refs": [15]}]}, "discussion": {"content": [{"type": "bullet", "text": "냉각제는 새들점 기공을 통해 상면 근처 공극으로 진입해 축적된 뒤 상승하며; 얕은 Delta-z(작은 셀)가 상승을 촉진해 냉각막을 더 일찍 형성한다.", "figure_refs": [9]}, {"type": "bullet", "text": "큰 단위셀은 깊은 공극(큰 Delta-z)을 주어 냉각제를 가두고 상승을 제한하며; 함몰된 상호연결 공극이 냉각제를 주류와 함께 하류로 유도하는 채널로 작용한다."}, {"type": "bullet", "text": "주류는 후연 쪽으로 내부 측방 냉각제 흐름을 유발하는데, 이는 냉각막 발달이 선단에 냉각제가 많을수록 유리하므로 바람직하지 않으며 - 큰 셀과 낮은 F에서 가장 두드러진다."}, {"type": "bullet", "text": "높은 압력강하(작은 셀)는 냉각제가 표면에 축적되고 주류 방해를 극복하도록 돕는데, 특히 선단에서 그러하다; 너무 낮은 압력강하는 주류가 균일 분포를 교란하게 한다."}, {"type": "bullet", "text": "냉각제 증가가 제트 리프트오프와 BR 0.6 이후 냉각 악화를 일으키는 분사와 달리, 증산냉각은 냉각제가 많을수록 향상되어 - 높은 출력에서 더 많은 냉각 공기를 공급하는 엔진 운전과 부합한다."}, {"type": "bullet", "text": "증산 delta-P(최대 0.44%)는 훨씬 높은 다공도 덕분에 대응 분사 설계보다 작아 압축기 작업 페널티를 낮게 유지한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "막냉각 효율은 냉각제가 축적되고 냉각막이 발달함에 따라 주류 방향으로 증가하며, 완전 발달 막에서 ~90%에 접근한다."}, {"type": "bullet", "text": "주입비 증가는 효율을 신뢰성 있게 향상시키며(분사 리프트오프와 달리), 낮은(0.68%)에서 중간(1.14%) 주입비로의 이득이 가장 크고 1.60%에서 수확 체감이 나타난다."}, {"type": "bullet", "text": "막냉각 성능은 단위셀 크기 감소에 따라 유의하게 증가한다: 얕은 표면 공극이 냉각제를 상승시켜 막을 형성하며, 큰 셀은 내부 측방 흐름 때문에 초기 단계 효율이 낮다."}, {"type": "bullet", "text": "경향은 TPMS 유형 전반에 보편적일 것으로 예상되므로(Diamond 전용 아님), 가장 높고 균일한 냉각을 위해 인쇄 가능한 최소 단위셀 크기가 가장 유리하다."}, {"type": "bullet", "text": "최적 성능은 1.9 mm 단위셀과 F = 1.60%에서 eta_ad = 0.76으로 - 동일 공기 소비에서 저자들의 개선된 복합각 분사 설계 대비 약 2배 향상이다."}, {"type": "bullet", "text": "시편은 고정 36% 실제 다공도(논문 시편 대역 아래)이며; 향후 연구는 전체 증산냉각 효율에 크게 영향을 주는 TPMS 격자 내부 흐름을 특성화해야 한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "Diamond형 TPMS만 시험되었으나, 저자들은 관찰된 단위셀 크기 경향이 TPMS 유형과 무관하며 모든 TPMS 유형에 보편적일 것으로 주장한다.", "source_quote": "although the effects of TPMS unit cell size on transpiration cooling were investigated with a relatively simple TPMS type-the Diamond type, the trends observed in this study are not TPMS-type dependent and are expected to be universal for all TPMS types.", "source_section": "conclusion"}, {"claim": "단위셀 크기를 더 줄이면 적층제조 프린터빌리티 한계에 부딪혀 좁은 내부 통로의 무작위 막힘/폐색을 유발한다.", "source_quote": "further reductions in unit cell size hit printability limits and can lead to random blockages to narrow passages inside the lattice structures.", "source_section": "conclusion"}, {"claim": "실제(인쇄된) 다공도는 내부 공극 수축/과경화로 인해 설계 다공도보다 상당히 낮아, 질량 기반 다공도 추정이 필요하다.", "source_quote": "It is common for the porosity observed in TPMS structures produced via additive manufacturing to be less than the designed value.", "source_section": "method"}], "future_works": [{"claim": "내부 흐름이 전체 증산냉각 효율에 크게 영향을 주므로, TPMS 격자 내부 흐름을 특성화한다.", "source_quote": "Future work to characterize flow internal to TPMS lattices is warranted due to the impact of internal flow on overall transpiration cooling effectiveness, as has been suggested by some observations of the present study.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["상승하는 터빈 입구 온도(&gt;2000 K)가 초합금 한계를 초과하며, 분사냉각은 다량의 압축기 토출 공기를 소비한다.", "증산냉각용 기존 다공성 매질(폼, 소결 금속)은 확률적 기공으로 불균일한 냉각제 분포, 핫스팟, 폐색을 야기한다.", "TPMS 격자는 유망한 결정론적 다공성 매질이나, 단위셀 크기 같은 기하 매개변수가 증산냉각에 미치는 영향에 대한 체계적 이해가 부족하다."], "addressed_by_this_work": ["PSP로 측정한 2D 막냉각 효율이 고정 다공도에서 Diamond형 TPMS의 단위셀 크기 효과를 세 주입비에 걸쳐 정량화한다.", "작은 단위셀 크기가 더 높고 균일한 냉각(최대 eta_ad = 0.76, 분사의 ~2배)을 주며, 이는 얕은 공극과 감소된 내부 측방 흐름에 기인함을 보인다.", "TPMS 증산냉각이 높은 블로잉비에서 분사냉각을 저하시키는 제트 리프트오프를 회피하며 냉각제가 많을수록 향상됨을 보인다."], "remaining_unresolved": ["TPMS 격자 내부 흐름은 직접 특성화되지 않았고 향후 연구로 지정되었다.", "36% 다공도의 Diamond형 TPMS만 시험되었으며 다른 TPMS 유형과 다공도(epsilon ~ 0.5 포함)는 실험적으로 다루지 않았다.", "프린터빌리티가 사용 가능한 최소 단위셀 크기를 제한하므로, 최적은 물리가 아니라 제조에 의해 한정된다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
