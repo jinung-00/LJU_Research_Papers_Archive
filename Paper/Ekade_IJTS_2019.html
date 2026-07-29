@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Fluid flow and heat transfer characteristics of octet truss lattice geometry</title>
+    <meta name="keywords" content="octet truss lattice, periodic cellular materials, direct numerical simulation, effective thermal conductivity, permeability, inertial coefficient, Brinkman screening length, friction factor, electronics cooling">
+    <meta name="paper-authors" content="Pawankumar Ekade, Shankar Krishnan">
+    <meta name="paper-journal" content="International Journal of Thermal Sciences, Vol. 137, 2019, pp. 253-261 · DOI: 10.1016/j.ijthermalsci.2018.11.031">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Fluid flow and heat transfer characteristics of octet truss lattice geometry</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Pawankumar Ekade, Shankar Krishnan</div>
+            <div class="journal">International Journal of Thermal Sciences, Vol. 137, 2019, pp. 253-261 · DOI: 10.1016/j.ijthermalsci.2018.11.031</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 주기적 단위셀의 직접 수치 시뮬레이션(ANSYS FLUENT)으로 <span class="term">옥텟 트러스(octet truss)</span> 격자 - 스트레치 지배형의 구조적으로 효율적인 주기적 셀룰러 재료 - 의 <span class="term">유효 열전도도, 투과율, 관성계수, 마찰계수, Nusselt 수</span>를 예측한다. 유효 전도도는 온도 강하를 부과하고 Fourier 법칙을 적용해 계산하며, 투과율과 관성계수는 압력강하의 Darcy-Forchheimer 피팅에서 회귀한다. 핵심 기여는 선행 연구의 서로 다른 기하 척도 대신 단일 길이 척도인 <span class="term">Brinkman 스크리닝 길이</span> $\sqrt{K}$로 유동과 열전달을 모두 상관짓는 것이다. 옥텟 정규화 투과율은 주어진 다공도에서 확률적 폼보다 20-80% 높고 관성계수는 확률적 측정치의 약 50%이며, 옥텟 트러스는 폼과 유사하거나 더 나은 유동/열 거동을 보인다. <span class="term">다공도 커버리지</span>: 시뮬레이션 다공도는 $\varepsilon \approx 0.62$-$0.95$를 포괄하므로, 상관식이 저다공도 끝에 도달하나 논문 시편 대역($\varepsilon \approx 0.499$)을 완전히 감싸지는 못한다.</div>
+            <div class="keywords"><span class="keyword-chip">octet truss lattice</span><span class="keyword-chip">periodic cellular materials</span><span class="keyword-chip">direct numerical simulation</span><span class="keyword-chip">effective thermal conductivity</span><span class="keyword-chip">permeability</span><span class="keyword-chip">inertial coefficient</span><span class="keyword-chip">Brinkman screening length</span><span class="keyword-chip">friction factor</span><span class="keyword-chip">electronics cooling</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">히트싱크는 하중 지지와 열 방출을 결합한 경량 다기능 매체를 점차 요구한다. 확률적 금속 폼은 웹 연결성이 나쁘고 굽힘 지배 파괴를 보이는 반면, 옥텟-트러스 격자는 스트레치 지배형으로 구조적으로 효율적이나 그 열·유동 특성이 미탐구 상태여서 DNS 단위셀 연구를 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 주기적 셀룰러 금속(주름형, 각기둥형, LFM)의 해석·수치 모델과 확률적 폼의 단위셀 시뮬레이션을 다룬다. 유효 전도도 모델(Qu, Bai, Krishnan/Lemlich)과 확률적 폼 수송 상관식이 옥텟 DNS 결과 비교의 벤치마크를 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">주기적 옥텟-트러스 단위셀(알루미늄-공기)을 SolidWorks로 모델링하고 ANSYS FLUENT로 시뮬레이션한다. 유효 전도도는 고정 온도 강하로부터 Fourier 법칙으로, 투과율과 관성계수는 Darcy-Forchheimer 압력강하 피팅에서 회귀로, 마찰계수/Nusselt 수는 완전 발달 주기 유동에서 계산하며 모두 Brinkman 스크리닝 길이 sqrt(K)로 상관짓는다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">옥텟 유효 전도도는 Bai et al. 모델과 일치하고 고다공도에서 Lemlich 예측에 접근한다. 정규화 투과율은 주어진 다공도에서 확률적 폼보다 20-80% 높고, 관성계수(0.05-0.11)는 폼 측정치의 약 절반이다. sqrt(K)를 사용하면 마찰계수와 Nusselt 수가 수렴하고 폼 상관식과 일치하여, 옥텟 격자가 정렬된 폼처럼 거동함을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">옥텟 격자의 스트레치 지배 위상은 구조적 이점에 폼 유사 수송을 더하며, 스트랜드 길이-단면비를 통해 물성을 조정하는 추가 능력을 준다. 유효 전도도는 방향각 beta를 줄여 향상되고, 마찰계수는 고다공도 폼과 유사하거나 약간 낮으며, sqrt(K)가 적절한 보편적 길이 척도이다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">옥텟-트러스 열-유체 특성을 조절 매개변수 없이 DNS 단위셀 시뮬레이션으로 예측했다. 유효 전도도는 Bai et al. 모델과 일치하고, 정규화 투과율은 폼보다 20-80% 높으며, 관성계수는 폼 값의 ~50%이고, Brinkman 스크리닝 길이 sqrt(K)가 마찰계수와 Nusselt 수 상관식을 통합한다 - 모두 다공도 ~0.62까지에 대한 것이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 36</span></summary>
+            <ol class="ref-list"><li>V. S. Deshpande, N. A. Fleck, M. F. Ashby, Effective properties of the octet-truss lattice material, J. Mech. Phys. Solids, 2001</li><li>Z. G. Qu, T. S. Wang, W. Q. Tao, T. J. Lu, A theoretical octet-truss lattice unit cell model for effective thermal conductivity of consolidated porous materials saturated with fluid, Heat Mass Transf., 2012</li><li>X. Bai, C. Hasan, M. Mobedi, A. Nakayama, A general expression for the stagnant thermal conductivity of stochastic and periodic structures, J. Heat Transfer, 2017</li><li>S. Krishnan, J. Y. Murthy, S. V. Garimella, Direct simulation of transport in open-cell metal foam, ASME J. Heat Transfer, 2006</li><li>V. V. Calmidi, R. L. Mahajan, Forced convection in high porosity metal foams, J. Heat Transfer, 2000</li><li>A. Bhattacharya, V. V. Calmidi, R. L. Mahajan, Thermophysical properties of high porosity metal foams, Int. J. Heat Mass Transf., 2002</li><li>Q. Wu, S. Weinbaum, Y. Andreopoulos, Stagnation point flows in a porous medium, Chem. Eng. Sci., 2005</li><li>K. Vafai, C. L. Tien, Boundary and inertia effects on convective mass transfer in porous media, Int. J. Heat Mass Transf., 1982</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "셀룰러 고체는 매력적인 다기능 열교환 매체이며, 확률적 폼과 주기적 격자/각기둥 구조로 나뉜다.", "figure_refs": []}, {"type": "bullet", "text": "확률적 폼은 무작위 망상 구조로 재료를 고르지 않게 분포시키며, 나쁜 웹 연결성 때문에 하중 하에서 셀벽 굽힘으로 파괴된다."}, {"type": "bullet", "text": "옥텟 트러스(절점 연결성 12)는 셀벽 스트레치로 변형되어, 상대밀도에 선형으로 비례하는 무게 효율적 강성/강도를 준다."}, {"type": "bullet", "text": "전자 냉각은 향상된 열전달과 함께 기계적 하중 지지 및 낮은 중량을 필요로 하여, 위상 최적화가 가능한 설계형 주기적 셀룰러 구조를 선호한다."}, {"type": "bullet", "text": "선행 연구는 주기적 단위셀로 확률적 폼을 모델링(다공도 &gt; 0.8에서 검증)하고 LFM/팔면체 히트싱크를 평가했으나, 옥텟-트러스 열/유동 물성은 미규명으로 남았다."}, {"type": "bullet", "text": "명시된 목표는 조절 매개변수 없이 단위셀 모델로 옥텟-트러스 격자(알루미늄-공기)의 압력강하, Nusselt 수, 유효 열전도도를 계산하는 것이다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Wadley와 Gu et al.은 다기능 열-구조 성능을 위한 주기적 셀룰러 금속(허니콤, 주름판, LFM)을 해석했다."}, {"type": "bullet", "text": "Valdevit et al.과 Lu et al.은 핀 유추와 유전 알고리즘으로 주어진 펌핑 동력에서 최대 열전달을 위한 각기둥/주름 패널 기하를 최적화했다."}, {"type": "bullet", "text": "Krishnan et al.은 폼 유동·열 거동을 예측하는 주기적 단위셀 방법(다공도 &gt; 0.8 폼에 대해 검증)을 시연했다."}, {"type": "bullet", "text": "Son et al.과 Fink et al.은 사면체/팔면체 LFM 히트싱크를 연구하여 Reynolds 수, 유동 방향, 기하에 대한 마찰계수 상관식을 보고했다."}, {"type": "bullet", "text": "Qu et al.은 유체 포화 다공성 재료의 유효 전도도에 대한 이론적 옥텟-트러스 단위셀 모델을 제안했으며 80% 이상 다공도에서만 유효하다."}, {"type": "bullet", "text": "Bai et al.은 일반 정체 전도도 식 k_eff = (1-e)k_s cos^2(beta) + e*k_f를 제시했고, 고다공도에서 Krishnan/Lemlich의 (1-e)k_s/3 + e*k_f로 환원되며 여기서 비교 모델로 채택된다."}]}, "method": {"content": [{"type": "bullet", "text": "다공도는 고정 단위셀 크기에서 스트랜드 직경을 바꿔 0.62-0.946로, 기공 밀도는 고정 스트랜드 직경에서 단위셀 크기를 바꿔 변화시킨다(표 1).", "figure_refs": [1]}, {"type": "formula", "label": "식 (1) - 유효 열전도도 (Fourier 법칙)", "latex": "k_{eff} = \\frac{Q\\times dX}{A_c\\times\\Delta T}", "description": "정지 상태의 고체와 유체에서 전도를 풀어, 길이 $dX$·단면 $A_c$의 단위셀에 부과된 온도 강하 $\\Delta T$(100 K)에서의 열전달률 $Q$로부터 유효 전도도를 구한다."}, {"type": "formula", "label": "식 (6) - Brinkman형 운동량 방정식", "latex": "\\rho(\\mathbf{u}\\cdot\\nabla)\\mathbf{u}+\\nabla P = \\mu\\nabla^2\\mathbf{u} - \\frac{\\mu}{K}\\mathbf{u} - \\frac{C_E\\,\\rho}{\\sqrt{K}}|\\mathbf{u}|\\mathbf{u}", "description": "자기일관 Navier-Stokes/Brinkman 형태; 마지막 두 항은 Darcy와 Forchheimer 저항으로, $K$는 투과율, $C_E$는 관성(Ergun) 계수이다."}, {"type": "bullet", "text": "열 문제에서는 트러스 표면에 일정 열유속(60 W/m^2)을 부과하고, 전도도에는 온도 강하를 적용하며, 2차 상류+SIMPLE, 잔차 &lt; 1e-6(에너지 &lt; 1e-12)로 계산한다."}, {"type": "formula", "label": "식 (9) - 회귀로부터의 투과율과 관성계수", "latex": "\\frac{\\Delta P}{L} = A_1 u + B_1 u^2,\\qquad K = \\frac{\\mu}{A_1},\\quad C_E = \\frac{B_1\\sqrt{K}}{\\rho}", "description": "2차 압력강하 법칙의 최소제곱 피팅($R^2 &gt; 99.9\\%$)으로부터 투과율 $K$와 관성계수 $C_E$를 구한다; 유동은 $C_E Re_K^{1/2} \\le 1$이 되도록 층류로 유지한다."}, {"type": "bullet", "text": "모델은 Fink et al.의 팔면체 격자 마찰계수 데이터(고 Re 두 점 제외 약 20% 이내)와 Qu et al.·Bai et al. 유효 전도도 모델에 대해 검증된다.", "figure_refs": [6]}, {"type": "bullet", "text": "Brinkman 스크리닝 길이 sqrt(K)를 마찰계수와 Nusselt 수 모두의 특성 길이로 채택하여, 타 연구의 서로 다른 기하 척도(수력 직경, 표면적 대 체적)를 대체한다.", "figure_refs": [9]}]}, "results": {"content": [{"type": "bullet", "text": "예측된 정규화 k_eff/k_s는 다공도에 따라 감소하며, 0.62-0.95에서 일반 Bai et al. 모델과 잘 일치하고 고다공도에서 Lemlich 예측에 접근한다(k_f/k_s ~ O(1e-4)이라 고체 전도 지배).", "figure_refs": [3]}, {"type": "bullet", "text": "옥텟 격자의 정규화 투과율(스트랜드 직경 기준)은 폼과 같은 자릿수이나 주어진 다공도에서 20-80% 높아, 옥텟 기하의 투과율-다공도 관계를 정립한다.", "figure_refs": [7]}, {"type": "bullet", "text": "예측 관성계수는 0.05-0.11로, 다공성 매질 범위 내이며 Bhattacharya et al. 폼 측정치(89.9-97.3% 다공도에서 0.068-0.104)의 약 50%이다.", "figure_refs": [8]}, {"type": "bullet", "text": "Brinkman 스크리닝 길이 sqrt(K)를 사용하면 계산 마찰계수가 Vafai-Tien 폼 상관식을 따라, 옥텟 트러스가 유동 거동에서 폼과 밀접히 닮음을 보인다.", "figure_refs": [9]}, {"type": "formula", "label": "식 (11) - 계면 Nusselt 수 (sqrt(K) 기준)", "latex": "Nu_K = \\frac{h_{sf}\\sqrt{K}}{k_f} = 0.52\\left(\\frac{U\\sqrt{K}}{\\vartheta\\,d}\\right)^{0.5} Pr^{0.37}", "description": "Calmidi-Mahajan 계면 Nu 상관식을 $\\sqrt{K}$와 수정 매개변수 $K(U/d)/\\vartheta$로 재구성한 것; 옥텟 DNS 국소 Nusselt 데이터가 동일 길이 척도로 상관된다."}, {"type": "bullet", "text": "상류 속도 구배 매개변수(v/KVgrad) 기반 수정 Reynolds 수는 비-Darcy 기여가 무시될 때 sqrt(K) 기반 Nu와 잘 상관된다.", "figure_refs": [10]}, {"type": "bullet", "text": "Nakayama et al.의 일반 체적 Nu 상관식은 낮은 수정 Reynolds 수에서 옥텟 예측과 일치하나 K(U/d)/v &gt; 5에서 다른 기울기로 편차를 보인다."}, {"type": "bullet", "text": "전체적으로 시뮬레이션한 Reynolds 범위(Re_K ~ 0.1-24)에서 옥텟 격자는 정렬된 금속 폼 기하로 취급될 수 있으며, 폼 데이터가 옥텟 예측과 일치한다."}]}, "discussion": {"content": [{"type": "bullet", "text": "인베스트먼트 주조는 옥텟 스트랜드 직경을 ~1-1.5 mm(폼은 ~0.4 mm)로 제한하여 설계 격자를 더 큰 기공 밀도로 제한할 수 있으나, 고전도 폼(~90%)과 달리 옥텟 주조는 고다공도 한계가 없다."}, {"type": "bullet", "text": "옥텟 격자는 확률적 폼보다 높은 유효 열전도도를 가지며, 방향각 beta 감소(cos(beta) -&gt; 1)는 k_eff를 기하평균 값 쪽으로 높이는 핵심 설계 지렛대이다."}, {"type": "bullet", "text": "옥텟 마찰계수는 저다공도 62% 기하를 제외하면 고다공도(&gt;=90%) 확률적 폼과 같거나 약간 낮다."}, {"type": "bullet", "text": "압력강하와 Nusselt 수는 단위셀 표면 대 체적비에 의존하며, 절점 접합부의 형상 항력은 유량에 따라 증가한다."}, {"type": "bullet", "text": "고정 체적 히트싱크 설계에서 beta 감소는 표면적 대 체적비를 줄이므로, 전도도와 대류 면적을 균형 잡도록 beta를 신중히 선택해야 한다."}, {"type": "bullet", "text": "옥텟 단위셀 기하를 열을 최적으로 확산·방출하도록 조정하는 능력은 제조에 제한된 확률적 재료로는 불가능한 이점이다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "옥텟 격자의 예측 유효 열전도도는 일반 Bai et al. 모델 및 기존 이론/실험 데이터와 잘 일치했다."}, {"type": "bullet", "text": "옥텟 격자의 정규화 투과율은 주어진 다공도에서 확률적 폼보다 20-80% 높으며, 관성계수는 확률적 측정치의 ~50%이다."}, {"type": "bullet", "text": "마찰계수 예측은 확률적 폼 상관식과 일치했으며, 62% 다공도 사례를 제외한 모든 옥텟 기하가 더 낮거나 유사한 마찰계수(Vafai-Tien 기준)를 보였다."}, {"type": "bullet", "text": "v/(KVgrad) 기반 수정 Reynolds 수는 비-Darcy 기여가 무시될 때 sqrt(K) 기반 Nusselt 수와 잘 상관된다."}, {"type": "bullet", "text": "비-Darcian 기여가 무시될 때 투과율 기반 길이 척도 sqrt(K)가 마찰계수와 Nusselt 수 모두에 적절하여 문헌의 서로 다른 척도를 통합한다."}, {"type": "bullet", "text": "시뮬레이션한 Reynolds 범위에서 옥텟 격자는 정렬된 금속 폼으로 취급될 수 있으며, 시뮬레이션 다공도 하한은 ~0.62이므로 논문 시편 대역(epsilon ~ 0.5)에는 도달하지 않는다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "주기적 셀룰러 기하는 일반적으로 이방성이므로, 보고된 물성은 해석된 단일 유동 방향에 대해서만 유효하다.", "source_quote": "Most of the periodic cellular geometries are expected to exhibit anisotropic behavior, the results discussed here are valid only for the flow direction discussed here.", "source_section": "method"}, {"claim": "분산 효과는 무시할 만하다고 추정되어 포함되지 않았으며, 이는 고려된 저 Reynolds(준-Darcy) 영역에서만 유효하다.", "source_quote": "the dispersion thermal conductivity is estimated to be O(10-2) or less for all the flows and geometry reported here and are not considered.", "source_section": "results"}, {"claim": "비교에 사용된 Qu et al. 유효 전도도 모델은 80% 이상 다공도에서만 정확하므로, 여기서 다룬 낮은 다공도에서는 일치도가 저하된다.", "source_quote": "equation (3) was found to predict accurate values only for porosity E &gt; 0.8.", "source_section": "results"}], "future_works": [{"claim": "실험 측정이 어려운 저 Reynolds 수에서 옥텟 격자의 유동 및 열분산 현상을 조사한다.", "source_quote": "the octet representation presents a unique opportunity to investigate other flow phenomena such as flow and thermal dispersion where experimental measurements are hard to come by, especially at low Reynolds numbers. This will be considered in our future work.", "source_section": "method"}, {"claim": "데이터를 더 높은 Reynolds 수로 확장하고 다른 경쟁 주기적 셀룰러 구조와 실험적으로 비교한다.", "source_quote": "Extending the data to higher Reynolds number and experimental comparison against other competing periodic cellular structures is being done in ongoing work.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["옥텟 트러스 격자는 구조적으로 효율적(스트레치 지배)이나 그 열·유동 특성은 조사되지 않았다.", "전자 냉각은 향상된 열전달을 갖춘 경량·기계적 하중 지지 매체를 필요로 하나, 확률적 폼은 이를 부실하게 제공한다.", "기존 문헌은 마찰계수와 Nusselt 수를 서로 다른 기하 길이 척도로 특성화하여 통합 수송 기술을 막는다."], "addressed_by_this_work": ["다양한 다공도·기공 밀도에 걸쳐 k_eff, 투과율, 관성계수, 마찰계수, Nusselt 수의 DNS 단위셀 예측을 제공한다.", "단일 길이 척도인 Brinkman 스크리닝 길이 sqrt(K)가 비-Darcy 기여가 무시될 때 마찰계수와 Nusselt 수를 모두 상관지음을 보인다.", "옥텟 격자가 정규화 투과율 20-80% 높음, 관성계수 ~50% 낮음, 폼과 유사/우수한 열 거동을 가짐을 보인다."], "remaining_unresolved": ["저 Reynolds 수에서의 유동 및 열분산은 향후 연구로 미룬다.", "단일 유동 방향만 해석되어 옥텟 격자의 이방성은 완전히 특성화되지 않았다.", "시뮬레이션 다공도가 ~0.62까지만 내려가 epsilon ~ 0.5는 다루지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
