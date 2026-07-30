@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Optimization transpiration cooling of nose cone with non-uniform permeability</title>
+    <meta name="keywords" content="transpiration cooling, optimization transpiration cooling, non-uniform permeability, nose cone, cooling effectiveness, coolant allocation, sintered porous matrix, stagnation point, hypersonic thermal protection, LTNE">
+    <meta name="paper-authors" content="Nan Wu, Jianhua Wang, Fei He, Liang Chen, Bangcheng Ai">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 127, 2018, pp. 882-891 · DOI: 10.1016/j.ijheatmasstransfer.2018.07.134">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="04_Hybrid">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Optimization transpiration cooling of nose cone with non-uniform permeability</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Nan Wu, Jianhua Wang, Fei He, Liang Chen, Bangcheng Ai</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 127, 2018, pp. 882-891 · DOI: 10.1016/j.ijheatmasstransfer.2018.07.134</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 실험·수치 병행 연구는 증산냉각(transpiration cooling)을 적용한 두 개의 쐐기형 다공성 노즈콘을 비교한다. 하나는 정체점 부근에서 투과율이 가장 높은 3층 <span class="term">비균질 투과율(non-uniform permeability)</span> 매트릭스를 갖는 <span class="term">최적화 증산냉각(OTC)</span> 시편이고, 다른 하나는 균질 투과율의 <span class="term">전통적 증산냉각(TTC)</span> 시편이다. 냉각제는 <span class="term">상변화가 없는 단상 기체(압축 공기)</span>이며, 다공성 매트릭스는 3개 층에 걸쳐 평균 입자 지름(150/125/90 um)과 성형 압력을 바꾸어 투과율을 계단식으로 나눈 소결 316L 스테인리스강 입자층이다. 실험(적외선 표면 온도, 냉각 효율)에서 OTC는 선단부 온도를 낮추고 F=0.67%에서 정체점 냉각 효율을 TTC의 0.16 대비 0.26까지 높이며 온도 균일도를 개선한다. 2D LTNE FLUENT 해석(Darcy-Brinkman-Forchheimer, 주류 RNG k-epsilon)은 국부적으로 높은 투과율이 냉각제를 재분배하여 전방층(x/L=0-0.26) 질량유속을 약 1.86배 높이고 필요한 냉각제 구동 압력을 줄인다는 것을 보여준다. 설계 결정 분류 관점에서 결정적으로, 여기서의 투과율 등급화는 (정체점에 가장 높은 투과율을 두는) <span class="term">경험적/정성적 규칙</span>을 3개의 제작된 이산 층으로 구현한 것이며, 어떠한 최적화기(optimizer)의 산출물도 아니고 목적함수도 없다. 논문 제목에도 불구하고 최적화 알고리즘은 수행되지 않았다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">optimization transpiration cooling</span><span class="keyword-chip">non-uniform permeability</span><span class="keyword-chip">nose cone</span><span class="keyword-chip">cooling effectiveness</span><span class="keyword-chip">coolant allocation</span><span class="keyword-chip">sintered porous matrix</span><span class="keyword-chip">stagnation point</span><span class="keyword-chip">hypersonic thermal protection</span><span class="keyword-chip">LTNE</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 극초음속 비행체 노즈콘과 선단부에 대한 능동 열보호를 개괄하며, 다공성 매트릭스가 넓은 대류 면적을 제공하므로 증산냉각이 대류·막냉각보다 우수하다고 주장한다. 전통적(균질) 증산냉각의 핵심 약점, 즉 가열과 압력이 최대인 정체점에서 냉각 효율이 최저라는 점을 지적하며, 이것이 목표한 냉각제 배분을 달성하려는 최적화 증산냉각(OTC)의 동기가 된다. 선행 OTC 연구는 거시구조 방식(벽두께, 챔버, 홀 선가공)과 미시물성 방식(비균질 공극률/투과율)으로 나뉘며, 미시물성 연구는 실험 데이터가 거의 없이 수치해석에 머물렀음을 지적한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론에서 개괄된 관련 연구는 증산냉각 최적화를 거시구조 경로와 미시물성 경로로 나눈다. 거시구조 계열(부등 벽두께, 다중 챔버, 홀 선가공, 맞춤 블로잉 프로토타입)은 유연하지만 선단부 형상에 제약되며, 미시물성 계열(비균질 공극률/투과율)은 주로 수치적으로 입증되었다. 명시된 연구 공백은 비균질 투과율 다공성 매트릭스에 대한 실험 데이터의 부족이며, 본 논문은 제작된 3층 시편으로 이를 채운다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">형상이 동일한 두 쐐기 노즈콘(외경 5 mm, 내부 콘각 12도, 벽두께 2.5 mm, L=15 mm)을 제작한다: OTC 선단부는 평균 입자 지름이 감소(150/125/90 um)하여 투과율이 감소(2.71e-11 / 1.50e-11 / 6.29e-12 m^2)하는 3개 층 A/B/C로 나뉜 소결 316L 입자층이며 A층(정체 영역)의 투과율이 가장 높다; TTC 매트릭스는 C층 투과율로 균질하다. 시험은 전기가열 풍동에서 적외선 표면 열영상, 단상 공기 냉각제, 주류 473 K, Re 약 1.6e4, 주입비 F=0.33-1.33%로 수행된다. 정상 2D 대칭 FLUENT 모델은 RNG k-epsilon 주류와 LTNE 2방정식 에너지식을 갖춘 Darcy-Brinkman-Forchheimer 다공성 유동을 풀고 Vafai의 열전달 계수로 폐합하며 실험과 5% 이내로 검증된다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실험적으로, 동일 주입비에서 OTC 온도는 상류 선단 영역(x/L=0-0.26)에서 TTC보다 훨씬 낮고, F=0.67%에서 정체점 냉각 효율은 OTC 0.26 대 TTC 0.16으로 주어진 효과를 위한 냉각제 소요를 대략 절반으로 줄인다. OTC는 또한 온도장을 평탄화(상류 평균과 전체 콘 평균이 근접)하여 균일도를 개선한다. 수치적으로, 전방층의 높은 투과율이 냉각제를 재분배하여 그 평균 질량유속은 TTC의 약 1.86배인 반면 후방층은 약 2.32배 낮고, OTC의 내외부 압력차는 TTC보다 낮아 냉각제 구동력이 더 작음을 의미한다. 그러나 실험과 해석 모두에서 바로 그 정체점은 외부 공기역학적 압력이 최대이므로 여전히 국부 최저 분출을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고찰은 OTC의 이득을 A층의 국부 투과율 증가로 귀속한다. 이는 유동 저항을 낮추고 냉각제를 선단부로 재분배하여 하류막을 두껍게 하고 주류 가열을 차단한다. 상충 효과 - 높은 공극률/큰 입자는 전도도와 비표면적을 줄이지만 투과율 주도의 질량유속 증가가 지배 - 를 저울질하고, 최대 외부 공기역학적 압력을 통해 정체점이 왜 국부 냉각제 최소로 남는지 설명한다. 비균질 투과율 경로를 거시구조 방식에 대한 제작 가능한 미시물성 대안으로 규정한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 소결 3층 비균질 투과율 노즈콘(OTC)이 균질 콘(TTC)을 능가한다고 결론짓는다: 전체 콘, 특히 정체점에서 냉각 효율을 높이고(F=0.67%에서 0.26 대 0.16), 온도 균일도를 개선하며, 동등한 냉각 효과에 대해 냉각제 소요와 구동력을 줄인다. 정체 영역으로 더 많은 냉각제를 보내어 최적화된 냉각제 배분을 달성하지만, 정체점은 최대 외부 공기역학적 압력 때문에 여전히 국부 분출 최소로 남는다. 등급화는 최적화기 결과가 아니라 설계된 3계층 투과율 배치이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 25</span></summary>
+            <ol class="ref-list"><li>L. Shen, J.H. Wang, Numerical investigation on the optimization of local transpiration cooling effectiveness, Applied Thermal Engineering 127 (2017) 58-69 - prior numerical non-uniform-porosity design this paper extends experimentally</li><li>W.J. Dong, J.H. Wang, S.Y. Chen, B.C. Ai, X.G. Luo, Modelling and investigation on heat transfer deterioration during transpiration cooling with liquid coolant phase-change, Applied Thermal Engineering 128 (2018) 381-392 - compared three OTC approaches (local porosity, chambers, wall thickness)</li><li>J.H. Wang, L.J. Zhao, X.C. Wang, J. Ma, J. Lin, An experimental investigation on transpiration cooling of wedge shaped nose cone with liquid coolant, Int. J. Heat Mass Transf. 75 (2014) 442-449 - unequal-thickness wedge nose cone macro-structure route</li><li>L.J. Zhao et al., An experimental investigation on transpiration cooling under supersonic condition using a nose cone model, Int. J. Therm. Sci. 84 (2014) 207-213 - nose-cone transpiration-cooling experiment lineage</li><li>L. Shen, J.H. Wang et al., An experimental investigation on transpiration cooling with phase change under supersonic condition, Appl. Therm. Eng. 105 (2016) 549-556 - phase-change transpiration cooling reference</li><li>S. Ergun, Fluid flow through packed columns, Chem. Eng. Prog. 48 (1952) 89-94 - empirical permeability-porosity relation used to set the three layers</li><li>K. Vafai, Convective flow and heat transfer in variable-porosity media, J. Fluid Mech. 147 (1984) 233-259 - solid-to-fluid heat transfer coefficient closure</li><li>A. Brune, S. Hosder, S. Gulli, L. Maddalena, Variable transpiration cooling effectiveness in laminar and turbulent flows for hypersonic vehicles, AIAA J. 53 (2015) 176-189 - tailored-porosity/variable-blowing prototype</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "근우주 극초음속 및 재사용 발사체는 노즈콘과 날개/러더 선단부에 극히 높은 열유속을 가하므로, 효율적 능동 열보호기술(TPT)이 중요한 화두가 된다."}, {"type": "bullet", "text": "증산냉각은 대류 열전달 면적비가 큰 다공성 매트릭스에 기반하므로 대류·막냉각보다 효과적인 TPT이며, DLR(독일)과 CAAA(중국)의 아크 가열 풍동 시험이 액체 냉각제에서의 고효율을 확인했다."}, {"type": "bullet", "text": "핵심 동기: 균질 다공성 매트릭스를 쓰는 전통적 증산냉각에서는 공기역학적 가열과 압력이 최대인 바로 그 정체점에서 냉각 효율이 최저이므로, 최적화 증산냉각(OTC)의 핵심 아이디어는 목표한 냉각제 배분을 만족하는 설계를 찾는 것이다."}, {"type": "bullet", "text": "OTC 방식은 두 범주로 나뉜다: 거시구조 변경(벽두께 변화, 냉각 챔버 추가, 막냉각 홀 선가공)과 다공성 매트릭스의 미시물성 조작(비균질 공극률/투과율)."}, {"type": "bullet", "text": "인용된 거시구조 예: Wang 등의 부등두께 쐐기 노즈콘(선단부가 가장 얇음), Huang 등과 Jiang 등의 다중 챔버 및 선가공 홀을 통한 증산+막냉각 결합, Brune 등의 가변 블로잉 프로파일을 위한 톱니형 벽속도 프로토타입(맞춤 공극률/두께)."}, {"type": "bullet", "text": "인용된 미시물성 예: Shen과 Wang의 비균질 공극률 매트릭스(자유류 총온도 2310 K, 마하 4.2에서 수치 검증), Dong과 Wang의 3가지 OTC 방식 비교(국부 공극률/전도도 변화, 격벽 추가로 다중 챔버, 벽두께 변화)로 고온측 최고온도를 약 40%, 55% 감소."}, {"type": "bullet", "text": "식별된 공백: 거시구조 최적화는 유연하나 선단부 규모와 챔버 설계에 제약되므로 비균질 미시물성(투과율) 경로가 선호될 수 있으나, 대부분의 미시물성 연구가 수치해석에 머물렀고 상응하는 실험 데이터가 상당히 부족했다."}, {"type": "bullet", "text": "본 논문의 목표: 두 쐐기형 노즈콘(정체 영역에서 투과율이 최고이고 하류로 낮아지는 OTC 대 균질 TTC)의 실험·수치 비교로 OTC 실현성과 냉각 메커니즘에 관한 설계 참고자료를 제공하는 것."}]}, "related_works": {"content": [{"type": "bullet", "text": "거시구조 경로: Wang 등은 부등두께 쐐기 노즈콘을 시험했고, Huang 등과 Jiang 등은 다중 챔버 설계와 선단부 선가공 홀을 통한 증산+막냉각 결합으로 고가열 구역에 더 많은 냉각제를 배분했다."}, {"type": "bullet", "text": "맞춤 블로잉 프로토타입: Brune 등은 톱니형 벽속도 분포를 수치 연구하고, 가변 블로잉 프로파일을 만들기 위해 제작 단계에서 맞춤 공극률과 두께를 지정한 프로토타입을 설계했다."}, {"type": "bullet", "text": "미시물성 경로(수치): Shen과 Wang은 주류 방향의 비균질 공극률 매트릭스를 제안하고 자유류 총온도 2310 K, 마하 4.2에서 그 우수성을 수치 검증했다."}, {"type": "bullet", "text": "미시물성 경로(비교 수치): Dong과 Wang은 국부 공극률/열전도도 변화, 격벽 추가에 의한 다중 챔버, 벽두께 변화를 수치 비교하여 국부 공극률 변화와 냉각 챔버가 가장 효과적임을 발견했다(고온측 최고온도 약 40%, 55% 감소)."}, {"type": "bullet", "text": "문헌에서 가져온 폐합 및 물성 상관식: Ergun의 투과율-공극률 관계, Vafai의 고체-유체 열전달 계수, 이후 수치 모델에 쓰이는 유효 전도도 표현식."}, {"type": "bullet", "text": "냉각 효율 정의는 Wang 등의 적외선 측정 증산냉각 실험에서 채택했고, 불확도 전파는 표준 공식을 따른다."}, {"type": "bullet", "text": "위로부터 종합된 식별 공백: 비균질 미시물성(투과율) 설계는 유망하지만 거의 전적으로 수치적이었으므로, 실제 소결 비균질 투과율 노즈콘에 대한 실험적 검증이 필요했다."}]}, "method": {"content": [{"type": "bullet", "text": "냉각제 상(분류 포인트): 냉각제는 단상 기체, 즉 다공성 매트릭스를 통해 주입되는 상온 압축 공기이며 상변화가 없다; 효율은 순수하게 기체 분출과 막 형성으로 지배된다.", "figure_refs": [1]}, {"type": "bullet", "text": "매질과 설계 변수(분류 포인트): 매트릭스는 소결 316L 스테인리스강 입자층이며, 설계 변수는 3가지 분말 크기를 몰드에 층별로 넣고 입자 크기와 성형 압력을 조정하여 구현한 계단식 투과율 계층이다. 따라서 등급화되는 것은 연속적인 공극률 장이 아니라 투과율이다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "등급화 규칙(분류 포인트): OTC 투과율은 정체점 부근에서 최고이고 3개의 이산 층을 통해 하류로 감소한다 - A층(x/L=0-0.26, dp=150 um, 공극률 40.16%, K=2.71e-11 m^2), B층(x/L=0.26-0.52, dp=125 um, 공극률 38.10%, K=1.50e-11), C층(x/L=0.52-1, dp=90 um, 공극률 36.04%, K=6.29e-12); TTC는 C층 투과율로 균질하다. 이는 최적화기 산출물이 아니라 정성적 규칙이다.", "figure_refs": [2]}, {"type": "formula", "label": "식 (1) -- 입자 지름과 공극률로부터의 Ergun 투과율", "latex": "K = \\frac{\\varepsilon^3 d_p^2}{150\\,(1-\\varepsilon)^2}", "description": "층 투과율 $K$는 공극률 $\\varepsilon$와 분말 지름 $d_p$로부터 Ergun의 경험식으로 계산되므로, 입자 크기가 크고 공극률이 높을수록 투과율이 높아진다. 이것이 3개의 투과율 계층을 설정하는 메커니즘이다."}, {"type": "formula", "label": "식 (2)-(3) -- 냉각제 주입비와 냉각 효율", "latex": "F = \\frac{m_c}{m_\\infty}, \\qquad \\eta = \\frac{T_{iw} - T_{cw}}{T_\\infty - T_c}", "description": "주입비 $F$는 냉각제 대 주류 질량유량비이고, 냉각 효율 $\\eta$는 미냉각 벽온도 $T_{iw}$와 냉각 벽온도 $T_{cw}$를 주류-냉각제 온도차로 정규화하여 비교한다(적외선 열영상으로 측정)."}, {"type": "bullet", "text": "시험 장치와 계측: 46 mm 수력 지름의 사각 통로를 갖는 USTC 전기가열 풍동; 주류·냉각측 온도는 열전대(정확도 +/-0.75%), 표면 온도는 사파이어 창을 통한 NEC TH5104R 적외선 열영상 시스템(ITIS), 냉각제 유량은 디지털 질량유량계(+/-2% RFS). F와 eta의 최대 불확도는 각각 3%, 8% 미만.", "figure_refs": [1, 4]}, {"type": "bullet", "text": "시험 매트릭스: 주류 T_inf=473 K, Re_inf=1.6e4, 주입비 F=0.33%, 0.67%, 1.00%, 1.33%; 별도 OTC 시리즈는 냉각제 질량률과 주류 레이놀즈수의 상충 효과를 분리하기 위해 고정 F=1.0%에서 Re_inf(10,773/16,160/21,546)를 변화시킨다.", "figure_refs": []}, {"type": "formula", "label": "식 (6)-(9) -- Darcy-Brinkman-Forchheimer 운동량과 LTNE 2방정식 에너지", "latex": "\\nabla P = -\\frac{\\mu}{K}\\,u - \\frac{1.75\\,\\rho}{\\sqrt{150\\,\\varepsilon^3}\\,\\sqrt{K}}\\,|u|\\,u + \\nabla\\!\\cdot(\\mu \\nabla u); \\quad \\nabla\\!\\cdot(\\rho_f c_{pf} u T_f) = \\nabla\\!\\cdot(k_{f,eff}\\nabla T_f) + h_v(T_s - T_f); \\quad \\nabla\\!\\cdot(\\rho_s c_{ps} u T_s) = \\nabla\\!\\cdot(k_{s,eff}\\nabla T_s) + h_v(T_f - T_s)", "description": "다공성 영역 내 유동은 Darcy-Brinkman-Forchheimer를 따르며 두 상은 국부 열비평형(LTNE) 모델을 사용해 체적 계수 $h_v$를 통해 열을 교환한다; 유효 전도도는 $k_{s,eff}=(1-\\varepsilon)k_s$, $k_{f,eff}=\\varepsilon k_f$이다."}, {"type": "formula", "label": "식 (10)-(12) -- Vafai 고체-유체 열전달 계수와 체적 계수", "latex": "h_{sf} = \\left(2 + 1.1\\,Pr^{1/3} Re^{0.6}\\right)\\frac{k_f}{d_p}, \\quad a_{sf} = \\frac{6(1-\\varepsilon)}{d_p}, \\quad h_v = h_{sf}\\,a_{sf}", "description": "간극 열전달 계수 $h_{sf}$(Vafai)와 비표면적 $a_{sf}$가 결합하여 LTNE 소스항을 구동하는 체적 계수 $h_v$가 되며, 입자 지름을 고체-유체 열교환에 연결한다."}, {"type": "bullet", "text": "수치 설정: 정상 2D 대칭 영역(폭 4W, 상·하류 각 3L), 속도 입구/압력 출구 주류와 질량유량 냉각제 입구; RNG k-epsilon 난류, SIMPLE 압력-속도 결합, 2차 상류; 비균질 OTC 물성은 구간별 사용자 정의 함수(UDF)로 부과; 격자 독립성은 310,313 셀(편차 &lt;1%); 잔차 &lt;1e-6에서 수렴.", "figure_refs": [10, 11, 12]}, {"type": "bullet", "text": "검증: T_inf=473 K, Re_inf=16,160, F=0.67%에서 OTC와 TTC 모두 x 방향 온도 분포가 실험과 최대 오차 5% 미만(최대는 x/L=0.2)으로 일치하여 모델 타당성을 확립한다.", "figure_refs": [13]}]}, "results": {"content": [{"type": "bullet", "text": "표면 온도장(Fig. 5): 동일 주입비에서 OTC는 상류, 특히 A층의 높은 투과율이 더 많은 냉각 공기를 분출시키는 선단 영역 x/L=0-0.26에서 TTC보다 훨씬 시원하다; 양의 투과율 효과가 비표면적과 전도도 감소라는 상쇄 효과를 능가한다.", "figure_refs": [5]}, {"type": "bullet", "text": "평균 온도(Fig. 6): 동일 F에서 OTC의 x/L=0-0.26 및 x/L=0-1 평균이 항상 TTC보다 낮고, OTC는 두 구역 평균이 근접한 반면 TTC는 상류 구역이 뚜렷이 더 뜨겁다 - 따라서 OTC는 더 많이 냉각하면서 온도장을 균등화한다.", "figure_refs": [6]}, {"type": "bullet", "text": "정체점 효율(Fig. 8): F=0.67%에서 OTC는 0.26, TTC는 0.16에 도달; TTC는 이를 맞추기 위해 거의 두 배의 냉각제(F=1.33%)가 필요하므로, OTC는 정체점 냉각을 강화하는 동시에 냉각제 소비를 줄인다.", "figure_refs": [8]}, {"type": "bullet", "text": "레이놀즈수 효과(Fig. 9, Table 2): 고정 F=1.0%에서 Re_inf를 높이면(10,773-&gt;21,546) 냉각제 질량률과 순 효율이 증가(냉각제율 효과가 Re 효과를 능가)하지만, 높은 외부 정압이 그곳의 분출을 억제하므로 정체점 이득은 높은 Re에서 축소된다.", "figure_refs": [9]}, {"type": "bullet", "text": "냉각제 재분배(Fig. 15, Table 3): OTC의 모사된 전방층(x/L=0-0.26) 평균 질량유속은 TTC의 약 1.86배(0.317 대 0.170 kg/m2s)이고 후방층(x/L=0.52-1)은 약 2.32배 낮으며(0.104 대 0.242) 중간층은 거의 같다 - 정체 영역으로 향하는 의도된 최적화 배분이다.", "figure_refs": [15, 16]}, {"type": "bullet", "text": "온도 등고선(Fig. 14): OTC의 최저 온도는 상류 x/L=0.16-0.5에 위치(선단 냉각 개선)하는 반면 TTC의 가장 시원한 영역은 중간 x/L=0.4-0.8이다; 냉각 공기막은 두 경우 모두 선단에서 하류로 갈수록 두꺼워진다.", "figure_refs": [14]}, {"type": "bullet", "text": "구동 압력 이점(Fig. 18): 예측된 내외부 압력차 DP는 정체점에서 최저이고 OTC는 두 주입비 모두에서 TTC보다 낮은 DP를 가지므로, 비균질 투과율이 요구되는 냉각제 구동력을 줄인다.", "figure_refs": [17, 18]}, {"type": "bullet", "text": "지속되는 정체점 한계: 바로 그 정체점(x/L=0)에서는 외부 공기역학적 힘이 최대이고 냉각 공기 일부가 측방 공극으로 빠져나가므로 OTC에서도 냉각제 질량유속이 여전히 최고가 아니다.", "figure_refs": [16, 17]}]}, "discussion": {"content": [{"type": "bullet", "text": "개선 메커니즘: A층의 높은 투과율이 상류 냉각제 유동 저항을 낮추어 냉각제 비율을 선단부로 배분한다; 이는 x/L=0-0.26을 직접 냉각하고 후방을 뜨거운 주류로부터 차폐하는 더 두꺼운 하류막을 형성한다.", "figure_refs": [15, 16]}, {"type": "bullet", "text": "상충 효과 근거: Von Wolfersdorf와 Liu에 따르면 높은 공극률은 낮은 열전도도를, 큰 분말은 작은 비표면적과 약한 간극 대류를 의미하지만(둘 다 효율을 낮춤), 투과율 증가의 양의 효과가 OTC 설계에서 지배적 인자이며 둘을 능가한다.", "figure_refs": [5]}, {"type": "bullet", "text": "정체점이 냉각제 부족으로 남는 이유: 외부 공기역학적(정압)이 x/L=0에서 항상 최대이므로 냉각-고온측 경로를 따라 일부 공기가 측방으로 빠져나가며 냉각제 질량유속이 감소하여, OTC에서도 정체점이 국부 분출 최소로 유지된다.", "figure_refs": [17]}, {"type": "bullet", "text": "레이놀즈/주입 상충: 냉각제 배분이 외부 정압에 민감하므로, 높은 Re(높은 정압)는 정체점에서 더 많은 냉각제 분출을 막아 mc가 0.29에서 0.387 g/s로 증가할 때 정체점 효율 이득이 감소한다.", "figure_refs": [9]}, {"type": "bullet", "text": "압력 구동 해석: OTC의 상류 DP 감소는 TTC 대비 확대된 투과율에서 비롯되고, 하류 DP 감소는 감소된 하류 냉각제 유량에서 비롯된다; 순 효과로 동일 배분에 더 작은 구동력이 필요하다.", "figure_refs": [18]}, {"type": "bullet", "text": "설계 함의: 거시구조 최적화가 형상에 제약되므로, 입증된 비균질 투과율 미시물성 경로(정체 영역에 최고 투과율)는 극초음속 노즈콘의 목표 냉각제 배분을 달성하는 실용적이고 제작 가능한 방법이다.", "figure_refs": []}]}, "conclusion": {"content": [{"type": "bullet", "text": "OTC는 선단 영역과 전체 노즈콘 모두에서 TTC보다 높은 냉각 효율을 보인다; F=0.67%에서 정체점 효율은 OTC 0.26 대 TTC 0.16이다."}, {"type": "bullet", "text": "비균질 투과율은 시편 내 온도 분포 균일도를 개선하며, 동일한 정체점 냉각 효과에 대해 냉각제 소요가 감소한다."}, {"type": "bullet", "text": "OTC는 정체 영역으로 더 많은 냉각제를 보내(전방층 질량유속 TTC의 약 1.86배) 최적화된 냉각제 배분을 달성하지만, 최대 외부 공기역학적 힘 하에서 냉각 공기 일부가 측방 공극으로 빠져나가므로 냉각제 질량유속은 여전히 정체점에서 최고가 아니다."}, {"type": "bullet", "text": "TTC 대비 OTC 설계에서는 동일 주입비의 현 조건에서 냉각제 주입 구동력이 감소하여 냉각제 공급 요구가 완화된다."}, {"type": "bullet", "text": "분류 주석: 제목의 '최적화 증산냉각'에도 불구하고 투과율 등급화는 정성적 규칙(정체점에 최고 투과율)에 따라 3개의 제작된 층으로 이산화한 것이며, 목적함수가 정의되지 않고 최적화 알고리즘도 실행되지 않는다."}, {"type": "bullet", "text": "범위 주석: 매질은 소결 316L 스테인리스강 입자층이고 냉각제는 단상 기체(공기)이므로, 입증된 이점은 기체 분출/막 메커니즘이다; 액체/상변화 냉각제와 연속적으로 최적화된 투과율 장으로의 확장은 미해결로 남는다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "등급화는 소결 공정으로 설정된 단 3개의 이산 투과율 층으로 구현되며, 소결 공정에서 달성 가능한 공극률/투과율 제어 정확도는 약 8%이므로, 이 배치는 연속적인 투과율 장이 아니라 조밀하지 못한 계단식이다.", "source_quote": "The porosity and permeability of OTC and TTC are controlled in their specific sinter process, and the control accuracy can achieve 8%.", "source_section": "method"}, {"claim": "전방층 투과율을 키워도 정체점에서는 외부 공기역학적(정압)이 가장 높아 냉각제 질량유속이 여전히 국부 최저로 남으므로, 등급화가 정체점의 압력 장벽을 완전히 상쇄하지 못한다.", "source_quote": "However, the coolant mass flow rate is still not the highest at the stagnation point, because a part of cooling air escapes from lateral pores.", "source_section": "conclusion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["균질 다공성 매트릭스를 쓰는 전통적 증산냉각에서는 공기역학적 가열과 압력이 가장 높은 바로 그 정체점에서 냉각 효율이 최저가 되므로, 균질 매트릭스는 냉각제를 잘못 배분한다.", "최적화 증산냉각(OTC)은 목표한 냉각제 배분을 달성하려 하지만, 대부분의 비균질 미시물성(투과율/공극률) 연구가 수치해석에 머물러 상응하는 실험 데이터가 상당히 부족했다.", "거시구조 최적화(벽두께 변화, 챔버 추가, 홀 선가공)는 유연하지만 선단부 규모와 챔버 설계에 제약을 받으므로, 실험적 입증이 필요한 미시물성(비균질 투과율) 경로가 요구되었다."], "addressed_by_this_work": ["소결 3층 비균질 투과율 노즈콘(OTC)을 제작해 균질(TTC) 콘과 비교 시험하여, 정체 영역 부근의 국부적 고투과율이 정체점 냉각 효율을 높이고(F=0.67%에서 0.26 대 0.16) 온도 균일도를 개선함을 실험적으로 입증함으로써 부족했던 실험 근거를 제공했다.", "실험과 대조 검증된(오차 &lt;5%) 2D LTNE 해석은 냉각제 재분배를 정량화한다: 전방층(x/L=0-0.26) 평균 질량유속은 TTC의 약 1.86배이고 후방층(x/L=0.52-1)은 약 2.32배 낮으며, OTC는 TTC 대비 냉각제 구동 압력차를 낮춘다.", "본 연구는 고열유속 정체 영역으로 냉각제를 재분배하는 데 있어 미시물성(비균질 투과율) 경로가 거시구조 최적화의 실현 가능하고 제작 가능한 대안임을 확인한다."], "remaining_unresolved": ["투과율 등급화는 목적함수나 최적화 알고리즘 없이 3개의 이산 층으로 (정체점에 가장 높은 투과율) 정성적 규칙에 따라 결정되므로, 배치는 실제 열유속 분포로부터 유도되거나 그에 대해 최적화된 것이 아니라 물리적 직관으로 사전에 선택된다.", "외부 공기역학적 압력이 정체점에서 최대이므로 OTC에서도 그곳의 냉각제 분출은 여전히 국부 최저이며, 등급화가 정체점 냉각제 부족을 완전히 해결하지 못한다.", "냉각제는 단상 기체(공기)뿐이며, 훨씬 효과적인 액체/상변화 증산 영역과 등급화된 투과율과의 상호작용은 여기서 다루지 않는다.", "단 두 개의 냉각제 주입비와 단일 주류 온도(473 K)만 해석되었고, 공극률/투과율 층은 목표 열적 목적에 맞춰 조정된 것이 아니라 제작 실현성으로 설정되었다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
