@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research Hub</title>
     <script>
-        // Apply saved theme before first paint (no flash). Falls back to the OS setting.
+        // Apply saved theme before first paint (no flash). Default = light.
         (function () {
             try {
                 var t = localStorage.getItem('theme');
@@ -30,7 +30,7 @@
             --hero-grad: linear-gradient(135deg, #005b96 0%, #0086d6 100%);
             color-scheme: light;
         }
-        /* Dark theme — explicit choice, or OS preference when none saved */
+        /* Dark theme — only when chosen via the toggle (default = light) */
         :root[data-theme="dark"] {
             --primary: #58a6ff;
             --primary-light: #132b44;
@@ -46,24 +46,6 @@
             --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
             --hero-grad: linear-gradient(135deg, #0a3d62 0%, #0b5d91 100%);
             color-scheme: dark;
-        }
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) {
-                --primary: #58a6ff;
-                --primary-light: #132b44;
-                --primary-fill: #1f6feb;
-                --primary-fill-hover: #388bfd;
-                --bg: #161b22;
-                --surface: #0d1117;
-                --border: #30363d;
-                --text: #e6edf3;
-                --text-soft: #9da7b3;
-                --text-muted: #7d8590;
-                --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
-                --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
-                --hero-grad: linear-gradient(135deg, #0a3d62 0%, #0b5d91 100%);
-                color-scheme: dark;
-            }
         }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
@@ -117,10 +99,6 @@
         .theme-toggle .icon-sun { display: none; }
         :root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
         :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: block; }
-            :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
-        }
         @media (max-width: 640px) {
             .hero-inner { padding: 0 16px; }
             .hero h1 { font-size: 26px; }
@@ -439,7 +417,7 @@
             <div class="hero-title">
                 <div class="curator">Curated by JINUNG LEE</div>
                 <h1>Research Hub</h1>
-                <div class="meta">총 <strong>44</strong>편 · 마지막 갱신 2026-09-30 21:07</div>
+                <div class="meta">총 <strong>44</strong>편 · 마지막 갱신 2026-09-30 21:19</div>
             </div>
             <div class="hero-actions">
             <nav class="site-tabs" aria-label="Site sections">
@@ -888,8 +866,7 @@
             if (!btn) return;
             btn.addEventListener('click', function () {
                 var root = document.documentElement;
-                var cur = root.getAttribute('data-theme') ||
-                    (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                var cur = root.getAttribute('data-theme') || 'light';
                 var next = cur === 'dark' ? 'light' : 'dark';
                 root.setAttribute('data-theme', next);
                 try { localStorage.setItem('theme', next); } catch (e) {}
