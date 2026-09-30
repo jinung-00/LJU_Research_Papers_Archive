@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research Hub</title>
+    <script>
+        // Apply saved theme before first paint (no flash). Falls back to the OS setting.
+        (function () {
+            try {
+                var t = localStorage.getItem('theme');
+                if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+        })();
+    </script>
     <style>
         :root {
             --primary: #005b96;
@@ -16,6 +25,45 @@
             --text-muted: #8b949e;
             --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 16px rgba(0,91,150,0.10);
+            --primary-fill: #005b96;
+            --primary-fill-hover: #00477a;
+            --hero-grad: linear-gradient(135deg, #005b96 0%, #0086d6 100%);
+            color-scheme: light;
+        }
+        /* Dark theme — explicit choice, or OS preference when none saved */
+        :root[data-theme="dark"] {
+            --primary: #58a6ff;
+            --primary-light: #132b44;
+            --primary-fill: #1f6feb;
+            --primary-fill-hover: #388bfd;
+            --bg: #161b22;
+            --surface: #0d1117;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-soft: #9da7b3;
+            --text-muted: #7d8590;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+            --hero-grad: linear-gradient(135deg, #0a3d62 0%, #0b5d91 100%);
+            color-scheme: dark;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --primary: #58a6ff;
+                --primary-light: #132b44;
+                --primary-fill: #1f6feb;
+                --primary-fill-hover: #388bfd;
+                --bg: #161b22;
+                --surface: #0d1117;
+                --border: #30363d;
+                --text: #e6edf3;
+                --text-soft: #9da7b3;
+                --text-muted: #7d8590;
+                --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+                --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+                --hero-grad: linear-gradient(135deg, #0a3d62 0%, #0b5d91 100%);
+                color-scheme: dark;
+            }
         }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; }
@@ -30,7 +78,7 @@
 
         /* Header */
         header.hero {
-            background: linear-gradient(135deg, #005b96 0%, #0086d6 100%);
+            background: var(--hero-grad);
             color: white;
             padding: 36px 0 28px;
         }
@@ -54,7 +102,25 @@
             transition: background 0.15s, color 0.15s;
         }
         .site-tabs a:hover { background: rgba(255,255,255,0.16); color: white; }
-        .site-tabs a.active { background: white; color: var(--primary); }
+        .site-tabs a.active { background: white; color: #005b96; }
+        .hero-actions { display: flex; align-items: center; gap: 10px; }
+        .theme-toggle {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; padding: 0; cursor: pointer;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 10px; color: white;
+            transition: background 0.15s;
+        }
+        .theme-toggle:hover { background: rgba(255,255,255,0.22); }
+        .theme-toggle svg { width: 18px; height: 18px; }
+        .theme-toggle .icon-sun { display: none; }
+        :root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+        :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: block; }
+            :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
+        }
         @media (max-width: 640px) {
             .hero-inner { padding: 0 16px; }
             .hero h1 { font-size: 26px; }
@@ -84,7 +150,7 @@
             border-radius: 8px;
             font-size: 14px;
             font-family: inherit;
-            background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23656d76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>') no-repeat 12px center;
+            background: var(--bg) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23656d76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>') no-repeat 12px center;
             transition: border-color 0.15s, box-shadow 0.15s;
         }
         .search-input:focus {
@@ -109,8 +175,8 @@
             font-family: inherit;
             transition: background 0.15s, color 0.15s;
         }
-        .read-toggle button:hover { background: white; color: var(--text); }
-        .read-toggle button.active { background: var(--primary); color: white; }
+        .read-toggle button:hover { background: var(--bg); color: var(--text); }
+        .read-toggle button.active { background: var(--primary-fill); color: white; }
         .counts { font-size: 13px; color: var(--text-soft); white-space: nowrap; }
         .counts strong { color: var(--text); }
 
@@ -126,7 +192,7 @@
             gap: 16px;
         }
         .card {
-            background: white;
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 16px 18px;
@@ -196,18 +262,18 @@
         .read-check input { cursor: pointer; accent-color: var(--primary); }
         .open-btn {
             padding: 6px 14px;
-            background: var(--primary);
+            background: var(--primary-fill);
             color: white;
             border-radius: 6px;
             font-size: 13px;
             font-weight: 500;
             transition: background 0.15s;
         }
-        .open-btn:hover { background: #00477a; }
+        .open-btn:hover { background: var(--primary-fill-hover); }
         .card-actions { display: flex; gap: 8px; align-items: center; }
         .detail-btn {
             padding: 6px 14px;
-            background: #fff;
+            background: var(--bg);
             color: var(--primary);
             border: 1px solid var(--primary);
             border-radius: 6px;
@@ -215,7 +281,7 @@
             font-weight: 500;
             transition: background 0.15s;
         }
-        .detail-btn:hover { background: #eef5fb; }
+        .detail-btn:hover { background: var(--primary-light); }
 
         .empty {
             grid-column: 1 / -1;
@@ -338,7 +404,7 @@
         .sort-control select {
             font-family: inherit; font-size: 12.5px; color: var(--text);
             padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px;
-            background: white; cursor: pointer;
+            background: var(--bg); cursor: pointer;
         }
         .sort-dir {
             display: inline-flex; align-items: center; justify-content: center;
@@ -373,13 +439,19 @@
             <div class="hero-title">
                 <div class="curator">Curated by JINUNG LEE</div>
                 <h1>Research Hub</h1>
-                <div class="meta">총 <strong>44</strong>편 · 마지막 갱신 2026-09-30 21:01</div>
+                <div class="meta">총 <strong>44</strong>편 · 마지막 갱신 2026-09-30 21:07</div>
             </div>
+            <div class="hero-actions">
             <nav class="site-tabs" aria-label="Site sections">
                 <a href="index.html" class="active" aria-current="page">Archive</a>
                 <a href="Map/index.html">Map</a>
                 <a href="ResearchNotes/index.html">Research Notes</a>
             </nav>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="라이트/다크 모드 전환" title="라이트/다크 모드 전환">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -808,6 +880,21 @@
         renderTopicFilter();
         renderCategoryFilter();
         render();
+    </script>
+    <script>
+        // Light/dark toggle — keep in sync across index-rebuild template, Map/, ResearchNotes/
+        (function () {
+            var btn = document.getElementById('theme-toggle');
+            if (!btn) return;
+            btn.addEventListener('click', function () {
+                var root = document.documentElement;
+                var cur = root.getAttribute('data-theme') ||
+                    (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                var next = cur === 'dark' ? 'light' : 'dark';
+                root.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next); } catch (e) {}
+            });
+        })();
     </script>
 </body>
 </html>
