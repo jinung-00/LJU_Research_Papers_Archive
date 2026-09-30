@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Hub · Map</title>
+    <style>
+        :root {
+            --primary: #005b96;
+            --surface: #fafbfc;
+            --border: #e1e5e8;
+            --text: #1f2328;
+            --text-soft: #656d76;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--surface);
+            color: var(--text);
+            line-height: 1.55;
+            min-height: 100vh;
+        }
+        a { color: inherit; text-decoration: none; }
+
+        /* Header — keep in sync with index-rebuild/templates/index.html */
+        header.hero {
+            background: linear-gradient(135deg, #005b96 0%, #0086d6 100%);
+            color: white;
+            padding: 36px 0 28px;
+        }
+        .hero-inner {
+            max-width: 1280px; margin: 0 auto; padding: 0 32px;
+            display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;
+        }
+        .hero .curator { margin: 0 0 4px; font-size: 12px; font-weight: 500; letter-spacing: 1.2px; opacity: 0.78; }
+        .hero h1 { margin: 0 0 8px; font-size: 32px; font-weight: 700; letter-spacing: -0.3px; }
+        .hero .meta { opacity: 0.92; font-size: 14px; }
+        .site-tabs {
+            display: inline-flex; padding: 4px; gap: 4px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 10px;
+        }
+        .site-tabs a {
+            padding: 8px 22px; border-radius: 7px;
+            font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9);
+            transition: background 0.15s, color 0.15s;
+        }
+        .site-tabs a:hover { background: rgba(255,255,255,0.16); color: white; }
+        .site-tabs a.active { background: white; color: var(--primary); }
+
+        .placeholder {
+            max-width: 1280px; margin: 48px auto; padding: 0 32px;
+        }
+        .placeholder .card {
+            background: white;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 64px 24px;
+            text-align: center;
+            color: var(--text-soft);
+        }
+        .placeholder h2 { margin: 0 0 8px; color: var(--text); font-size: 20px; }
+        .placeholder p { margin: 0; font-size: 14px; }
+        @media (max-width: 640px) {
+            .hero-inner, .placeholder { padding: 0 16px; }
+            .hero h1 { font-size: 26px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-title">
+                <div class="curator">Curated by JINUNG LEE</div>
+                <h1>Research Hub</h1>
+                <div class="meta">Research Map</div>
+            </div>
+            <nav class="site-tabs" aria-label="Site sections">
+                <a href="../index.html">Archive</a>
+                <a href="index.html" class="active" aria-current="page">Map</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="placeholder">
+        <div class="card">
+            <h2>Research Map 준비 중</h2>
+            <p>문헌 간 계보·비교·주제 관계를 지도 형태로 정리할 예정입니다.</p>
+        </div>
+    </main>
+</body>
+</html>
