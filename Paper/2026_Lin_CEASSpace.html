@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Research progress on Electron Transpiration Cooling technology for hypersonic vehicles</title>
+    <meta name="keywords" content="hypersonic, thermal protection system / TPS, electron transpiration cooling, thermionic emission, work function, plasma sheath, space-charge limitation, refractory materials, ultra-high-temperature ceramics, leading edge">
+    <meta name="paper-authors" content="Guohan Lin, Feng Hu, Yuanwen Hao, Zhuochen Sui, Hua Jin, Yancheng You, Wei Zhao">
+    <meta name="paper-journal" content="CEAS Space Journal, 2026 (online first) · DOI: 10.1007/s12567-026-00759-3">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Research progress on Electron Transpiration Cooling technology for hypersonic vehicles</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Guohan Lin, Feng Hu, Yuanwen Hao, Zhuochen Sui, Hua Jin, Yancheng You, Wei Zhao</div>
+            <div class="journal">CEAS Space Journal, 2026 (online first) · DOI: 10.1007/s12567-026-00759-3</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 리뷰는 극초음속 비행체용 능동 열방호 개념인 <span class="eng">Electron Transpiration Cooling (ETC)</span>를 개관한다. 이는 저일함수 고온 표면에서의 <span class="term">열전자 방출(thermionic emission)</span>로 전자가 열을 실어 내보내는 방식으로(각 전자가 일함수에 운동에너지를 더한 양만큼 제거), 작동유체가 없는 고체상태 메커니즘이다. 이름과 달리 ETC는 통상적 <span class="term">증산냉각</span>과 근본적으로 다르다. 다공벽을 통한 냉각제 주입이 아니라 전자 방출로 열을 제거한다. 논문은 진전을 세 갈래로 정리한다: 수치 모델링(Richardson-Dushman 법칙에 의한 타당성, 열전자 방출 경계 모델, 플라즈마 시스/공간전하 물리), 방출체 재료(내화 금속, 산화물 개질 텅스텐, 희토류 육붕화물, 일렉트라이드, 희토류 도핑 초고온 세라믹), 지상 실험(글로 방전·레이저 가열 장치와 플라즈마·팽창관 풍동). 주요 발견으로 리딩에지 날카로움, 일함수, 바이어스, 공간전하 제한의 강한 영향과, 매우 날카로운 에지에는 중간 일함수(~4-5 eV)가 최적일 수 있음을 든다. 저자들은 ETC가 타당하나 정확한 공간전하 모델링, 내화 저일함수 재료, 동기화된 온도-전류 측정 기법이 필요하다고 결론짓는다.</div>
+            <div class="keywords"><span class="keyword-chip">hypersonic</span><span class="keyword-chip">thermal protection system / TPS</span><span class="keyword-chip">electron transpiration cooling</span><span class="keyword-chip">thermionic emission</span><span class="keyword-chip">work function</span><span class="keyword-chip">plasma sheath</span><span class="keyword-chip">space-charge limitation</span><span class="keyword-chip">refractory materials</span><span class="keyword-chip">ultra-high-temperature ceramics</span><span class="keyword-chip">leading edge</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">열전자 방출은 열에너지가 일함수를 넘어설 때 고온 표면에서 전자를 방출하며, ETC는 이를 능동 냉각으로 활용해 각 방출 전자가 일함수에 운동에너지를 더한 양만큼 열을 실어 나르고 방출체-수집체-외부 경로의 완전한 회로를 필요로 한다. 작동유체가 없고 자가 적응적이며 재사용 가능한 고체상태 방식으로 극심한 극초음속 공력 가열에 매력적이다. 리뷰는 기존 리뷰가 부분적으로만 다룬 모델링·재료·실험을 통합한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">ETC의 타당성 기초는 Richardson-Dushman 관계식과 일련의 CFD 연구(Alkandry, Hanquist, Li, Uribarri)에 있으며, 이들은 ETC에 근본적 장벽이 없음을 확립했으나 1세대의 한계도 드러냈다. 이 초기 연구들은 지배 인자와 이후 모델링·실험이 해결해야 할 핵심 물리 메커니즘(표면 바이어스, 전자 역류, 공간전하, 시스 충돌성, 회로 상호작용)을 식별했다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">ETC 수치 모델링은 전자 방출, 플라즈마 시스 전개, 공력 가열, 고체 전도를 아우르는 강결합 다물리 문제다. 리뷰는 모델을 타당성 분석, 열전자 방출 경계 모델(온도 제한 T, 부유 시스 Z-C, 공간전하 제한 S-C), 플라즈마 시스/공간전하 모델로 정리하며 Debye/시스 길이와 공력 스케일 간 다스케일 간극을 강조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">방출체 재료는 높은 운용 온도, 낮은 유효 일함수, 화학·기계 안정성을 겸해야 하는데 이는 상충하는 요구다. 리뷰는 후보를 초고온 내화 금속(예: W), 고온 산화물 개질 텅스텐과 희토류 육붕화물(LaB6, CeB6), 저온 산화물 캐소드와 C12A7 일렉트라이드, 그리고 신흥 희토류 도핑 초고온 세라믹으로 분류하며 각각의 특성 일함수와 내구성 절충을 제시한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">지상 실험은 이론과 비행을 잇고 방출/시스 모델을 검증하며 순냉각을 정량화하고 결합 하중 하 재료 안정성을 시험한다. 리뷰는 직접 증거(동기화 표면 온도 강하)와 간접 증거(회로 전류)를 구분하며, 개념 실증용 글로 방전·고출력 레이저 장치와 비행 관련 검증용 플라즈마·팽창관 풍동을 다룬다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">ETC는 개념에서 능동 TPS 연구 방향으로 진전했으며, 시뮬레이션·재료·실험이 핵심 물리를 규명하고 제어 환경에서 개념 실증 냉각을 입증했다. 저자들은 세 우선 과제를 제시한다: 불확도 정량화를 갖춘 고충실도 결합 다물리 모델링, 실험적으로 검증된 내화 저일함수 재료, 동기화 온도-전류 측정이 가능한 극초음속 대표 플랫폼.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 92</span></summary>
+            <ol class="ref-list"><li>H. Alkandry, K. Hanquist, I. D. Boyd, Conceptual Analysis of Electron Transpiration Cooling for the Leading Edges of Hypersonic Vehicles, 11th AIAA/ASME Joint Thermophysics and Heat Transfer Conference, 2014</li><li>K. M. Hanquist, K. Hara, I. D. Boyd, Detailed modeling of electron emission for transpiration cooling of hypersonic vehicles, J. Appl. Phys., 2017</li><li>K. M. Hanquist, I. D. Boyd, Limits for thermionic emission from leading edges of hypersonic vehicles, 54th AIAA Aerospace Sciences Meeting, 2016</li><li>C. Yuan, C. Wang, Z. Jiang, Electron transpiration cooling technology and its research progress, Chinese J. Theoret. Appl. Mech., 2023</li><li>R. Sahu, A. Tropina, D. Andrienko, R. B. Miles, Cesium seeding for effective electron transpiration cooling in hypersonic flows, Plasma Sources Sci. Technol., 2022</li><li>N. M. Ghoniem, D. B. Brown, Y. Huang, A variational method for the sheath potential of hypersonic leading edges with space-charge limitations, Phys. Plasmas, 2024</li><li>J. Bak et al., Experimental study of electron transpiration cooling with a 2-kW laser heating system, AIAA SciTech 2022 Forum</li><li>J. M. Meyers et al., Characterization of LaB6 Emitters in an Inductively Coupled Plasma Facility for Electron Transpiration Cooling Applications, AIAA Aviation 2022 Forum</li><li>O. L. Paxton, H. Porat, I. H. Jahn, Experimental Results of the Electron Transpiration Cooling Effect in the X2 Expansion Tunnel, AIAA Aviation 2023 Forum</li><li>Z. X. Li et al., Theoretical screening of rare earth and transition metals for tuning surface electron emission of ZrB2, Mater. Sci. Eng. B, 2025</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "<span class=\"term\">열전자 방출</span>은 표면이 전자가 일함수를 넘어설 만큼 가열될 때 전자를 방출하며, 진공관·캐소드·전자총의 기반이고 극한 열관리로 재조명되고 있다.", "figure_refs": []}, {"type": "bullet", "text": "ETC는 연속 열전자 방출을 능동 냉각으로 쓴다. 방출 전자가 전하와 상당한 열에너지를 방출체에서 실어 나가 표면 온도를 낮추며, 이는 전도·대류·복사와 근본적으로 다른 메커니즘이다.", "figure_refs": []}, {"type": "bullet", "text": "각 방출 전자는 일함수에 운동에너지를 더한 양에 근접한 에너지 양자를 제거하며, 강한 방출에서는 이 플럭스가 복사 손실에 필적하거나 초과할 수 있다.", "figure_refs": []}, {"type": "bullet", "text": "Alkandry 등은 날카로운 리딩에지(60 km, 7 km/s, 1 cm 노즈, 2.0 eV 일함수)를 계산하여 포화 방출·무귀환·완전촉매 가정 하에 정체점 온도가 2600에서 1600 K로 약 40% 감소함을 보였다.", "figure_refs": []}, {"type": "bullet", "text": "ETC는 작동유체 제로, 자가 적응 조절, 재사용성을 제공하며, 최근 연구는 다물리 시뮬레이션, 저일함수 열안정 방출체 재료, 실험실 장치부터 고엔탈피 설비까지의 실험을 아우른다.", "figure_refs": [1]}, {"type": "bullet", "text": "기존 리뷰는 기본 원리와 초기 개발을 다뤘으나 모델링 접근의 체계적 비교를 최근 재료·실험과 통합하지 못했으며, 본 리뷰가 이를 제공한다(2장 모델링, 3장 재료, 4장 실험, 5장 과제).", "figure_refs": []}]}, "related_works": {"content": [{"type": "bullet", "text": "가장 이른 타당성 연구는 온도 제한 방출 전류밀도에 대한 고전적 Richardson-Dushman(R-D) 관계식에 직접 기반했다.", "figure_refs": []}, {"type": "formula", "label": "식 (1) - Richardson-Dushman 관계식", "latex": "j=A_0 T^2 \\exp\\!\\left(-\\frac{\\Phi_M}{kT}\\right)", "description": "Richardson 상수 A_0, 방출체 온도 T, 일함수 Phi_M, 볼츠만 상수 k로부터의 열전자 방출 전류밀도 j로, 고진공·온도 제한 방출을 가정한다(공간전하·플라즈마 효과 무시)."}, {"type": "bullet", "text": "Alkandry 등(미시간대)은 고충실도 공력열화학 모델링(LeMANS, 11종 유한속도 화학, Park 2온도)과 ETC 물리를 결합하여, ETC가 극초음속 리딩에지에 타당함을 처음 종합적으로 수치 입증했다.", "figure_refs": [2]}, {"type": "bullet", "text": "일함수 감소, 자유류 속도 증가, 노즈 반경 축소는 모두 방출 전류밀도와 냉각을 높이는데, 방출이 R-D를 따르고 온도에 지수적으로 증가하기 때문이다.", "figure_refs": [2]}, {"type": "bullet", "text": "Li 등(정밀 Fluent 메시)은 임계값을 정량화했다: ETC 정체점 온도 감소가 300 mm 리딩에지 반경에서 2.1%, 2 mm 날카로운 에지에서 32.2%로, 날카로운 에지가 ETC에 강하게 유리하다.", "figure_refs": [2]}, {"type": "bullet", "text": "Uribarri 등(록히드마틴)은 ETC가 열부하를 냉각이 쉬운 표면으로 재분배할 수 있고 ~1000-2000 K에서 복사 손실을 초과할 수 있음을 보였으나, Peltier 가열·공간전하 축적·회로 연결성 효과를 경고했다.", "figure_refs": []}, {"type": "bullet", "text": "Hanquist 등은 Touryan의 1960년대 Sandia 플라즈마 아크 실험을 재현하여, 방출 전자의 평균 에너지가 벌크 페르미 준위 아래로 떨어지면 방출이 역설적으로 냉각이 아닌 가열을 일으킴을 발견했다 - 핵심 에너지 수지 유의점.", "figure_refs": [3]}]}, "method": {"content": [{"type": "bullet", "text": "정확한 ETC 시뮬레이션은 전자 방출, 플라즈마 시스 형성, 대류·복사 가열, 고체 전도를 포함해야 하며, 강결합이 비선형성과 스케일 격차를 유발해 매우 어려운 다물리 문제가 된다.", "figure_refs": []}, {"type": "bullet", "text": "Hanquist 등은 세 대표 방출 영역(온도 제한 T, 부유 시스 Z-C, 공간전하 제한 S-C)을 공식화하여, 부유 시스 모델이 순전류를 억제해 ETC를 무효화할 수 있고 바이어스된 S-C 영역은 바이어스 크기에 따라 냉각이 단조 증가함을 보였다.", "figure_refs": [4]}, {"type": "bullet", "text": "표면 바이어스는 공간전하 제한 완화의 효과적 실용 수단이다. 냉각은 바이어스 증가, 일함수 감소, 유속 상승, 리딩에지 반경 축소에 따라 커진다.", "figure_refs": [4]}, {"type": "bullet", "text": "Hanquist는 저온(cold) 대 고온(hot) 방출을 구분했다: 저온 한계에서는 표면 근처 가상 캐소드가 순방출을 제약하고, 고에너지 전자는 더 큰 국부 냉각의 고온 영역으로 전이하나 성능은 공간전하 효과로 제한된다.", "figure_refs": []}, {"type": "bullet", "text": "완전 결합 ETC/재료응답 시뮬레이션(LeMANS + MOPAR)은 높은 기판 전도율(200 W/cm^2급)에서 전도가 지배하여 ETC 기여가 줄고, 저전도 재료에서는 ETC가 주된 표면 냉각 메커니즘으로 남음을 보였다.", "figure_refs": [5]}, {"type": "bullet", "text": "매우 낮은 일함수는 날카로운 에지에서 공간전하를 심화하므로, 매우 날카로운 리딩에지에는 중간 일함수(~4-5 eV)가 최적이었고, ETC는 뭉툭한 Stardust형 몸체에도 기하학적 강건성을 보였다.", "figure_refs": []}, {"type": "bullet", "text": "시스 모델링은 다스케일이며(Debye/시스 길이가 공력 스케일보다 훨씬 작음), 유효성 기준을 갖는 축소 모델(Sahu의 방출비 지표), 불연속 Galerkin 다성분 유체 모델(Gangemi), 변분 Poisson 기반 시스 방법(Ghoniem)이 개발되었고, 국부 플라즈마를 개질해 공간전하를 완화하는 세슘 시딩이 제안되었다.", "figure_refs": [6, 7]}]}, "results": {"content": [{"type": "bullet", "text": "방출체 선택은 방출 극대화(낮은 일함수)와 내구성 있는 시스템 적합 고온 성능 사이의 다목적 절충이며, 보고된 일함수는 고유 상수가 아니라 표면 상태·배향·산화·온도·측정법에 따라 변한다.", "figure_refs": []}, {"type": "bullet", "text": "금속의 열전자 적합성을 순위화하는 성능 지수가 있다.", "figure_refs": []}, {"type": "formula", "label": "식 (2) - 금속 방출체 성능 지수", "latex": "F=\\frac{\\Phi}{T_e}\\times 10^3", "description": "일함수 Phi와 10^-5 mmHg 증기압에서의 온도 T_e로부터의 성능 지수 F로, F가 낮을수록 더 적합한 열전자 금속을 나타낸다(재료 상수가 아닌 정성 비교용)."}, {"type": "bullet", "text": "내화 금속(W, Mo, Ta, Nb, Re)은 융점이 높지만 일함수가 4 eV를 넘으며, 텅스텐(W=4.52 eV, 융점 3377 C)이 역사적으로 지배적이나 텅스텐-물 순환과 개질 시스템 대비 낮은 효율의 단점이 있다.", "figure_refs": [8]}, {"type": "bullet", "text": "산화물 개질 텅스텐은 유효 일함수를 낮추나(W-ThO2 ~2.63 eV, W-La2O3 ~3.0 eV) 토륨 방사능으로 W-희토류 산화물 복합재로 전환되며, 세 번째 산화물 첨가는 보통 수확 체감을 보인다.", "figure_refs": []}, {"type": "bullet", "text": "희토류 육붕화물(LaB6 ~2.68 eV, CeB6 ~2.59 eV)은 케이지형 B6 팔면체 격자로 본질적 저일함수와 높은 방출(LaB6-MeB2 복합재는 2000 K에서 ~85 A/cm^2)을 주나 취성·열충격 민감·지지체로의 붕소 확산 문제가 있다.", "figure_refs": [8]}, {"type": "bullet", "text": "저온 방출체 - 산화물(BaO) 캐소드(~1.65 eV까지 낮으나 산소 중독 민감)와 C12A7 일렉트라이드(이론 ~0.6 eV, 측정 ~2.1-2.4 eV, ~900 C 이상에서 분해) - 는 가장 낮은 일함수를 제공하나 열·산화 강건성이 나쁘다.", "figure_refs": [9]}, {"type": "bullet", "text": "신흥 희토류 도핑 초고온 세라믹(ZrB2, TaC 등)은 높은 융점과 산화 저항을 지니며, DFT 스크리닝과 희토류 산화물 도핑(ZrB2에 La로 ~3.63 eV; ZrB2-SiC에 Gd2O3/La2O3로 일함수 0.3-0.6 eV 감소)이 저일함수와 극한 환경 안정성을 겸하는 경로를 연다.", "figure_refs": [10]}]}, "discussion": {"content": [{"type": "bullet", "text": "실험은 총 방출 전류·전류밀도·수집체 전류를 보고하며, 비교에는 전류밀도가 선호되고, 직접 냉각 증거(동기화 온도 강하)는 경쟁 가열(이온 재결합, 전자 역류)을 놓칠 수 있는 간접 회로 전류 추론과 구분된다.", "figure_refs": []}, {"type": "bullet", "text": "글로 방전 플라즈마 장치(Bezverkhnii 방법; Gollapudi N2-Ar 장치)는 LaB6 방출체를 1000 C 부근으로 가열하고 완만한 전압 변조로 ~10 K 직접 표면 냉각을 냈다 - 플라즈마에서 열전자 방출이 순냉각할 수 있다는 증거.", "figure_refs": [11]}, {"type": "bullet", "text": "고출력 레이저 장치(Liang 980 nm 후면 가열, 2050-2350 C에서 최대 200 V 바이어스; Bak 1070 nm ~6.37 MW/m^2에 아르곤 플라즈마)는 직접 증거 - 전류 급증과 동기화된 급속 ~100 K 강하 - 를 제공했고, 분할 레이저 가열 방출체는 급증이 열전자임을 확인하며 플라즈마는 주로 공간전하를 중화했다.", "figure_refs": [12]}, {"type": "bullet", "text": "Bak의 결합 실험-모델-재료 연구는 과도 온도장과 정상 냉각률을 5% 미만 오차로 재현하여, 검증된 모델링과 결합된 레이저 플랫폼을 견고한 정량 경로로 확립했다.", "figure_refs": [12]}, {"type": "bullet", "text": "플라즈마 풍동(Helber VKI Plasmatron 2017 흑연 방출체; UVM 30 kW ICP의 LaB6와 Cu 도핑 C12A7)은 저일함수 재료가 방출 밀도를 높임을 확인했으나 열 강건성 한계(산화물 형성, 균열)를 드러냈고 대체로 간접 증거를 제공했다.", "figure_refs": [13]}, {"type": "bullet", "text": "Helber 시험은 2000 K에서 15 mA(2300 K에서 30 mA)만 방출되고 전자가 접지된 설비 하드웨어에 흡수됨을 보여, 더 낮은 일함수 방출체와 더 나은 전기 절연/전극 배치의 필요성을 부각했다.", "figure_refs": [13]}, {"type": "bullet", "text": "X2 팽창관 시험(Paxton)은 깨끗한 신호를 위해 6 km/s를 권고했고(9 km/s는 이온화로 잡음 지배), W-La2O3 노즈가 30 V 바이어스에서 방출체/수집체 전류를 줄임을 보였으며, 고충실도 시뮬레이션은 전류 불일치(수집체 재포집이 총 방출보다 낮음)를 드러내 시스템 수준 설계가 이를 다뤄야 함을 시사했다.", "figure_refs": [14]}]}, "conclusion": {"content": [{"type": "bullet", "text": "혁신적 능동 열방호 메커니즘으로서 ETC에 대한 전 세계적 관심이 고속 항공우주 시스템 추구에 힘입어 커지고 있다.", "figure_refs": []}, {"type": "bullet", "text": "시뮬레이션은 타당성을 예비 검증했으나 단순화 가정(포화 방출, 1D 유동, 평면 전극)에 의존하므로 고충실도 결합 모델과 체계적 민감도·불확도 해석이 필요하다.", "figure_refs": []}, {"type": "bullet", "text": "ETC는 낮은 일함수와 고온·화학 안정성을 겸하는 방출체가 필요하나 기존 재료는 미달이고 현재 시험 재료는 2000 K 미만에서만 작동하므로, 내화 저일함수 재료를 개발하고 실험적으로 검증해야 한다.", "figure_refs": []}, {"type": "bullet", "text": "희토류 도핑 UHTC 복합재는 잠재력이 있으나 실험 검증이 부족하고, 세슘 함침 재료는 소모성 증기 단점과 함께 대체로 이론적이다.", "figure_refs": []}, {"type": "bullet", "text": "레이저 실험은 동기화 전류-온도 신호를 관측하나 극초음속 조건을 과도 단순화하고, 플라즈마 풍동은 열의존 전류를 검출하나 동기화 온도-전류 데이터와 참 극초음속 속도/이온화가 부족하다.", "figure_refs": []}, {"type": "bullet", "text": "참 극초음속 파라미터를 재현하면서 정밀한 동기화 온도-전류 측정을 가능케 하는 플랫폼 개발이 ETC 발전에 핵심적이다.", "figure_refs": []}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "기존 ETC 모델은 포화 열전자 방출, 1차원 유동, 평면 전극 형상 같은 단순화 가정에 의존하여 실제 극초음속 환경 적용성이 제한된다.", "source_quote": "Existing models generally rely on simplifying assumptions, such as saturated thermionic emission, one-dimensional flow, and planar electrode geometries, which limit their applicability to realistic hypersonic environments.", "source_section": "conclusion"}, {"claim": "현재 ETC 시험 재료는 2000 K 미만에서만 작동하며, 일함수를 낮춘 희토류 도핑 UHTC 복합재는 실험 검증이 부족하고 세슘 함침 재료는 대체로 이론적이다.", "source_quote": "current ETC-tested materials only function below 2000 K. Rare-earth-doped ultra-high-temperature ceramic (UHTC) composites with reduced work functions show potential but lack experimental validation. Cesium-impregnated materials remain theoretical concepts with limited practical applicability.", "source_section": "conclusion"}, {"claim": "플라즈마 풍동은 온도-전류 데이터의 실시간 동기화가 없고 속도·이온화에서 실제 극초음속 유동과 다르며, 레이저 실험은 유동-ETC 상호작용을 무시하여 극초음속 조건을 과도 단순화한다.", "source_quote": "Plasma wind tunnels detect thermal-dependent currents but lack real-time synchronization of temperature-current data and differ from actual hypersonic flows in velocity and ionization levels.", "source_section": "conclusion"}, {"claim": "소모성 세슘 코팅은 증발하면 고갈되어 재사용성을 저해하고 장기 임무를 복잡하게 하며, Cs 증기는 무선 통신 방해나 계측 오염을 일으킬 수 있다.", "source_quote": "vaporization of elemental Cs is essentially consumptive: once evaporated, the Cs layer can be depleted, undermining reusability and complicating long-duration missions.", "source_section": "results"}], "future_works": [{"claim": "열전자 방출, 플라즈마 수송, 공력 가열의 결합을 포착하는 고충실도 다물리 모델과 통상 가정에 대한 체계적 민감도·불확도 해석을 개발해야 한다.", "source_quote": "Future work should therefore focus on developing higher-fidelity multiphysics models capable of capturing the coupled interactions between thermionic emission, plasma transport, and aerodynamic heating, together with systematic sensitivity and uncertainty analyses to assess the validity of commonly adopted assumptions.", "source_section": "conclusion"}, {"claim": "ETC용 신규 내화 저일함수 재료를 개발하고 그 ETC 성능을 실험적으로 검증하는 것이 시급한 우선 과제다.", "source_quote": "Developing novel refractory low-work-function materials and experimentally verifying their ETC performance are urgent priorities.", "source_section": "conclusion"}, {"claim": "참 극초음속 파라미터를 재현하면서 정밀한 동기화 온도-전류 측정을 가능케 하는 실험 플랫폼을 구축해야 한다.", "source_quote": "Developing experimental platforms capable of reproducing true hypersonic parameters while enabling precise synchronized measurements is critical for advancing ETC technology.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["극초음속 비행체의 열방호 요구는 마하수와 비행 시간에 따라 급격히 증가하여 기존 TPS 한계를 초과한다.", "기존 ETC 리뷰는 특정 측면에 집중했고 모델링 접근의 체계적 비교를 최근 재료·실험 발전과 통합하지 못했다.", "ETC는 전자 방출, 플라즈마 시스/공간전하 물리, 공력 가열, 고체 전도를 상이한 스케일에 걸쳐 결합하므로 정확한 예측이 어렵다."], "addressed_by_this_work": ["수치 모델링·방출체 재료·실험 검증 관점에서 ETC를 통합 개관하며 모델링 방법론과 물리 메커니즘의 진화를 추적한다.", "방출 모델군(온도 제한 T, 부유 시스 Z-C, 공간전하 제한 S-C)을 종합하고 지배 인자(바이어스, 일함수, 형상, 재료 전도, 시스 운동학)를 규명한다.", "방출체 재료군과 실험 플랫폼을 집대성하며 직접(동기화 온도 강하) 대 간접(회로 전류) 냉각 증거를 구분한다."], "remaining_unresolved": ["가상 캐소드 운동학을 비행체 스케일에서 해석하는 처리 가능한 고충실도 다물리/다스케일 모델이 아직 없다.", "산화·열순환 하 2000 K 이상에서 안정적이고 방출성이 높은 내화 저일함수 재료가 실험적으로 입증되지 않았다.", "참 극초음속 조건을 동기화 온도-전류 측정과 함께 재현하는 실험 플랫폼이 없고, 시스템 수준의 전자 전류 불일치(방출 대 재포집)가 미해결이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
