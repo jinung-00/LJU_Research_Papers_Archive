@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Experimental Investigation on Additively Manufactured Transpiration and Film Cooling Structures</title>
+    <meta name="keywords" content="Experimental, Transpiration cooling, Turbine blade, Porous media, Additive manufacturing, Cooling efficiency, Blowing ratio, Interstitial heat transfer, Inconel 718, Film cooling">
+    <meta name="paper-authors" content="Zheng Min, Gan Huang, Sarwesh Narayan Parbat, Li Yang, Minking K. Chyu">
+    <meta name="paper-journal" content="Journal of Turbomachinery (ASME), Vol. 141, No. 3, March 2019, Paper 031009 (pp. 031009-1 to 031009-10) · DOI: 10.1115/1.4042009">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Experimental Investigation on Additively Manufactured Transpiration and Film Cooling Structures</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Zheng Min, Gan Huang, Sarwesh Narayan Parbat, Li Yang, Minking K. Chyu</div>
+            <div class="journal">Journal of Turbomachinery (ASME), Vol. 141, No. 3, March 2019, Paper 031009 (pp. 031009-1 to 031009-10) · DOI: 10.1115/1.4042009</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 연구는 Inconel 718을 <span class="term">선택적 레이저 금속 소결</span>(SLMS) 적층제조로 제작하여 다섯 가지 <span class="term">증산냉각</span> 구조(피치가 다른 두 종의 타공판, 금속 구 패킹, 금속 와이어 메시, 혈관 모사 유로)와 라이드백 팬형 막냉각 쿠폰을 만든다. 풍동 열전달 실험으로 세 가지 냉각제 주입비(1.2%, 2.4%, 3.6%)와 네 가지 주류 온도에서 냉각효율을 평가한다. 모든 증산냉각 구조는 높은 주입비에서 막냉각을 능가했으며, 혈관형 설계는 전체 냉각효율 0.35/0.50/0.57에 도달했다. 형태학적 변수 분석 결과, 체적 공극률이 아니라 <span class="term">내부 고체–유체 계면적비</span>가 가장 영향력 있는 기하 인자로 밝혀졌다. 본 연구는 적층제조 기반 증산냉각이 기존 터빈 블레이드 냉각의 유망한 대안임을 보이는 개념 검증이다.</div>
+            <div class="keywords"><span class="keyword-chip">Experimental</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Turbine blade</span><span class="keyword-chip">Porous media</span><span class="keyword-chip">Additive manufacturing</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Blowing ratio</span><span class="keyword-chip">Interstitial heat transfer</span><span class="keyword-chip">Inconel 718</span><span class="keyword-chip">Film cooling</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">상승하는 터빈 입구 온도는 블레이드 모재의 생존 온도를 넘어서고, 기존 내부냉각·막냉각·열차폐코팅은 한계에 도달했다. 다공성 벽을 통해 냉각제를 강제로 통과시켜 연속적으로 보충되는 단열 막과 매우 큰 내부 고체–유체 표면적을 형성하는 증산냉각은 더 적은 냉각제로 더 높은 효율을 약속하지만, 미세 다공 기하의 제작이 어려웠다. 적층제조(SLMS)가 이러한 복잡한 다공 구조의 제작을 가능하게 하면서 본 연구를 촉발했다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">선행 증산냉각 연구는 소결 스트럿, 상변화 소결판, 직조 와이어 메시를 사용하여 공극률과 층 배열이 냉각효율을 지배함을 반복적으로 확인했다. 기존 다공성 금속 제작법(폼, 분말 소결, 와이어 메시, 적층판)은 각각 공극률·강도·설계 유연성·제작성에서 상충한다. 금속 적층제조(바인더 제팅, DLD, SLMS)와 그 미세조직·기계적 특성 분석이 본 연구의 기반을 이룬다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다섯 가지 증산 기하와 라이드백 팬형 막냉각 쿠폰 하나를 Inconel 718로 EOS M290 SLMS로 인쇄하여, 200x200 mm 풍동에서 11 m/s(Re = 98,000), 주류 온도 45–60 C, 상온 압축공기 냉각제, 주입비 1.2%·2.4%·3.6%로 시험했다. FLIR 적외선 카메라로 표면 온도를 측정했고, 냉각효율은 (단열–벽) 대 (단열–냉각제) 온도의 선형 최소제곱 적합 기울기로 구했다. 설계·측정 공극률, 내부 고체–유체 계면적비, 표면 출구 면적비는 무게 측정과 CAD 기하에서 계산했다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">모든 구조에서 주입비가 높아질수록 냉각효율이 상승했고, 모든 증산 기하가 2.4%·3.6% 주입에서 막냉각을 능가했다. 혈관형 설계는 2.4%·3.6%에서(0.50, 0.57), 구 패킹은 1.2%에서(0.36) 최고였으며, 단순 타공 3D 구조가 가장 약했다. 결정적으로 냉각효율은 비단조적으로 거동한 체적 공극률보다 내부 고체–유체 계면적비와 가장 강하게 상관했다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">지배 메커니즘은 내부 벽에서 열을 제거하는 확대된 내부 고체–유체 대류 면적이어서, 냉각효율은 체적 공극률보다 계면적을 따른다. 높은 공극률은 금속을 약화시키므로 설계 교훈은 공극률을 낮게 유지하면서 계면적을 최대화하는 것이다. 독자의 공극률 구배 증산냉각 연구에 대해, 이는 설계 변수를 공극률 단독에서 간극 계면적으로 재구성하며, 그러한 설계가 필요로 하는 복잡 기하를 적층제조가 구현할 수 있음을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">하나의 막냉각과 다섯 증산 구조를 Inconel 718로 SLMS 적층제조하여 냉각효율을 시험했다. 모든 증산 설계가 2.4%·3.6% 주입에서(다섯 중 넷은 1.2%에서도) 막냉각을 능가했고, 구멍 근처가 아니라 피복 중앙에서 정점을 이뤘다. 공극률·내부 표면비·출구 면적비 중 내부 고체–유체 표면적비가 가장 유의한 인자였으며, 적층제조는 터빈 증산냉각의 유망한 실현 수단으로 평가된다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 9 / total 31</span></summary>
+            <ol class="ref-list"><li>P. X. Jiang, G. Huang, Y. Zhu, Z. Liao, Z. Huang, Experimental Investigation of Combined Transpiration and Film Cooling for Sintered Metal Porous Struts, Int. J. Heat Mass Transfer, 108, 2017, pp. 232-243.</li><li>G. Huang, Y. Zhu, Z. Liao, X. L. Ouyang, P. X. Jiang, Experimental Investigation of Transpiration Cooling With Phase Change for Sintered Porous Plates, Int. J. Heat Mass Transfer, 114, 2017, pp. 1201-1213.</li><li>G. Xu, Y. Liu, X. Luo, J. Ma, H. Li, Experimental Investigation of Transpiration Cooling for Sintered Woven Wire Mesh Structures, Int. J. Heat Mass Transfer, 91, 2015, pp. 898-907.</li><li>J. Ma, X. Luo, H. Li, Y. Liu, An Experimental Investigation on Transpiration Cooling Based on the Multilaminated Sintered Woven Wire Mesh Structures, ASME J. Therm. Sci. Eng. Appl., 8(3), 2016, 031005.</li><li>C. Saumweber, A. Schulz, Effect of Geometry Variations on the Cooling Performance of Fan-Shaped Cooling Holes, ASME J. Turbomach., 134(6), 2012, 061008.</li><li>K. N. Amato et al., Microstructures and Mechanical Behavior of Inconel 718 Fabricated by Selective Laser Melting, Acta Mater., 60(5), 2012, pp. 2229-2239.</li><li>R. S. Bunker, Evolution of Turbine Cooling, ASME Paper No. GT2017-63205, 2017.</li><li>D. A. Nealy, S. B. Reider, Evaluation of Laminated Porous Wall Materials for Combustor Liner Cooling, ASME J. Eng. Power, 102(2), 2009, pp. 268-276.</li><li>S. J. Kline, F. A. McClintock, Describing Uncertainties in Single Sample Experiments, Mech. Eng., 75(1), 1953, pp. 3-8.</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "가스터빈 설계자는 사이클 효율을 위해 입구 온도를 계속 높이지만, 그 결과 고온 가스가 모재 생존 온도를 넘어서며 열응력·산화·부식을 일으켜 블레이드 수명을 단축한다."}, {"type": "bullet", "text": "기존 보호는 내부냉각(사행 유로, 충돌 제트, 핀핀, 스월 챔버), 외부 막냉각, 열차폐코팅을 결합하지만, 막냉각 구멍의 이산적 특성이 고온면의 완전한 냉각제 피복을 제한한다."}, {"type": "bullet", "text": "막냉각 유량이 높아지면 냉각제 막이 리프트오프되고 난류 와류를 생성하여 냉각효율을 낮추고 표면 온도 불균일을 특히 구멍 하류에서 증가시킨다."}, {"type": "bullet", "text": "<span class=\"term\">증산냉각</span>(sweat, effusion, 전면 막냉각이라고도 불림)은 다공성 벽을 통해 냉각제를 밀어내며, 극도로 조밀한 미세 구멍을 가진 막냉각처럼 작동하여 막이 연속 보충되고 이산 구멍 막냉각보다 피복이 균일하다."}, {"type": "bullet", "text": "증산 구조의 내부 고체–유체 표면은 막냉각 구멍보다 훨씬 커서 매질 간 대류를 크게 강화하고, 더 적은 냉각제로 더 높은 냉각효율을 준다."}, {"type": "bullet", "text": "오랜 장벽은 제작이다: 제어 가능한 공극률과 충분한 기계적 강도를 갖는 미세·고공극 금속 매질의 생산. 적층제조, 특히 SLMS의 급속한 발전이 새로운 경로를 제공하여 Inconel 718을 이용한 본 개념 검증 연구를 촉발했다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Jiang 등은 소결 금속 다공 스트럿에서 증산+막 결합 냉각이 선단과 스트럿 본체를 모두 효과적으로 냉각할 수 있음을 보였다.", "figure_refs": []}, {"type": "bullet", "text": "Huang 등은 소결 다공판의 상변화 증산냉각을 연구하여 소결 입자 직경이 600에서 200 마이크로미터로 감소함에 따라 냉각효율이 증가함을 발견했다."}, {"type": "bullet", "text": "Xu 등과 Ma 등은 직조 와이어 메시 증산냉각을 시험했다: 공극률 55%에서 냉각효율 0.5에 도달했고, 평균 메시 공극률(및 층 배열 순서)이 성능을 지배하는 주요 인자였다."}, {"type": "bullet", "text": "기존 다공성 금속 경로는 각각 단점이 있다: 금속 폼은 약 90% 공극률에 도달하지만 약하고 제작이 느리며, 분말 소결은 강도를 더하나 무작위적·부분적으로 비연결(비유효) 공극을 만들고, 직조 와이어 메시는 강하지만 설계 유연성과 형상 제어가 부족하다."}, {"type": "bullet", "text": "적층 다공 매질(용접으로 접합된 미세 유로 적층층)은 층별 설계 공극률과 더 나은 냉각제 관리를 허용하나 조립이 어렵고 제작 시간이 길어 단일 공정의 제어 가능한 대안을 촉발한다."}, {"type": "bullet", "text": "세 가지 금속 적층제조 계열을 비교한다: 분말상 바인더 제팅(내재적 공극, 낮은 강도, 소결 치수 변화), 직접 레이저 증착(DLD), 선택적 레이저 금속 소결(SLMS). SLMS는 미용융 분말로 오버행을 지지하며 더 미세한 구조와 더 나은 표면 품질을 낸다."}, {"type": "bullet", "text": "SLMS 미세조직·기계적 연구가 Inconel 718 선택을 뒷받침한다: Amato 등은 SLM Inconel 718의 인장강도가 단조 합금에 필적함을 보고했고, Van Bael 등과 Dewidar 등은 다공성 Ti6Al4V와 316L에서 설계 대 제작 형태 불일치를 정량화했다."}]}, "method": {"content": [{"type": "bullet", "text": "시험 장치는 정사각(200 mm x 200 mm) 단면 풍동이며, 가열된 주류 공기가 정류기를 지나 피토관 측정으로 11 m/s(Re = 98,000)를 유지하고, 주류 온도는 K형 열전대로, 상온(21 C) 압축공기 냉각제는 Dwyer 플로트 유량계로 측정한다.", "figure_refs": [1]}, {"type": "bullet", "text": "30 x 12 x 3.2 mm Inconel 벽에 다섯 증산 쿠폰을 제작했다: 0.3 mm 구멍의 피치 3D(RH-3D)·2D(RH-2D) 타공판, 1.5 mm 구의 4층 구 패킹, 적층 와이어 매트릭스 메시, 그리고 주 입구를 4개 다시 16개 하위 분지로 나눠 낮은 공극률에서 출구 면적을 키우는 생체 모사 혈관형 유로.", "figure_refs": [2, 3, 4, 5]}, {"type": "bullet", "text": "단일 열 라이드백 팬형 막냉각 쿠폰(30도 경사, 1 mm 원통 구멍, Saumweber와 Schulz의 기하)을 동일 공정으로 대조군으로 인쇄했다.", "figure_refs": [6]}, {"type": "bullet", "text": "모든 쿠폰은 EOS M290 SLMS 시스템(레이저 초점 직경 0.1 mm)에서 상면을 45도 경사로 인쇄하여 하부가 추가 지지 없이 자가 지지하도록 제작한 뒤, 지지 제거·와이어 커팅·무게가 안정될 때까지 반복 압축공기 탈분말을 거쳤다.", "figure_refs": [7]}, {"type": "bullet", "text": "설계 공극률과 무게 측정 공극률은 CAD와 솔리드판 기준 질량으로 정의했다."}, {"type": "formula", "label": "식 (1) — 설계 공극률", "latex": "\\phi_d = \\left(1 - \\frac{V_d}{V_s}\\right) \\times 100\\%", "description": "기하의 CAD 체적 $V_d$를 동일 외형 솔리드판 체적 $V_s$에 대비한 설계 공극률."}, {"type": "formula", "label": "식 (2) — 측정 공극률", "latex": "\\phi_m = \\left(1 - \\frac{M_r}{M_s}\\right) \\times 100\\%", "description": "인쇄된 쿠폰 무게 $M_r$를 솔리드판 무게 $M_s$에 대비한 측정 공극률. SLMS가 분말을 완전히 용융하지 못해 측정 공극률은 대체로 설계값을 초과했다."}, {"type": "bullet", "text": "두 면적비가 기하를 특징짓는다: 내부 고체–유체 계면적비(유효 냉각 면적당 내부 대류 표면)와 표면 출구 면적비(유효 면적당 냉각제 출구 면적으로 출구 속도와 피복을 지배)."}, {"type": "formula", "label": "식 (3) — 내부 표면적비", "latex": "R_{internal} = \\frac{A_{internal}}{A_{effective}}", "description": "내부 고체–유체 계면적을 유효(냉각제 피복, 20 x 12 mm) 고온면 면적에 대비한 비. 본 논문의 핵심 형태학적 변수."}, {"type": "bullet", "text": "냉각제 주입비 F와 막냉각 블로잉비 M은 냉각제 공급을 정의하며, 속도를 등가 단면 속도(증산)로 보느냐 구멍당 속도(막)로 보느냐에서 차이가 난다."}, {"type": "formula", "label": "식 (5a) — 주입비", "latex": "F = \\frac{\\rho_c v_c}{\\rho_g v_g}", "description": "냉각제 밀도·속도($\\rho_c, v_c$) 대 주류($\\rho_g, v_g$)의 주입비. $v_c$는 등가 평균 단면 속도 $\\dot{m}/(\\rho_c A_{effective})$. 주입비 1.2%·2.4%·3.6%는 막냉각 블로잉비 1.0·2.0·3.0에 대응한다."}, {"type": "bullet", "text": "국소 냉각효율은 각 주입비에서 네 주류 온도에 대해 (단열–벽) 대 (단열–냉각제) 온도의 선형 최소제곱 적합 기울기로 적외선 온도 지도에서 구했다.", "figure_refs": [8, 9]}, {"type": "formula", "label": "식 (7) — 냉각효율", "latex": "\\eta = \\frac{T_a - T_w}{T_a - T_c}", "description": "단열 벽 온도 $T_a$(냉각제 없음), 냉각제 막이 있는 벽 온도 $T_w$, 플레넘 냉각제 온도 $T_c$로부터의 국소 냉각효율. 적합 기울기가 표면 전역의 국소값을 준다."}, {"type": "bullet", "text": "Kline과 McClintock를 따라 총 냉각효율 불확도는 5.0–6.2%(가열 온도가 높을수록 낮음), 주입비 불확도는 1.7–2.3%였고, 주류·냉각제 온도는 각각 0.5 K, 적외선 벽 온도는 측정값의 2%였다."}]}, "results": {"content": [{"type": "bullet", "text": "여섯 구조 모두 주입비가 높아질수록 냉각효율이 증가했으며, 네 복잡 증산 설계가 막냉각 쿠폰보다 훨씬 크게 효율을 높였다.", "figure_refs": [10]}, {"type": "bullet", "text": "막냉각은 구멍 근처에서 정점을 이룬 뒤 리프트오프와 난류 혼합으로 하류에서 떨어진 반면, 모든 증산 구조는 주변 미세 유로가 대류로 열을 빠르게 제거하는 냉각제 피복 중앙에서 정점을 이뤘다.", "figure_refs": [10, 11]}, {"type": "bullet", "text": "두 타공판 중 더 조밀한 2D 피치가 3D 피치를 능가했는데, 촘촘한 구멍이 더 큰 피복과 낮은 냉각제 속도를 주어 막 리프트오프를 억제했기 때문이다.", "figure_refs": [11]}, {"type": "bullet", "text": "낮은 주입(1.2%)에서는 구 패킹이 최고(0.36)였고 막냉각이 가장 단순한 구멍과 비슷하거나 앞섰으나, 주입이 커질수록 복잡 내부 기하(구, 와이어 메시, 혈관)가 더 높은 내부 난류와 열전달로 앞서나갔다.", "figure_refs": [11]}, {"type": "bullet", "text": "혈관형 설계의 전체 평균 냉각효율은 1.2%·2.4%·3.6% 주입에서 0.35·0.50·0.57에 도달했으며, 이는 2.4%·3.6%에서 막냉각 대비 각각 31.6%·39.0% 증가다.", "figure_refs": []}, {"type": "bullet", "text": "공극률은 냉각효율과 비단조적이었다: 와이어 매트릭스 메시는 공극률이 다른 것보다 60% 넘게 높았으나 최고 효율이 아니었는데, 큰 개구가 낮은 내부 속도·적은 유동 전향·약한 열전달을 주었기 때문이다.", "figure_refs": [12]}, {"type": "bullet", "text": "공극률·내부 표면비·출구 면적비에 대한 냉각효율 그래프를 비교하면 효율은 내부 고체–유체 표면비에 가장 민감하여 이를 지배적 기하 인자로 규명했다. 두 타공 사례는 낮은 난류와 열전달 계수 때문에 예외였다.", "figure_refs": [12]}, {"type": "bullet", "text": "출구 면적비는 대체로 독립적인 피복 인자로 작용했다: 더 큰 출구 면적은 주입 속도를 낮추고 하류 막 부착을 개선하여 공극률을 바꾸지 않고 효율을 높였다.", "figure_refs": [12]}]}, "discussion": {"content": [{"type": "bullet", "text": "확대된 내부 상호작용 표면이 쿠폰 내부로부터의 열 제거를 강화하여 냉각효율은 대체로 내부 고체–유체 표면비와 함께 증가했으며, 저난류 타공 기하가 명백한 예외였다.", "figure_refs": [12]}, {"type": "bullet", "text": "큰 공극률은 매질 간 열전달을 개선하지만 동시에 기계적 강도를 저하시키므로, 저자들은 공극률을 가능한 작게 유지하면서 내부 표면적을 키우는 최적화를 주장한다.", "figure_refs": [12]}, {"type": "bullet", "text": "출구 면적비는 분리 가능한 피복 레버(공극률이나 내부비를 바꾸지 않고 공극 연결성으로 설정)로, 내부 열전달 설계와 독립적으로 하류 막 부착을 개선하는 데 유용하다."}, {"type": "bullet", "text": "비정량 인자—내부 난류를 설정하는 기하 복잡성과 국소 최대 속도를 설정하는 공극 크기—도 냉각효율을 좌우하므로, 측정된 비들은 지배적 경향은 설명하나 모든 사례를 설명하지는 못한다."}, {"type": "bullet", "text": "독자의 정상상태 2D 상변화 증산냉각·공극률 구배 연구와의 관련성: 체적 공극률이 아니라 간극 계면적이 냉각효율을 지배한다는 본 실험의 핵심 발견은, 균일 냉각을 목표로 하는 공극률 구배 epsilon(x) 설계가 비균일 열유속 하에서 국소 열 제거율을 형성하려면 공극률만이 아니라 내부 표면적을 함께 구배해야 함을 시사한다."}, {"type": "bullet", "text": "혈관형 유로는 적층제조가 낮은 공극률(강도 보존)에서 높은 출구 면적을 구현할 수 있음을 보이는데, 이는 공간적으로 맞춤화된 다공성 벽 구현에 직접 유용한 제작 역량이다. 다만 본 연구는 고열유속 하 상변화 냉각제가 아니라 상온 부근 단상 공기다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "다섯 증산 설계(타공판 둘, 구 패킹, 와이어 매트릭스, 혈관형)와 라이드백 팬형 막 쿠폰 하나를 SLMS로 제작하여 세 주입비와 네 주류 온도에서 시험했다."}, {"type": "bullet", "text": "모든 증산 설계가 2.4%·3.6% 주입에서 막냉각보다 높은 전체 평균 냉각효율을 보였고, 다섯 중 넷은 1.2%에서도 막냉각을 능가했다."}, {"type": "bullet", "text": "유선 방향 분포는 막냉각 효율이 구멍 근처에서, 증산 효율이 냉각제 피복 면적 중앙에서 정점을 이룸을 보였다."}, {"type": "bullet", "text": "측정된 기하 변수—공극률, 내부 고체–유체 표면적, 출구 면적—중 내부 고체–유체 표면적비가 냉각효율을 지배하는 가장 유의한 단일 인자였다."}, {"type": "bullet", "text": "증산냉각의 냉각 잠재력은, 특히 그것이 요구하는 복잡 내부 구조를 적층제조가 구축할 수 있음을 고려하면, 막냉각을 크게 능가할 수 있다."}, {"type": "bullet", "text": "향후 최적화는 공극률을 최소화하면서 내부 표면적을 키워야 하며, 적층제조 증산냉각의 추가 연구가 가치 있고 유망하다고 평가된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "미세 내부 구조는 비연결(고립) 공극에 미용융 분말을 가두며, 탈분말 공정으로도 제거되지 않아 실제 공극률이 설계값에서 벗어나고 일부 공극은 증산에 비유효하다.", "source_quote": "Some of the unmelt metal powders were left inside these isolated spaces in powder bed fabrication process and could not be removed by the de-powdering process.", "source_section": "results"}, {"claim": "냉각효율에 영향을 주는 여러 변수가 비정량·비측정적이어서(예: 내부 난류를 지배하는 기하 복잡성, 국소 최대 속도를 결정하는 공극 크기) 측정된 기하 변수만으로는 냉각효율을 온전히 설명할 수 없다.", "source_quote": "there were still several nonquantitative/nonmeasurable parameters affecting the cooling effectiveness, e.g., geometry complexity which dominated the turbulence level inside the porous media and pore size which determined the highest local velocity.", "source_section": "results"}], "future_works": [{"claim": "계면적이 냉각효율을 지배하고 낮은 공극률이 기계적 강도를 보존하므로, 향후 최적화는 공극률을 가능한 낮게 유지하면서 내부 고체–유체 계면적비를 최대화해야 한다.", "source_quote": "the future optimization work can start from making larger internal surface ratio while keeping porosity as small as possible.", "source_section": "discussion"}, {"claim": "적층제조가 요구되는 복잡한 내부 기하를 구현할 수 있으므로, 적층제조 증산냉각 구조에 대한 추가 연구가 가치 있다.", "source_quote": "Further investigations on additive manufactured transpiration cooling structures are worthwhile and promising.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["막냉각은 이산적 구멍에 의존하여 완전한 냉각제 피복을 제한하고, 특히 하류에서 리프트오프와 불균일한 표면 온도를 유발한다.", "증산냉각은 미세·고공극 다공성 금속 매질을 제어 가능한 공극률과 충분한 기계적 강도로 제작하기 어려워 터빈 익형에 적용되지 못했다.", "기존 다공성 제작법(금속 폼, 분말 소결, 직조 와이어 메시, 적층판)은 공극 구조를 정밀하게 설계하지 못하거나 비유효 공극을 생성하거나 설계 유연성·강도가 부족하다."], "addressed_by_this_work": ["Inconel 718을 이용한 SLMS 적층제조로 설계된 공극률과 향상된 기계적 강도를 갖는 다섯 가지 증산 기하를 정밀 제작했으며, 기존 방식으로는 불가능한 생체 모사 혈관형 유로를 포함한다.", "열전달 실험 결과 모든 증산 구조가 주입비 2.4%·3.6%에서 막냉각을 능가했다(혈관형은 막냉각 대비 각각 +31.6%, +39.0%).", "형태학적 변수 분석으로 내부 고체–유체 계면적비를 지배적이고 제어 가능한 인자로 규명하여 구체적 최적화 목표를 제시했다."], "remaining_unresolved": ["실험은 상온에 가까운 주류 온도(45–60 C)를 사용했을 뿐 실제 고온 가스터빈 조건이 아니어서 엔진 적용 성능은 입증되지 않았다.", "엔진의 열·공력 하중 하에서 적층제조 구조의 기계적 내구성은 평가되지 않았다.", "탈분말의 한계가 남는다: 고립 공극에 갇힌 분말로 실제 공극률이 설계값과 다르다.", "계면적과 공극률(및 강도)의 동시 최적화는 향후 과제로 남는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
