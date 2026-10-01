@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Heat Flux Reduction by Transpiration-Cooling of CMCs for Space Applications</title>
+    <meta name="keywords" content="Review, Transpiration cooling, TPS, Hypersonic, Re-entry, CMC, UHTC, Cooling efficiency, Graded porosity, Flight test">
+    <meta name="paper-authors" content="Hannah Boehrk">
+    <meta name="paper-journal" content="Advanced Composite Materials: Properties and Applications (De Gruyter Open), Ch. 10, pp. 468-496, 2017 · DOI: 10.1515/9783110574432-010">
+    <meta name="paper-tier" content="3">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="00_Review">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Heat Flux Reduction by Transpiration-Cooling of CMCs for Space Applications</div>
+                <span class="tier-badge tier-3">Tier 3 — 미등록</span>
+            </div>
+            <div class="authors">Hannah Boehrk</div>
+            <div class="journal">Advanced Composite Materials: Properties and Applications (De Gruyter Open), Ch. 10, pp. 468-496, 2017 · DOI: 10.1515/9783110574432-010</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 북 챕터는 극초음속 및 대기권 재진입 구조물의 능동 열보호 전략으로서 투과성 세라믹 복합재(CMC)의 <span class="term">증산냉각</span>을 DLR의 연구를 중심으로 개관한다. 먼저 둔탁한 및 날카로운 선단부에 가해지는 공력가열 하중을 설명하고, 냉각/비냉각 고온 구조물의 과도 열응답을 예측하는 표면 열수지 접근법(DLR 코드 HEATS로 구현)을 소개한다. 고온 구조 재료(C/C-SiC, RCC, UHTC)와, 투과성 C/C 중간재(공극률 ~12 퍼센트, 투과율 ~1e-13 m2)를 남기는 액상 규소 침윤 공정을 조사한다. 핵심은 2012년 SHEFEX II 아궤도 재진입에서 비행한 최초의 증산냉각 비행 실험 <span class="term">AKTiV</span>로, 최대 ~58 퍼센트 냉각 효율과 HEATS와의 양호한 일치를 측정했다. 챕터는 고열유속 선단부 첨단으로 더 많은 냉각제를 유도하려면 투과율 구배가 필요하다고 결론짓고 SHEFEX III 냉각 선단부 계획을 제시한다.</div>
+            <div class="keywords"><span class="keyword-chip">Review</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">TPS</span><span class="keyword-chip">Hypersonic</span><span class="keyword-chip">Re-entry</span><span class="keyword-chip">CMC</span><span class="keyword-chip">UHTC</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Graded porosity</span><span class="keyword-chip">Flight test</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">우주 비행과 극초음속/재진입 비행체의 선단부 및 광역 TPS는 극심한 공력가열(단기 ~2000 K, 로켓 연소 ~3500 K)을 받으므로, 경량이면서 손상 허용성이 있는 열보호 시스템이 필요하다. 챕터는 CMC를, 그리고 CMC 한계마저 초과하는 경우 능동 증산냉각을 제시하며, 비행 하중에서 AKTiV 비행 실증까지의 구성을 밝힌다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">저자는 냉각 개념과 증산냉각의 역사적 흐름을 조사한다. 수동(용량성, 복사), 반수동(히트파이프), 능동(막, 증산, 대류/재생) 접근법이 각각 열유속과 임무 지속시간 영역에 대응되며, 1950년대 이후의 선행 증산냉각 연구가 검토된다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">열응답 기법은 고온 가스로부터의 대류 입력과 복사 및 전도 사이의 표면 열수지로, 증산하는 냉각제에 의한 체적 대류 냉각을 포함하도록 확장된다. 이 수지는 DLR 코드 HEATS로 궤적 전반의 과도 벽 온도를 구한다. AKTiV 비행 실험 하드웨어(다공 C/C 시편, 질소 냉각제, 계측 패널)와 투과성 C/C 재료 경로가 설명된다.</div>
+            </div>
+            <div class="section" onclick="openModal('comparison')">
+                <div class="section-title">Comparison — 비교 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">챕터는 냉각 전략을 열유속·지속시간 영역별로 비교하고 후보 고온 구조 재료를 비교한다. 수동 용량성/복사 냉각은 저열유속 또는 단기 노출에, 히트파이프와 능동 막/증산 냉각은 더 높은 열유속과 장기 임무로 확장되며, 증산냉각은 대류와 막 형성 양쪽으로 넓은 면적에 작용한다.</div>
+            </div>
+            <div class="section" onclick="openModal('applications')">
+                <div class="section-title">Applications — 응용 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">응용은 재진입·극초음속 순항 TPS, 로켓 연소 챔버, SHEFEX 비행 시험 시리즈에 걸친다. 대표 성과는 SHEFEX II(2012)의 AKTiV로, 최초의 비행 중 증산냉각 실증이며 의미 있는 냉각 효율과 HEATS 예측 일치를 측정했다.</div>
+            </div>
+            <div class="section" onclick="openModal('challenges')">
+                <div class="section-title">Challenges — 과제 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">결론 전망은 증산냉각 날카로운 선단부의 미해결 문제를 제시한다: 투과성 재료 내 강한 열구배와 응력, 막냉각되지 않는 첨단으로 투과율 구배를 통해 더 많은 냉각제를 유도할 필요, 검증된 3D 과도 예측 도구의 요구이며, 모두 SHEFEX III 선단부를 목표로 한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 12 / total 49</span></summary>
+            <ol class="ref-list"><li>H. Boehrk, Transpiration Cooling at Hypersonic Flight - AKTiV on SHEFEX II, 11th AIAA/ASME Joint Thermophysics and Heat Transfer Conference, AIAA 2014-2676, 2014</li><li>H. Boehrk, O. Piol, M. Kuhn, Heat Balance of a Transpiration-Cooled Heat Shield, Journal of Thermophysics and Heat Transfer, 2010</li><li>H. Boehrk, C. Dittert, H. Weihs, Sharp Leading Edge at Hypersonic Flight - Modelling and Flight Measurement, Journal of Spacecraft and Rockets, 2014</li><li>D. Glass, A. Dilley, H. Kelly, Numerical Analysis of Convection and Transpiration Cooling, Journal of Spacecraft and Rockets, 2001</li><li>D. Glass, CMC Thermal Protection Systems and Hot Structures for Hypersonic Vehicles, 15th AIAA Int. Space Planes and Hypersonic Systems Conf., AIAA-2008-2682, 2008</li><li>E. Eckert, J. Livingood, Comparison of Effectiveness of Convection-, Transpiration-, and Film-Cooling Methods with Air as Coolant, NACA, 1954</li><li>J. Marvin, R. Pope, Laminar Convective Heating and Ablation in the Mars Atmosphere, AIAA Journal, 1968</li><li>T. Langener, J. von Wolfersdorf, M. Selzer, H. Hald, Experimental Investigations of Transpiration Cooling Applied to C/C Material, Int. J. Thermal Sciences, 2012</li><li>Y.-Q. Liu, P.-X. Jiang, S.-S. Jin, J.-G. Sun, Transpiration Cooling of a Nose Cone by Various Foreign Gases, Int. J. Heat and Mass Transfer, 2010</li><li>J. Wang, L. Zhao, X. Wang, J. Ma, J. Lin, An Experimental Investigation on Transpiration Cooling of Wedge Shaped Nose Cone with Liquid Coolant, Int. J. Heat and Mass Transfer, 2014</li><li>M. Ortelt, H. Hald, A. Herbertz, I. Mueller, Advanced Design Concepts for Ceramic Thrust Chamber Components of Rocket Engines, 5th EUCASS, 2013</li><li>B. Heidenreich et al., C/C-SiC Materials Based on Melt Infiltration, High Temperature Ceramic Matrix Composites 8, 2014</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "comparison": "Comparison — 비교", "applications": "Applications — 응용", "challenges": "Challenges — 과제"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "우주 비행은 넓은 온도 범위에서 높은 비강도 재료가 필요하며, '고온'의 정의는 응용에 따라 다르다(위성 &gt;450 K, 가스터빈 ~2500 K, 로켓 고온부 ~3500 K, 단기 노출 선단부 ~2000 K)."}, {"type": "bullet", "text": "열보호 시스템(TPS)은 재진입 및 극초음속 순항체를 보호하며, 우주 접근 비용이 높으므로 다수 하중 주기에 대해 손상 허용성을 유지하면서도 과잉설계를 피해야 한다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "주요 TPS 구성 요소는 선단부, 조종면, 광역 TPS, 실(seal)이며, ESA의 ATV 파괴적 재진입이 열차폐 없는 경우를 보여준다."}, {"type": "bullet", "text": "세라믹 복합재(CMC)는 고온 TPS와 추진(예: Ariane 5 SiC 노즐 연장, PTAH-SOCAR 연료냉각 CMC 램제트 챔버)에 점점 중요해지고 있다."}, {"type": "bullet", "text": "열하중이 CMC 재료 한계를 초과하면 수동/능동 냉각이 필요하며, 반수동 히트파이프와 능동 막/효출/증산 냉각이 선택지이다."}, {"type": "bullet", "text": "DLR은 1990년대부터 CMC 로켓 모터를 연구했고, 이는 다른 고온 구조물의 증산냉각과 SHEFEX II(2012)의 최초 증산냉각 비행 실험 AKTiV로 이어졌다.", "figure_refs": [4, 5]}, {"type": "bullet", "text": "챕터 구성: 극초음속 비행 하중(1.1), 열-구조 응답 접근법과 HEATS(1.2), CMC 재료 개관(1.3), SHEFEX II의 AKTiV 비행 데이터(1.4)."}]}, "related_works": {"content": [{"type": "bullet", "text": "히트파이프 냉각 날개 선단부는 Space Shuttle 개념(1970년대)과 NASP 프로그램(1980년대)에서 강화 카본-카본 내 Mo-Re 히트파이프로 연구되었고, 재료 호환성과 열응력이 핵심 과제이다(Glass 등, 1999).", "figure_refs": [3]}, {"type": "bullet", "text": "금속 능동 냉각 선단부도 제작되었으나 수소 상호작용과 다주기 수명 문제가 있으며, X-15는 Inconel 히트싱크 냉각을 썼으나 충격-충격 상호작용으로 표피 관통을 겪었다."}, {"type": "bullet", "text": "Eckert와 Livingood(1954)는 증산냉각이 대류 및 막냉각 대비 효과적임을 보였으나, 초기 다공 금속 스펀지는 녹는점이 낮아 우주 응용에 부적합했다."}, {"type": "bullet", "text": "다른 증산/효출 냉각 CMC 프로그램으로 IMENS, ATLLAS, DFG TRR40이 있으며, 다양한 질량유량, 다공 재료, 냉각제(He, N2, 공기, Ar)가 시험되었다(Langener 등, 2012)."}, {"type": "bullet", "text": "Wolf 등(1966)은 필요한 기체 냉각제 질량이 냉각제 열용량에 대략 반비례한다고 했고, 액체는 잠열 냉각을 추가한다(물, 높은 증발열 ~4168 J/kg K). 다만 수증기 내 탄소섬유 산화에 주의해야 한다."}, {"type": "bullet", "text": "Ultramet의 3성분 개념(외부 재킷, SiC 폼 투과성 코어, MoSi2-SiC 다공 라이너)은 압력 구배로 투과성 벽에 냉각제를 강제 통과시켜 재진입 하중 사례에 사용되었다(Soezen과 Davis, 2008)."}, {"type": "bullet", "text": "선행 증산냉각 쐐기/노즈콘 실험: Liu 등(2010)은 스테인리스 쐐기(공극률 42.8 퍼센트)와 여러 기체를, Wang 등(2014)은 소결 316L 선단부(공극률 34 퍼센트)에서 상변화를 동반한 물을 사용했다."}]}, "method": {"content": [{"type": "bullet", "text": "공력열 환경은 충격파가 결정한다: 충격 이격거리는 노즈 반경에 따라 증가하여 열하중을 낮춘다(Oertel 상관식)."}, {"type": "formula", "label": "식 (10.1) - 충격 이격거리", "latex": "\\delta = R_{LE}\\, 0.143\\, e^{3.24/M^2}", "description": "충격 이격거리 $\\delta$는 선단부 반경 $R_{LE}$와 Mach 수 $M$에 따라 커지며, 더 둔탁한 반경일수록 이격거리가 증가해 정체 열하중을 줄인다."}, {"type": "formula", "label": "식 (10.2) - 운동 엔탈피", "latex": "h = \\tfrac{1}{2} v^2", "description": "유입 유동의 운동 엔탈피로, 7.9 km/s 지구 궤도 재진입에서 ~31 MJ/kg, 11.3 km/s 타 천체 귀환에서 ~63 MJ/kg이다."}, {"type": "formula", "label": "식 (10.3) - Marvin &amp; Pope 정체점 열유속", "latex": "\\dot{q} = K \\sqrt{\\frac{p_{tot}}{R_{eff}}}\\, h", "description": "비행 엔탈피 $h$, 전압 $p_{tot}$, 유효 선단부 반경 $R_{eff}$, 공기의 기체 상수 $K = 0.368\\,\\mathrm{kW\\,(MJ\\,m)^{-1}(mPa)^{-1/2}}$를 갖는 정체점 열유속으로, $R_{eff}$가 작을수록(날카로울수록) 열유속이 커진다."}, {"type": "formula", "label": "식 (10.6) - 복사 열유속(회색체)", "latex": "\\dot{q}_{rad} = \\sigma \\varepsilon T^4", "description": "회색체 가정 하의 표면 복사 냉각으로, Stefan-Boltzmann 상수 $\\sigma$와 벽 방사율 $\\varepsilon$을 가지며 온도가 높을수록 효과적이다."}, {"type": "formula", "label": "식 (10.7), (10.8) - 표면 열수지와 대류 입력", "latex": "\\dot{q}_{HG\\text{-}S} = \\dot{q}_{rad} + \\dot{q}_{cond}, \\qquad \\dot{q}_{HG\\text{-}S} = \\alpha_A (T_r - T_S)", "description": "고온 가스에서 표면으로의 모든 대류 열유속은 복사되거나 전도되며, 대류 입력은 열전달계수 $\\alpha_A$와 회복온도 $T_r$로 표현된다."}, {"type": "formula", "label": "식 (10.9) - Stanton 수 기반 대류계수", "latex": "\\alpha_A = St\\, \\rho_\\infty c_{p,\\infty} u_\\infty", "description": "열전달계수는 Stanton 수 $St$, 자유류 밀도 $\\rho_\\infty$, 비열 $c_{p,\\infty}$, 속도 $u_\\infty$로 표현되며, $St$와 회복계수 $r$은 유동 조건별로 Crocco/van Driest 모델로 구한다."}, {"type": "formula", "label": "식 (10.16) - 증산을 포함한 확장 벽 열방정식", "latex": "\\rho c \\frac{\\partial T}{\\partial t} = \\lambda_x \\frac{\\partial^2 T}{\\partial x^2} + \\lambda_y \\frac{\\partial^2 T}{\\partial y^2} - \\alpha_V (T - T_C)", "description": "다공 벽의 2D 열방정식은 온도 $T_C$의 냉각제로의 간극 대류 열전달을 나타내는 체적 결합항 $-\\alpha_V(T-T_C)$로 확장된다(구조물과 냉각제 간 국부 열적 비평형)."}, {"type": "formula", "label": "식 (10.18) - 냉각제 에너지 수지(1D 압력 구배)", "latex": "-\\frac{\\dot{m}}{A}\\frac{\\partial (c_{p,C} T_C)}{\\partial y} + \\alpha_V (T - T_C) = \\rho_C c_{pC} \\frac{\\partial T_C}{\\partial t}", "description": "체적 열전달계수 $\\alpha_V$, 냉각제 질량유량 $\\dot{m}$, 증산냉각 면적 $A$를 갖는 냉각제 에너지 수지로, 벽 관통 압력 구배가 구동하는 유동 방향만 남긴다."}, {"type": "bullet", "text": "이 수지들은 DLR 프로그램 HEATS(Heat Exchange Analysis for Transpiration Systems)로 풀리며, 전 재진입 궤적의 과도 벽 온도를 신속히 계산해 레이아웃 도구로 쓰이고, 아크 가열 풍동 층류 유입 실험으로 검증되었다."}, {"type": "bullet", "text": "투과성 증산 매질은 DLR C/C-SiC 공정의 열분해 중간재인 C/C로, 미세균열이 열린 기공 역할을 한다. AKTiV의 C/C는 투과율 ~1e-13 m2, 공극률 ~12 퍼센트였다.", "figure_refs": [20]}, {"type": "bullet", "text": "AKTiV 하드웨어: 7 mm C/C-SiC 패널(C3)에 삽입된 5 mm 두께 61x61 mm 다공 C/C 시편에 스테인리스 저장조에서 압력 레귤레이터와 음속 노즐 질량유량 제어기로 질소를 공급하고 흑연 Sigraflex로 밀봉했으며, C7 패널에 비냉각 기준 시편을 두고 양쪽을 열전대로 계측했다.", "figure_refs": [28, 30, 31]}, {"type": "formula", "label": "식 (10.19) - 냉각 효율", "latex": "\\eta = \\frac{T_{W,uncooled} - T_{W,cooled}}{T_{W,uncooled} - T_{coolant}}", "description": "냉각 효율은 냉각된 벽 온도를 비냉각 기준과 비교하여 비냉각-냉각제 온도차로 정규화한 값으로, C3(냉각)와 C7(기준) 패널에서 계산한다."}]}, "comparison": {"content": [{"type": "bullet", "text": "용량성 냉각(두꺼운 고열용량 벽)은 저열유속·단기 임무에 적합하나 오래 흡열하면 과열될 수 있고, 복사 냉각은 온도가 높을수록 효과적이며 정상상태에 도달하는 고온 구조물에 적합하다.", "figure_refs": [14]}, {"type": "bullet", "text": "반수동 히트파이프는 정체 영역의 열을 후방으로 옮겨 복사시키고, 능동 대류(재생) 냉각은 고열유속을 처리하나 재생 채널은 큰 압력 손실과 금속 열피로 주기 한계를 수반한다."}, {"type": "bullet", "text": "막냉각은 상류 특정 위치에 냉각제를 주입해 벽을 덮는 반면, 증산냉각은 투과성 다공 벽을 통해 넓은 면적에 냉각제를 공급해 기공 내 대류와 외부 막으로 냉각한다.", "figure_refs": [18]}, {"type": "bullet", "text": "난류 혼합은 고온 가스를 냉각막으로 유입시켜 냉각 효율을 떨어뜨리며, 이는 막 열수지에서 직접 고온가스/막 대류 대신 질량 유입항으로 표현된다."}, {"type": "bullet", "text": "재료 비교: DLR C/C-SiC는 공극률 ~3 퍼센트, 밀도 1900 kg/m3, 섬유 방향 열팽창 저(2e-6 /K), ~1840 K 견딤, 단 산화 저항은 낮다. 투과성 C/C 중간재는 증산용으로 ~12 퍼센트 공극률을 갖는다."}, {"type": "bullet", "text": "강화 카본-카본(RCC)은 Shuttle Orbiter 선단부와 X-43(Mach 10, ~2450 K)에 쓰였고 반복 치밀화 후 1440~1600 kg/m3에 도달하며, 주요 과제는 산화 저항과 임무 수명이다."}, {"type": "bullet", "text": "초고온 세라믹(UHTC, 예: ZrB2/HfB2, 융점 ~3000 K)은 단일체로 열충격·파괴인성이 낮아 코팅이나 UHTCMC 복합재로 쓰는 편이 낫고, 저자는 투과성 C/C의 능동 증산냉각이 현재 더 실용적 경로라 본다."}]}, "applications": {"content": [{"type": "bullet", "text": "재진입 전략(탄도형 고열유속-단기 대 양력형 저열유속-장기)과 비행체 형상(둔탁 캡슐 대 L/D 0.5~2.0 양력체)이 TPS가 견뎌야 할 열유속-시간 포락선을 정한다.", "figure_refs": [7, 8, 9]}, {"type": "bullet", "text": "DLR은 증산냉각 복합재 로켓 추력 챔버를 실증했다(2011, P6.1 시설): 챔버 압력 55 bar, O/F 5.5, 수소의 9 퍼센트를 투과성 라이너로 공급.", "figure_refs": [4, 27]}, {"type": "bullet", "text": "SHEFEX II(2012)는 고체 C/C-SiC 날카로운 노즈 첨단(~1 mm 반경)을 가진 다면 오자이브 전방동체를 177 km 원점에서 아궤도 비행했고, ~500 s 비행 중 100~30 km 사이 52 s의 실험 시간(Mach 10.2 to 9.3)을 가졌다.", "figure_refs": [11, 12, 13]}, {"type": "bullet", "text": "SHEFEX II 첨단 열전대는 30 km 고도에서 최대 1122 K를 기록해 HEATS와 잘 일치했고, 비열 민감도 분석은 열응답에 ~5 퍼센트 영향을 보였다.", "figure_refs": [23, 24]}, {"type": "bullet", "text": "AKTiV 냉각은 431 s에 명령되었고, 냉각제가 흐르자 패널 온도가 떨어졌으며, 비냉각 대 냉각 차이는 K38에서 87 K(효율 58 퍼센트), 하류 K33에서 74.5 K(42 퍼센트)로 최대였다.", "figure_refs": [32]}, {"type": "bullet", "text": "설명되지 않는 겉보기 효율 8.7 퍼센트를 뺀 보정 냉각 효율은 51 퍼센트(상류/시편상)와 58 퍼센트(하류)였고, 거리에 따라 42, 30 퍼센트로 감소했으며, 전도로 상류에도 ~11 퍼센트 냉각이 나타났다.", "figure_refs": [37, 38]}, {"type": "bullet", "text": "횡방향 데이터는 최저 온도를 가장 중심의 열전대에서 보여 냉각막의 주변 유동 유입과 일치했고, 냉각 후 온도가 다시 상승해 구조물이 과냉각되지 않고 여전히 열유속에 반응함을 나타냈다(HEATS로 재현).", "figure_refs": [33, 34, 35, 36]}]}, "challenges": {"content": [{"type": "bullet", "text": "날카로운 선단부의 증산냉각은 강한 온도 구배와 그에 따른 투과성 재료 내 응력을 만들 수 있다."}, {"type": "bullet", "text": "열하중이 첨단에서 가장 심하고 첨단은 상류로부터 막냉각되지 않으므로, 더 많은 냉각제를 그곳으로 보내야 하고 하류에는 덜 필요하다."}, {"type": "bullet", "text": "벽 관통 압력 구배에 대응하고 상류 주입 기체를 최대한 활용해 첨단을 보호하기 위해 투과율 구배가 제안된다."}, {"type": "bullet", "text": "과도 응답, 모든 상태변수의 강한 구배, 열적 비평형에서의 냉각제 분포, 벽 압력 구배, 정확한 막냉각 영역 시뮬레이션을 다루는 3D 예측 도구가 필요하다."}, {"type": "bullet", "text": "SHEFEX III(2018 발사 예정)는 치메에 다공 재료를, 상단/하단 패널에 막냉각을 적용한 냉각 선단부를 목표로 하며, 과제는 냉각제 질량유량 분포, 난류 효율, 투과율 구배, 부착, 저장조 밀봉이다.", "figure_refs": [39, 40]}, {"type": "bullet", "text": "궤도 이상 대기 속도의 TPS에서 증산냉각이 효율적으로 작동할 수 있을지 입증이 남아 있으며, 열·기계 복합 하중을 지지하는 완전 통합형 능동 냉각 TPS는 아직 없다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "SHEFEX II에서 AKTiV 패널 위치는 극심한 열하중을 받지 않아, 이 실증은 아직 고열유속 선단부에서의 증산냉각을 입증하지 못한다.", "source_quote": "Although this location was not subject to extreme heat load for the SHEFEX II trajectory, the findings serve to support theories for future structural design with transpiration-cooling.", "source_section": "applications"}, {"claim": "냉각 모듈과 기준 모듈 사이에 대기 영향 고도보다 높은 곳에서 설명되지 않는 ~8.5 K 편차가 나타나, 아직 이해되지 않은 8.7 퍼센트의 겉보기 효율 보정이 필요했다.", "source_quote": "This deviation is not yet explained, but it cannot be attributed to aerodynamic effects, because it originates at altitudes higher than those influenced by the atmosphere.", "source_section": "applications"}, {"claim": "HEATS 시뮬레이션과 비행 측정의 차이는 대기 모델 불확실성, 재료 물성 일정 가정, 열전대 접합 두께 미상에 기인한다.", "source_quote": "The differences between the simulation and the measurement are attributed to uncertainties in the atmospheric model and assumptions of constant material properties.", "source_section": "applications"}, {"claim": "열하중과 기계적 하중을 모두 견디는 완전 통합형 능동 냉각 TPS 설계는 아직 존재하지 않는다.", "source_quote": "There is yet to be a fully integrated actively cooled TPS design, withstanding both thermal and mechanical loads.", "source_section": "applications"}], "future_works": [{"claim": "선단부에 투과율 구배를 적용해 첨단으로 더 많은 냉각제를 유도하여, 정체 영역이 상류로부터 막냉각되지 않는 점을 보완하고 압력 구배에 대응한다.", "source_quote": "In order to make the best use of the upstream injected gas and to protect the tip from the heat load, graded permeability can be used to counteract the pressure gradients.", "source_section": "challenges"}, {"claim": "과도 열응답, 상태변수의 강한 구배, 열적 비평형에서의 냉각제 분포, 정확한 막냉각 영역 시뮬레이션을 포함하는 3D 증산냉각 예측 도구를 SHEFEX III 선단부용으로 개발한다.", "source_quote": "Prediction tools for three-dimensional transpiration-cooling are needed in order to design the SHEFEX III leading edge.", "source_section": "challenges"}, {"claim": "치메(chime)에 다공 재료를, 상단/하단 패널에 막냉각을 적용한 SHEFEX III 선단부에 기술을 적용하며, 투과율 구배와 지향성 질량유량 실현을 포함한다.", "source_quote": "The next step is the application of this technology to the SHEFEX III leading edge (Dittert et al., 2014).", "source_section": "challenges"}], "motivation_resolution": {"motivating_problems": ["극초음속 및 재진입 선단부는 수동 복사·히트싱크 냉각이나 CMC 재료조차 견딜 수 없는 ~2000 K 단기 열하중을 받아 능동 냉각이 필요하다.", "슬렌더 저항력 순항체와 공기흡입 흡입구에 필요한 날카로운 선단부는 충격파를 부착시켜 극심한 국부 정체 가열을 유발한다.", "우주 접근 비용이 높아 TPS 과잉설계를 피해야 하므로, 냉각 구조물의 과도 열응답을 정확히 예측해야 한다.", "CMC의 증산냉각은 실제 극초음속 비행에서 실증된 바 없었다."], "addressed_by_this_work": ["수동 냉각 한계를 넘는 열하중을 견디는 경로로서 투과성 C/C-CMC의 능동 증산냉각을 제시한다.", "전 재진입 궤적에 걸친 과도 벽 온도를 저계산비용으로 예측하는 표면 열수지 기법을 HEATS 코드로 구현하고, 아크 가열 풍동 및 비행 데이터로 검증했다.", "SHEFEX II(2012)의 AKTiV를 통해 실제 극초음속 비행에서 증산냉각을 실증하여 ~51~58 퍼센트 보정 냉각 효율과 양호한 HEATS 일치를 얻었다."], "remaining_unresolved": ["고열유속 SHARP 선단부의 증산냉각은 아직 실증되지 않았으며(AKTiV 패널은 중간 하중만 경험) SHEFEX III로 미뤄졌다.", "열·기계 복합 하중을 처리하는 완전 통합형 능동 냉각 TPS는 아직 없다.", "첨단으로의 투과율 구배 및 지향성 냉각제 질량유량과 검증된 3D 예측 도구가 아직 실현되지 않았다.", "비행 데이터의 설명되지 않는 ~8.5 K 고고도 오프셋이 미해결로 남아 있다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
