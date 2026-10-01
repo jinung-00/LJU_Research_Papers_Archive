@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Transpiration cooling of high pressure turbine vane with optimized porosity distribution</title>
+    <meta name="keywords" content="Numerical, Transpiration cooling, Turbine blade, Graded porosity, Optimization, RSM, Cooling efficiency, Coolant distribution, Non-uniform permeability, CFD">
+    <meta name="paper-authors" content="Wen Wang, Guocheng Tao, Dandan Ke, Jiaqi Luo, Jiahuan Cui">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 223, 2023, Art. 119831 · DOI: 10.1016/j.applthermaleng.2022.119831">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Transpiration cooling of high pressure turbine vane with optimized porosity distribution</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Wen Wang, Guocheng Tao, Dandan Ke, Jiaqi Luo, Jiahuan Cui</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 223, 2023, Art. 119831 · DOI: 10.1016/j.applthermaleng.2022.119831</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 논문은 증산냉각되는 C3X 고압 터빈 베인의 공간 <span class="term">공극률 분포</span>를 정식으로 최적화하며, 이는 사용자의 구배 공극률 $\varepsilon(x)$ 목표에 가장 명확한 설계 방법론 선례가 된다. 베인 벽을 11개 다공 구역(LE, PS-1-4, SS-1-6)으로 나누고 공극률 0.2-0.7을 두며, Brinkman-Forchheimer 확장 Darcy 방정식과 국소 열평형(LTE) 가정으로 모델링하고 RANS(RNG $k\text{-}\varepsilon$)로 푼다. 대리모델 기반 최적화(약 120개 Latin-hypercube CFD 표본으로 학습한 Kriging 응답면을 유전 알고리즘으로 탐색)가 면적 평균 고온측 표면 온도를 최소화하여, 분사비 1.2%/2.0%에서 면적 평균 냉각효율을 균일 대비 0.25/0.41에서 0.48/0.63으로 높인다. 도출된 설계 법칙 — 전연과 그 직하류 압력면에 최고 공극률, 후방 압력면에 최저 공극률, 흡입면에 중간 — 은 냉각제 배출을 베인 표면 압력장에 맞추는 데서 직접 따라온다. 사용자 문제와 목표(균일/효율 냉각을 위한 공극률 공간 최적화)를 공유하고 실제 설계 법칙을 도출하지만, 단상 기체·국소 열평형·구역별(구간별) 공극률을 사용하여 상변화·LTNE-TPMM·연속 $\varepsilon(x)$와는 다르다.</div>
+            <div class="keywords"><span class="keyword-chip">Numerical</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Turbine blade</span><span class="keyword-chip">Graded porosity</span><span class="keyword-chip">Optimization</span><span class="keyword-chip">RSM</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Coolant distribution</span><span class="keyword-chip">Non-uniform permeability</span><span class="keyword-chip">CFD</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">터빈 입구 온도가 재료 한계를 넘고 기존 냉각이 사이클 효율을 떨어뜨리므로 '이상적' 방식인 증산냉각이 매력적이며, 강한 다공 구조의 적층제조로 이제 실현 가능하다. 선행 연구가 평판을 사용했고 실제 터빈 블레이드의 최적화가 없으므로, 본 논문은 CFD + 대리 최적화로 C3X 캐스케이드 베인의 공극률 분포를 최적화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공 매질 모델링 선택(확장 Darcy + LTE/LTNE; RANS/LES/DNS)과 AM 냉각 구조가 방법을 틀 짓고, Kim의 C3X 실험과 Wu의 비균일 투과율 노즈콘이 실제 베인의 공극률 최적화를 동기부여한다. 대리모델 기반 최적화(Kriging + GA)는 막냉각 설계 관행에서 채택한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">3D RANS(RNG $k\text{-}\varepsilon$) 공액 모델이 베인 벽을 11개 다공 구역으로 다루며, Ergun 투과율·관성손실 계수를 갖는 Brinkman-Forchheimer 확장 Darcy 운동량 소스와 체적 평균 유효전도도의 국소 열평형 에너지 방정식을 쓴다. 모델은 평판 증산 실험으로 검증되고, 약 120개 Latin-hypercube CFD 표본으로 학습한 Kriging 대리모델을 유전 알고리즘으로 탐색해 11개 구역 공극률에 대해 면적 평균 고온측 표면 온도를 최소화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">균일 공극률에서는 표면 압력장이 냉각제 대부분을 흡입면(SS-2 최대)으로 배출하고 전연에서는 거의 배출하지 않아 LE와 압력면이 미냉각으로 남는다. 최적 분포는 이를 역전시켜 LE와 PS-1에 최고, PS-3/PS-4에 최저, SS에 중간 공극률을 두어, F=1.2%/2.0%에서 면적 평균 냉각효율을 0.25/0.41에서 0.48/0.63으로 높이고(CFD 검증 오차 1.0%/1.7%), LE/PS 막이 하류로 대류해 표면을 보호한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">최적은 구역별 공극률을 표면 압력장에 맞춰 냉각제가 열하중이 최대인 곳에서 배출되어 하류로 막으로 대류하게 함으로써 작동한다. 냉각막은 압력면에 안정적으로 부착하지만 역압력구배의 흡입면에서는 빠르게 감쇠하며, 단벽 와류가 흡입면 막을 스팬 방향으로 끌어내 단벽 영역을 더 뜨겁게 남긴다 — 평판 연구에 없는 3D 효과이며 공극률 설계가 유동 구조를 예측해야 함과 직접 관련된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">C3X 고압 베인의 증산냉각을 Kriging + 유전 알고리즘 대리 프레임워크로 11개 구역 공극률에 대해 최적화했다. 도출된 설계 법칙은 전연과 상류 압력면에 최고 공극률, 후방 압력면에 최저를 두며, LE/PS 막이 하류로 대류해 압력면에 잘 부착하고, 흡입면 막은 빠르게 감쇠하며 단벽 와류와 플레넘 온도 비균일성이 스팬 방향 표면 온도 비균일성을 일으킨다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 54</span></summary>
+            <ol class="ref-list"><li>M. Kim, D.H. Shin, J.S. Kim, B.J. Lee, J. Lee, Experimental investigation of effusion and transpiration air cooling for single turbine blade, Appl. Therm. Eng., 2021</li><li>M. Kim, D.H. Shin, B.J. Lee, J. Lee, Experimental and numerical investigation of micro-scale effusion and transpiration air cooling on cascaded turbine blades, Case Stud. Therm. Eng., 2022</li><li>N. Wu, J. Wang, F. He, L. Chen, B. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transf., 2018</li><li>Y.Q. Liu, P.X. Jiang, Y.B. Xiong, Y.P. Wang, Experimental and numerical investigation of transpiration cooling for sintered porous flat plates, Appl. Therm. Eng., 2013</li><li>L.D. Hylton, M.S. Mihelc, E.R. Turner, D.A. Nealy, R.E. York, Analytical and experimental evaluation of the heat transfer distribution over the surfaces of turbine vanes, 1983</li><li>S. Ergun, Fluid flow through packed columns, Chem. Eng. Prog., 1952</li><li>H.C. Brinkman, A calculation of the viscous force exerted by a flowing fluid on a dense swarm of particles, Flow Turbul. Combust., 1949</li><li>Z. Min, G. Huang, S.N. Parbat, L. Yang, M.K. Chyu, Experimental investigation on additively manufactured transpiration and film cooling structures, J. Turbomach., 2019</li><li>E.R.G. Eckert, J.N. Livingood, Comparison of effectiveness of convection-, transpiration-, and film-cooling methods with air as coolant, NACA, 1954</li><li>X. Xiao, G. Zhao, W. Zhou, S. Martynenko, Large-eddy simulation of transpiration cooling in turbulent channel with porous wall, Appl. Therm. Eng., 2018</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "가스터빈 성능은 터빈 입구 온도(TIT)에 의존하는데 이미 1800 K를 넘어 재료 한계를 벗어났고, ~1900 K 이상에서는 냉각 패널티가 TIT 이득을 상쇄할 수 있어 최소 냉각제로 냉각효율을 최대화하는 방식이 필요하다."}, {"type": "bullet", "text": "증산냉각은 냉각제가 다공벽을 침투해 보호막으로 배출되며 강한 내부 대류와 균일 분사를 제공하여, 내부·막·효출·이중벽 냉각을 대체로 능가한다.", "figure_refs": [1]}, {"type": "bullet", "text": "1950년대에 처음 연구된 증산냉각은 강도와 제작 한계로 막혀 있다가 적층제조가 강한 다공 구조를 가능케 하면서 상용 터빈 잠재력이 되살아났다."}, {"type": "bullet", "text": "다공 매질의 유동/열전달은 확장 Darcy 방정식에 국소 열평형 또는 비평형 처리를 더해 RANS·LES·DNS로 모델링되며, 선행 CFD 대부분은 곡면 베인의 압력구배와 단벽 2차 유동을 대표하지 못하는 평판을 사용했다."}, {"type": "bullet", "text": "Kim 등은 C3X 블레이드(AM 무작위 다공벽)에 증산냉각을 처음 시험해 효출·내부 냉각보다 34%·25% 높은 효율과, 다공 유동 저항이 정체 영역 주류 침투를 줄임을 발견했다."}, {"type": "bullet", "text": "고열하중 영역에 냉각제를 배분하고자 Wu 등은 비균일 투과율 노즈콘(전연 최고, 하류 감소)을 설계해 정체 영역 배출을 늘리고 효율을 높였으며, AM은 이제 영역별 두께/공극률/투과율/기공 크기를 바꿀 수 있다."}, {"type": "bullet", "text": "본 논문은 CFD와 대리모델 기반 최적화로 C3X 캐스케이드 고압 베인의 공극률 분포를 최적화하여, 실제 터빈 블레이드 증산냉각 최적화가 없던 간극을 메우고 기저 유동/열전달 물리를 밝힌다."}]}, "related_works": {"content": [{"type": "bullet", "text": "해석 모델은 예비 설계용 표면 온도를 예측하고, CFD는 RANS·LES·DNS를 쓰며, 확장 Darcy 방정식이 LTE 또는 LTNE 열전달과 함께 다공 유동 저항을 모델링하고, DNS 연구는 다공 영역을 균일 분사/슬릿 소스로 다룬다."}, {"type": "bullet", "text": "AM 제작 냉각 구조(Min 등의 6종 AM 구성; Huang 등의 나무형 미세유로·지렁이 피부 거친 표면 +12% 효율)가 증산냉각의 우위와 제작성을 보인다."}, {"type": "bullet", "text": "평판 형상은 곡면 PS/SS의 순/역 압력구배나 실제 베인 통로의 단벽 2차 유동(말굽/통로/코너 와류)을 대표하지 못한다."}, {"type": "bullet", "text": "Kim 등의 단일 블레이드·캐스케이드 C3X 실험이 증산냉각의 효율 우위와 다공 유동 저항에 의한 정체 침투 감소를 확립했다."}, {"type": "bullet", "text": "Wu 등은 비균일 투과율(전연 최고, 하류 감소) 노즈콘을 최적화해 최고 열하중 정체 영역에 더 많은 냉각제를 보냈으며, 이는 공극률 분포 최적화의 직접 선례다."}, {"type": "bullet", "text": "대리모델 기반 최적화는 막냉각 설계(laidback 팬형 홀, 더블제트 홀, 다목적 슬롯 홀)에서 널리 성공했으나, 실제 터빈 블레이드 증산냉각에는 적용된 적이 없었다."}, {"type": "bullet", "text": "베인 형상은 고전적 Hylton 등의 C3X로, 본 연구에서 고체 벽을 다중 다공 구역 + 고체 후연으로 변환했다."}]}, "method": {"content": [{"type": "bullet", "text": "표준 유체 구역은 압축성 Navier-Stokes 방정식(연속·중력 포함 운동량·에너지)을 쓴다."}, {"type": "formula", "label": "식 (1-3) — Navier-Stokes 지배 방정식", "latex": "\\frac{\\partial\\rho}{\\partial t}+\\nabla\\cdot(\\rho\\vec{\\upsilon})=0,\\quad \\frac{\\partial}{\\partial t}(\\rho\\vec{\\upsilon})+\\nabla\\cdot(\\rho\\vec{\\upsilon}\\vec{\\upsilon})=-\\nabla p+\\nabla\\cdot(\\bar{\\bar\\tau})+\\rho\\vec{g},\\quad \\frac{\\partial}{\\partial t}(\\rho E)+\\nabla\\cdot(\\rho E\\vec{\\upsilon})=-\\nabla\\cdot(p\\vec{\\upsilon})+\\nabla\\cdot(\\bar{\\bar\\tau}\\cdot\\vec{\\upsilon})+\\nabla\\cdot(k\\nabla T)", "description": "표준 유체 구역의 질량·운동량(응력 텐서 $\\bar{\\bar\\tau}$·중력)·에너지."}, {"type": "bullet", "text": "다공 구역은 운동량 방정식에 Brinkman-Forchheimer 확장 Darcy 저항 소스(점성 Darcy + 관성 Forchheimer + Brinkman 보정)를 추가한다."}, {"type": "formula", "label": "식 (4) — 다공 유동 저항", "latex": "\\vec{F}=-\\frac{\\mu}{\\alpha}\\vec{\\upsilon}-C_2\\frac{1}{2}\\rho|\\vec{\\upsilon}|\\vec{\\upsilon}+\\nabla\\cdot(\\mu_{eff}\\nabla\\vec{\\upsilon})", "description": "투과율 $\\alpha$·관성손실 계수 $C_2$·유체 점성 $\\mu$·Brinkman 유효 점성 $\\mu_{eff}$의 유동 저항."}, {"type": "bullet", "text": "투과율과 관성손실 계수는 Ergun 상관식(입자경·공극률 기반)을 쓴다."}, {"type": "formula", "label": "식 (5) — Ergun 투과율과 관성손실 계수", "latex": "\\alpha=\\frac{d_p^2\\,\\gamma^3}{150(1-\\gamma)^2},\\qquad C_2=\\frac{3.5}{d_p}\\frac{1-\\gamma}{\\gamma^3}", "description": "평균 입자경 $d_p$와 공극률 $\\gamma$로부터의 투과율 $\\alpha$와 관성손실 계수 $C_2$."}, {"type": "bullet", "text": "열전달은 다공 에너지 방정식에 체적 평균 유효전도도를 쓰는 국소 열평형 모델을 사용한다."}, {"type": "formula", "label": "식 (6-7) — 다공 에너지 방정식과 유효전도도", "latex": "\\frac{\\partial}{\\partial t}\\big[\\gamma\\rho_f E_f+(1-\\gamma)\\rho_s E_s\\big]+\\nabla\\cdot(\\rho_f E_f\\vec{\\upsilon})=-\\nabla\\cdot(p\\vec{\\upsilon})+\\nabla\\cdot(\\bar{\\bar\\tau}\\cdot\\vec{\\upsilon})+\\nabla\\cdot(k_{eff}\\nabla T),\\qquad k_{eff}=\\gamma k_f+(1-\\gamma)k_s", "description": "유효전도도 $k_{eff}$(유체·고체 전도도의 체적 평균)를 갖는 국소 열평형 다공 에너지 방정식."}, {"type": "bullet", "text": "검증: 2D 평판 사례(스테인리스강, $d_p=90\\ \\mu m$, $\\gamma=36.7\\%$)가 분사비 0.5-1.5%에서 Liu 등의 실험과 일치하며, RNG $k\\text{-}\\varepsilon$ 모델이 표면 온도를 가장 잘 재현해 F=1.0%에서 면적 평균 효율 0.48을 준다.", "figure_refs": [2, 4, 5]}, {"type": "bullet", "text": "C3X 베인 설정: 11개 다공 구역(LE, PS-1-4, SS-1-6, 두께 3 mm) + 고체 후연; 결합 다공-유체 계면, 피치 방향 주기 벽; $y^+&lt;1$ 비정렬 다면체 격자, 3.13 M 셀에서 격자 독립.", "figure_refs": [6, 7, 8]}, {"type": "bullet", "text": "분사비와 표면 속도 관계가 냉각제 경계조건을 정의한다."}, {"type": "formula", "label": "식 (8-9) — 분사비와 표면 속도", "latex": "F=\\frac{\\rho_c U_{c,s}}{\\rho_\\infty U_\\infty},\\qquad U_c A_c=U_{c,s}A_{c,s}", "description": "분사비 $F$(냉각제 대 주류 질량유속)와 플레넘-표면 속도를 잇는 체적유량 보존."}, {"type": "bullet", "text": "최적화: 11개 구역 공극률(경계 0.2-0.7)에 대해 면적 평균 고온측 표면 온도를 최소화하며, 약 120개 Latin-hypercube CFD 표본으로 Kriging 대리모델을 학습해 유전 알고리즘(개체수 100, smt + pymoo)으로 탐색한다."}, {"type": "formula", "label": "식 (10-12) — 최적화 문제와 Kriging 대리모델", "latex": "\\min f(\\gamma_1,\\gamma_2,\\ldots,\\gamma_{11})=T_{area\\,avg},\\;\\; 0.2\\le\\gamma_i\\le0.7;\\qquad \\hat{y}=\\sum_i\\beta_i f_i(x)+Z(x),\\;\\; \\mathrm{cov}[Z(x_i),Z(x_j)]=\\sigma^2 R(x_i,x_j)", "description": "목적(AM 가능 공극률 경계 하 면적 평균 표면 온도 최소화)과 Kriging 보간자(회귀 항 + 영평균 Gaussian 과정)."}]}, "results": {"content": [{"type": "bullet", "text": "균일 공극률($\\gamma=0.5$): 상대 냉각제 유량이 플레넘-표면 압력차(SS-2에서 최대)를 따르므로 LE에서는 배출이 없고 SS-2에서 최대이며, SS-1 하류 흡입면은 잘 냉각되지만 LE와 PS는 그렇지 않다.", "figure_refs": [9, 10, 11]}, {"type": "bullet", "text": "냉각제는 중공 베인에서 흡입면 쪽으로 수직 유동하며 큰 플레넘 와류를 형성하고, 플레넘 열대류가 냉각제 온도를 비균일하게 만들어 베인 높이 방향 표면 온도 비균일성을 야기하며 단벽 부근에서 최악이다.", "figure_refs": [12, 13]}, {"type": "bullet", "text": "최적화 검증: Kriging 예측이 시험 집합과 일치하고 개체수 100이 충분하며, CFD가 최적을 F=1.2% 1.0%·F=2.0% 1.7% 이내로 확인하고, 두 SS-1 시험 사례가 최적이 면적 평균 온도에서 사실상 최상임을 확인한다.", "figure_refs": [15]}, {"type": "bullet", "text": "최적 공극률은 공통 패턴을 갖는다: LE 최고(0.7), PS-1 두 번째, PS-3/PS-4 최저(0.2), SS-2 하류 구역은 비슷한 중간 수준; F=1.2%는 $\\gamma_i$=[0.70,0.63,0.41,0.20,0.20,0.22,0.20,0.32,0.30,0.31,0.34].", "figure_refs": [16]}, {"type": "bullet", "text": "최적 설계는 LE·압력면 냉각을 크게 개선하여, 면적 평균 냉각효율이 F=1.2%/2.0%에서 균일 대비 0.25/0.41에서 0.48/0.63으로 상승하고, F=1.2%에서 PS-1 효율이 거의 1.0, F=2.0%에서 LE가 거의 1.0에 이른다.", "figure_refs": [17, 18]}, {"type": "bullet", "text": "최적 냉각제 배분 법칙: 냉각제를 먼저 LE와 PS-1에 보내고, PS-3/PS-4는 소량, 원거리 흡입면에 수 %, 잉여는 하류 흡입면 구역에 배분; F=2.0%에서 SS 냉각효율이 F=1.2% 대비 1.6배 이상 증가한다.", "figure_refs": [20, 21]}, {"type": "bullet", "text": "상대 냉각제 유량은 플레넘-표면 압력차와 구역 공극률/유동 저항으로 설정되므로, 공극률을 구역별로 조정해 냉각제 배출을 국소 열하중에 맞춘다.", "figure_refs": [22]}, {"type": "bullet", "text": "전연과 상류 PS 냉각제가 하류로 안정적 막으로 대류한다: SS-1(국소 냉각제 적음)은 LE 막으로 냉각되고 PS-3/PS-4는 상류 PS 막으로 냉각되어 유리한 냉각제 중첩을 보인다.", "figure_refs": [21, 26, 27]}]}, "discussion": {"content": [{"type": "bullet", "text": "상대 냉각제 유량이 플레넘-표면 압력차와 다공 유동 저항으로 지배되므로, 압력차가 불리한 곳(LE/상류 PS)에 높은 공극률을 할당하면 그곳에서 냉각제가 배출되고, 후방 PS의 낮은 공극률은 낭비성 배출을 막는다."}, {"type": "bullet", "text": "압력면에서는 통로 와류가 경계층을 거의 교란하지 않아 냉각막이 잘 부착하고 LE 냉각제가 중첩되어 하류 냉각을 강하게 강화한다."}, {"type": "bullet", "text": "흡입면에서는 역압력구배로 막이 빠르게 감쇠하고 온도 경계층이 확산적이 되며, F=2.0%에서 SS-1에 ~25.8% 냉각제를 주어도 효율이 0.94(SS-1)에서 0.5(SS-3)로 떨어진다."}, {"type": "bullet", "text": "단벽 말굽/통로/코너 와류가 흡입면 막을 스팬 방향으로 끌어내 흡입면 후반부 단벽 부근을 미냉각으로 남기고 베인 높이 방향 표면 온도 비균일성을 야기한다."}, {"type": "bullet", "text": "플레넘 열대류가 내부 냉각제 온도를 비균일하게(중앙 스팬 뜨겁고 단벽 차가움) 만들어 표면 온도 분포에 사상되며, 이는 공극률 설계가 고려해야 할 내부/외부 결합 효과다."}, {"type": "bullet", "text": "사용자의 $\\varepsilon(x)$ 문제와의 관련성: 비균일 열하중에 냉각제 배분을 맞추기 위해 공간 공극률 설계 법칙(및 목적 — AM 가능 공극률 경계 하 면적 평균 온도 최소화)을 도출하는 진정한 최적화로, 사용자의 역 $\\varepsilon(x)$ 설계 구조와 정확히 일치하는 가장 강력한 방법론 선례다."}, {"type": "bullet", "text": "사용자 설정과의 핵심 차이: 단상 기체 냉각제, 국소 열평형(단일 온도), 연속 $\\varepsilon(x)$가 아닌 구역별/구간별 공극률(11개 이산 구역), 그리고 규정된 비균일 열유속 하 2D 상변화 판이 아니라 단벽 2차 유동의 3D 베인이다; 다만 대리모델+GA 기구는 그대로 전이된다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "최적 증산냉각 베인에서는 전연과 그 직하류 압력면 공극률이 최대, 후방 압력면이 최소여야 하며, 냉각제가 가장 필요한 곳에서 배출되어 하류로 안정적 막으로 대류한다."}, {"type": "bullet", "text": "압력면에서는 막이 유리한 냉각제 중첩과 함께 잘 부착하고, 흡입면에서는 LE 막이 직하류를 냉각하지만 빠르게 감쇠하므로 흡입면 구역에도 상당한 냉각제를 배분해야 한다."}, {"type": "bullet", "text": "최적화는 균일 공극률 대비 면적 평균 냉각효율을 2배로 높이며(F=1.2% 0.25→0.48, F=2.0% 0.41→0.63) CFD로 1.0-1.7% 이내 검증된다."}, {"type": "bullet", "text": "플레넘 냉각제 온도 비균일과 흡입면 단벽 와류가 베인 높이 방향 비균일 표면 온도 분포를 야기한다."}, {"type": "bullet", "text": "Ergun 충전층 상관식을 사용하므로 최적 베인 제작에는 충전 금속 구가 선호되는 다공 매질이다."}, {"type": "bullet", "text": "향후 과제는 강도가 공극률에 의존하므로 비균일 공극률 다공 매질의 열-기계 거동 연구다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "Kriging 대리모델에 대한 유전 알고리즘 탐색은 전역 최적을 보장하지 않고 강건한 수용 가능 해만 주며, 대리모델은 작은 비단조 온도 변화를 놓칠 수 있다.", "source_quote": "It is important to mention that GA is not guaranteed to find the global minimum, while it is robust with finding acceptable solutions to a broad range of problem types [53].", "source_section": "discussion"}, {"claim": "충전층(packed bed)용 Ergun 방정식을 사용하므로, 최적 설계는 임의의 AM 미세구조가 아니라 충전 금속 구 다공 매질을 암묵적으로 가정한다.", "source_quote": "As the Ergun equation applicable to packed beds is used in the numerical simulations, packed metal spheres might be a preferred type of porous media for manufacturing the optimal transpiration cooled vane.", "source_section": "conclusion"}], "future_works": [{"claim": "강도가 공극률에 따라 변하므로 최적화된 비균일 공극률 다공 매질의 열-기계 거동을 조사해야 한다.", "source_quote": "as the optimal design incorporates porous media with non-uniform porosities, investigations into their thermo-mechanical behaviors are needed. These will be our future research directions.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["터빈 입구 온도가 재료 한계를 넘었고 기존 냉각은 공력/열역학 손실을 유발하므로, 차세대 터빈에는 냉각제 효율이 높은 방식(증산냉각)이 필요하다.", "증산냉각 연구 대부분이 평판 형상을 사용해 실제 곡면 베인의 순/역 압력구배와 단벽 2차 유동을 대표하지 못한다.", "문헌에 실제 터빈 블레이드의 증산냉각 최적화가 없으며, AM이 영역별 공극률/투과율을 제작할 수 있으므로 공극률 분포를 최적화해 고열하중 영역에 냉각제를 배분해야 한다."], "addressed_by_this_work": ["11개 다공 구역을 갖는 실제 C3X 캐스케이드 베인의 3D 공액 RANS 모델이 증산 유동·열전달을 해석하고 평판 실험으로 검증된다.", "Kriging + 유전 알고리즘 대리 최적화가 11개 구역 공극률 선택으로 면적 평균 표면 온도를 최소화하여, F=1.2%/2.0%에서 면적 평균 냉각효율을 0.25/0.41에서 0.48/0.63으로 높인다(CFD 검증 오차 1.0%/1.7%).", "냉각제 배출을 표면 압력장에 연결하여 물리적 설계 법칙(전연+상류 PS 고공극률, 후방 PS 저공극률, SS 중간)을 도출하며, LE/PS 막이 하류로 대류해 표면을 보호한다."], "remaining_unresolved": ["GA/대리모델 최적은 전역임이 증명되지 않고, 대리모델은 작은 비단조 온도 응답을 포착하지 못한다.", "국소 열평형과 단상 기체 냉각제를 가정하여 상변화/LTNE 효과와 액체 냉각제는 범위 밖이다.", "비균일 공극률 베인의 열-기계 강도와 흡입면 단벽 와류가 유발하는 온도 비균일성은 미해결로 남는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
