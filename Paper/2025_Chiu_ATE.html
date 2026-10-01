@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Design and construction of an ultra-high temperature wind tunnel for transpiration cooling research</title>
+    <meta name="keywords" content="Experimental, Transpiration cooling, Additive manufacturing, Lattice structure, Cooling efficiency, Blowing ratio, Liquid coolant, Infrared thermography, High-temperature wind tunnel, Hypersonic">
+    <meta name="paper-authors" content="Tzu-Wei Chiu, Jing-Fa Chang, Kuan-Hsueh Lin, Szu-Chi Huang, Yao-Hsien Liu">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 288 (2026), Art. 129538 (available online 19 Dec 2025) · DOI: 10.1016/j.applthermaleng.2025.129538">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Design and construction of an ultra-high temperature wind tunnel for transpiration cooling research</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Tzu-Wei Chiu, Jing-Fa Chang, Kuan-Hsueh Lin, Szu-Chi Huang, Yao-Hsien Liu</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 288 (2026), Art. 129538 (available online 19 Dec 2025) · DOI: 10.1016/j.applthermaleng.2025.129538</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 논문은 실제 고온 반응 유동 조건에서 <span class="term">증산냉각</span>을 연구하기 위해 제작된 개방형(open-loop) 연소 가열식 초고온 풍동의 설계, 제작, 특성 평가를 보고한다. 고전적인 저속 풍동 설계 이론(입구 디퓨저, 정류실, 천공판/허니컴 유동 정류장치, 수축부, Inconel 601 시험부, 출구 디퓨저)을 사용해 850~1050 degC 주류를 27.5~41.9 m/s로 안정적으로 공급하며 코어 온도 비균일도는 약 4 퍼센트 이내이다. 동압 보정을 적용한 5공 프로브는 반응 유동 속도를 이론값 대비 5 퍼센트 이내로 측정한다. 체심입방(BCC) 격자 다공 영역(공극률 34.45 퍼센트)을 갖는 쐐기형 Ti6Al4V 선단부 시편을 적층제조하여 공기와 물 냉각제로 취출비 0.4~1.2 퍼센트에서 시험하였다. 적외선 열화상 측정 결과 최대 냉각 효율은 약 0.65에 달했고 물이 공기보다 일관되게 우수했으나, 균일 공극률 셀은 정체점 영역을 충분히 냉각하지 못해 공극률 구배 설계의 필요성을 시사하였다.</div>
+            <div class="keywords"><span class="keyword-chip">Experimental</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Additive manufacturing</span><span class="keyword-chip">Lattice structure</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Blowing ratio</span><span class="keyword-chip">Liquid coolant</span><span class="keyword-chip">Infrared thermography</span><span class="keyword-chip">High-temperature wind tunnel</span><span class="keyword-chip">Hypersonic</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고온 환경(터빈 블레이드, 연소기, 로켓, 재진입 선단부)에서는 저온 기반 열전달 상관식의 신뢰성이 떨어지지만, 실제 고온 반응 유동으로 시험할 수 있는 풍동은 거의 없다. 저자들은 전용 고온 풍동의 필요성을 제기하고, 대부분 단일 고정 형상을 대상으로 하는 소수의 연소 가열식 시설을 개관한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">관련 연구는 두 갈래이다: 각 구성 요소에 대한 고전적 저속 풍동 설계 규칙과 선행 고온/증산냉각 실험이다. Barlow, Bradshaw, Morel, Bell, Mehta 등의 설계 지침이 본 연구에서 채택한 디퓨저 각도, 스크린/허니컴 배치, 수축부 형상을 결정한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">이 시설은 Honeywell Eclipse TJ 노즐 혼합 버너(최대 1540 degC)를 LPG로 연소시켜 입구 디퓨저, 정류실(천공판 + 스테인리스 허니컴), 4.5:1 수축부, 적외선 창을 갖춘 160x80 mm 시험부, 출구 디퓨저로 구성된 Inconel 601 개방형 풍동에 공급한다. 압력계수 보정을 거친 스테인리스 5공 프로브로 속도를 측정하고, BCC 격자 다공 영역을 갖는 3D 프린팅 Ti6Al4V 쐐기를 공기 또는 물로 냉각하며 FLIR A615 적외선 카메라로 표면 온도를 매핑한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">풍동은 버너 부하 20~80 퍼센트에서 시험부 850~1000 degC를 공급하며, 비반응 유동 비균일도는 3 퍼센트 이내, 반응 유동 온도 균일도는 4 퍼센트 이내(모서리 제외)이다. 5공 프로브는 동압 보정 후 이론값과 5 퍼센트 이내로 일치하였다. 증산냉각은 물에서 최대 효율 ~0.65에 도달해 공기를 일관되게 상회하였다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">저자들은 정체점 핫스팟을 균일 BCC 셀의 냉각제 공급 한계로 해석하고, 고열유속 선단부로 냉각제를 유도하려면 공극률 구배 구조가 필요하다고 주장한다. 물은 잠열 흡수로 공기를 일관되게 능가하며, 과도한 취출은 하류에서 냉각제를 낭비한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고전적 설계 이론으로 연소 가열식 개방형 고온 풍동을 성공적으로 제작하여 안정적이고 균일한 850~1050 degC 주류를 공급하고 적층제조 Ti6Al4V 쐐기의 증산냉각 연구를 가능하게 했다. 물 냉각이 최고 효율을 보였으며, 이 시설은 고온 열전달 연구에 적합하다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 34</span></summary>
+            <ol class="ref-list"><li>Y.Q. Liu, P.X. Jiang, S.S. Jin, J.G. Sun, Transpiration cooling of a nose cone by various foreign gases, Int. J. Heat Mass Transf., 2010</li><li>J. Wang, L. Zhao, X. Wang, J. Ma, J. Lin, An experimental investigation on transpiration cooling of wedge shaped nose cone with liquid coolant, Int. J. Heat Mass Transf., 2014</li><li>N. Wu, J. Wang, F. He, L. Chen, B. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transf., 2018</li><li>P.X. Jiang, G. Huang, Y. Zhu, Z. Liao, Z. Huang, Experimental investigation of combined transpiration and film cooling for sintered metal porous struts, Int. J. Heat Mass Transf., 2017</li><li>G. Huang, Z. Min, L. Yang, P.X. Jiang, M. Chyu, Transpiration cooling for additive manufactured porous plates with partition walls, Int. J. Heat Mass Transf., 2018</li><li>J.B. Barlow, W.H. Rae, A. Pope, Low-Speed Wind Tunnel Testing, John Wiley &amp; Sons, 1999</li><li>P. Bradshaw, R.C. Pankhurst, The design of low-speed wind tunnels, Prog. Aerosp. Sci., 1964</li><li>T. Morel, Comprehensive design of axisymmetric wind tunnel contractions, J. Fluids Eng., 1975</li><li>M. Kim, D.H. Shin, J.S. Kim, B.J. Lee, J. Lee, Experimental investigation of effusion and transpiration air cooling for single turbine blade, Appl. Therm. Eng., 2021</li><li>D. Khan, J.H. Bjernemose, I. Lund, J.E. Bebe, Design and construction of an open loop subsonic high temperature wind tunnel for investigation of SCR dosing systems, Int. J. Thermofluids, 2021</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "가스터빈 블레이드, 연소실, 로켓, 열처리 공정 등 고온 환경은 흔하지만 대부분의 열전달 상관식은 저온 실험에서 도출되어, 복사와 재료 효과가 중요한 고온에서의 유효성이 불확실하다."}, {"type": "bullet", "text": "대부분의 풍동 시험이 저온에 국한되므로, 고온 조건 전용으로 설계된 풍동은 <span class=\"term\">증산냉각</span> 및 막냉각을 포함한 열전달 연구에 가치가 있다."}, {"type": "bullet", "text": "고온 개방형 풍동도 입구 디퓨저, 메시 스크린과 허니컴을 갖춘 정류실, 수축부, 시험부, 출구 디퓨저라는 고전적 구성 요소 설계를 따른다."}, {"type": "bullet", "text": "저자들은 기존 고온 유동 풍동을 정리하였다(표 1): 전기 히터 방식은 350~400 degC에 그치는 반면, 연소/케로신/프로판 방식은 800~1394 degC에 도달하나 특정 터빈 냉각 또는 퇴적 연구용으로 제작되었다.", "figure_refs": []}, {"type": "bullet", "text": "약 800 degC 이상에서는 보통 연소로 생성된 반응 유동이 고온 주류 생성에 필요하며, 이러한 공개 문헌상의 시설은 상대적으로 드물다."}, {"type": "bullet", "text": "증산냉각은 냉각제를 다공 재료를 통해 수송하여 보호막을 형성함으로써 냉각제를 적게 쓰면서 더 균일한 냉각을 제공하며, 소량의 냉각제로도 노즈콘 표면 온도를 크게 낮출 수 있다(Liu 등 [25])."}, {"type": "bullet", "text": "선행 연구는 물 냉각제가 높은 증발 잠열을 활용해 과냉각까지 가능하고(Wang 등 [26]), 비균일 투과율이 정체점 근처 냉각을 향상하며(Wu 등 [27]), 격벽을 가진 3D 프린팅 다공판이 소결재보다 우수하고 4배 이상 강하다(Huang 등 [29])는 점을 보였다."}, {"type": "bullet", "text": "본 연구는 전통적 상류 구성과 연소기 반응 유동원(&gt;1000 degC), 고온 유동 속도 측정용 5공 프로브, 적외선 열화상으로 시험한 적층제조 Ti6Al4V 쐐기를 통합한 새 고온 풍동을 제시한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "입구 디퓨저 지침: Barlow 등 [3]은 7도 미만의 원추형 디퓨저 확산각을 권고하며, 폐루프 풍동에서는 콘 각도가 5도 미만이어야 한다(Bradshaw 등 [4])."}, {"type": "bullet", "text": "정류실 정류: 면적비 2 초과 급확장에는 최소 2층 메시, 허니컴 종횡비 6~8(Bradshaw [5]); 허니컴 길이-폭비 6~9가 최적(Mehta 등 [6,7])."}, {"type": "bullet", "text": "수축부 설계: 입구 직경-길이비 0.75~1.25(Morel [8]); 5차 다항식 형상이 박리 방지에 최적(Bell 등 [9]); 팔각 단면이 원형/정사각형보다 우수(Kao 등 [10])."}, {"type": "bullet", "text": "출구 디퓨저: 확산각 5~10도, 면적비 2.5 이하(Mehta [11]); 모서리 가이드 베인이 폐루프 풍동 균일도를 65 퍼센트 향상(Calautit 등 [12])."}, {"type": "bullet", "text": "고온 시설 개관: Khan 등 [13]은 SCR 연구용 400 degC 개방형 아음속 풍동을 제작했고, Kim 등 [14]은 100 degC 주류에서 터빈 블레이드의 막냉각/증산냉각을 연구하였다."}, {"type": "bullet", "text": "연소 가열식 터빈 리그(Zhang [15], Liu [16], Cramer [17], Lundgreen [18], Qiao [19])는 1204~2200 degF에 도달해 막냉각과 입자 퇴적을 연구하나 터빈 캐스케이드 형상에 특화되어 있다."}, {"type": "bullet", "text": "5공·7공 프로브의 설계, 보정, 데이터 환산은 Treaster &amp; Yocum, Dominy &amp; Hodson, Zilliac, Crawford &amp; Birk [20-24]에서 가져왔다."}]}, "method": {"content": [{"type": "bullet", "text": "가열원: 최대 1540 degC의 고온 가스를 생성하는 Honeywell Eclipse TJ 노즐 혼합 직화 버너로, 액화석유가스(중량비 프로판 30 퍼센트/부탄 70 퍼센트)를 연료로 하고 공기 유량은 4000~8000 L/min로 조절된다.", "figure_refs": [1]}, {"type": "bullet", "text": "본체는 Inconel 601(1200 degC까지 내산화)로, 입구 디퓨저는 7도 각도·면적비 4.76·길이 1070 mm이며 수축부는 5차 다항식 곡선을 사용한 4.5:1 비율이다.", "figure_refs": [2]}, {"type": "bullet", "text": "정류실은 깨지기 쉬운 와이어 스크린 대신 천공판 3장(8 mm 구멍, 12 mm 피치)과 스테인리스 육각 허니컴(둘레 8 mm, 길이 60 mm, 길이-둘레비 7.5, 공극률 0.89)을 사용해 화염 전파를 막고 유동을 정류한다.", "figure_refs": [3]}, {"type": "bullet", "text": "시험부: 160x80 mm 직사각 Inconel 덕트(길이 450 mm)에 적외선 카메라 대역에 맞춘 70x70 mm 장파 적외선(8~14 um) 게르마늄 관측창(투과율 &gt;90 퍼센트)을 두고, 출구 디퓨저 각도 4.9도·면적비 2.4이다."}, {"type": "bullet", "text": "스테인리스 5공 프로브(60도 전방 콘, 1.6 mm 구멍)와 Omega PX142 차압 변환기, NI-9252 DAQ로 속도를 측정하며, 피치·요 계수는 포트 압력차로 정의된다.", "figure_refs": [4]}, {"type": "formula", "label": "식 (1), (2) - 피치 및 요 압력계수", "latex": "C_{P\\alpha} = \\frac{P_3 - P_1}{P_5 - \\bar{P}}, \\qquad C_{P\\beta} = \\frac{P_4 - P_2}{P_5 - \\bar{P}}", "description": "피치($C_{P\\alpha}$)와 요($C_{P\\beta}$) 계수는 5공 프로브 포트 압력의 정규화된 차이로, $P_5$는 중앙 포트, $\\bar{P}$는 주변 포트 평균이며, 보정 차트를 통해 국부 유동각을 지시한다."}, {"type": "formula", "label": "식 (3) - 전압 및 정압 계수", "latex": "C_{P0} = \\frac{P_5 - P_0}{P_5 - \\bar{P}}, \\qquad C_{PS} = \\frac{\\bar{P} - P_S}{P_5 - \\bar{P}}", "description": "전압($C_{P0}$)과 정압($C_{PS}$) 계수는 프로브가 정확한 전압·정압을 읽지 못하는 한계를 보상하며, 기지 유동에 대해 보정된다."}, {"type": "formula", "label": "식 (4) - 프로브 속도 크기", "latex": "|V| = \\left[\\frac{2}{\\rho}(P_5 - \\bar{P})(C_{PS} - C_{P0} + 1)\\right]^{0.5} = \\left[\\frac{2}{\\rho}(P_5 - \\bar{P})(C_{PD} + 1)\\right]^{0.5}", "description": "속도 크기는 보정된 동압에서 구해지며, $C_{PD}=C_{PS}-C_{P0}$는 복합 동압 보정 계수, $\\rho$는 연소 혼합기의 가스 밀도이다."}, {"type": "bullet", "text": "쐐기 시편(쐐기각 16도, 선단 반경 3 mm, 폭 40 mm 다공 영역)은 BCC 단위 셀(셀 1 mm, 스트럿 반경 0.255 mm, 마름모 공극 0.36 mm, 이론 공극률 34.45 퍼센트)로 Ti6Al4V 3D 프린팅되며, 실제 공극 폭은 0.18~0.38 mm이고 세라믹 코팅(방사율 ~0.8)이 표면을 보호한다.", "figure_refs": [6, 7]}, {"type": "bullet", "text": "공기(가스 실린더, 열식 질량유량계) 또는 물(연동 펌프, 로터미터) 냉각제가 용접된 플레넘을 통해 공급되며, 방사율은 코팅 열전대 보정으로 400~900 degC에서 ~0.8로 고정된다.", "figure_refs": [10]}, {"type": "formula", "label": "식 (5) - 취출비", "latex": "BR = \\frac{\\rho_c V_c}{\\rho_\\infty V_\\infty}", "description": "취출비는 냉각제 대 주류 질량유속비이며, 냉각제 유량을 변화시켜 세 값(0.4, 0.8, 1.2 퍼센트)을 시험하였다."}, {"type": "formula", "label": "식 (6) - 증산냉각 효율", "latex": "\\eta = \\frac{T_\\infty - T_w}{T_\\infty - T_c}", "description": "냉각 효율은 벽면 온도 저감을 주류-냉각제 온도차로 정규화한 값으로, $T_w$는 적외선 열화상, $T_c$는 플레넘에서 측정한다."}]}, "results": {"content": [{"type": "bullet", "text": "버너 부하 20~80 퍼센트에서 시험부 주류 온도는 850, 930, 960, 980 degC(+/-30 degC)였고 배기 혼합기 유량은 5.1~8.8 kg/min였다(표 2).", "figure_refs": []}, {"type": "bullet", "text": "비반응 유동 균일도는 수직·수평 방향 모두 3 퍼센트 이내였고, 평균 속도를 5.46에서 12.87 m/s로 올려도 영향이 없었다.", "figure_refs": [11]}, {"type": "bullet", "text": "심한 열손실로 입구에서 시험부까지 온도가 200 degC 이상 떨어질 수 있으며, 60 퍼센트와 40 퍼센트 버너 출력은 각각 17분, 25분에 정상 분포(변동 &lt;5 degC)에 도달했다.", "figure_refs": [12]}, {"type": "bullet", "text": "직접 속도 매핑이 불가능하여 코어 반응 유동 온도 균일도(4 퍼센트 이내, 모서리만 악화)를 속도 균일도의 견고한 대리 지표로 사용했다.", "figure_refs": [13]}, {"type": "bullet", "text": "5공 프로브 속도(100 Hz, 1분 평균)는 30.0~43.9 m/s였고, 동압 보정(CPD = -0.07) 시 이론값 27.5~41.9 m/s 대비 편차가 5 퍼센트 이내였다.", "figure_refs": [14]}, {"type": "bullet", "text": "증산냉각 시험은 주류 안정화에 13분 이상 걸렸으며, 물의 경우 다공 영역에 잔류한 액체 물이 완전히 증발(상변화)하는 데 시간이 더 필요해 더 오래 걸렸다.", "figure_refs": [15]}, {"type": "bullet", "text": "BR = 0.4 퍼센트에서 정체점 영역(x/L ~ 0.3)은 공기 30초 후 &lt;1 퍼센트, 물 60초 후 &lt;1.5 퍼센트 변동으로 응답했고, 정체점은 하류 경사면보다 약 75 degC 높았다.", "figure_refs": [16]}, {"type": "bullet", "text": "BR을 0.4에서 1.2 퍼센트로 올리면 표면 온도가 공기 ~25~100 degC, 물 ~100~200 degC 낮아졌으나, 높은 BR은 하류 과잉 냉각제 배출로 분포를 더 불균일하게 만들었다.", "figure_refs": [17, 18]}, {"type": "bullet", "text": "최대 냉각 효율은 물에서 ~0.65(공기를 일관되게 상회)였고, 공기도 낮은 BR에서 표면 대부분 0.4를 초과했으며, 현재 효율은 선단부 근처에서 비교 문헌보다 ~30 퍼센트 높았다.", "figure_refs": [19]}]}, "discussion": {"content": [{"type": "bullet", "text": "정체점 영역이 보통 가장 높은 열유속을 받지만, 균일 단위 셀은 대부분의 냉각제를 경사면에서 배출해 선단부(&gt;600 degC)가 충분히 냉각되지 못한다.", "figure_refs": [17]}, {"type": "bullet", "text": "Wu 등 [27]의 비균일 투과율 개념을 따라, 국부 공극률 제어와 정체점 냉각 향상을 위해 쐐기 전반의 공극률 구배(graded) 다공 구조가 제안된다."}, {"type": "bullet", "text": "물 냉각은 모든 취출비에서 공기보다 낮은 표면 온도와 높은 효율을 일관되게 보이며, 이는 물의 높은 증발 잠열에 기인한다.", "figure_refs": [19]}, {"type": "bullet", "text": "취출비가 높을수록 온도는 낮아지지만 점점 더 불균일해지는데, 과잉 냉각제가 뜨거운 선단부를 냉각하기보다 정체선 하류로 배출되기 때문이다.", "figure_refs": [18]}, {"type": "bullet", "text": "기존 공기 냉각제 문헌 대비 ~30 퍼센트 높은 효율은 시편 설계, 작동 온도 차이, 그리고 반응 유동 풍동의 높은 전도/복사 손실에 기인한다.", "figure_refs": [19]}, {"type": "bullet", "text": "비반응 유동 균일도가 반응 유동 온도 균일도로 이어짐을 보여, 고온 풍동에 대한 고전적 설계 접근의 타당성을 입증했다."}, {"type": "bullet", "text": "측정 불확도: 5공 프로브 압력 최대 6 퍼센트, 취출비 BR=0.4 퍼센트에서 최대 7.9 퍼센트, 적외선 온도 +/-40 degC로 최저 BR에서 효율 불확도 최대 12.5 퍼센트."}]}, "conclusion": {"content": [{"type": "bullet", "text": "전통적 풍동 설계 이론은 고온 풍동에 효과적이며, 비반응 유동 균일도는 모서리를 제외하면 반응 조건 온도 균일도 4 퍼센트 이내를 보장한다."}, {"type": "bullet", "text": "풍동은 시험부에 안정적인 850~1050 degC 주류를 공급하며, 버너 출력이 높을수록 주류 온도가 높아진다."}, {"type": "bullet", "text": "다공(5공) 프로브로 고온 유동 속도를 측정할 수 있으며, 동압 계수 보정이 측정값과 이론값의 일치를 5 퍼센트 이내로 개선한다."}, {"type": "bullet", "text": "적외선 열화상이 증산냉각 중 표면 온도 분포를 포착했고, 물이 공기보다 일관되게 높은 냉각 효율(최대 ~0.65)을 제공했다."}, {"type": "bullet", "text": "이 시설은 고온 공학 열전달 연구를 위한 제어된 고온 반응 가스 유동 생성에 적합하다."}, {"type": "bullet", "text": "균일 공극률 선단부는 정체점 영역이 충분히 냉각되지 않아, 공극률 구배 다공 설계가 다음 단계로 제시된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "1000 degC 반응 유동에서는 큰 8 mm 다공 프로브가 계측 손상 위험과 유동 교란을 유발하여 직접 속도 매핑을 수행할 수 없었고, 온도 균일도를 대리 지표로 사용하였다.", "source_quote": "Direct velocity mapping in the 1000 °C reacting flow condition was deemed impractical due to significant instrument risk and flow disruption from the large 8 mm diameter multi-hole probe.", "source_section": "results"}, {"claim": "균일 BCC 단위 셀 다공 구조는 정체점 영역에 충분한 냉각제를 공급하지 못해, 대부분의 냉각제가 열유속이 낮은 경사면에서 배출된다.", "source_quote": "current uniform unit cell designs are unable to deliver enough coolant to this area, resulting in most of the coolant being ejected from the inclined surface.", "source_section": "discussion"}, {"claim": "시험부 모서리 영역은 관측창을 통한 전도·복사 열손실이 커서 코어 유동보다 국부 온도가 낮고 비균일도가 높다.", "source_quote": "the corner region showed stronger heat loss due to conduction and radiation through the sight glass window, resulting in lower flow temperature and higher nonuniformity.", "source_section": "results"}], "future_works": [{"claim": "쐐기 표면 전반에 걸쳐 공극률 구배(graded) 다공 구조를 적용하여 국부 공극률 제어를 개선하고 정체점 영역으로의 냉각 효율을 향상시킨다.", "source_quote": "Enhancements could involve utilizing gradient porous structures over wedge surfaces as proposed in literature [27] for better porosity control and improved cooling efficiency towards stagnation regions.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["대부분의 풍동 열전달 시험이 저온에서 수행되어, 실제 엔진이나 재진입 조건의 고온에서는 상관식의 유효성이 불확실하다.", "800 degC 이상의 실제 연소 반응 유동을 사용하는 공개 문헌상의 고온 시설이 드물고, 대개 하나의 특정 형상(예: 터빈 캐스케이드)에 맞춰 제작된다.", "적층제조된 다공 선단부의 증산냉각 성능을 실제 고온 반응 유동 조건에서 특성화할 필요가 있다."], "addressed_by_this_work": ["고전적 풍동 설계 이론을 사용해 안정적이고 균일한 850~1050 degC 주류를 공급하는 개방형 연소 가열식 풍동을 제작·검증하였다.", "하나의 고정 형상이 아니라 임의 시편(여기서는 쐐기형 선단부)을 시험할 수 있는 유연한 고온 반응 유동 시설을 구현하였다.", "공기 및 물 냉각제로 3D 프린팅된 Ti6Al4V BCC 격자 쐐기의 증산냉각 효율을 측정하여 최대 약 0.65에 도달하였다."], "remaining_unresolved": ["고열유속 정체점 영역으로의 충분한 냉각제 공급은 균일 공극률로는 해결되지 않아 공극률 구배 설계로 넘겨졌다.", "고온 반응 유동 내부의 공간 분해 속도 측정은 여전히 불가능하다(중심선 단일 지점과 온도 균일도 대리 지표만 확보)."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
