@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Materials design for hypersonics</title>
+    <meta name="keywords" content="hypersonics, thermal protection system, refractory metals, ultra-high temperature ceramics, carbon-carbon composites, ceramic matrix composites, transpiration cooling, oxidation, integrated computational materials engineering, additive manufacturing">
+    <meta name="paper-authors" content="Adam B. Peters, Dajie Zhang, Samuel Chen, Catherine Ott, Corey Oses, Stefano Curtarolo, Ian McCue, Tresa M. Pollock, Suhas Eswarappa Prameela">
+    <meta name="paper-journal" content="Nature Communications (Perspective), Vol. 15, 2024, Art. 3328 · DOI: 10.1038/s41467-024-46753-3">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Materials design for hypersonics</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Adam B. Peters, Dajie Zhang, Samuel Chen, Catherine Ott, Corey Oses, Stefano Curtarolo, Ian McCue, Tresa M. Pollock, Suhas Eswarappa Prameela</div>
+            <div class="journal">Nature Communications (Perspective), Vol. 15, 2024, Art. 3328 · DOI: 10.1038/s41467-024-46753-3</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 Nature Communications <span class="term">Perspective</span>는 극한 공력열 환경이 결합된 열·산화·기계 하중을 부과하는 <span class="term">극초음속 비행체</span>(마하 5+)를 위한 강인한 내화 합금·복합재·세라믹의 절실한 필요를 다룬다. 설계 문제를 비행체 하위시스템(1차 공력구조, 열방호계(TPS), 추진)과 재료 부류(내화 금속, 탄소 복합재, UHTC, 세라믹 기지 복합재)로 조직한다. TPS는 수동·반수동·능동으로 분류되며, <span class="term">능동 TPS(다공 구조를 통해 $\mathrm{H_2O}$나 He 같은 유체를 주입하는 증산냉각 포함)</span>는 가장 극한의 지속 열유속에 사용되고, 정상상태 FE 예시는 증산냉각이 입사 열유속을 2배로 줄일 수 있음을 보인다. 저자들은 이론·전산(ICME, 고처리량 제일원리, 기계학습)과 통합 실험/비행 준비 경로의 역할을 강조하며, 누락된 고온 재료 물성 데이터를 율속 공백으로 반복 지목한다. (주의: 이 Perspective에는 번호 매긴 수식이 없으며, 일부 물리 스케일링만 정성적으로 보고된다.)</div>
+            <div class="keywords"><span class="keyword-chip">hypersonics</span><span class="keyword-chip">thermal protection system</span><span class="keyword-chip">refractory metals</span><span class="keyword-chip">ultra-high temperature ceramics</span><span class="keyword-chip">carbon-carbon composites</span><span class="keyword-chip">ceramic matrix composites</span><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">oxidation</span><span class="keyword-chip">integrated computational materials engineering</span><span class="keyword-chip">additive manufacturing</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속(마하 5 초과 비행)은 성능과 재사용성 목표로 부흥했으나, 마하수 도약은 가공할 재료 도전을 수반한다. 공력열 가열이 공력보다 지배적이 되며, 높은 열유속, 극심한 구배, 높은 정체압, 기체 이온화로 인한 파괴적 플라즈마가 비행체 하위시스템 전반에서 수용되어야 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">재료 요구는 비행체 형상·비행 영역에 민감하게 결합되어, 열하중(형상/위치 의존)과 강한 산화 조건(산화+어블레이션)을 부과한다. TPS는 수동·반수동·능동으로 분류되어 각각 열유속/지속 영역에 대응하며, 선단·넓은 면적·추진이 각기 다른 재료를 요한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">재료 선정은 외형(outer mold line)과 궤적이 정해진 뒤 적용되며, 열기계 시뮬레이션으로 후보를 스크리닝한다. 주어진 물성 집합에 대해 열유속과 정체 온도를 가해 열 프로파일을 계산하고, 이를 경계조건으로 열응력을 계산하여 피크 온도가 융점을 초과하는지, 열응력이 유동응력을 초과하는지 스크리닝한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">재료 부류별 분석이 능력과 한계를 매핑한다: 내화 금속은 고온 강도를 주나 산화 제한적이고, 탄소-탄소 복합재는 저밀도·고온이나 ~370 C부터 산화되며, UHTC는 매우 높은 융점이나 열충격이 열악하고, CMC는 섬유 보강으로 취성과 산화를 극복한다. 모든 부류에서 누락된 물성 데이터가 설계를 제한한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 조건의 실험 특성화는 고비용·접근 불가라 전산(ICME, 고처리량 제일원리, 기계학습, DEED 기술자)이 유용하나 검증이 어렵다. 통합 실험과 비행 준비 경로(지상시험, 아크젯, 재사용 테스트베드, TRL/MRL)가 필수이나, 어떤 설비도 정확한 비행 조건을 재현하지 못하고 유산 재료 의존이 지속된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">각 극초음속 하위시스템 - 1차 구조, 열방호, 추진 - 은 고유한 공력열·산화·기계 요구를 견뎌야 하며, 재료 생존성(특히 TPS와 공기흡입 추진)이 비행체 혁신의 율속이었다. 원자에서 거시까지 확장된 설계 체계 채택이 필요하며, 금속·복합재·세라믹에 대한 부류별 전망을 제시한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 138</span></summary>
+            <ol class="ref-list"><li>S. Eswarappa Prameela et al., Materials for extreme environments, Nat. Rev. Mater. 8 (2023) 81-88</li><li>D. Glass, Ceramic matrix composite (CMC) thermal protection systems (TPS) and hot structures for hypersonic vehicles, 15th AIAA Space Planes and Hypersonic Systems and Technologies Conf., 2682 (2008)</li><li>D. Glass, Physical challenges and limitations confronting the use of UHTCs on hypersonic vehicles, 17th AIAA Space Planes and Hypersonic Systems and Technologies Conf., 2304 (2011)</li><li>H. Su, J. Wang, F. He, L. Chen, B. Ai, Numerical investigation on transpiration cooling with coolant phase change under hypersonic conditions, Int. J. Heat Mass Transf. 129 (2019) 480-490</li><li>H. S. Ifti et al., Laminar transpiration cooling experiments in hypersonic flow, Exp. Fluids 63 (2022) 102</li><li>O. Uyanna, H. Najafi, Thermal protection systems for space vehicles: A review on technology development, current challenges and future prospects, Acta Astronautica 176 (2020) 341-356</li><li>W. G. Fahrenholtz, G. E. Hilmas, Ultra-high temperature ceramics: Materials for extreme environments, Scr. Materialia 129 (2017) 94-99</li><li>B. C. Wyatt, S. K. Nemani, G. E. Hilmas, E. J. Opila, B. Anasori, Ultra-high temperature ceramics for extreme environments, Nat. Rev. Mater. (2023)</li><li>S. Divilov et al., Disordered enthalpy-entropy descriptor for high-entropy ceramics discovery, Nature 625 (2024) 66-73</li><li>G. V. Candler, Rate effects in hypersonic flows, Annu. Rev. Fluid Mech. 51 (2019) 379-402</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "극초음속은 마하 5 초과의 비행·공력 현상을 가리키며, 지난 10년간 비행 성능과 재사용성에 의해 부흥했다.", "figure_refs": [1]}, {"type": "bullet", "text": "속도가 극초음속 영역에 진입하면 외부 공력 유동이 공력보다 공력열 가열에 지배된다.", "figure_refs": [1]}, {"type": "bullet", "text": "과열된 대기는 높은 열유속(태양의 1.4 kW/m2보다 3-7 자릿수 큼), 극심한 열구배(~1 cm에 걸쳐 -170 C에서 3000 C), 높은 정체압(~1e5-1e7 Pa), 기체 이온화로 인한 파괴적 플라즈마를 만든다."}, {"type": "bullet", "text": "정체 온도는 마하의 3제곱과 대기 밀도의 제곱근에 비례해 증가하며($T_{stag}\\propto M^3\\sqrt{\\rho}$) 최대 10,000 C에 이를 수 있다."}, {"type": "bullet", "text": "~3000 C 이상(~마하 8 이상)에서 O2·N2가 자유 라디칼로 해리되어 고반응성 표면 화학, 재료 열화, 미세조직 진화, 상 형성을 비행 중 유발한다."}, {"type": "bullet", "text": "이 현상들은 주요 하위시스템 - 공력각/1차 구조, 선단, 제어면, 넓은 면적 열방호, 추진, 유도 - 의 재료에서 수용되어야 한다.", "figure_refs": [1]}, {"type": "bullet", "text": "극초음속 재료는 크게 세 유형 - 내화 금속, 복합재, 세라믹 - 으로 분류되며, 각각 특정 하위시스템·환경에 상이한 절충을 제공한다.", "figure_refs": []}, {"type": "bullet", "text": "일반 금속(알루미늄, Ni기 초합금)은 1차 구조·중간 열하중(&lt;800 C)에 적합하고, 내화 금속은 800-1200 C, 내화 세라믹은 &gt;1700 C 능력을 주나 단일체 열충격 저항이 부족하다.", "figure_refs": []}]}, "related_works": {"content": [{"type": "bullet", "text": "재료 요구는 비행체 설계·비행 영역에 결합되어 두 주요 도전을 부과한다: 위치·형상 의존 열하중과, 재료 물성(산화)과 형상(어블레이션)을 바꾸는 강한 산화 조건."}, {"type": "bullet", "text": "경량 1차 구조는 양력체 또는 탄도 구조를 이루며, 극초음속 비행체는 날씬한 1차 구조와 날카로운 제어면을 요하고, 가열률은 선단 반경의 제곱근에 반비례한다."}, {"type": "bullet", "text": "공력각은 고체 또는 샌드위치 구성(허니콤, 격자, 주름, 폼 코어)을 쓰며, 탄소·세라믹 복합재가 현대 선단(핫 구조)의 선택 재료이다.", "figure_refs": [1]}, {"type": "bullet", "text": "수동 TPS는 중간 과도 열유속에 적합하다: 단열 냉구조(셔틀 타일), 히트싱크 구조(X-15 외피), 또는 복사 핫 구조(X-51 노즈).", "figure_refs": [1]}, {"type": "bullet", "text": "반수동 TPS는 지속되는 높은 열유속을 다룬다: 증발 냉각으로 에너지를 전달·복사하는 재사용 히트파이프(액체 리튬·포타슘), 또는 보강 폴리머의 열분해/숯화 단회용 어블레이터(아폴로 등)."}, {"type": "bullet", "text": "능동 TPS는 가장 극한의 지속 열유속에 액체·증기의 강제 유동을 사용한다: 대류 냉각, 막냉각(단열 블랭킷), 또는 <span class=\"term\">다공 구조를 통해 유체(예: $\\mathrm{H_2O}$나 He)를 고온 가스류에 주입하는 증산냉각</span>.", "figure_refs": [1]}, {"type": "bullet", "text": "노즈·날개 선단은 히트파이프나 능동 냉각 구조를 쓸 수 있고, 넓은 면적은 역사적으로 과도한 질량과 낮은 파괴인성에도 저전도·저팽창 수동 재료를 쓴다.", "figure_refs": []}, {"type": "bullet", "text": "공기흡입 램/스크램젯 추진 부품(인렛, 노즐, 연소기)은 복사 냉각 없이 극한 온도·응력을 겪으며 내화 합금·CMC·C/C·MMC를 쓰고, ~마하 6 이상에서 능동 냉각이 필요하다."}]}, "method": {"content": [{"type": "bullet", "text": "재료 선정은 보통 구조 외형 설계와 원하는 궤적 결정 후 적용되며, 열기계 시뮬레이션으로 초기 스크리닝한다."}, {"type": "bullet", "text": "주어진 물성 집합에 대해 부품 전반에 열유속과 정체 온도를 가해 열 프로파일을 계산하고, 이를 경계조건으로 열응력을 계산한다.", "figure_refs": [2]}, {"type": "bullet", "text": "스크리닝은 피크 온도가 재료 융점을 초과하는지, 해당 온도에서 열응력이 유동응력을 초과하는지를 판정한다."}, {"type": "bullet", "text": "예로, 날카로운 수동 선단에 대해 300+ 마하·고도 조합에서 정상상태 열 시뮬레이션을 수행해 피크 온도를 추출하고 열구배로부터 팁 응력을 추정했다.", "figure_refs": [2]}, {"type": "bullet", "text": "입사 열유속은 팁 주위에서 크게 변해(4 mm에 걸쳐 1000 K에 달함) 비균일 열팽창으로 100 MPa 규모 응력을 생성하며, 팁을 변형시키고 층류-난류 천이를 유발할 수 있다.", "figure_refs": [2]}, {"type": "bullet", "text": "한 비행 조건에서 수동·반수동(히트파이프)·능동(증산) 선단의 정상상태 FE 비교는 수동 선단이 최고 피크 온도·구배를, 히트파이프가 전도도를 1-3 자릿수 높임을, 능동 냉각(증산) 선단이 입사 열유속을 2배 줄여 최저 피크 온도를 가짐을 보인다.", "figure_refs": [2]}, {"type": "bullet", "text": "Ashby 맵과 Ashby형 FE 플롯은 금속 합금·UHTC·내화 합금·탄소 기반 재료 부류의 운용 절충을 강조하며, 날카로운 쐐기 형상의 가상 극초음속 비행 회랑(생존성 한계)으로 귀결된다.", "figure_refs": [2]}, {"type": "bullet", "text": "이 메조 규모 열기계 모델은 주어진 비행 조건에서 각 구조에 어떤 재료를 써야 할지 안내하며, 전통적 Ti/Ni/강 합금이 낮은 융점과 높은 열팽창으로 선단 용도가 제한됨을 보인다."}]}, "results": {"content": [{"type": "bullet", "text": "내화 금속(W, Re, Ta, Mo, Nb, V, Cr, Ti, Ni)은 고온 합금을 이루며, X-43 노즈의 SD180 텅스텐 중합금, 액체 알칼리 금속(1000-1300 C)을 담는 히트파이프 선단용 T111/T222 Ta-W-Hf 합금이 예이다."}, {"type": "bullet", "text": "내화 다주원소(고엔트로피) 합금 MoNbTaVW(항복 1246 MPa, 12.4 g/cm3), NbMoTiVZr(항복 1785 MPa, 7.1 g/cm3)는 Ta-10W(항복 471 MPa, 16.8 g/cm3) 같은 유산 합금을 능가할 수 있다."}, {"type": "bullet", "text": "극초음속 환경의 합금은 보통 호환 다층 코팅에 의존하나, 내화 합금용 코팅은 훨씬 덜 발달해(금속 규화물이 850 C 이하에서 제한, 1700 C 이상에서 실패) 있다."}, {"type": "bullet", "text": "탄소-탄소 복합재는 사실상 선단 재료(밀도 1.60-1.98 g/cm3, 고탄성률 ~200 GPa, 불활성 환경 ~2000 C까지 물성 유지)이나 ~370 C부터, 500 C 이상에서 유의하게 산화된다.", "figure_refs": [3]}, {"type": "bullet", "text": "C/C는 PIP(HIP 하 4-6회 열분해로 &gt;98% 밀도)나 CVI로 치밀화되며, 산소 확산 제한에 다공성 저감이 핵심이고, 미코팅 C/C는 밀도에 따라 증가하는 ~165 MPa 면내 인장강도를 얻는다."}, {"type": "bullet", "text": "C/C 보호는 고온 코팅(SiC, HfB2, ZrB2 블렌드)과 기지 개질을 쓰며 1500-1600 C까지 보호하나, 얇은 산화물 코팅은 용융·능동 산화·CTE 불일치 균열로 더 높은 온도에서 무효가 된다.", "figure_refs": [3]}, {"type": "bullet", "text": "UHTC(Zr/Hf/Ti/Nb/Ta의 탄화물·질화물·붕화물)는 매우 높은 융점(&gt;4000 C), 높은 열전도도(&gt;140 W/mK), 높은 방사율을 가지며, ZrB2-SiC·HfB2-SiC가 가장 주목받았다(2500 C에서 강도 &gt;460 MPa, 산화 저항 ~1650 C).", "figure_refs": [3, 4]}, {"type": "bullet", "text": "높은 UHTC 밀도(C/C의 ~3-6배), 낮은 열충격 저항, 낮은 파괴인성이 벌크 사용을 제한해, 선호 형태는 C 복합재나 내화 합금 위 복사·항산화 코팅이다.", "figure_refs": [3]}, {"type": "bullet", "text": "세라믹 기지 복합재(35-60 vol% 섬유)는 벌크 UHTC의 열악한 열충격과 높은 밀도를 극복하며, C/SiC·C/C-SiC는 자가 부동태 SiO2 스케일로 ~1600 C까지 안정하고, ~15% SiC 섬유의 HfC 복합재는 상온 ~370 MPa(2200 C에서 290 MPa)에 이른다."}]}, "discussion": {"content": [{"type": "bullet", "text": "TPS용 시뮬레이션 코드 역사는 1960년대(CMA, FIAT)로 거슬러 가며 어블레이션, 전자기 차폐, 증산냉각 물 질량유량, 파괴인성 모델링을 포함해 비행체·재료 수준 설계 기준을 프레이밍한다."}, {"type": "bullet", "text": "극초음속 조건의 실험 특성화는 고비용/접근 불가라 전산이 통찰을 줄 수 있으나, 복잡한 다척도 질량/열전달이 척도 간 단절되고 고처리량 워크플로우에 너무 비싸다."}, {"type": "bullet", "text": "지평선상의 해법으로 1750 C까지 미세균열 손상을 해상하는 싱크로트론 X선 마이크로토모그래피와 유한온도 물성을 모델링하는 고처리량 제일원리 체계가 있으며, 환경이 극한일수록 무질서가 커지는 역할을 한다."}, {"type": "bullet", "text": "전산 모델과 실험은 상보적 역할을 하며, 의도된 응용과 재사용성이 환경 하중과 관련 시간 척도를 좌우한다(탄도/부스트-글라이드는 수초~수십 분, 재사용은 비행체 전 수명)."}, {"type": "bullet", "text": "다척도 모델링은 연속체 FEA/CFD(열유속, 압력, 전단, 열/화학 비평형)에서 메조·원자 척도까지 아우르나, 진정한 물리 기반 접근으로 척도를 연결하는 것은 어렵다."}, {"type": "bullet", "text": "비행시험은 금지적으로 비싸 지상시험(현실적 엔탈피/전단/압력을 주는 아크젯이 황금 표준, 아초 노출의 충격관)이 비행을 모사하나, 어떤 설비도 정확한 복합 조건을 재현하지 못한다."}, {"type": "bullet", "text": "부상 시스템의 고온 물성 데이터 부족으로 유산 재료(예: 50년 된 AETB 단열 타일이 여전히 X-37, Orion, Starship, Dream Chaser에 사용)에 대한 의존이 크다."}, {"type": "bullet", "text": "비행 준비를 위해 기술성숙도(TRL)와 제조성숙도(MRL)가 충분히 높아야 하며, 쿠폰·준척도부터 전비행체 시험까지 광범위한 시험을 요한다.", "figure_refs": [4]}]}, "conclusion": {"content": [{"type": "bullet", "text": "각 핵심 하위시스템은 고유한 공력열·산화·기계 요구를 견뎌야 하며, 재료 생존성(특히 TPS와 공기흡입 추진)이 비행체 혁신의 율속이었다."}, {"type": "bullet", "text": "차세대 강인 재료 설계를 위해 원자 척도에서 거시 척도까지 확장된 재료 설계 체계의 채택이 필요하다."}, {"type": "bullet", "text": "내화 금속은 산화 저항과 고온 강도로 제한되며, 미래 고엔트로피 MPEA가 밀도를 낮추고 산화 속도론을 개선해 새로운 첨단 냉각 기술과 강인한 구조를 가능케 할 수 있다."}, {"type": "bullet", "text": "복합재는 유망한 비강도를 보이나 미코팅 시 산화/침식되며, 진전에는 개선된 복사 코팅, 기지 개질, 이방성을 다루는 다척도 보강이 필요하다."}, {"type": "bullet", "text": "세라믹(내화·UHTC)은 매우 높은 융점이나 낮은 열충격 저항을 가져 최적 용도가 열차폐 코팅과 CMC이며, ~1600 C 이상 산화가 가공할 장벽으로 남는다."}, {"type": "bullet", "text": "적층 제조, 기계학습/모델링, 고엔트로피 조성을 통한 UHTC 탐구는 맞춤 물성의 복잡한 신규 세라믹을 창출할 태세이다."}, {"type": "bullet", "text": "급속 진화 제조, 고처리량 특성화, 기계학습 활용은 새로운 조성과 첨단 냉각법을 신속히 발굴할 유망성을 지닌다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "가용 재료 물성은 공력각(aeroshell)·선단 같은 관련 부품에 대한 설계·확장성에 불충분하며, 특히 500-2000 C 이상에서 그러하다.", "source_quote": "Available material properties are presently insufficient for design and scalability to relevant components such as aeroshells and leading edge.", "source_section": "results"}, {"claim": "어떤 지상시험 설비도 정확한 복합 비행 조건을 재현하지 못해, 설비는 한 번에 둘 이상의 매개변수만 맞추며 짧은 노출 시간이 열시험을 제한한다.", "source_quote": "no facility is able to reproduce the exact flight conditions, and instead seek to match two or more parameters.", "source_section": "discussion"}, {"claim": "결합된 다척도 질량/열전달의 제일원리 모델링은 척도 간 대체로 단절되어 있고 고처리량 워크플로우에는 너무 비싸다.", "source_quote": "the complex mass and heat transfer behavior at play spans several scales, and first-principles modeling is largely disjointed across these scales and far too expensive for high-throughput workflows.", "source_section": "discussion"}], "future_works": [{"claim": "차세대 강인한 재료 설계를 위해 원자 척도에서 거시 척도까지 아우르는 확장된 재료 설계 체계를 채택한다.", "source_quote": "the adoption of expanded materials design frameworks from the atomistic to the macroscopic is needed to the design next generation of resilient materials.", "source_section": "conclusion"}, {"claim": "급속히 진화하는 제조, 고처리량 특성화, 기계학습 알고리즘을 활용해 차세대 내화 합금과 첨단 냉각 기술을 신속히 발굴한다.", "source_quote": "Leveraging rapidly evolving manufacturing methods alongside high-throughput characterization and machine learning algorithms holds promise for expeditiously uncovering novel compositions.", "source_section": "conclusion"}, {"claim": "섬유강화 재료의 이방성을 다루기 위해 다척도 보강 전략과 더 높은 차원의 복합 아키텍처를 추구한다.", "source_quote": "The inherent anisotropic properties of existing fiber-reinforced materials underscore the importance of progress in multi-scale reinforcement strategies and higher-dimensional materials, which represent compelling avenues for future development.", "source_section": "conclusion"}, {"claim": "적층 제조, 기계학습/모델링, 고엔트로피 UHTC 조성을 탐구해 맞춤 물성의 복잡한 세라믹을 창출한다.", "source_quote": "Exploration of UTHCs in the domains of additive manufacturing, machine learning and modeling, and high-entropy UHTC compositions are poised to create complex new ceramics with tailored properties.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["극한 공력열 환경(높은 열유속, 극심한 열구배, 높은 정체압, 해리 가스 플라즈마)이 극초음속 비행체 재료·구조에 심각한 도전을 만든다.", "기존 극초음속 재료는 구조의 강인성을 제한하며, 원하는 마하/고도/조건 지속 시간 응용에 대해 인증된 재료가 존재하지 않을 수 있다.", "실험실 규모에서 비행으로의 진전은 비표준 공정, 재료 데이터의 낮은 재현성, 대표적 비행 조건 시험의 어려움으로 저해된다.", "부상하는 시스템에 대한 고온 물성 데이터가 부족해 수십 년 된 유산(heritage) 재료(예: AETB 타일)에 대한 의존이 크다."], "addressed_by_this_work": ["Perspective는 내화 금속·탄소 복합재·UHTC·CMC에 대한 명시적 부류별 설계 기준을 갖춘 하위시스템·재료부류 구조화 설계 체계를 제공한다.", "비행 조건을 재료 생존성에 연결하는 열기계 스크리닝 방법론(300+ 마하/고도 조합의 정상상태 FE, Ashby 맵, 생존 가능성 회랑)을 시연한다.", "부상하는 전산 도구(ICME, 고처리량 제일원리, DEED 기술자, 기계학습)와 통합 실험/비행 준비(TRL/MRL) 경로를 매핑해 개발을 가속한다.", "가장 극한의 지속 열유속 영역을 위한 경로로서, 입사 열유속을 줄이는 증산냉각을 포함한 능동 TPS 옵션을 설명한다."], "remaining_unresolved": ["많은 부상 내화 합금·복합재·세라믹에 대해 고온(500-2000 C 이상)의 운용 관련 물성 데이터가 여전히 누락되어 있다.", "길이/시간 척도를 가로지르는 다척도·물리 기반 결합 모델링은 여전히 단절되어 있고 고처리량 사용에는 계산적으로 금지적이다.", "지상시험 설비는 정확한 복합 비행 조건을 재현하지 못하며, 산화는 복합재/세라믹에 대해 ~1600 C 이상에서 여전히 가공할 장벽이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

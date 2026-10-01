@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>IXV post-flight reconstruction and analysis of the aerothermodynamic measurements along the rarefied portion of the reentry trajectory</title>
+    <meta name="keywords" content="Direct Simulation Monte-Carlo, Computational Fluid Dynamics, rarefied hypersonic flow, Earth reentry, heat flux reconstruction, IXV, accommodation coefficient, continuum breakdown, thermal protection system, flight data">
+    <meta name="paper-authors" content="Marc Schouler, Ysolde Prevereaud, Luc Mieussens">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 178, 2021, Article 121582 · DOI: 10.1016/j.ijheatmasstransfer.2021.121582">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">IXV post-flight reconstruction and analysis of the aerothermodynamic measurements along the rarefied portion of the reentry trajectory</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Marc Schouler, Ysolde Prevereaud, Luc Mieussens</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 178, 2021, Article 121582 · DOI: 10.1016/j.ijheatmasstransfer.2021.121582</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 <span class="term">Intermediate eXperimental Vehicle(IXV)</span>의 2015년 지구 재진입 중 희박(천이) 구간인 고도 115-90 km에서의 공력열역학 측정 데이터를 최초로 사후 활용한다. 20개 풍상 열전대 위치에서 재구성한 대류 <span class="term">열유속</span>을 SPARTA 코드의 방대한 <span class="term">직접 시뮬레이션 몬테카를로(DSMC)</span> 시뮬레이션과, 90 km에서 ONERA의 CEDRE를 이용한 단일 <span class="term">CFD</span>(Navier-Stokes) 계산과 비교한다. 기체-표면 적응 계수, 충돌 모델(VHS/VSS, Bird 대 Stephani 파라미터), 화학, 자유류 밀도 불확실성에 대한 상세 민감도 분석이 주요 불일치 원인을 규명한다. 표준 DSMC(완전 확산 벽)는 비행 열유속을 115/100/95 km 노즈 영역에서 90-110%, 110/105/90 km에서 40-50% 과대평가하는데, 이는 적응 계수만으로 설명되지 않으며, 일부 고고도 열전대는 신뢰할 수 없는 것으로 드러난다. 90 km에서 DSMC와 CFD의 표면량은 잘 일치하나(열유속 차 Bird VHS 30%, Stephani 파라미터 15%), 연속체 붕괴와 수송 모델 선택이 완전한 방법 일관성과 대기 밀도 불확실성의 역할을 핵심 미해결 쟁점으로 만든다.</div>
+            <div class="keywords"><span class="keyword-chip">Direct Simulation Monte-Carlo</span><span class="keyword-chip">Computational Fluid Dynamics</span><span class="keyword-chip">rarefied hypersonic flow</span><span class="keyword-chip">Earth reentry</span><span class="keyword-chip">heat flux reconstruction</span><span class="keyword-chip">IXV</span><span class="keyword-chip">accommodation coefficient</span><span class="keyword-chip">continuum breakdown</span><span class="keyword-chip">thermal protection system</span><span class="keyword-chip">flight data</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">CFD 도구의 실험 검증은 신뢰할 수 있는 항공우주 설계에 결정적 단계이나, 지구 재진입의 고에너지 저밀도 조건을 지상에서 재현하기가 매우 어려워 비행 데이터가 가장 가치 있는 자료이다. 대부분의 재진입 계측은 ~80-85 km 미만의 연속체 구간을 겨냥하여 천이 희박 구간은 상대적으로 미활용되었다. 2015년 IXV 재진입 이후, 본 논문은 고도 115-90 km의 공력열역학 데이터를 최초로 사후 활용하여 재구성 열유속을 DSMC(및 90 km에서 CFD) 시뮬레이션과 비교한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 선행 재진입 데이터 활용(OREX, Apollo, ARD, STS), Banyai 등의 IXV 사전 비행 DSMC와 Van Ghele의 열유속 역재구성, 그리고 희박 극초음속 유동을 위한 폭넓은 DSMC/CFD 문헌에 기반한다. 또한 연속체 붕괴 기준과 방법 간 기대 일치를 틀짓는 발표된 CFD-DSMC 비교를 활용한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">IXV 양력체 기하(C-SiC CMC 슁글 TPS와 어블레이션 부분)와 계측(열전대 194개, 여기서 20개 사용)을 기술하며, 대류 열유속은 역해석법으로 얻는다. SPARTA DSMC 시뮬레이션은 VHS 충돌 모델(Bird 파라미터), 19개 반응의 TCE 화학, 비촉매 완전 확산 벽을 사용하고 115-90 km(Kn 0.43~0.0033)에 걸쳐 시공간 수렴을 세심히 검증했다. 90 km에서 CEDRE CFD 계산(Navier-Stokes, 열평형, 화학 비평형, 5종)을 수행했으며, 연속체 붕괴 기준이 비교를 틀짓는다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">DSMC 유동장은 고도가 낮아질수록 충격파가 두꺼워지고 밀집·가열되며, 115 km에서 강한 적응 계수 효과가 90 km로 갈수록 약화됨을 보인다. 공력적으로 표면 압력은 5 km마다 두 배 이상 증가하고 정체 압력 계수는 Pitot-Rayleigh 범위와 일치하며, 표피 마찰은 0.7에서 0.1로 감소한다. 표준 DSMC 열유속은 비행 데이터를 크게 과대평가하며(115/100/95 km 노즈 90-110%, 110/105/90 km 40-50%), 일부는 대기 밀도 불확실성과 신뢰할 수 없는 센서에서 기인하고; 90 km에서 DSMC와 CFD 표면량은 잘 일치하여 열유속 차가 30%(Bird VHS), 15%(Stephani)이다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">DSMC의 비행 열유속 지속 과대평가는 적응 계수만으로 설명되지 않아, 대기 밀도 불확실성과 희박 영역에서의 센서 신뢰성 문제를 가리킨다. DSMC-CFD 열유속 격차는 열유속의 전도(Fourier) 부분과 문헌마다 크게 다른 수송 물성 모델 선택에 기인하며; CFD 수송을 DSMC 쪽으로 조정하면 방법 일치는 좋아지나 CFD가 비행 데이터에서 더 멀어진다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">최초로 IXV 희박 재진입(115-90 km)을 DSMC(SPARTA)로 재구성하고 90 km에서 CFD(CEDRE)로 교차 확인했다. 희박화와 적응 효과가 충격파를 형성했고 적응 역할은 고도에 따라 약화되었으며, 90 km의 상당한 유동장 불일치가 일관된 벽 근처 결과와 공존했다. 표준 DSMC는 비행 열유속을 90-110%(115/100/95 km 노즈), 40-50%(110/105/90 km) 과대평가했는데 일부는 밀도 불확실성과 신뢰할 수 없는 센서에서 기인하며, 완전한 DSMC-CFD 일관성과 적절한 고고도 계측이 아직 과제로 남는다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 49</span></summary>
+            <ol class="ref-list"><li>L. Van Ghele, Analyse aerothermique de la rentree atmospherique de l'Intermediate eXperimental Vehicle (IXV), Ph.D. thesis, ISAE-SUPAERO, 2020</li><li>T. Banyai, E. Torres, T. E. Magin et al., Evaluation of the aerodynamic properties of the intermediate experimental vehicle in the rarefied and transitional regime, Progress in Flight Physics, Vol. 5, 2013</li><li>S. J. Plimpton, S. G. Moore, A. Borner et al., Direct simulation Monte Carlo on petaflop supercomputers and beyond, Physics of Fluids, Vol. 31, 2019</li><li>G. A. Bird, Molecular Gas Dynamics and the Direct Simulation of Gas Flows, Clarendon Press, 1994</li><li>I. D. Boyd, T. E. Schwartzentruber, Nonequilibrium Gas Dynamics and Molecular Simulation, Cambridge University Press, 2017</li><li>K. A. Stephani, D. B. Goldstein, P. L. Varghese, Consistent treatment of transport properties for five-species air DSMC/Navier-Stokes applications, Physics of Fluids, Vol. 24, 2012</li><li>F. Buffenoir, C. Zeppa, T. Pichon, F. Girard, Development and flight qualification of the C-SiC thermal protection systems for the IXV, Acta Astronautica, Vol. 124, 2016</li><li>A. Refloch, B. Courbet, A. Murrone et al., CEDRE Software, Journal AerospaceLab, 2011</li><li>J. N. Moss, G. A. Bird, Direct simulation of transitional flow for hypersonic reentry conditions, AIAA, 1988</li><li>T. D. Holman, I. D. Boyd, Effects of continuum breakdown on the surface properties of a hypersonic sphere, Journal of Thermophysics and Heat Transfer, Vol. 23, 2009</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "CFD 방법의 실험 검증은 견고한 항공우주 도구에 결정적이나, 지구 재진입의 에너지 조건 - 특히 저밀도 유동 - 을 지상에서 재현하기가 어려워 비행 실험이 데이터 수집의 가장 가치 있는 수단이다."}, {"type": "bullet", "text": "과거 재진입 물체(OREX, Apollo, ARD)에서 계측은 보통 ~120 km 진입점 이후 작동했고 대부분 데이터가 80 km 미만에서 활용되었으며, 천이 구간(~85 km 이상) 데이터는 일부만 고도 비평형 방법에 쓰였다."}, {"type": "bullet", "text": "2015년 2월 Vega 발사체로 프랑스령 기아나에서 발사된 IXV는 7000 km 이상의 유도 양력 진입을 수행하고 태평양에 착수했으며, 재진입 공력열역학 연구를 위해 약 300개 센서를 갖췄다.", "figure_refs": [1]}, {"type": "bullet", "text": "Van Ghele의 박사 논문은 열전대 측정으로부터 대류 열유속을 재구성하는 역해석법을 개발했고, Banyai 등은 그 이전에 120-85 km에서 IXV의 사전 비행 DSMC를 수행했다."}, {"type": "bullet", "text": "본 논문은 천이 구간의 공력열역학 데이터를 최초로 활용하여, 재구성 열유속을 115-90 km의 DSMC 시뮬레이션(SPARTA)과 90 km의 CFD 계산(CEDRE)과 비교한다."}, {"type": "bullet", "text": "자유류 조건, 충돌 모델, 화학, 적응 계수에 대한 상세 민감도 연구를 수행하고, 90 km의 DSMC/CFD 비교로 비행 데이터와의 일관성을 논의한다."}, {"type": "bullet", "text": "IXV 궤적은 일부 STS(Space Transportation System) 임무 궤적과 뚜렷이 가까워, 비행체 크기 차이에도 불구하고 STS 측정에 비추어 IXV 비행 데이터의 병행 분석을 정당화한다.", "figure_refs": [2]}]}, "related_works": {"content": [{"type": "bullet", "text": "과거 재진입 데모(일본 OREX, 미국 Apollo, 유럽 ARD)는 주로 연속체 구간에서 비행 데이터를 수집했고 천이 영역의 비평형 방법 비교 활용은 제한적이었다."}, {"type": "bullet", "text": "Banyai 등은 임무 준비로 120-85 km에서 IXV의 사전 비행 DSMC로 공력 거동을 조사했으며, 본 공력 분석이 정밀 비행 조건으로 이를 확장한다."}, {"type": "bullet", "text": "Van Ghele의 역해석법은 열전대 데이터로부터 대류 열유속을 재구성하며, Monte-Carlo 분석은 전 비행체·전 재진입에 걸쳐 재구성 열유속의 최대 불확실성이 8% 미만임을 나타낸다."}, {"type": "bullet", "text": "임의 Knudsen 수에서 유효한 Boltzmann 방정식의 수치 해를 제공하는 Bird의 DSMC 방법은 극초음속 희박 유동의 표준 접근법이다(Bird 및 Boyd·Schwartzentruber 교과서)."}, {"type": "bullet", "text": "저지구궤도 위성에 대한 기체-표면 상호작용 연구(Moe; Crisp 등)는 적응 계수가 1에 가깝다(0.8-1.0)고 시사하는 반면, Moss와 Bird는 셔틀에 대해 0.5까지의 값을 물리적으로 현실적이라 보아 IXV 적응 연구를 동기화했다."}, {"type": "bullet", "text": "일군의 CFD-DSMC 비교 연구(Holman·Boyd, Votta 등, Casseau 등, Liechty 등)는 Knudsen 수가 작고 유동·기하가 단순할 때 두 방법이 일치하나, 복잡한 기하 주변의 반응성 다종 유동에서는 벌어짐을 보인다.", "figure_refs": []}]}, "method": {"content": [{"type": "bullet", "text": "IXV는 Dassault 설계 양력체로 두 바디 플랩으로 제어되며, 단열재 위 내열 C-SiC CMC 슁글 TPS와 어블레이션 풍하/베이스 부분, 모놀리식 C-SiC 노즈를 갖는다.", "figure_refs": [3, 4]}, {"type": "bullet", "text": "약 300개 센서(열전대 194개 - 타입 S 105개, 타입 K 89개 - 와 압력 센서 37개) 중 풍상 타입-S 열전대는 273.15-1823.15 K를 정확도 0.5%로 측정하며; 여기서 20개 열전대(중심선 10개, 측면 10개)를 사용하고 압력 센서는 희박 영역에서 사용 불가였다.", "figure_refs": [5]}, {"type": "bullet", "text": "대류 열유속은 Monte-Carlo 불확실성 8% 미만의 역해석법으로 재구성되며; 비행 파라미터(115-90 km, U = 7.44-7.46 km/s, 받음각 ~45-47도, 플랩 15도)와 MSISE-00 대기 조건이 입력을 설정한다."}, {"type": "bullet", "text": "전역 Knudsen 수(자유류 평균자유행로/기준 길이)는 115 km의 0.43에서 90 km의 0.0033까지로 천이에서 준연속체에 걸치며, 대기 밀도는 90 km 이상에서 10-15% 불확실성을 가진다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (2) - 전역 Knudsen 수", "latex": "Kn = \\frac{\\lambda_\\infty}{L_{ref}}", "description": "자유류 평균자유행로 $\\lambda_\\infty$ 대 비행체 기준 길이 $L_{ref}$($L_{ref}=4.4$ m)의 비로, 희박에서 연속체까지 유동 영역을 분류한다."}, {"type": "bullet", "text": "SPARTA DSMC는 Bird 파라미터의 가변 경구(VHS) 충돌 모델, NTC 선택 알고리즘, 회전 완화(Z_rot = 5), Millikan-White 진동 완화, Borgnakke-Larsen 에너지 전달, Park 계수의 TCE 화학(19개 반응)을 사용하고, 측정 벽 온도의 비촉매 완전 확산 벽을 썼다.", "figure_refs": [6]}, {"type": "formula", "label": "Eq. (4) - VHS 점도-온도 의존성", "latex": "\\mu \\propto T^{\\omega}", "description": "VHS 모델은 지수 $\\omega$를 통해 역멱법칙 점도-온도 의존성을 재현하며, 기준 종 직경 $d_{VHS}$와 기준 점도 $\\mu_{ref}$를 사용한다."}, {"type": "bullet", "text": "연속체 붕괴는 전역 Knudsen 수와 구배 길이 국소 Knudsen 수(Boyd)로 평가하며, 후자는 0.05 초과 시 상당한 비평형을 표시한다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (3) - 구배 길이 국소 Knudsen 수", "latex": "Kn_{GLL} = \\frac{\\lambda}{Q}\\,|\\nabla Q|", "description": "유동 물성 $Q$(여기서 밀도)에 기반한 국소 Knudsen 수; $Kn_{GLL} &gt; 0.05$는 상당한 비평형과 연속체 붕괴를 나타낸다."}, {"type": "bullet", "text": "CFD 계산(ONERA CEDRE, CHARME 솔버)은 Navier-Stokes 방정식을 2차 유한체적(AUSM+ 및 Van Leer 제한자)으로 풀고, 열평형(단일 온도)과 화학 비평형(Park, 5종, 17개 반응)을 가정하며, 완전 층류(90 km에서 Re_L = 12.6e3), 비촉매, Blottner 점도를 사용했다.", "figure_refs": [12]}, {"type": "formula", "label": "Eq. (10) - DSMC 전체 온도", "latex": "T_{ov} = \\frac{3 T_{tr} + 2 T_{rot} + 2 T_{vib}}{7}", "description": "병진·회전·진동 모드를 결합한 에너지 가중 전체 온도로, 단일 온도 CFD 결과를 DSMC와 비교하기 위해 정의된다(90 km에서 최대값이 ~14% 차이)."}, {"type": "formula", "label": "Eq. (11) - CFD 벽 열유속(Fourier + Fick)", "latex": "q = (\\kappa_{mix}\\,\\partial_x T)_w + \\sum_i \\rho D_i h_i\\,\\partial_x C_i", "description": "혼합 전도도 $\\kappa_{mix}$를 가진 전도(Fourier) 항과 확산(Fick) 항의 합인 벽 열유속; 비촉매 벽에서는 확산 항이 소거되어 열유속이 혼합 전도도 모델에 강하게 의존한다."}]}, "results": {"content": [{"type": "bullet", "text": "고도가 낮아질수록 충격파는 두껍고 약한 것에서 얇고 강한 것으로 전이하며 밀도와 온도가 가로질러 상승하고; 105 km 미만에서는 15도 플랩 경사가 볼록 충격파 외피 형상을 깬다.", "figure_refs": [13]}, {"type": "bullet", "text": "적응 계수는 115 km 충격파층에 강한 영향을 주지만(정반사 입자가 에너지를 충격파로 되돌림), 입자가 벽 근처에서 열화됨에 따라 고도가 낮아질수록 그 영향이 줄어든다.", "figure_refs": [14]}, {"type": "bullet", "text": "최적화 VHS(Stephani) 파라미터는 충격파층을 CFD 거동 쪽으로 약간 얇게 하며, 최적화 VHS와 VSS 모델은 90 km에서 거의 동일한 온도·속도 분포를 준다.", "figure_refs": [15]}, {"type": "bullet", "text": "표면 압력은 5 km마다 두 배 이상 증가하고, 정체 압력 계수는 Pitot-Rayleigh 범위(C_p,stag = 1.84 for gamma 1.4, 1.9 for gamma 1.1)에 들며, 표피 마찰은 점성 효과가 약화되면서 115 km 평균 0.7에서 90 km 0.1로 감소한다.", "figure_refs": [17, 18]}, {"type": "bullet", "text": "비행체는 천이 내내 공력적으로 안정하여 피칭 모멘트 계수가 작고 연속체 영역으로 갈수록 0으로 수렴하며; 15% 자유류 밀도 불확실성이 공력 계수에 대략 같은 불확실성으로 대응된다.", "figure_refs": [17, 19]}, {"type": "bullet", "text": "표준 DSMC(완전 확산, w = 1) 열유속은 비행 데이터보다 훨씬 높아, 115/100/95 km 노즈에서 상대차 90-110%, 110/105/90 km에서 40-50%이며; 놀랍게 큰 100/95 km 차이는 국소 대기 이상을 시사한다.", "figure_refs": [20]}, {"type": "bullet", "text": "일부 고고도 열전대가 비정상이며(WT62·WT48은 벽 온도가 센서 최소에 가까워 느리게 회복; NT2·WT12는 전 고도에서 벗어나 고장 지시), 숄더 센서는 열유속 피크를 너무 낮은 크기로 포착한다.", "figure_refs": [21]}, {"type": "bullet", "text": "90 km에서 CFD 충격파는 벽에 더 가깝고 DSMC보다 훨씬 얇으며 온도 피크가 낮으나 벽 근처 속도·온도는 일치하며; 연속체 붕괴(충격파·벽·그림자에서 Kn_GLL &gt; 0.05)가 CFD 평형 가정과 모순된다.", "figure_refs": [28, 29, 30]}, {"type": "bullet", "text": "90 km에서 DSMC와 CFD 공력량은 훌륭히 일치하고(압력 계수; 법선/축력 ~2%, 피칭 모멘트 10%), 노즈 열유속은 CFD와 30%(Bird VHS) 또는 14%(Stephani) 차이이며, CEDRE는 비행 데이터와 10% 이내로 일치한다.", "figure_refs": [31, 33]}]}, "discussion": {"content": [{"type": "bullet", "text": "자유분자 극한에서 열유속은 적응 계수에 대략 비례하나, 그 영향은 고도에 따라 줄어들어 비행 데이터에 대한 DSMC의 전역 과대평가를 설명할 수 없다."}, {"type": "bullet", "text": "인접 비행점 대비 유난히 큰 100·95 km 불일치는 국소적·돌발적 대기 이상을 시사하며, 이 고도에서 매우 큰 값에 이를 수 있는 밀도 불확실성과 일치한다."}, {"type": "bullet", "text": "재진입 온도와 거리가 먼 표준 대기 조건에서 측정된 Bird VHS 파라미터는 의심스럽고; Stephani의 최적화 파라미터(2880 K 기준에서 피팅)는 90 km 결과와 DSMC-CFD 일관성을 크게 개선한다."}, {"type": "bullet", "text": "DSMC-CFD 열유속 차는 전도(Fourier) 부분에 있다: 비촉매 벽에서는 확산 항이 소거되어 열유속이 혼합 전도도 모델에 의존하는데, 이는 크게 다양하여(Blottner/Eucken, Wilke, Armaly-Sutton) 열유속을 수십 % 이동시킬 수 있다.", "figure_refs": [33]}, {"type": "bullet", "text": "CFD 열평형 가정의 기여는 작아(진동 에너지를 끈 DSMC 실행이 벽 열유속을 ~3%만 바꿈), 방법 격차는 CEDRE의 누락된 진동 온도보다 수송 모델링이 지배한다."}, {"type": "bullet", "text": "실제 벽은 부분 촉매이므로 비촉매 수치 해는 측정을 과소평가해야 하나 가장 낮은 CFD 해조차 이를 과대평가하여 - 상당한 자유류 밀도 불확실성을 지목하며 DSMC를 더 보수적 추정으로 만든다."}, {"type": "bullet", "text": "발표된 CFD-DSMC 비교는 작은 Knudsen 수와 단순 유동/기하에서만 일치하며; 복잡한 물체 주변의 완전 반응성 다종 유동에서 CFD 해는 설계상 벽 근처 얇은 충격파로 수렴하여 DSMC와 다르다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "IXV 희박 재진입 115-90 km의 사후 재구성을 SPARTA로, 90 km CEDRE CFD 계산을 수행하고, 비행체 20개 위치의 재구성 열유속을 독보적 검증 수단으로 사용했다."}, {"type": "bullet", "text": "유동장 연구는 충격파 구조에 대한 희박화와 적응 계수 효과를 보였으며, 고도가 낮아질수록 적응 역할이 줄어든다."}, {"type": "bullet", "text": "90 km에서 DSMC와 CFD 간 충격파 위치·두께의 상당한 불일치가 일관된 벽 근처 결과와 공존하며, 이는 연속체 붕괴와 전도도·열확산도 차이에 기인한다."}, {"type": "bullet", "text": "일부 고고도 센서가 신뢰할 수 없어(WT62/WT48 느린 회복; NT2/WT12 벗어난 값), 희박 조건에서 올바른 온도를 측정하는 센서의 능력이 의문시된다."}, {"type": "bullet", "text": "DSMC는 두 개의 서로 다른 적응 계수 값을 가진 비완전 확산 모델로 105 km 이상의 기록 열유속에 부분적으로 접근하나, 적응 영향이 고도에 따라 줄어 전역 과대평가(115/100/95 km 노즈 90-110%, 110/105/90 km 40-50%)를 설명할 수 없다."}, {"type": "bullet", "text": "90 km에서 DSMC-CFD 열유속 차는 비촉매 벽에서 30%(Bird VHS) 또는 15%(Stephani)이며; CEDRE가 측정과 일치하나 실제 벽은 촉매이므로 해는 과소평가해야 하여 - 상당한 밀도 불확실성이 지목되고 DSMC가 더 보수적으로 보인다."}, {"type": "bullet", "text": "본 연구는 적절한 센서를 갖춘 고고도 비행 실험, 더 나은 대기 환경 지식, 그리고 유동장·표면량 모두에서 두 방법 간 완전한 일관성에 도달하기 위한 보완 작업의 필요성을 강조한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "탑재 압력 센서는 희박 영역의 매우 낮은 압력용으로 설계되지 않아 데이터가 사용 불가하여 분석에서 제외되었다.", "source_quote": "since the pressure sensors were not designed to measure pressures as low as those encountered in the rarefied regime, their data turned out to be unusable. They were therefore not considered in our analysis.", "source_section": "method"}, {"claim": "비행 계측이 고도 희박 조건에서 신뢰할 수 없어 보이며, 일부 열전대는 느리게 회복하거나 전 고도에서 벗어난 값을 읽는다.", "source_quote": "First the instrumentation seems to be unreliable in highly rarefied conditions.", "source_section": "conclusion"}, {"claim": "Bird의 표준 VHS 충돌 파라미터는 재진입 온도와 거리가 먼 표준 대기 조건에서 측정되어 여기서는 의심스러울 수 있다.", "source_quote": "Since these temperature conditions are far from those considered herein, Bird's parameters can be deemed questionable.", "source_section": "discussion"}, {"claim": "90 km에서 충격파·벽 근처·그림자 영역의 상당한 연속체 붕괴를 고려하면 CFD 열평형(Navier-Stokes) 가정이 의심스럽다.", "source_quote": "The use of the Navier–Stokes equations in these conditions is then questionable and the inability to accurately simulate the regions of significant thermochemical nonequilibrium could explain the large difference in the predicted shock position and thickness.", "source_section": "results"}], "future_works": [{"claim": "유동장과 표면량 모두에서 DSMC와 CFD 방법 간 완전한 일관성에 도달하기 위한 보완 작업을 수행한다.", "source_quote": "complementary efforts must be carried out in order to reach full consistence between the two methods both for the flowfield and the surface quantities.", "source_section": "conclusion"}, {"claim": "희박 영역에 적합한 센서를 갖춘 향후 고고도 비행 실험을 설계한다.", "source_quote": "It underlines, once more, the necessity to design high altitude flight experiments with adequate sensors.", "source_section": "conclusion"}, {"claim": "분석이 수치 모델에만 집중할 수 있도록 대기 환경에 대한 지식을 개선한다.", "source_quote": "The sensitivity analysis also showed the need to perfectly know the atmospheric environment in order to only focus on the numerical models.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["CFD 도구의 실험 검증은 중요하나 지구 재진입의 고에너지 저밀도 조건을 지상에서 재현하기가 매우 어려워, 비행 데이터가 독보적으로 가치 있다.", "대부분의 재진입 비행 데이터는 ~80-85 km 미만의 연속체 구간에서 수집·활용되어, 천이/희박 구간 데이터는 비평형 방법 검증에 거의 쓰이지 않았다.", "IXV 희박 재진입 공력열역학 데이터(115-90 km)가 활용되지 않았고, DSMC가 이를 재현할 능력과 불일치 원인이 알려지지 않았다."], "addressed_by_this_work": ["DSMC 코드 SPARTA와 90 km에서의 CEDRE CFD 계산을 사용해 IXV 희박 재진입(115-90 km)의 사후 재구성·분석을 최초로 수행했다.", "적응 계수, 충돌 모델, 화학, 자유류 밀도에 대한 상세 민감도 분석을 수행하여 수치 결과를 크게 개선하는 여러 방안을 규명했다.", "90 km에서 DSMC와 CFD를 비교하여 공력·벽 근처량의 좋은 일치를 보이고 열유속 차(Bird VHS 30%, Stephani 파라미터 15%)를 정량화했다."], "remaining_unresolved": ["표준 DSMC가 비행 열유속을 큰 폭으로 과대평가하며(115/100/95 km 노즈 90-110%, 그 외 40-50%), 이는 적응 계수만으로 설명되지 않는다.", "비행 계측이 고도 희박 조건에서 신뢰할 수 없는 것으로 드러나 일부 재구성 열유속 데이터에 의문을 던진다.", "현재 모델로는 고고도 대기의 완벽한 파악이 불가능하여 10-15%(또는 그 이상)의 자유류 밀도 불확실성이 남는다.", "유동장·표면량에 대한 DSMC-CFD 완전 일관성이 아직 달성되지 않았고, CFD 열유속이 수송 물성 모델 선택에 강하게 민감하다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

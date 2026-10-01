@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Ultra-high temperature ceramics: Materials for extreme environments</title>
+    <meta name="keywords" content="ultra-high temperature ceramics, extreme environments, borides, carbides, nitrides, oxidation, hypersonic, densification, composites, computational materials">
+    <meta name="paper-authors" content="William G. Fahrenholtz, Greg E. Hilmas">
+    <meta name="paper-journal" content="Scripta Materialia (Viewpoint article), Vol. 129, 2017, pp. 94-99 · DOI: 10.1016/j.scriptamat.2016.10.018">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Ultra-high temperature ceramics: Materials for extreme environments</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">William G. Fahrenholtz, Greg E. Hilmas</div>
+            <div class="journal">Scripta Materialia (Viewpoint article), Vol. 129, 2017, pp. 94-99 · DOI: 10.1016/j.scriptamat.2016.10.018</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 <span class="term">뷰포인트(Viewpoint) 논문</span>은 <span class="term">초고온 세라믹(UHTC)</span> - 알려진 화합물 중 가장 높은 융점(보통 3000 C 초과로 정의)을 갖는 초기 전이금속(Zr, Hf, Nb, Ta)의 붕화물·탄화물·질화물 - 에 대한 현재 지식의 공백을 규명하고 부상하는 연구 방향을 기술한다. 저자들은 합성·가공·치밀화·열/기계 물성·산화에 대한 수십 년 연구가 상당한 지식 기반을 구축했으나, 특히 구조-물성 관계와 진정한 극한 환경에서의 거동에 관해 핵심 질문들이 미해결로 남았음을 개관한다. 부상하는 연구는 네 주제로 묶인다: <span class="term">극한 환경 시험/특성화, 복합재, 전산 연구, 신소재</span>. 논문은 UHTC 연구가 오늘날의 합성/가공/치밀화/산화 중심에서 복합 극한 환경 성능, 섬유강화 복합재, 전산, 신소재 발굴(예: 엔트로피 안정화 조성)로 진화해야 한다고 주장한다. 또한 응용이 항공우주를 넘어 원자력·에너지·마이크로전자로 넓어짐을 전망한다. (주의: 이 뷰포인트에는 번호 매긴 수식이 없으며, 정성적 연구 전망 논문이다.)</div>
+            <div class="keywords"><span class="keyword-chip">ultra-high temperature ceramics</span><span class="keyword-chip">extreme environments</span><span class="keyword-chip">borides</span><span class="keyword-chip">carbides</span><span class="keyword-chip">nitrides</span><span class="keyword-chip">oxidation</span><span class="keyword-chip">hypersonic</span><span class="keyword-chip">densification</span><span class="keyword-chip">composites</span><span class="keyword-chip">computational materials</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">UHTC는 극한 환경용으로 부상하는 재료로, 보통 3000 C 초과 융점(실용적으로는 1650 C 이상 사용 가능)으로 정의된다. 거의 모두 붕소·탄소·질소가 초기 전이금속(Zr, Hf, Ti, Nb, Ta)과 이룬 이원 화합물로, 강한 공유결합이 높은 경도·강성·융점과 금속형 전기/열전도도를 부여한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">UHTC 합성 보고는 1800년대 말로 거슬러 가나, 미국과 소련이 로켓모터·열차폐·구조재를 찾으며 우주 경쟁기에 기술적 관심이 커졌다. 이는 결합·전자구조·열역학·기계 거동·상평형·산화에 관한 상당한 지식 기반을 생성해 현재 연구를 떠받친다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">뷰포인트로서 본 논문은 UHTC 재료 수명주기 - 합성, 가공/성형, 치밀화 - 를 중심으로 분야를 조직하고 각 영역의 지속 과제를 규명한다. 합성과 가공이 강한 시너지를 가지며, 치밀화는 치밀화 기구와 조대화 기구 사이 경쟁의 제어를 요함을 강조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 열기계 물성과 산화에 걸친 지속 과제를 평가한다. 대부분의 물성 연구는 지배적 구조-물성 인자를 분리하지 않고 단일 세라믹 값을 보고하며, 산화 거동은 이붕화물에서 상당히 진전되었으나 여전히 대표적 극한 환경에서의 이해가 필요하다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">네 부상 연구 방향이 전개된다: 극한 환경 시험/특성화, 연속섬유 복합재, 전산 연구, 신소재. 이 주제들은 역사적 지식 기반을 활용해 UHTC가 잠재력을 발휘하지 못하게 하는 과제들을 공략한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">상당한 연구가 UHTC의 뛰어난 물성을 드러내고 응용을 항공우주를 넘어 에너지·재료 가공·마이크로전자로 넓혔다. 연구는 현재의 합성/가공/치밀화/구조-물성/산화 중심에서 극한 환경 성능, 섬유강화 복합재, 전산, 신소재로 진화해야 한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 89</span></summary>
+            <ol class="ref-list"><li>W. G. Fahrenholtz, E. J. Wuchina, W. E. Lee, Y. Zhou (Eds.), Ultra-High Temperature Ceramics: Materials For Extreme Environment Applications, Wiley, 2014</li><li>W. G. Fahrenholtz, G. E. Hilmas, I. G. Talmy, J. A. Zaykoski, J. Am. Ceram. Soc. 90 (2007) 1347</li><li>M. M. Opeka, I. G. Talmy, J. A. Zaykoski, S. J. Causey, J. Eur. Ceram. Soc. 19 (1999) 2405</li><li>W. G. Fahrenholtz, J. Am. Ceram. Soc. 90 (2007) 143</li><li>T. A. Parasarathy, R. A. Rapp, M. Opeka, M. K. Cinibulk, J. Am. Ceram. Soc. 95 (2012) 338</li><li>S. C. Zhang, G. Hilmas, W. G. Fahrenholtz, J. Am. Ceram. Soc. 91 (2008) 26</li><li>H. A. Bale et al., Nat. Mater. 12 (2013) 40</li><li>C. M. Rost et al., Nat. Commun. 6 (2015) 8485</li><li>W. G. Fahrenholtz, J. Binner, J. Zou, J. Mater. Res. 31 (2016) 2757</li><li>D. M. Van Wie, D. G. Drewry Jr., D. E. King, C. M. Hudson, J. Mater. Sci. 39 (2004) 5915</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "UHTC는 보통 융점 <span class=\"term\">3000 C 초과</span> 화합물로 정의되며, 실용적 대안으로 1650 C 이상에서 장시간 사용 가능한 세라믹을 든다.", "figure_refs": [1]}, {"type": "bullet", "text": "거의 모든 UHTC는 붕소·탄소·질소가 Zr, Hf, Ti, Nb, Ta 같은 초기 전이금속과 결합한 이원 화합물이다."}, {"type": "bullet", "text": "전이금속과 B/C/N 사이의 강한 공유결합은 높은 경도·강성·융점을 주며, 금속결합 특성 덕분에 산화물 세라믹보다 높은 전기·열전도도를 준다."}, {"type": "bullet", "text": "이 금속형/세라믹형 조합 덕분에 UHTC는 기존 구조재를 넘어서는 극한 온도·열유속·방사선·기계하중·화학 반응성을 견딘다."}, {"type": "bullet", "text": "관심은 1950-60년대 우주 경쟁기에 급증했다가 수십 년 쇠퇴한 뒤, 스크램젯 추진·극초음속 비행체·고성능 로켓모터로 1980년대 말 재점화되었다.", "figure_refs": [2]}, {"type": "bullet", "text": "극초음속에서 날카로운 선단·제어면의 활형 충격파는 2000 C 초과 온도, 수백 W/cm2 열유속, 고반응성 해리 가스종을 만든다.", "figure_refs": [2]}, {"type": "bullet", "text": "이붕화물 기반 UHTC는 열전도도·고온 강도·산화 저항을 근거로 선단용으로 검토되었고, 탄화물·질화물은 노즐 목·추력기용으로 주목받았다."}]}, "related_works": {"content": [{"type": "bullet", "text": "UHTC 합성 보고는 1800년대 말로 거슬러 가나, 1950년대 말 시작된 우주 경쟁기에 기술적 관심이 급증했다."}, {"type": "bullet", "text": "소련과 미국의 그룹들은 1세대 우주선용 로켓모터·열차폐·구조부품 재료를 탐색했다."}, {"type": "bullet", "text": "초기 연구자들(G. V. Samsonov, H. Nowotny, E. V. Clougherty, L. Kaufman)은 UHTC의 기본 결합·전자구조·열역학·기계 거동·상평형·산화를 문서화했다."}, {"type": "bullet", "text": "미국·중국·일본·영국·이탈리아·인도 등의 연구 그룹이 현재 합성·가공·치밀화·열기계 물성·산화 전반에 걸쳐 진행 중인 노력을 보유한다."}, {"type": "bullet", "text": "대부분의 상용 UHTC는 해당 산화물의 탄소열환원으로 합성되며, 비교적 거친 입도와 상당한 불순물(&gt;=0.1 wt%)을 낳는다.", "figure_refs": [3]}, {"type": "bullet", "text": "고상 반응을 통한 대체 합성이 가장 일반적 경로이며, 액체/고분자 전구체 경로는 코팅과 UHTC 기지 복합재의 고분자 함침-열분해(PIP) 가공을 가능케 한다."}, {"type": "bullet", "text": "소수 연구실(Missouri S&amp;T, 하얼빈공대, 임페리얼 칼리지 런던, 버밍엄대, 애리조나대, UC 버클리)이 2000 C 이상의 극한 조건 시험 능력을 확립했다."}]}, "method": {"content": [{"type": "bullet", "text": "합성의 지속 과제를 규명한다: 고순도 UHTC 분말, 합성 반응의 기구/속도론, 높은 세라믹 수율과 낮은 열화의 액체/고분자 전구체.", "figure_refs": [3]}, {"type": "bullet", "text": "UHTC는 대개 건식 분말로 기존 성형(예: 건식 가압)으로 가공되며, 근본 가공 과학을 다룬 연구가 적어 표면화학 제어·고고형분 슬러리/페이스트·적층 제조·수계 가공에 기회가 있다."}, {"type": "bullet", "text": "합성과 가공은 상당한 시너지를 갖는다: 분말 크기·형상·표면화학을 제어하는 개선이 안정 분산 형성과 원하는 유변 물성 발현 능력에 영향을 준다."}, {"type": "bullet", "text": "UHTC 소결은 치밀화 기구와 조대화 기구 사이 경쟁을 수반하며, 산소·불순물이 조대화·포집 다공·과도 결정립 성장을 촉진한다.", "figure_refs": [4]}, {"type": "bullet", "text": "더 미세한 초기 입도는 소결을 촉진하나, 완전 치밀화를 위해서는 산소 함량이 임계치 이하여야 한다."}, {"type": "bullet", "text": "가압 보조법(열간 가압, 열간 등방압 가압, 방전 플라즈마 소결)이 가장 일반적이며, 일부 계에서는 첨가제로 무가압 소결이 가능하다."}, {"type": "bullet", "text": "치밀화의 근본적 수송 메커니즘이나 소결 속도론을 보고한 문헌은 소수에 불과해 추가 기초 연구 여지가 크다."}]}, "results": {"content": [{"type": "bullet", "text": "많은 연구가 단일 세라믹의 상온 열·기계 물성(강도, 경도, 탄성상수, 열전도도, 파괴인성)을 지배하는 근본적 구조-물성 인자 규명 없이 보고한다."}, {"type": "bullet", "text": "체계적 연구는 미세조직을 기계 물성에 연결하고 강도 제한 결함을 규명하여, 결정립 크기와 SiC 클러스터 크기를 제어해 ZrB2 및 ZrB2-SiC 세라믹 설계를 가능케 했다."}, {"type": "bullet", "text": "공칭 순수 ZrB2의 상온 열전도도는 ~30 W/m·K에서 &gt;130 W/m·K까지 변할 수 있으며, 그 근본 인자를 다루는 연구가 시작되었다.", "figure_refs": [5]}, {"type": "bullet", "text": "붕화물은 일반적으로 ~1700 C까지 우수한 산화 저항을 가지며 탄화물은 더 높은 온도에서 우수하고, 이붕화물 산화 열역학·속도론에서 상당한 진전이 있었다.", "figure_refs": [6]}, {"type": "bullet", "text": "SiC·MoSi2 같은 첨가제는 수동 산화와 실리카 부화 스케일을 촉진해 산화 저항을 개선하나, 실리카 스케일은 온도·전압·외부 기체속도의 특정 영역에서만 유효하다.", "figure_refs": [6]}, {"type": "bullet", "text": "응용이 2000 C·고열유속·해리 가스를 수반함에도 특성화/시험의 대부분이 상온에서 수행되며, 관련 환경 시험의 상당수가 제한/기밀이다."}, {"type": "bullet", "text": "보고된 극한 환경 연구는 단일 조건에서 단일 재료를 평가하는 경향이 있어, 복잡·비선형 응답을 고려할 때 단일 노출에서 계산된 어블레이션/후퇴율은 신뢰하기 어렵다."}]}, "discussion": {"content": [{"type": "bullet", "text": "여러 연구실이 극초음속/재돌입 조건을 모사(플라즈마 풍동, ICP계, 아크 히터)하거나 산소-아세틸렌 토치 리그로 고열유속/어블레이션 시험을 하나, 관련 환경 결과는 종종 제한된다."}, {"type": "bullet", "text": "대표적 복합 환경(예: 기계하중+열유속) 시험은 활용이 부족하여 결합된 열-기계-화학 응답에 대한 기초 연구 기회를 만든다."}, {"type": "bullet", "text": "단일체 UHTC는 취성이며 극한 온도·열유속·변형률에서 파국적으로 파괴(예: 열충격)될 수 있으므로 연속섬유 강화 UHTC가 필요하다."}, {"type": "bullet", "text": "전산 기법은 물성·열역학적 안정성·결정구조·변형 기구를 예측했으나, 정확한 원자간 퍼텐셜, 고유 거동 분리, 초고온으로의 시뮬레이션 확장이 과제이다."}, {"type": "bullet", "text": "오늘날 연구되는 UHTC 계열은 1950-60년대 우주 경쟁기와 본질적으로 동일하므로, 신소재 발굴이 필요하며 이는 고급 구조금속 개발 경로를 따를 가능성이 크다."}, {"type": "bullet", "text": "변태 인성화나 크리프 억제를 위한 2차상 첨가, 중간 온도 산화와 잠재적 강도/인성을 개선하는 용질 첨가(W, Ta, Nb) 설계 기회가 있다."}, {"type": "bullet", "text": "신규 UHTC 탐색은 전산과 엔트로피 안정화 같은 새 접근으로 구동될 가능성이 크며, 모든 신소재 탐색을 혁신할 잠재력을 지닌다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "UHTC의 근본 물성에 상당한 연구 노력이 투입되어 잠재 응용 범위를 계속 넓혀 왔다."}, {"type": "bullet", "text": "초기 동기는 더 높은 융점, 개선된 열전도도, 기계적 안정성, 극한 열유속·반응성 플라즈마 저항에 대한 항공우주 요구였다."}, {"type": "bullet", "text": "응용 범위는 원자력 핵분열/핵융합, 에너지 하베스팅, 집광 태양광, 고온 전극, 가공 공구, 용융 금속 격납, 마이크로전자로 넓어지고 있다."}, {"type": "bullet", "text": "연구는 현재 초점(합성, 가공, 치밀화, 구조-물성 관계, 산화)에서 극한 환경 성능, 섬유강화 복합재, 전산 연구, 신소재 공략으로 진화해야 한다."}, {"type": "bullet", "text": "약 2020년이면 2차 UHTC 연구 물결이 거의 30년간 활동한 셈으로, 이는 신규 재료가 초기 상용 응용을 찾는 데 필요한 전형적 기간이다."}, {"type": "bullet", "text": "UHTC가 실험실 연구에서 실세계 응용으로 전환됨에 따라, 자금은 정부 기초연구에서 산업 자금 응용 개발로 넓어질 것으로 예상된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "대부분의 물성 연구는 거동을 지배하는 근본적 구조-물성 인자(조성, 미세조직, 다공성, 불순물)를 규명하지 않고 단일 세라믹의 값만 보고한다.", "source_quote": "Most of these studies have reported properties for a single ceramic without identifying fundamental factors related to composition, microstructure, porosity, impurities, etc. that control observed behavior.", "source_section": "results"}, {"claim": "응용은 재료를 극한 환경에 노출시킴에도 대부분의 UHTC 시험은 상온·대기압에서 수행되며, 관련 환경 시험의 상당수는 제한되거나 기밀이다.", "source_quote": "A vast majority of the characterization and testing of UHTCs is carried out under ambient conditions (i.e., near room temperature and atmospheric pressure) even though applications of these materials will expose them to extreme environments such as temperatures of 2000 C or above, heat fluxes of hundreds of W/m·K, dissociated gases, etc.", "source_section": "results"}, {"claim": "치밀화의 근본적 수송 메커니즘이나 소결 속도론에 대한 상세 정보를 보고한 문헌은 소수에 불과하다.", "source_quote": "Despite practical knowledge for densification, only a few publications have reported detailed information on the fundamental transport mechanisms for densification or the kinetics of sintering processes leaving ample room for additional basic research in these areas.", "source_section": "method"}], "future_works": [{"claim": "단일 노출 조건이 아닌 복합 극한 환경에서 UHTC를 시험·특성화하여 결합된 열-기계-화학 응답을 포착한다.", "source_quote": "tests in relevant environments are under-utilized by basic researchers, creating an opportunity for fundamental research on the complex responses (i.e., coupled thermal, mechanical, chemical, etc.) exhibited by materials in extreme environments.", "source_section": "discussion"}, {"claim": "단일체 세라믹의 취성과 파국적 파괴를 극복하기 위해 연속섬유 강화 UHTC 복합재를 개발한다.", "source_quote": "Continuous fiber reinforced UHTCs are needed because UHTCs are brittle and exhibit ceramic like mechanical behavior.", "source_section": "discussion"}, {"claim": "전산 재료 기법(원자간 퍼텐셜, 파괴·수송 시뮬레이션)을 초고온과 더 큰 길이 척도로 확장한다.", "source_quote": "More robust simulations of fracture behavior and transport properties are also needed to understand mechanisms at length scales ranging from atoms to the mesoscale.", "source_section": "discussion"}, {"claim": "엔트로피 안정화와 같은 새로운 접근과 전산적 수단을 사용해 신규 UHTC를 탐색한다.", "source_quote": "the search for new UHTCs is likely to be driven by computational means and will likely require novel approaches such as exploring entropy-stabilization or other methods that have not yet been espoused.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["기존 구조재는 극초음속 비행·재돌입·로켓 추진의 극한 온도, 열유속, 반응성 플라즈마를 견딜 수 없어 UHTC 개발을 동기화한다.", "수십 년 UHTC 연구에도 합성·가공·치밀화·열기계 물성·산화 이해에 핵심 공백이 남아 있다.", "연구 중인 UHTC 계열은 본질적으로 1950-60년대 우주 경쟁기에 검토된 것과 동일하여 재료 집합이 유의미하게 확장되지 않았다."], "addressed_by_this_work": ["뷰포인트는 UHTC 수명주기(합성·가공·치밀화·물성·산화) 전반의 지식 상태를 종합하고 각 영역의 구체적 지속 과제를 프레이밍한다.", "공백을 메울 경로로서 네 부상 연구 방향(극한 환경 시험, 복합재, 전산 연구, 신소재)을 규명·조직한다.", "구조-물성 이해의 공백을 중심 장벽으로 명확히 하고, 이를 해결할 복합 환경 시험과 전산을 권고한다."], "remaining_unresolved": ["UHTC 치밀화·소결의 근본적 수송/속도론 메커니즘은 대체로 미보고로 남는다.", "진정으로 대표적인 복합 극한 환경 시험은 여전히 활용이 부족하고 종종 제한/기밀이다.", "진정한 신규 UHTC 화합물 발굴은 여전히 어려우며, 엔트로피 안정화 등 새 접근이 제안되었으나 아직 확립되지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

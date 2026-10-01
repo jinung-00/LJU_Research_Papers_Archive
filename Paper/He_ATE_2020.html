@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Transient model and its application to investigate the injection mode and periodical operation of transpiration cooling with liquid coolant phase change</title>
+    <meta name="keywords" content="transpiration cooling, liquid phase change, transient model, semi-mixed model, local thermal non-equilibrium, injection mode, periodical operation, coolant driving force, fluid-structure coupling">
+    <meta name="paper-authors" content="Fei He, Wenjie Dong, Jianhua Wang, Jianxing Zhou, Longsheng Tang">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 181, 2020, Art. 115956 · DOI: 10.1016/j.applthermaleng.2020.115956">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Transient model and its application to investigate the injection mode and periodical operation of transpiration cooling with liquid coolant phase change</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Fei He, Wenjie Dong, Jianhua Wang, Jianxing Zhou, Longsheng Tang</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 181, 2020, Art. 115956 · DOI: 10.1016/j.applthermaleng.2020.115956</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 액체 냉각제 상변화 증산냉각을 위한 <span class="term">국소 열적 비평형(LTNE)</span> 하 <span class="term">준혼합 모델(semi-mixed model, SMM)</span>의 <span class="term">과도(transient)</span> 형태를 개발하고, 세 가지 시간가변 열환경에서 동적 상변화와 유체-구조 연성 열전달을 연구한다. 두 냉각제 주입 제어 방식을 비교한다: <span class="term">압력 제어</span>는 부과 열유속이 비교적 낮고 상변화가 고온측에 머무를 때만 안정한 반면, <span class="term">질량유량 제어</span>는 외부 환경이 어떻게 변하든 절대적으로 안정하다. 압력 제어의 불안정성은 악성 양의 피드백으로 설명된다: 상변화 전면이 내부로 이동하고 증기 영역이 형성되면 훨씬 큰 증기 유동 저항이 냉각제를 덜 받아들여 벽온도를 높이고 증기 영역을 삭마 쪽으로 확장시킨다. 주기 운전에서는 벽온도와 냉각제 구동력이 부과 주기로 요동하며(온도 피크가 냉각제 유량 골짜기와 일치), 주기/진폭이 클수록 성능 저하, 삭마 위험, 냉각제 구동 비용이 커지나 주기 평균은 정상 기준과 같다. <span class="term">관련성</span>: 본 연구는 논문 LTNE-TPMM 프레임워크와 같은 계보(Shi &amp; Wang, Su, Dong)의 수치 LTNE 상변화 증산냉각 모델이며 비균일 공극률 배치를 최적화 경로로 명시하지만, 논문의 정상 2D 공극률 구배가 아니라 과도·1차원이다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">liquid phase change</span><span class="keyword-chip">transient model</span><span class="keyword-chip">semi-mixed model</span><span class="keyword-chip">local thermal non-equilibrium</span><span class="keyword-chip">injection mode</span><span class="keyword-chip">periodical operation</span><span class="keyword-chip">coolant driving force</span><span class="keyword-chip">fluid-structure coupling</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">증산냉각은 특히 잠열로 효율을 크게 높이는 액체 냉각제와 함께 극초음속 선단, 연소실, 로켓 인젝터에 널리 쓰인다. 기존 실험과 시뮬레이션은 거의 모두 정상 상태여서, 액체 상변화 증산냉각의 과도 거동과 동적 열환경 하 냉각제 주입 제어 방식의 신뢰성이 미탐구로 남았다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">모델링 배경은 모세관 다공매질의 이상혼합·분리상 모델과 그 LTNE 확장을 아우르며, Wang &amp; Beckermann의 TPMM, Shi &amp; Wang의 상변화 증산 모델, Dong &amp; Wang 및 Su 등의 정식을 거친다. 이들은 여기서 과도 형태로 채택되는 준혼합 모델을 더 정확·유연한 후속으로 확립한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">두께 L의 1차원 무한 다공판이 고온측에서 시간가변 열유속 q(t)로 가열되고 냉각측에서 액체 냉각제가 주입되며, 매트릭스는 액체·이상·증기 영역으로 나뉜다. LTNE 하 과도 SMM은 질량·운동량·에너지 보존과 이상 영역을 닫는 의사 비엔탈피, 구성 관계(모세관 압력, 상대 투과율, 계면 열전달)로 구성되고, TDMA/SIMPLE와 Picard 선형화를 쓴 명시적 유한차분으로 풀린다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">계단형(Case A)·선형(Case B) 열유속 하에서 압력 제어 주입은 저열유속에 고온측 상변화일 때만 정상 상태에 도달하고 증기 영역이 형성되어 냉각제 유동을 막는 순간 급격히 실패하는 반면, 질량유량 제어는 내내 안정하다. 주기 운전에서는 벽온도와 냉각제 구동력이 부과 진동과 동기로 요동하며 주기/진폭이 클수록 피크가 높고 저하가 심하다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">두 주입 방식의 안정성 대비는 압력 제어가 막지 못하는 증기 영역 유동 저항 피드백이 지배한다. 주기 운전은 장기적으로 불안정화하지 않으나(주기 평균=정상 기준), 온도 피크가 열피로·삭마 위험을, 압력 피크가 냉각제 구동 비용을 유발하므로 과도 예측과 질량유량 제어가 권장된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">LTNE 하 과도 준혼합 모델로 액체수 증산냉각과 두 냉각제 주입 제어 방식을 계단형·선형·주기 열조건에서 연구했다. 압력 제어는 조건부 안정, 질량유량 제어는 절대 안정이며, 주기 운전은 평균 안정하나 냉각 성능을 저하시키고 삭마 위험·냉각제 구동 비용을 높인다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 35</span></summary>
+            <ol class="ref-list"><li>C. Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media - I. Formulation, Int. J. Heat Mass Transf., 1993</li><li>J. X. Shi, J. H. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transp. Porous Media, 2011</li><li>W. J. Dong, J. H. Wang, A new model and its application to investigate transpiration cooling with liquid coolant phase change, Transp. Porous Media, 2018</li><li>H. Su, F. He, J. H. Wang, N. Wu, H. T. Han, M. Chu, Numerical investigation on the characteristics of coolant flow, heat absorption and phase change in transpiration cooling process, Int. J. Therm. Sci., 2019</li><li>C. Xin et al., Numerical investigation of vapor-liquid heat and mass transfer in porous media, Energy Convers. Manage., 2014</li><li>F. He, J. H. Wang, L. C. Xu et al., Modeling and simulation of transpiration cooling with phase change, Appl. Therm. Eng., 2013</li><li>N. Wu, J. H. Wang, F. He, L. Chen, B. C. Ai, Optimization transpiration cooling of nose cone with non-uniform permeability, Int. J. Heat Mass Transf., 2018</li><li>A. V. Foreest et al., Transpiration cooling using liquid water, J. Thermophys. Heat Transf., 2009</li><li>G. Huang et al., Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transf., 2017</li><li>W. J. Dong et al., Modelling and investigation on heat transfer deterioration during transpiration cooling with liquid coolant phase-change, Appl. Therm. Eng., 2018</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "증산냉각은 극초음속 선단/노즈, 연소실, 로켓 추력 인젝터의 극한 열부하 보호에 널리 연구된 효율적 열방출 방식이다."}, {"type": "bullet", "text": "냉각제가 다공 구조를 투과해 저장열을 흡수하고 보호막을 형성하며, 액체 냉각제는 상변화 잠열로 효율을 더 높인다. Foreest 등은 액체수가 1/5 냉각제 소비로 기체 질소 냉각과 동등함을 보였다."}, {"type": "bullet", "text": "액체 상변화 증산냉각은 실험(아크가열 초음속 풍동)과 이론(여러 공인 수학 모델·수정 정식)으로 연구되어 메커니즘, 냉각 효과, 열적 비평형, 구성 최적화를 탐구했다."}, {"type": "bullet", "text": "보고된 최적화 설계에는 냉각 챔버 추가, 막 구멍 선가공, 다공 매트릭스 벽두께 변화에 의한 최적 냉각제 배분, 비균일 공극률 배치 활용, 자가 펌핑/자가 적응 시스템이 포함된다."}, {"type": "bullet", "text": "그러나 기존 연구는 정상 상태 실험 또는 정상 상태 수치해여서, 적절한 수학 모델 부재로 액체 상변화 증산냉각의 과도 거동과 메커니즘이 거의 보고되지 않았다."}, {"type": "bullet", "text": "실제 서비스 환경은 동적이다: DLR은 SpaceLiner 노즈의 정현파 열유속 이력을 추정했고 아크젯 시험은 계단형 열유속 증가를 보여, 정상 상태 모델로는 정확히 예측할 수 없다."}, {"type": "bullet", "text": "신뢰성 있는 냉각제 공급에는 정확한 주입 제어가 필요하며 두 방식(질량유량 제어, 압력 제어)이 있는데, 후기 DLR 실험에서 관찰된 압력 제어 실패(억제 불가 국소 과열)가 설명되지 않았다."}, {"type": "bullet", "text": "본 논문은 액체수 증산냉각을 연구하고 계단형·선형·주기 시간가변 조건에서 두 주입 제어 방식의 타당성을 평가할 과도 수학 모델을 제안한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Wang &amp; Beckermann의 모세관 다공매질 액-기 유동·열전달 이상혼합 모델(TPMM)이 혼합 정식 기반을 제공한다."}, {"type": "bullet", "text": "Shi &amp; Wang은 액체 냉각제 상변화 증산냉각을 수치 연구하여 혼합 틀을 증산냉각에 초기 적용했다."}, {"type": "bullet", "text": "Dong &amp; Wang은 새 모델과 이후 열전달 저하 분석을 제안하여 액체 냉각제 상변화 증산냉각의 이상 기술을 정교화했다."}, {"type": "bullet", "text": "Su 등은 증산냉각 과정의 냉각제 유동·열흡수·상변화를 수치 조사했고, He 등은 다공매질 상변화 이상 유동의 열적 비평형 특성과 경계조건을 논의했다."}, {"type": "bullet", "text": "분리상 모델(SPM), 이상혼합 모델(TPMM), 최근 제안된 준혼합 모델(SMM)이 선행 연구에서 비교되어 SMM이 더 정확·유연함이 입증되었다."}, {"type": "bullet", "text": "Wu 등의 비균일 투과율 노즈콘과 각종 비균일 공극률 배치 같은 최적화 연구가 구조 맞춤을 동기화하며, 본 과도 연구가 맥락으로 참조한다."}]}, "method": {"content": [{"type": "bullet", "text": "물리 모델은 고온측 열유속 q(t)와 냉각측 액체 냉각제 질량유량 m_c(t) 주입을 받는 두께 L의 수평 무한 다공판이며, q나 m_c가 시간에 따라 변하면 내부 유동·열전달·상변화가 과도이다.", "figure_refs": [1]}, {"type": "bullet", "text": "매트릭스는 액체·혼합(이상)·증기 영역으로 분류되며, SMM이 SPM·TPMM보다 더 정확·유연함이 앞서 입증되어 LTNE 하 과도 SMM을 채택한다.", "figure_refs": [1]}, {"type": "bullet", "text": "액-증기 혼합의 의사 비엔탈피 H_f를 정의하여 포화도 s=1에서 H_f=H_l, 0&lt;s&lt;1에서 혼합, s=0에서 H_v가 되도록 하여 H_f가 모든 단상·이상 영역에서 유효하게 한다."}, {"type": "formula", "label": "Eq. (1) - 혼합의 의사 비엔탈피", "latex": "H_f = \\frac{s\\rho_l}{s\\rho_l + (1-s)\\rho_v}\\,H_l + \\frac{(1-s)\\rho_v}{s\\rho_l + (1-s)\\rho_v}\\,H_v", "description": "액체·이상·증기 영역에 걸쳐 연속인 포화도 가중 혼합 엔탈피 $H_f$. 준혼합 모델의 주 에너지 변수이다."}, {"type": "bullet", "text": "혼합 엔탈피를 푼 뒤, 유체 온도와 액체 포화도를 포화 액/증기 엔탈피로 구분된 조각별 대수 관계로 복원한다.", "figure_refs": []}, {"type": "formula", "label": "Eqs. (2)-(3) - 엔탈피로부터의 온도와 포화도", "latex": "T_f = \\begin{cases}(H_f-H_{l,sat})/c_{p,l}+T_{sat} & H_f \\le H_{l,sat}\\\\ T_{sat} & H_{l,sat}\\le H_f \\le H_{v,sat}\\\\ (H_f-H_{v,sat})/c_{p,v}+T_{sat} & H_{v,sat}\\le H_f\\end{cases};\\quad s=\\begin{cases}1 & H_f\\le H_{l,sat}\\\\ \\dfrac{\\rho_v(H_{v,sat}-H_f)}{\\rho_l(H_f-H_{l,sat})+\\rho_v(H_{v,sat}-H_f)} & H_{l,sat}\\le H_f\\le H_{v,sat}\\\\ 0 & H_{v,sat}\\le H_f\\end{cases}", "description": "혼합 엔탈피의 조각별 함수인 유체 온도 $T_f$와 액체 포화도 $s$. 이상 영역에서는 온도가 $T_{sat}$에 고정되고 $s$가 변한다."}, {"type": "bullet", "text": "운동량 식의 압력 p_i는 각 상의 실제 압력이며, 증기는 압축성 이상 기체로 다루고 이상 영역에서 포화 압력이 온도에 의존한다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (4) - 증기 포화 압력(Clausius-Clapeyron)", "latex": "p_v = p_0\\exp\\!\\left[\\frac{H_{lv}}{R_g}\\left(-\\frac{1}{T}+\\frac{1}{T_0}\\right)\\right]", "description": "잠열 $H_{lv}$와 기체상수 $R_g$를 갖는 증기의 Clausius-Clapeyron 포화 압력으로, 이상 영역 압력장을 닫는다."}, {"type": "bullet", "text": "지배 방정식은 상별 질량 보존(이상 영역의 계면 질량전달률 m' 포함), 각 상의 Darcy형 과도 운동량, 그리고 LTNE 하 계면 열원 q_sf로 결합된 유체·고체 에너지 식으로 구성된다.", "figure_refs": []}, {"type": "formula", "label": "Table 1 - LTNE 유체 및 고체 에너지 보존", "latex": "\\frac{\\partial}{\\partial t}\\{\\varepsilon[s\\rho_l+(1-s)\\rho_v]H_f\\} + \\nabla\\!\\cdot\\!\\{\\varepsilon u_v[s\\rho_l+(1-s)\\rho_v]H_f\\} + \\nabla\\!\\cdot\\![\\varepsilon(u_l-u_v)s\\rho_l H_l] = \\nabla\\!\\cdot\\!(k_{f,eff}\\nabla T_f) + q_{sf};\\quad \\frac{\\partial}{\\partial t}[(1-\\varepsilon)\\rho_s c_{p,s}T_s] = \\nabla\\!\\cdot\\!(k_{s,eff}\\nabla T_s) - q_{sf}", "description": "이상 유체 에너지 식과 고체 에너지 식. 계면 소스 $q_{sf}$가 국소 열적 비평형 하에서 상들을 연결하며, 논문이 쓰는 LTNE-TPMM 구조를 반영한다."}, {"type": "formula", "label": "Table 1 - 구성 관계(모세관 압력, 상대 투과율)", "latex": "p_c = p_v - p_l = \\left(\\frac{\\varepsilon}{K}\\right)^{1/2}\\sigma J(s),\\;\\; J(s)=1.417(1-s)-2.120(1-s)^2+1.263(1-s)^3;\\quad K_l=s^3,\\;K_v=(1-s)^3", "description": "Leverett형 모세관 압력과 액체·증기의 3차 상대 투과율 닫힘. 포화도가 상 이동도를 어떻게 설정하는지를 제어한다."}, {"type": "formula", "label": "Table 1 - 계면 열전달 및 이상 비등 소스", "latex": "h_{si} = \\frac{k_i}{d_p}\\left(2.0 + 1.1\\,Pr_i^{1/3}Re_p^{0.6}\\right),\\; i=l,v;\\quad q_{boil} = s\\,\\alpha\\,\\mu H_{lv}\\left[\\frac{g(\\rho_l-\\rho_v)}{\\sigma}\\right]^{1/2}\\left[\\frac{c_{pf}(T_s-T_{sat})}{0.006 H_{lv}}\\right]^{1/0.33}\\left(\\frac{1}{Pr_f}\\right)^{1.7/0.33}", "description": "유체-고체 열전달계수와 이상 영역에 쓰이는 Rohsenow형 풀비등 소스($q_{sf}=q_{boil}+(1-s)h_{sv}(T_s-T_f)$), 비표면적 $\\alpha=6(1-\\varepsilon)/d_p$."}, {"type": "bullet", "text": "경계조건은 냉각측에서 주입 질량유속과 에너지 균형을, 고온측에서 부과 열유속/압력을 설정한다. 기준 파라미터는 L=0.1 m, 다공도 0.35, k_s=13.4 W/mK, d_p=5e-4 m, T_c=300 K이며 기준으로 q=1.5e6 W/m2, m=0.3 kg/m2s이다.", "figure_refs": []}, {"type": "bullet", "text": "과도 SMM은 자작 유한차분 프로그램으로 푼다: 명시적 시간, 2차 상류 대류, 중심차분 확산, 소스 선형화 S=S_c+S_p T, 온도는 TDMA, 유동은 SIMPLE, 온도 의존 계수는 Picard 처리(수렴 1e-6; 공간/시간 스텝 영역/시간의 5e-4, 5e-5).", "figure_refs": []}]}, "results": {"content": [{"type": "bullet", "text": "Case A의 압력 제어에서 I-II 단계(q=0.5, 0.75e6 W/m2)에는 정상 상태에 도달하나, 열유속이 III 단계로 오르면 급격히 불안정해진다: 상변화 위치가 냉각제 입구로 점프하고 입구 냉각제 유량이 거의 0으로 떨어지며 벽온도가 급상승한다.", "figure_refs": [2]}, {"type": "bullet", "text": "저열유속에서는 상변화가 고온측 근처에 머물러 모세관력이 커지고 유동 저항이 줄어 냉각제가 더 유입되는(안정화 음의 피드백) 반면, 증기 영역이 형성·확장되면 큰 증기 유동 저항이 냉각제를 덜 받아 증기 영역을 두껍게 하는(악성 양의 피드백) 삭마로 향한다.", "figure_refs": [2]}, {"type": "bullet", "text": "Case B(연속 증가 열유속)에서는 정상 상태가 없으나, 압력 제어는 다시 상변화가 고온측에 있을 때만 안정하고 증기 영역이 형성되면 실패하여 압력 제어가 조건부 안정임을 확인한다.", "figure_refs": [2]}, {"type": "bullet", "text": "질량유량 제어(m=0.3 kg/m2s)에서는 Case A에서 벽온도·상변화 계면·냉각제 구동력이 빠르게 정상 상태에 도달하고 Case B에서 제어 가능하게 변하며, 두 경우 모두 열전달 저하가 없다.", "figure_refs": [3, 4]}, {"type": "bullet", "text": "따라서 질량유량 제어가 실제 공학과 이론/실험 연구에 권장되며, 이후 주기 운전 연구에 사용된다.", "figure_refs": []}, {"type": "bullet", "text": "주기적 냉각제 주입 변동(진폭 0.075 kg/m2s, 주기 200/300/400 s)에서 벽온도와 냉각제 구동력은 같은 주기로 반대 추세로 요동하며 온도 피크가 냉각제 유량 골짜기와 일치하고, 주기가 길수록 근피크 냉각제 구간이 길어 열 축적으로 피크가 높아진다.", "figure_refs": [5, 6]}, {"type": "bullet", "text": "주기적 열유속 변동(진폭 0.15-0.35e6 W/m2)에서 벽온도와 구동력은 열유속 주기·추세를 따르며 피크가 열유속 주기·진폭에 따라 증가하고, 열유속 변동이 벽온도 진폭에 냉각제 주입 변동보다 더 강하게 영향한다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "변동 주기가 증산냉각 응답시간보다 작아지면 시스템 성능이 무변동 경우에 근접하며, 주기 평균 벽온도와 구동력은 정상 기준값과 같다.", "figure_refs": [9]}]}, "discussion": {"content": [{"type": "bullet", "text": "압력 제어 불안정성은 양의 피드백 질식이다: 증기 영역 성장이 유동 저항을 올리고 입구 냉각제를 줄이며 벽온도를 높여 증기 영역을 더 확장시키는데, 질량유량 제어는 전달 냉각제를 고정해 이를 회피한다."}, {"type": "bullet", "text": "주기적 열유속·냉각제 주입 변동은 물리적으로 불연속 연소, 블레이드 회전, 궤적/고도 변화, 계량 펌프 불연속에서 비롯되어 주기 운전이 공학적으로 유의하다."}, {"type": "bullet", "text": "총 냉각제 소비와 열부하가 같을 때, 변동 주기·진폭이 클수록 냉각이 저하된다: 벽온도 피크와 열피로가 삭마/실패 위험을 높이고, 높은 피크 입구 압력이 냉각제 구동 비용을 올린다.", "figure_refs": [9]}, {"type": "bullet", "text": "주기 평균 벽온도와 구동력이 정상 기준과 같으므로, 변동 시스템은 순간 피크가 유해해도 장기 평균으로는 '안정'하다."}, {"type": "bullet", "text": "변동 주기가 증산냉각 응답시간보다 짧으면 이력(hysteresis)이 응답을 평활화하여 성능이 무변동 경우에 근접하며, 허용 변동 시간척도에 대한 설계 지침을 준다."}, {"type": "bullet", "text": "결과는 가변 열환경이 정상 상태 모델이 아닌 과도 해석·예측을 요구하며, 신뢰성 보장을 위해 질량유량 제어를 채택해야 함을 주장한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "압력 제어 기반 냉각제 주입은 부과 열유속이 비교적 낮고 상변화가 고온측에 있을 때만 타당·신뢰할 수 있으며, 질량유량 제어는 외부 열환경이 어떻게 변하든 절대적으로 안정하다."}, {"type": "bullet", "text": "질량유량 제어 사용 시, 냉각제 주입과 외부 열유속의 변동은 장기 안정성에 영향 없이 구조 온도와 냉각제 구동력의 변동을 일으킨다."}, {"type": "bullet", "text": "운전 조건 변동은 냉각 성능을 더 크게 저하시켜 증산냉각 시스템의 삭마 위험과 냉각제 구동 비용을 증가시킨다."}, {"type": "bullet", "text": "압력 제어 실패는 냉각제 유동을 질식시키는 악성 증기 영역 피드백으로 설명되며, 이는 과도 모델로만 드러난 메커니즘이다."}, {"type": "bullet", "text": "가변 열환경에는 과도 해석·예측을 써야 하며, 실제 공학 응용에는 질량유량 제어가 권장된다."}, {"type": "bullet", "text": "과도 준혼합 LTNE 모델이 증산냉각 설계의 동적 상변화·유체-구조 연성 해석 도구로 확립된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [], "future_works": [], "motivation_resolution": {"motivating_problems": ["기존 증산냉각 연구는 정상 상태 실험 또는 정상 상태 수치해를 썼으며, 적절한 수학 모델 부재로 액체 상변화 증산냉각의 과도 거동과 메커니즘 연구가 거의 없었다.", "압력 제어 주입 방식의 실패 원인(DLR 실험에서 국소 과열 관찰)이 규명되지 않았고, 복잡·가변 열환경에서 주입 방식이 신뢰성/안정성에 미치는 영향이 평가되지 않았다.", "실제 공학에서 서비스 열환경은 동적(예: 정현파 또는 계단형 열유속)이어서 정상 상태 모델로는 정확한 예측이 불가능하다."], "addressed_by_this_work": ["LTNE 하 과도 SMM을 정식화하고 유한차분으로 풀어, 계단형·선형·주기 열조건에서 동적 상변화 전개와 유체-구조 연성 열전달을 포착했다.", "두 주입 방식을 비교하여 압력 제어는 조건부 안정(저열유속+고온측 상변화)이고 질량유량 제어는 절대 안정임을 보였으며, 압력 제어 실패를 증기 영역 양의 피드백으로 설명했다.", "변동 열유속·냉각제 주입이 냉각 성능에 미치는 과도 효과를 정량화하여, 정상 모델이 드러낼 수 없는 주기/진폭 의존 성능 저하·삭마 위험·구동 비용 증가를 보였다."], "remaining_unresolved": ["모델이 1차원이어서 다차원 거동과 인용된 비균일 공극률 배치 최적화는 실제로 여기서 풀리지 않는다.", "변동 유발 성능 저하를 (특성화에 그치지 않고) 억제하는 수단은 개방되어 있다.", "비균일 열유속 하 정상 2D 공극률 구배 장(field) 해는 본 과도 1D 연구 범위 밖이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

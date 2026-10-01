@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Transpiration Cooling Tests of Porous CMC in Hypersonic Flow</title>
+    <meta name="keywords" content="transpiration cooling, porous CMC, hypersonic, arc jet, SpaceLiner, C/C-SiC, leading edge, water coolant, thermal protection system, ice formation">
+    <meta name="paper-authors" content="Thomas Reimer, Markus Kuhn, Ali Gulhan, Burkhard Esser, Martin Sippel, Arnold van Foreest">
+    <meta name="paper-journal" content="AIAA Paper 2011-2251, 17th AIAA International Space Planes and Hypersonic Systems and Technologies Conference, San Francisco, 11-14 April 2011 · DOI: 10.2514/6.2011-2251">
+    <meta name="paper-tier" content="3">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Transpiration Cooling Tests of Porous CMC in Hypersonic Flow</div>
+                <span class="tier-badge tier-3">Tier 3 — 미등록</span>
+            </div>
+            <div class="authors">Thomas Reimer, Markus Kuhn, Ali Gulhan, Burkhard Esser, Martin Sippel, Arnold van Foreest</div>
+            <div class="journal">AIAA Paper 2011-2251, 17th AIAA International Space Planes and Hypersonic Systems and Technologies Conference, San Francisco, 11-14 April 2011 · DOI: 10.2514/6.2011-2251</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 학술대회 논문은 DLR의 개념 우주비행기 <span class="term">SpaceLiner</span>에 대한 공력열 부하를 도출하고, 극초음속 유동에서 다공성 세라믹 복합재(CMC)의 <span class="term">증산냉각(transpiration cooling)</span> 초기 아크제트 시험을 보고한다. DKR 정체 가열 식을 사용해, 열유속의 노즈/앞전 반경 의존성이 공력 성능이 요구하는 작은 반경에서 부하를 10 MW/m^2 이상으로 몰아 수동 TPS 한계를 초과하여 능동 냉각을 동기화함을 보인다. C/C, C/C-SiC, 산화물 섬유 CMC에 대해 물·질소·아르곤 냉각제로 ~1-4 MW/m^2, 정체 압력 ~70 kPa에서 세 단계 스크리닝 프로그램(평판, 구형 팁 콘, 앞전)이 정의되었다. 물로 냉각한 C/C 시편으로 매우 예비적인 아크제트 시험 두 건을 수행했는데, 둘 다 낮은(~6 mbar) 풍동 압력에서 물 수송을 막는 <span class="term">얼음 형성</span>을 겪어 냉각 효과가 거의 관찰되지 않았고 시편 표면이 1100-1400 C에 도달했다. 질량유량 측정은 신뢰할 수 없었고(이후 ~0.1 g/s로 개선), 저자들은 스크리닝 캠페인을 진행하기 전에 시편/냉각제 예열 또는 어는점을 낮추기 위한 알코올 첨가로 얼음 문제를 해결해야 한다고 결론짓는다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">porous CMC</span><span class="keyword-chip">hypersonic</span><span class="keyword-chip">arc jet</span><span class="keyword-chip">SpaceLiner</span><span class="keyword-chip">C/C-SiC</span><span class="keyword-chip">leading edge</span><span class="keyword-chip">water coolant</span><span class="keyword-chip">thermal protection system</span><span class="keyword-chip">ice formation</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">지속 극초음속 비행은 노즈·앞전·엔진 흡입구에 큰 열 부하를 발생시키며, 열 부하가 곡률 반경에 의존하므로 공력이 요구하는 날카로운 반경이 부하를 수동 TPS 한계 위로 몬다. DKR 식을 쓰면 작은 반경에서 열유속이 10 MW/m^2 이상에 이르러, 셔틀급 TPS의 ~600 kW/m^2 / 1600 C 한계를 훨씬 넘는다. 지속 비행에 어블레이션이 바람직하지 않고 CMC/UHTC도 여전히 제한적이어서, 물을 주 냉각제로 하는 다공성 CMC의 능동 증산냉각이 제안된다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 DLR의 SpaceLiner 개념 연구와 다공성 CMC를 사용한 로켓 추력실 증산냉각 선행 개발에 기반한다. 또한 가스 냉각 CMC 인서트의 이전 아크제트 시험과 van Foreest의 액체 물 증산냉각 시험, 그리고 진보 TPS 개발(X-38 노즈캡, EXPERT, SHEFEX)과 UHTC 산화 연구를 활용한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">SpaceLiner가 기준 비행체이며, 그 스키핑 재진입 궤적으로 노즈 열유속·온도 이력을 계산하여 강한 반경 의존성(DKR로 10 mm 앞전에서 5000 C 초과)을 보인다. LBK 설비에서 세 단계 아크제트 스크리닝 프로그램 - 평판, 이어 구형 팁 콘, 이어 앞전 - 을 C/C, C/C-SiC, 산화물 섬유 CMC에 대해 물·질소·아르곤 냉각제로 정의했다. 내부 물 저장소를 가진 세라믹 튜브 위의 간단한 50 mm 평판 디스크 시편을 제작했다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">예비 시험은 구조·밀봉 약점을 드러냈다 - C/C 시편이 ~7 atm에서 층간 파괴되고 흑연 접착제 접합부가 누설 - 이에 RTV 실리콘 밀봉제로 전환했다. 물로 냉각한 C/C 시편의 아크제트 시험 두 건에서, 낮은(~6 mbar) 풍동 압력에 시편 주위에 얼음이 형성되어 물 수송을 막았고; 표면이 1100 C(1차, 10 s)와 1400 C(2차, 16 s)에 도달하며 사실상 냉각 효과가 없었고, 질량유량 측정은 신뢰할 수 없어 0.1 g/s 미만으로 추정되었다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">이 예비 시험의 지배적 장애는 매우 낮은 풍동 압력에서의 얼음 형성으로, 냉각제 수송을 막고 냉각 효과를 무효화했으며, 밀봉 실패·튜브로부터의 시편 배출·신뢰할 수 없는 질량유량 계측이 가중되었다. 이 문제들은 냉각 개념 자체가 아니라 새로운 시험 영역의 생소함에 기인하며, 스크리닝 캠페인 진행 전 절차적 수정을 가리킨다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고부하 극초음속 구조 요소를 위한 다공성 CMC 증산냉각에 관한 더 넓은 스크리닝 캠페인의 초기 시험 두 건을 C/C-SiC 튜브 위 C/C 시편으로 수행했다. 냉각제 공급이 주로 얼음 형성으로 예상대로 작동하지 않았고, 질량유량 측정이 신뢰할 수 없었으며(이후 개선), 시편 온도가 1100-1400 C에 도달하며 냉각이 거의 없었다. 저자들은 시편이나 냉각제 예열 또는 어는점을 낮추는 알코올 첨가로 얼음 문제를 해결할 것을 제안한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 11</span></summary>
+            <ol class="ref-list"><li>J. J. Bertin, Hypersonic Aerothermodynamics, AIAA, 1993</li><li>A. van Foreest, M. Sippel, A. Gulhan, B. Esser, B. A. C. Ambrosius, K. Sudmeijer, Transpiration Cooling Using Liquid Water, Journal of Thermophysics and Heat Transfer, Vol. 23, No. 4, 2009</li><li>H. Hald, A. Herbertz, M. Kuhn, M. Ortelt, Technological Aspects of Transpiration Cooled Composite Structures for Thrust Chamber Applications, 16th AIAA/DLR/DGLR Int. Space Planes and Hypersonic Systems and Technologies Conference, 2009</li><li>M. Sippel, A. van Foreest, Latest Progress in Research on the SpaceLiner High-Speed Passenger Transportation Concept, International Astronautical Congress, IAC-07-D2.7.07, 2007</li><li>A. Gulhan (Ed.), RESPACE - Key Technologies for Reusable Space Systems, Springer, 2008</li><li>B. Esser, A. Gulhan, M. Kuhn, Thermal Qualification of Transpiration Cooling for Atmospheric Entry, CEAS, Berlin, pp. 3205-3210</li><li>J. Marschall et al., Oxidation of ZrB2-SiC Ultrahigh-Temperature Ceramic Composites in Dissociated Air, Journal of Thermophysics and Heat Transfer, Vol. 23, No. 2, 2009</li><li>H. Weihs, H. Hald, T. Reimer, I. Fischer, Development of a CMC Nose Cap for X-38, IAF-01-I.3.01, 52nd International Astronautical Congress, 2001</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "임계 극초음속 요소(노즈, 날개/제어면 앞전, 엔진 흡입구 구조)는 공력 성능을 위해 작은 반경으로 설계되어, 열 부하를 기존 수동 TPS가 감당할 수 있는 수준 위로 몬다."}, {"type": "bullet", "text": "셔틀급 TPS는 복사 단열 조건에서 약 600 kW/m^2의 결과인 약 1600 C로 제한되나, 셔틀 노즈 반경은 구상 중인 극초음속 비행체 대비 크다."}, {"type": "bullet", "text": "DKR 정체 가열 식을 더 작은 곡률 반경에 적용하면 열유속이 빠르게 10 MW/m^2 이상에 이를 수 있다.", "figure_refs": [1]}, {"type": "formula", "label": "Eq. (1) - DKR 정체 열유속 식", "latex": "\\dot{q} = \\frac{a}{\\sqrt{R_N}}\\left(\\frac{\\rho_\\infty}{\\rho_{SL}}\\right)^{0.5}\\left(\\frac{U_\\infty}{U_{CO}}\\right)^{3.15}", "description": "노즈 반경 $R_N$에 대한 열유속으로, $\\rho_\\infty/\\rho_{SL}$은 고도-해면 밀도비, $U_\\infty$는 비행체 속도, $U_{CO}$는 원 궤도 속도, $a$는 상수; 열유속은 $R_N^{-1/2}$로 스케일된다."}, {"type": "bullet", "text": "어블레이션 TPS는 표면 어블레이션이 공력을 바꾸므로 지속 비행에 바람직하지 않으며; 진보된 CMC(DLR C/C-SiC, 1700-1800 C)와 UHTC(Zr/Hf/B 기반)도 여전히 온도·산화 열화 한계에 직면한다.", "figure_refs": []}, {"type": "bullet", "text": "로켓 추력실(20-50 MW/m^2)에서 성공한 다공성 CMC 능동 증산냉각을 극초음속 조건에 적응시키며, (로켓과 달리) 추력에 기여할 필요가 없고 이전 물 냉각 시험이 유망했으므로 물을 주 냉각제로 선택한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "로켓 추진용 증산냉각 세라믹 추력실이 초고 열 부하 환경(20-50 MW/m^2)에서 기술의 잠재력을 실증했으며 타당성 있는 데모 엔진을 보였다(Hald 등)."}, {"type": "bullet", "text": "이전 아크제트 시험은 가스 냉각(질소 및 기타 가스) 인서트를 가진 평판 CMC를 사용하여 가스 냉각제 경험 기반을 제공했다(Gulhan, RESPACE; Esser 등)."}, {"type": "bullet", "text": "van Foreest 등은 극초음속 유동 영역에서 액체 물 증산냉각이 유망함을 보여 여기서 물을 냉각제로 쓰는 동기를 주었다."}, {"type": "bullet", "text": "DLR C/C-SiC를 사용한 진보 CMC TPS 개발은 재사용(X-38)·단일비행(EXPRESS, EXPERT) 비행체와 facetted SHEFEX 접근을 위해 1700-1800 C를 목표했다."}, {"type": "bullet", "text": "Zirconia, Hafnium, Boron에 카바이드를 첨가한 UHTC는 높은 융점을 가지나 고온에서 산화 열화를 겪는다(Marschall 등)."}, {"type": "bullet", "text": "DKR 정체 가열 식(Bertin)이 SpaceLiner의 열 문제 규모 산정에 사용된 부하 추정을 제공한다."}]}, "method": {"content": [{"type": "bullet", "text": "SpaceLiner는 2단, 50인승 준궤도 개념(이륙 1150 t, 승객 단 60 m)으로 ~45 km로 급강하 후 반복 상승하는 스키핑 재진입을 하며; 그 궤적이 가열 환경을 설정한다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "노즈 열유속/온도 이력을 1 m 노즈 반경에 대해 복사 단열·방사율 0.85로 계산했고; 반경을 10 mm로 줄이면 예측 비냉각 온도가 5000 C 초과로 상승하여 능동 냉각의 필요성을 강조한다.", "figure_refs": [4, 5]}, {"type": "bullet", "text": "시험 프로그램(EU FAST20XX 프로젝트 내)은 점점 복잡해지는 세 캠페인 - 유동 수직 평판, 구형 팁 콘, 날개 앞전 - 으로 구성되며 캠페인마다 재료 목록이 좁혀진다."}, {"type": "bullet", "text": "캠페인 1은 C/C, C/C-SiC, 산화물 섬유 CMC를 물·질소·아르곤 냉각제로 기준 ~1 MW/m^2 및 고부하 ~4 MW/m^2 냉벽 열유속, 정체 총압 ~70 kPa에서 스크리닝한다.", "figure_refs": [6]}, {"type": "bullet", "text": "시편은 수직·+/-45·평행 섬유 배향(투과율이 이방성)의 0/90 직조를 사용하며; C/C-SiC는 C/C의 실리콘 용융 침투로 제작하고 이후 자유 실리콘을 뽑아내어 다공도와 투과율을 높인다.", "figure_refs": [7]}, {"type": "bullet", "text": "아크제트 장치(LBK 쾰른)는 세라믹 튜브와 금속 어댑터 위에 유동 수직으로 놓인 50 mm 평판 디스크 시편을 사용하며, 시험 중 물로 채워지는 내부 저장소를 형성한다.", "figure_refs": [8, 9]}]}, "results": {"content": [{"type": "bullet", "text": "예비 시험에서 알루미늄 실린더에 접착된 C/C 시편이 약 7 atm에서 층간 파괴(상부 날아감)되었으나 접착 접합은 견뎠고; 밀봉 시험은 튜브 접합부에서 누설하여 에폭시 임시 수리 후 약 1 atm까지 0-0.5 g/s 물 흐름으로 견뎠다."}, {"type": "bullet", "text": "원래 예정된 흑연 접착제를 밀봉 성능 향상을 위해 상온 가황 고온 실리콘으로 교체했다."}, {"type": "bullet", "text": "풍동 배기 중 시편이 ~6 mbar에서 0 C 미만으로 냉각되었고(삽입 전 약 -2 C), 시편 둘레에 얼음이 형성되어 물 수송과 의도된 냉각을 막을 수 있다.", "figure_refs": [11, 12]}, {"type": "bullet", "text": "명목상 동일한 아크제트 조건에도 표면 온도가 1차 시험(~10 s)에 1100 C, 2차(~16 s)에 1400 C로 상승했고 냉각 효과가 거의 없었으며; 차이의 원인은 아직 불분명하다.", "figure_refs": [13]}, {"type": "bullet", "text": "저장소 온도가 58 C(1차)와 100 C(2차)에 도달했고, 2차 시험에서 발생한 증기와 상승 압력이 시편을 튜브 밖으로 밀어냈다.", "figure_refs": [14]}, {"type": "bullet", "text": "냉각제 질량유량(코리올리 유량계)은 불리한 유량계 위치로 큰 산포와 함께 신뢰할 수 없었고; 장치 변경 후 이후 시험에서 일관된 ~0.1 g/s를 읽어, 첫 시험들이 0.1 g/s 미만으로 운전되었음을 - 냉각이 거의 없던 것과 일치하게 - 시사한다."}]}, "discussion": {"content": [{"type": "bullet", "text": "~6 mbar에서 시편에 형성된 얼음이 플라즈마 제트 삽입 후에도 지속되어 물 수송을 막았고, 냉각 효과가 발달하지 못한 - 두 시험이 냉각을 거의 보이지 않은 핵심 이유이다."}, {"type": "bullet", "text": "높은 주공급 압력(7 bar)과 이후 증기 발생이 시편을 두 번 배출/파괴하여, 냉각제 공급을 압력을 제한하는 ~5 m 정수압 저장소로 변경했다."}, {"type": "bullet", "text": "1100-1400 C 표면 온도는 기대를 크게 초과하여, 공급된 냉각제 질량유량(0.1 g/s 미만)이 시편을 냉각하기에 너무 작았음을 나타낸다."}, {"type": "bullet", "text": "니들 밸브 뒤 저압측 질량유량 계측이 신뢰할 수 없는 값을 주었는데, 이후 장치에서 개선된 계측 문제이다."}, {"type": "bullet", "text": "Tier-3 예비 학술대회 보고로서 이 결과는 미검증이며, 냉각 성능을 확립하기보다 새로운 시험 프로그램의 실무 어려움을 기록하기 위해 제시된다."}, {"type": "bullet", "text": "매우 작은 반경에 대한 DKR 기반 부하 예측은 불확실하다고 인정되나, 어블레이션이 옵션이 아닌 경우 능동 냉각의 필요성을 여전히 명확히 동기화한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "큰 투과율과 기존 가스 냉각제 경험 기반 때문에 선택된 C/C 시편을 C/C-SiC 튜브에 장착하여 매우 예비적인 아크제트 시험 두 건을 수행했다."}, {"type": "bullet", "text": "냉각제 공급이 예상대로 작동하지 않았는데, 아마도 낮은 풍동 압력에서의 (예상된) 얼음 형성 때문이다."}, {"type": "bullet", "text": "냉각제 질량유량 측정이 첫 시험들에서 신뢰할 수 없었으나 이후 시험에서는 이미 약 0.1 g/s로 개선되었다."}, {"type": "bullet", "text": "시편 표면 온도 1100-1400 C가 기대보다 훨씬 높아, 사실상 냉각 효과가 달성되지 않았음을 나타낸다."}, {"type": "bullet", "text": "저자들은 캠페인을 계속하기 전에 시편이나 냉각제를 예열하거나 냉각제에 알코올을 첨가해 어는점을 낮춰 얼음 문제를 해결할 것을 제안한다."}, {"type": "bullet", "text": "결과는 명시적으로 예비적이며, 냉각 성능 실증이 아니라 새로운 시험 영역 진입의 실무 어려움을 부각한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "시편 제조 및 준비 어려움으로 캠페인이 연기되어 매우 예비적인 시험 두 건만 제시할 수 있었다.", "source_quote": "The campaign had to be postponed due to the usual reasons with sample manufacturing and preparations, so that only very preliminary results can be presented that highlight the troubles that are always coming up when new testing ground is entered.", "source_section": "conclusion"}, {"claim": "냉각제 공급이 예상대로 작동하지 않았는데, 아마도 예상된 얼음 형성 때문이어서 냉각 효과가 거의 달성되지 않았다.", "source_quote": "Among the issues that need to be resolved was that the coolant supply did not work as aniticipated. That was probably due to the ice formation issue which was expected in some way.", "source_section": "conclusion"}, {"claim": "저압측 니들 밸브 뒤의 불리한 질량유량계 위치로 인해 첫 시험들의 냉각제 질량유량 측정이 신뢰할 수 없었다.", "source_quote": "it was found that the mass flow readings for these initial tests were unreliable due to an unfavourable position of the mass flow meter after the needle valve on the low-pressure side .", "source_section": "results"}, {"claim": "매우 작은 반경(10 mm 앞전에서 5000 C 초과)에 대한 DKR 온도 예측은 불확실하다.", "source_quote": "This may not be fully correct, since the prediction for such small radii is uncertain, but it clearly shows the need to implement an actively cooled design if ablation is no option.", "source_section": "introduction"}], "future_works": [{"claim": "시편이나 냉각제를 예열하거나 냉각제에 알코올을 첨가해 어는점을 낮춰 얼음 형성 문제를 해결한다.", "source_quote": "If the ice issue can not be resolved by a suitable procedure (like pre-heating the sample or the coolant) is to add alcohol to the coolant to lower its freezing point.", "source_section": "conclusion"}, {"claim": "구형 팁 콘, 이어서 날개 앞전 시편을 사용해 남은 스크리닝 캠페인을 진행하며, 재료 목록을 최적 후보로 축소한다.", "source_quote": "In the second part of the test program which follows, the configuration will be changed into a cone with spherical tip.", "source_section": "method"}, {"claim": "최종 앞전 시편을 첫 두 캠페인의 최우수 재료로 제작하고 냉각제 질량유량·압력·받음각·후퇴각에 대한 냉각 특성을 특성화한다.", "source_quote": "The sample will be manufactured from one material that came out as the best performing candidate from the first two campaigns.", "source_section": "method"}], "motivation_resolution": {"motivating_problems": ["공력 성능이 날카로운 노즈와 앞전을 요구하지만 열 부하는 곡률 반경에 의존하여 수동 TPS 한계를 초과하며 - 작은 반경에서 10 MW/m^2 이상에 이른다.", "표면 어블레이션이 공력을 바꾸므로 지속 극초음속 비행에 어블레이션 TPS는 바람직하지 않고, 진보된 CMC/UHTC도 여전히 온도·산화 한계에 직면한다.", "로켓 추력실에서 입증된 다공성 CMC 증산냉각을 높은 열 부하와 높은 동압을 가진 극초음속 정체 유동 조건에 적응시켜야 한다."], "addressed_by_this_work": ["SpaceLiner 공력열 부하를 도출하고, DKR 방법으로 열유속과 표면 온도가 노즈/앞전 반경에 강하게 의존함을 정량화했다.", "물·질소·아르곤 냉각제로 CMC 증산냉각을 위한 세 단계 아크제트 시험 프로그램과 간단·저비용 정체 시험 장치를 정의했다.", "C/C 시편과 물로 초기 아크제트 시험 두 건을 수행하여 절차를 확립하고 핵심 실무 장애를 드러냈다."], "remaining_unresolved": ["냉각제 공급이 작동하지 않았고 냉각 효과가 거의 달성되지 않았는데, 주로 낮은 풍동 압력에서의 얼음 형성이 물 수송을 막았기 때문이다.", "첫 시험들에서 신뢰할 수 있는 냉각제 질량유량 측정이 이루어지지 못했다(이후 약 0.1 g/s로만 개선).", "시편 표면 온도 1100-1400 C가 기대를 크게 초과했고, 그 외 동일한 두 시험 간 차이의 원인이 불분명하다.", "전체 재료 스크리닝과 콘·앞전 캠페인이 아직 수행되지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

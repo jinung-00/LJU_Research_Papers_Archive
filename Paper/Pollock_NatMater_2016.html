@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Alloy design for aircraft engines</title>
+    <meta name="keywords" content="aircraft engines, nickel-based superalloys, single-crystal turbine blades, cobalt-based alloys, titanium alloys, integrated computational materials engineering, additive manufacturing, density functional theory, high-temperature materials, turbine">
+    <meta name="paper-authors" content="Tresa M. Pollock">
+    <meta name="paper-journal" content="Nature Materials (Commentary), Vol. 15, August 2016, pp. 809-815 · DOI: 10.1038/nmat4709">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Alloy design for aircraft engines</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Tresa M. Pollock</div>
+            <div class="journal">Nature Materials (Commentary), Vol. 15, August 2016, pp. 809-815 · DOI: 10.1038/nmat4709</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 <span class="term">Commentary</span>는 항공기 엔진용 금속재료가 성숙한 것으로 여겨지지만, 부상하는 전산·실험·공정 혁신이 새로운 금속재료 발굴과 배치의 범위를 넓히고 있다고 주장한다. 제트 엔진의 현 재료 지도 - <span class="term">단결정 니켈기 초합금 터빈 블레이드</span>, 다결정 Ni기 디스크, 팬/압축기의 티타늄 합금, 연소기의 Ni/Co기 합금 - 와 효율을 위해 터빈 입구 온도를 높이려는 지속적 구동력을 개관한다. 새로운 기회는 전산 유도 <span class="term">Co기 단결정 합금(Co-Al-W, Co-Al-Nb-Mo)</span> 발굴, 재료 데이터베이스와 밀도범함수이론(DFT) 계산의 역할, 첨단 3D 토모그래피/특성화, 부상하는 고온계(Nb-Si, Mo-Si-B, CMC)로 예시된다. 저자는 <span class="term">적층 제조</span>와 ICME를 가속 요인으로 강조하면서, 소성 시뮬레이션과 AM 인증을 남은 주요 과제로 지목한다. 전망은 다층·다재료 설계와 공정 혁신이 추진 시스템을 계속 발전시킬 것으로 본다. (주의: 이 Commentary에는 번호 매긴 수식이 없으며, 물성값은 점 데이터로 인용된다.)</div>
+            <div class="keywords"><span class="keyword-chip">aircraft engines</span><span class="keyword-chip">nickel-based superalloys</span><span class="keyword-chip">single-crystal turbine blades</span><span class="keyword-chip">cobalt-based alloys</span><span class="keyword-chip">titanium alloys</span><span class="keyword-chip">integrated computational materials engineering</span><span class="keyword-chip">additive manufacturing</span><span class="keyword-chip">density functional theory</span><span class="keyword-chip">high-temperature materials</span><span class="keyword-chip">turbine</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">제트 엔진은 가장 기술적으로 복잡한 플랫폼 중 하나이며 재료 혁신으로 가능해졌다. 늘어나는 항공 여행과 예측되는 항공기 생산, 안전·연비·저배출 우선순위가 결합되어, 빠르고 높은 신뢰도로 개발 가능한 더 높은 융점·강도, 더 낮은 밀도, 개선된 내구성의 신재료를 요구한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">금속재료는 강도·인성·열기계 순환 저항·표면 안정성의 독특한 조합 덕분에 엔진 중량의 85-95%를 차지한다. 엔진의 열역학 사이클은 팬(Ti 합금, PMC)부터 압축기(Ti), 연소기(Ni/Co 시트 합금), 고압 터빈(단결정 Ni기 초합금)까지 구역별로 상이한 재료군을 지시한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 전산과 첨단 특성화를 가속 합금 설계의 가능화 방법으로 프레이밍한다. 재료 데이터베이스, Calphad/DFT 계산, 다물리 시뮬레이션이 3D 토모그래피(원자 탐침, TriBeam, 연속 절편)와 in situ 디지털 이미지 상관과 결합되어, 대규모 실험을 줄이며 물성 예측과 발굴을 가능케 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">전산 유도 탐색이 새로운 Co기 L1_2 금속간계를 발굴했고, DFT가 이들을 강화하는 첨가(및 Re가 그렇지 않음)를 규명했다. In situ 변형 매핑은 미세조직 특징을 따른 강한 국소화를 드러내며, 적층 제조는 결함·구조·파괴인성의 큰 빌드 방향 변동을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Ni 단결정(용융 개시 온도의 ~90%인 ~1,100 C까지 허용)을 넘어, Co기 합금, Nb-Si 및 Mo-Si-B계, CMC 등 더 높은 온도의 기판 재료가 필요하며, 각각 공정·물성 균형 과제를 안는다. 적층 제조와 하이브리드 금속-복합 구조는 형상·중량 이점을 주나 이방성과 결함 우려를 도입한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">금속재료는 특히 안전 임계 회전 터빈·압축기 부품에서 항공기 엔진의 주요 구성으로 남을 것이다. 부상하는 발굴·설계·특성화·물성 예측 도구가 개발을 가속하고, 가혹한 터빈 환경은 다층·다재료 설계와 단결정 성장·적층 제조 같은 공정 혁신을 점점 더 촉진할 것이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 37</span></summary>
+            <ol class="ref-list"><li>R. C. Reed, The Superalloys, Cambridge Univ. Press, 2006</li><li>T. M. Pollock, S. Tin, J. Propul. Power 22 (2006) 361-374</li><li>A. Suzuki, H. Inui, T. M. Pollock, Annu. Rev. Mater. Res. 45 (2015) 345-368</li><li>J. Sato et al., Science 312 (2006) 90-91</li><li>S. K. Makineni, B. Nithin, K. Chattopadhyay, Acta Mater. 85 (2015) 85-94</li><li>R. E. Schafrik, Metall. Mater. Trans. A 47 (2016) 2539-2549</li><li>B. P. Bewlay, M. R. Jackson, P. R. Subramanian, J.-C. Zhao, Metall. Mater. Trans. A 34 (2003) 2043-2052</li><li>J. H. Perepezko, Ann. Rev. Mater. Res. 45 (2015) 519-542</li><li>J. C. Stinville et al., Exp. Mech. 56 (2016) 197-216</li><li>J. J. Lewandowski, M. Seifi, Annu. Rev. Mater. Res. 46 (2016) 151-186</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "제트 엔진은 가장 기술적으로 복잡한 엔지니어링 플랫폼 중 하나로, 태동부터 재료 혁신으로 가능해졌다."}, {"type": "bullet", "text": "상업 항공 여객 수요는 1980년 이래 ~500% 증가해 2015년 35억 명 이상이 수송되었고, 향후 20년간 38,000대 이상의 신규 항공기가 예측된다."}, {"type": "bullet", "text": "안전과 신뢰성, 연비, 저배출이 미래 추진의 우선순위이며, 더 짧은 엔지니어링 리드타임도 함께 요구된다."}, {"type": "bullet", "text": "이 요구는 빠르고 높은 신뢰도로 개발 가능한 더 높은 융점·강도, 더 낮은 밀도, 개선된 내구성의 신재료를 동기화한다."}, {"type": "bullet", "text": "효율·성능을 위해 터빈 입구 온도를 높이려는 구동력이 늘 존재하므로, 고압 터빈용 고온 재료·코팅이 주요 연구 초점이다."}, {"type": "bullet", "text": "신재료는 상당한 시스템 이익을 주거나 새로운 엔진 아키텍처를 가능케 할 때만 위험을 감수할 가치가 있다."}]}, "related_works": {"content": [{"type": "bullet", "text": "현 상업 항공기 엔진은 2,000-8,500 kg이며, 금속재료가 중량의 85-95%를 차지한다."}, {"type": "bullet", "text": "팬에는 저밀도·고인성 재료(티타늄 합금, 고분자기 복합재)가 우선되며, 외부 정적 구조에는 일부 알루미늄이 쓰인다."}, {"type": "bullet", "text": "압축기에서 기류 온도는 ~700 C까지 오르고 이 구역은 주로 티타늄 합금 블레이드·디스크이며, 연소기에는 고온 Ni·Co기 시트 합금이 쓰인다."}, {"type": "bullet", "text": "1,400-1,500 C로 고압 터빈에 진입하며 회전 터빈 블레이드는 가장 가혹한 응력/온도 조합을 겪고, 박벽 내부 냉각을 갖춘 단결정 니켈기 초합금이다.", "figure_refs": [1]}, {"type": "bullet", "text": "블레이드는 산화저항 금속간 본드코트와 다공성 저전도 이트리아 안정화 지르코니아 열차폐 상부층으로 코팅되고, 다결정 Ni기 디스크에 부착된다."}, {"type": "bullet", "text": "단결정 공정(Fig. 1a-c)은 농축 Ni 고용체 기지 내 L1_2 Ni3Al 금속간상을 실험적으로 조정해, 더 높은 온도 능력의 연속 세대 Ni기 단결정 합금을 가능케 했다.", "figure_refs": [1]}, {"type": "bullet", "text": "운용 합금 Rene N6와 더 높은 능력의 TMS-238은 8-10종의 주요 합금 원소를 함유하며, 강력한 내화 강화제(Re, W, Ru)가 최대 20-25 wt%를 차지한다.", "figure_refs": [1]}]}, "method": {"content": [{"type": "bullet", "text": "풍부한 실험 데이터베이스, 전산 열역학/동역학(Calphad) 데이터베이스, 제일원리 기반 데이터베이스(예: Materials Project, ~65,000종)의 수렴이 신규 구조재 개발의 시간·비용을 줄이고 있다."}, {"type": "bullet", "text": "DFT 계산은 금속간 석출물의 안정성·부피분율을 극대화하고 고온 강도를 위한 결함 에너지를 조정하는 주요 합금 첨가를 선택한다.", "figure_refs": [2]}, {"type": "bullet", "text": "이러한 전산 도구의 광범위한 가용성은 대부분의 금속계 초기 탐색 시간을 3-5배 단축하는 것으로 추정된다."}, {"type": "bullet", "text": "확장되는 전산 능력은 나노/마이크로/메조 규모의 수송·구조·결함·물성(확산, 응고, 열간 가공, 초소성 성형) 다물리 시뮬레이션을 가능케 하나, 소성은 주요 과제로 남는다."}, {"type": "bullet", "text": "첨단 3D 토모그래피(원자 탐침, 집속 이온빔, 싱크로트론 X선, 로봇·펨토초 레이저 연속 절편)는 열/기계/유체 계산에 직접 메싱 가능한 대규모 3D 데이터셋을 가능케 한다.", "figure_refs": [3]}, {"type": "bullet", "text": "나노 규모 마커를 쓰는 새로운 디지털 이미지 상관은 단조·순환 하중 중 국소 변형과 미세조직 의존성의 in situ 관찰을 가능케 한다.", "figure_refs": [4]}, {"type": "bullet", "text": "이러한 노력은 통합 전산 재료(과학)공학(ICME/ICMSE)으로 느슨히 분류되며, 안전 임계 물성 예측을 위한 견고한 균질화와 불확실성 정량화가 핵심 요소이다."}]}, "results": {"content": [{"type": "bullet", "text": "삼원 Co-Al-W와 사원 Co-Al-Nb-Mo 입방 L1_2 금속간화합물이 각각 2006년(Calphad 평가 중)과 2015년에 발견되어, Ni기보다 잠재적으로 높은 온도 능력의 새로운 고온 구조재 부류를 출범시켰다.", "figure_refs": [2]}, {"type": "bullet", "text": "Co-Al-W계에서 DFT 계산은 Co3(Al,W) 석출물의 안정성·부피분율을 극대화하고 결함 에너지를 조정하는 첨가를 선택하며, (Ni기와 달리) 레늄이 유의한 강화를 주지 않음을 흥미롭게 보이고, Ta·Ti가 지금까지 관측된 최고 강화를 준다.", "figure_refs": [2]}, {"type": "bullet", "text": "in situ 변형 맵은 Ni기 다결정에서 (~1% 거시 변형 중) 변형이 쌍정 경계를 따라 강하게 국소화되며, 슬립 밴드가 결정립계에 부딪히는 곳에 집중됨을 보인다.", "figure_refs": [4]}, {"type": "bullet", "text": "거시 항복점 이하의 Ti-6Al-4V에서 국소 변형 과정은 결정립 조직에 강하게 영향받고 변형이 매우 불균일하다.", "figure_refs": [4]}, {"type": "bullet", "text": "이러한 정보는 구조를 바꾸고 더 유리한 소성 변형 모드를 유도하는 대체 재료 공정 경로를 동기화한다."}, {"type": "bullet", "text": "적층 제조 Ti-6Al-4V에서 파괴인성, 결정립 구조/조직, 결함 함량이 빌드 높이에 따라 크게 변해 AM 구조의 강한 이방성을 예시한다.", "figure_refs": [5]}]}, "discussion": {"content": [{"type": "bullet", "text": "Ni기 단결정은 운용 시 ~1,100 C(핫스팟 ~1,200 C)까지 허용되어 용융 개시 온도의 ~90%에 근접하며, 새 세라믹 열차폐 코팅과 본드코트가 추가 기류 온도 상승을 가능케 한다."}, {"type": "bullet", "text": "새로운 Co기 재료는 Ni기 대비 100-150 C 이점을 잠재적으로 제공하며, 기존 공급자 인프라라는 이점이 더해진다."}, {"type": "bullet", "text": "Nb기 계는 비교적 낮은 밀도(순수 Nb 8.56 g/cm3)와 in situ 복합재로 관심을 끌지만, 상이한 공정 경로에서 산화와 인성의 균형 달성이 과제로 남는다."}, {"type": "bullet", "text": "Mo-Si-B 삼원 다상 합금은 몰리브덴계 중 가장 유망하며, 붕규산 보호층과 2세대 Ni 단결정을 능가하는 고온 크리프를 가지며, 편석을 줄이는 분말 공정이 돕는다."}, {"type": "bullet", "text": "탄소섬유 에폭시 복합재와 (Ti 또는 새 Al-Li 합금을 쓴) 하이브리드 금속-복합 구조는 이물질 충격을 견디면서 팬 블레이드 중량을 줄인다."}, {"type": "bullet", "text": "적층 제조(분말상, 분말공급, 와이어공급)는 기하학적으로 복잡한 근-정형 부품(예: GE LEAP 연료 노즐 25% 경량화, 18→1 부품)을 가능케 하나, 강한 이방성과 불완전한 결함 이해가 초기 응용을 비회전 구조로 제한한다.", "figure_refs": [5]}, {"type": "bullet", "text": "AM 부품의 건전성 입증과 물성 예측을 요구 신뢰도로 달성하는 것은 주요 과제로 남아, 대규모 센서 데이터와 비파괴 평가의 진전을 요한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "금속재료는 기계·열물리 물성의 독특한 조합 덕분에 항공기 엔진과 관련 추진 시스템의 주요 구성으로 남을 것이다."}, {"type": "bullet", "text": "특히 디스크·블레이드 같은 안전 임계 회전 터빈·압축기 부품에서 지배적으로 남을 것이다."}, {"type": "bullet", "text": "발굴·설계·특성화·물성 예측의 부상 도구가 신규 금속·금속간계의 개발 과정을 크게 향상·가속할 것이다."}, {"type": "bullet", "text": "가혹한 터빈 환경은 기능 향상을 위한 다층·다재료 설계 개발을 점점 더 촉진할 것이다."}, {"type": "bullet", "text": "공정 혁신 - 터빈 블레이드용 초기 단결정 성장과 최근 적층 제조 활동으로 예시되는 - 이 이 플랫폼에 계속 긍정적 영향을 줄 것이다."}, {"type": "bullet", "text": "새로운 Co기 단결정 합금으로 예시되는 전산 유도 발굴은, 확장되는 데이터베이스·DFT·특성화 도구가 새로운 고온 구조재의 배치를 가속함을 보여준다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "전위 동역학 모델이 특히 다상 재료에서 3D 벌크 소성 변형을 아직 예측하지 못하므로 소성 시뮬레이션은 주요 과제로 남는다.", "source_quote": "However, plasticity remains a major challenge, as simulations of dislocation dynamics are still limited in their ability to predict 3D bulk plastic deformation phenomena, particularly in multiphase materials.", "source_section": "method"}, {"claim": "유한요소 해석에 구현되는 구성 모델에서 복잡한 변형 패턴을 포착하는 것은 주요 과제로 남는다.", "source_quote": "Capturing the details of these complex deformation patterns in constitutive models that can be embodied in finite element analyses remains a major challenge.", "source_section": "results"}, {"claim": "적층 제조 금속 부품의 건전성 입증과 물성 예측을 요구 신뢰도로 달성하는 것은 주요 과제로 남아, 초기 AM 응용은 비회전 부품에 한정된다.", "source_quote": "Major challenges remain in demonstrating the integrity and predicting the properties of metallic components manufactured by these additive processes to the degree of confidence required for operation in the extreme environments of the aircraft engine.", "source_section": "discussion"}], "future_works": [{"claim": "고차 조성 공간의 더 체계적인 탐색이 전산 도구로 탐구할 유망한 재료 기회를 더 많이 드러낼 것으로 기대된다.", "source_quote": "More systematic mapping of higher-order compositional spaces is likely to reveal many more promising materials opportunities that can be explored with this expanding set of computational tools.", "source_section": "results"}, {"claim": "현 본드코트의 불충분한 고온 강도를 극복하기 위해 고강도 신규 본드코트 조성이 개발 중이다.", "source_quote": "Currently these bond coatings suffer from insufficient high-temperature strength; new higher-strength bond coat compositions are currently under development.", "source_section": "discussion"}, {"claim": "가혹한 터빈 환경은 기능 향상을 위한 다층·다재료 설계 개발을 점점 더 촉진할 것이다.", "source_quote": "The severe environment of the turbine engine will increasingly motivate the development of multilayered, multimaterial designs for increased functionality.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["미래 추진은 더 높은 융점·강도, 더 낮은 밀도, 개선된 내구성을 빠르고 높은 신뢰도로 개발하길 요구하나, 기존 재료와 느린 개발 주기가 이를 충족하지 못한다.", "실질적으로 다른 물성을 지닌 단계적 변화 재료는 역사적으로 상용 엔진에 반영되기까지 수십 년 개발이 필요하다.", "Ni기 단결정 내 핵심 내화 원소(Re, Ru, Ta, W)의 공급 위험·희소성·가격이 우려 사항이다."], "addressed_by_this_work": ["부상하는 재료 데이터베이스, 전산 열역학(Calphad), DFT가 신속한 데이터 기반 합금 설계를 가능케 해 대부분의 금속계 초기 탐색 시간을 3-5배 단축하는 것으로 추정된다.", "전산 유도 신규 Co기 단결정 합금(Co-Al-W, Co-Al-Nb-Mo) 발굴은 더 높은 온도 능력과 기존 공급자 인프라를 보이며, DFT가 이 계에서 Re가 강화에 유익하지 않음을 예측한다.", "Re 공급 문제는 최소 실험과 2년 만의 전면 인증으로 최초의 신속 데이터 기반 저-Re/무-Re 단결정 합금 개발을 촉발했다."], "remaining_unresolved": ["다상 재료의 소성과 3D 벌크 변형은 아직 신뢰성 있게 시뮬레이션되지 않아 예측 설계를 제한한다.", "적층 제조 부품의 건전성과 물성 예측은 안전 임계 회전 부품에 대해 아직 불충분하다.", "고온계(Nb-Si, Mo-Si-B, CMC)는 엔진 채택 전 공정·물성 균형 과제(예: 산화+인성)를 여전히 안고 있다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

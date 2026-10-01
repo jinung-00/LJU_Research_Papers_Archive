@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Experimental investigation of transpiration cooling with phase change for sintered porous plates</title>
+    <meta name="keywords" content="transpiration cooling, phase change, sintered bronze porous plate, water coolant, vapor-blockage effect, coolant injection ratio, particle diameter, temperature oscillation, cooling delay">
+    <meta name="paper-authors" content="Gan Huang, Yinhai Zhu, Zhiyuan Liao, Xiao-Long Ouyang, Pei-Xue Jiang">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 114, 2017, pp. 1201-1213 · DOI: 10.1016/j.ijheatmasstransfer.2017.05.114">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Experimental investigation of transpiration cooling with phase change for sintered porous plates</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Gan Huang, Yinhai Zhu, Zhiyuan Liao, Xiao-Long Ouyang, Pei-Xue Jiang</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 114, 2017, pp. 1201-1213 · DOI: 10.1016/j.ijheatmasstransfer.2017.05.114</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 풍동(입구 $800\,\mathrm{K}$, $Re = 45000$, $65\,\mathrm{m/s}$)에서 <span class="term">물</span>을 냉각제로 사용한 소결 청동 다공판의 <span class="term">상변화 증산냉각(phase-change transpiration cooling)</span>을 실험적으로 연구하며, <span class="term">냉각제 주입비</span> $F$($0.10\%$-$0.30\%$)와 청동 입자 직경($90$, $200$, $600\,\mathrm{\mu m}$)의 영향을 조사한다. 상변화 계면 위치가 $F$에 따라 이동하고(판 아래/내부/상면), 낮은 $F$에서는 <span class="term">증기 차단 효과(vapor-blockage effect)</span>가 상류 온도를 높인다. 평균 냉각효율은 입자 직경이 $600$에서 $200\,\mathrm{\mu m}$로 줄면 증가하고 최대온도는 감소하나, $90\,\mathrm{\mu m}$에서는 낮은 투과율이 증기 차단을 악화시켜 효율이 급감하며 $200\,\mathrm{\mu m}$가 최적이다. 또한 냉각은 지연되고($600\,\mathrm{\mu m}$, $F=0.25\%$에서 $474\,\mathrm{s}$) 불안정하게 진동한다(주기 $\sim105\,\mathrm{s}$, 진폭 $\sim150\,\mathrm{K}$). <span class="term">관련성</span>: 본 연구는 상변화 증산냉각 실험으로, 균일 투과율 판이 강한 비균일 표면온도와 진동을 유발한다는 핵심 결과와 더불어 비균일 냉각제 주입/구조 최적화를 권고하고 논문이 사용하는 LTNE-TPMM 모델(Shi &amp; Wang)을 인용하여, 공극률 구배 설계에 대한 강한 실험적 동기를 제공한다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">phase change</span><span class="keyword-chip">sintered bronze porous plate</span><span class="keyword-chip">water coolant</span><span class="keyword-chip">vapor-blockage effect</span><span class="keyword-chip">coolant injection ratio</span><span class="keyword-chip">particle diameter</span><span class="keyword-chip">temperature oscillation</span><span class="keyword-chip">cooling delay</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">비행 속도 증가로 극심한 공력가열(스크램제트 선단 1000 MW/m2 초과, 로켓 연소실 약 3600 K)이 발생해 기존 재료가 견딜 수 없어, 선단·연소실·인젝터에 증산냉각이 매력적이다. 상변화(액체수) 증산냉각은 물의 큰 잠열 덕분에 기체 냉각보다 효과적이지만, 메커니즘과 다공매질 특성의 영향은 여전히 충분히 이해되지 않았다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">기존 상변화 증산냉각 연구는 잠열에 의한 물의 이점과 얼음 형성·주입압 절충을 확립했으나 대부분 메커니즘보다 응용을 겨냥했다. 수치 LTNE-TPMM 모델링(Shi &amp; Wang)과 응용 시험(Ma, Langener)이 본 실험이 메우는 비정상 거동·다공매질 효과의 공백을 틀 짓는다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">풍동이 고온 공기(800 K, Re=45000, 65 m/s, 50x80 mm 단면)를 소결 청동 다공판(80x40 mm, 두께 10 mm) 위로 보내고, 아래에서 일정 계량 유량으로 액체수를 펌핑했다. 입자 직경 90/200/600 um(다공도 ~28%)의 세 판을 시험하며, 표면온도는 열전대로 보정한 적외선 카메라로 측정하고 투과율은 Ergun 식으로 계산했다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">표면온도 지도는 F가 0.15%에서 0.30%로 증가함에 따라 잘 냉각된 영역이 커지고 그 경계가 상류로 이동하며, 분포가 균일에서 비균일로 다시 균일로 변함을 보인다. 입자 직경을 600에서 200 um로 줄이면 (냉각제-매트릭스 대류 향상으로) 평균 냉각효율이 증가하나 90 um는 심한 증기 차단으로 실패하며, 과정은 지연되고 지속적으로 진동한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">증기 차단 효과와 비등 구동 증기 축적이 비균일 정상 온도와 비감쇠 진동을 모두 설명하며, 그 주기는 단순 채널 비등 불안정과 다르다. 저자는 TPS 설계 함의를 강조한다: 지연은 상류 벽을 소손시키고 진동은 열응력 균열을 유발하므로 균일 투과율 판은 문제이며 비균일 주입이나 구조 변경을 권고한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">소결 청동판의 상변화 증산냉각(800 K, Re=45000)을 주입비와 입자 직경에 따라 특성화하여 증기 차단 메커니즘, 지연 현상, 진동 거동을 규명했다. 효율은 주입비 증가와 (200 um까지) 입자 직경 감소에 따라 상승하나, 균일 투과율 판은 비균일·지연·진동 냉각을 주어 구조/주입 최적화를 동기화한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 9 / total 21</span></summary>
+            <ol class="ref-list"><li>A. Van Foreest, M. Sippel, A. Gulhan, B. Esser, B. C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophys. Heat Transfer, 2009</li><li>J. Wang, L. Zhao, X. Wang, J. Ma, J. Lin, An experimental investigation on transpiration cooling of wedge shaped nose cone with liquid coolant, Int. J. Heat Mass Transf., 2014</li><li>L. Shen, J. Wang, W. Dong, J. Pu, J. Peng, D. Qu, L. Chen, An experimental investigation on transpiration cooling with phase change under supersonic condition, Appl. Therm. Eng., 2016</li><li>J. X. Shi, J. H. Wang, A numerical investigation of transpiration cooling with liquid coolant phase change, Transp. Porous Media, 2011</li><li>J. Ma, J. Lin, J. H. Wang, Experiment on transpiration cooling with phase change of liquid water, J. Aerospace Power, 2014</li><li>T. Reimer, M. Kuhn, A. Gulhan, B. Esser, M. Sippel, A. van Foreest, Transpiration cooling tests of porous CMC in hypersonic flow, AIAA 2011-2251, 2011</li><li>T. Langener, J. von Wolfersdorf, M. Selzer, H. Hald, Experimental investigations of transpiration cooling applied to C/C material, Int. J. Therm. Sci., 2012</li><li>Y. Q. Liu, P. X. Jiang, Y. B. Xiong et al., Experimental and numerical investigation of transpiration cooling for sintered porous flat plates, Appl. Therm. Eng., 2013</li><li>S. Ergun, Fluid flow through packed columns, Chem. Eng. Prog., 1952</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "비행 속도가 커지며 항공기 핵심 부품의 열보호가 점점 어려워진다: 스크램제트 선단 공력가열은 1000 MW/m2를 넘고 액체로켓 연소실 온도는 약 3600 K에 이르러 기존 재료의 한계를 넘는다."}, {"type": "bullet", "text": "증산냉각은 고열유속 표면을 효과적으로 냉각하며 로켓 노즈콘, 연소실 벽, 스크램제트 연료 인젝터에 널리 연구되어 왔다."}, {"type": "bullet", "text": "최근 연구는 냉각제 종류에 따라 기체 증산냉각과 액체 상변화 증산냉각으로 나뉜다."}, {"type": "bullet", "text": "기체 냉각에서는 냉각제 비열이 높을수록 효율이 높고(헬륨 &gt; 공기/아르곤), 입자 직경이 작을수록 냉각제-매트릭스 열전달 향상으로 효율이 증가하나, 높은 효율에는 큰 기체 유량이 필요하다."}, {"type": "bullet", "text": "액체 상변화 증산냉각은 기체 냉각보다 효과적이며, van Foreest 등은 노즈콘에서 물이 질소보다 5배 유량에서도 훨씬 우수함을 물의 큰 잠열로 보였다."}, {"type": "bullet", "text": "Wang 등은 소량의 물로 선단을 효과적으로 냉각하며 주입압을 최소화하는 최적 주입비를 찾았고, Shen 등과 Reimer 등은 냉각제 유동을 바꾸는 얼음 형성을 관찰했다."}, {"type": "bullet", "text": "Shi 등은 국소 열적 비평형 이상혼합물(LTNE-TPMM) 모델로 상변화 증산냉각을 수치 모사하여 고온면 압력 증가 시 냉각 효과가 감소함을 보였고, Ma 등은 효율이 주입비에 따라 증가함을 보였다.", "figure_refs": []}, {"type": "bullet", "text": "문헌은 비정상 효과와 다공매질 특성이 상변화 증산냉각에 미치는 영향에 대한 실험 연구가 부족하여, 본 소결 청동판 체계적 연구를 동기화한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "van Foreest 등은 노즈콘을 액체수와 기체 질소로 증산냉각 시험하여, 물의 큰 잠열 덕분에 물의 효율이 훨씬 높음을 보였다."}, {"type": "bullet", "text": "Wang 등은 쐐기형 선단을 액체수로 냉각하여 주입압을 최소화하면서 높은 효율을 유지하는 최적 냉각제 주입비를 규명했다."}, {"type": "bullet", "text": "Shen 등은 Mach 4.2에서 증산냉각 선단의 얼음 형성을 관찰했으며, 높은 공력가열로 정체점 부근 효율이 가장 낮았다."}, {"type": "bullet", "text": "Reimer 등은 극초음속 시험 중 C/C 노즈콘에서 냉각제 유동을 바꾸는 얼음 형성을 관찰했다."}, {"type": "bullet", "text": "Shi 등은 LTNE-TPMM 모델로 상변화 증산냉각을 수치 연구하여 고온면 압력 증가 시 냉각 효과가 감소함을 밝혔다."}, {"type": "bullet", "text": "Ma 등은 증산냉각 효율이 주입비에 따라 증가하고 표면온도가 주류 방향으로 크게 감소하며, 상변화 시 주입압이 높음을 실험적으로 밝혔다."}, {"type": "bullet", "text": "Liu 등과 Langener 등은 기준 소결판 및 C/C 증산냉각 데이터를 제공하여, 본 연구가 비정상·상변화 거동으로 확장하는 다공매질 맥락을 확립했다."}]}, "method": {"content": [{"type": "bullet", "text": "공기를 0.5 MPa로 압축·건조/정화하고 120 kW 전기 히터로 가열한 뒤 수축부를 거쳐 시험부로 가속했으며, 액체수는 이중 주입 펌프로 일정 Coriolis 계량 유량으로 펌핑했다.", "figure_refs": [1]}, {"type": "bullet", "text": "세 소결 청동판(dp = 90, 200, 600 um)은 동일 중량 입자를 같은 10 mm 두께로 충전해 밀도·다공도(~28.1-28.4%)가 유사하도록 했고, 다공도·기공 직경은 수은 압입으로 측정했다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "투과율은 Ergun 식으로 계산하여 90, 200, 600 um 판에 대해 각각 2.42e-12, 1.18e-11, 1.03e-10 m2를 얻었다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (1) - Ergun 투과율", "latex": "K = \\frac{d_p^2\\,\\varepsilon^3}{150\\,(1-\\varepsilon)^2}", "description": "청동 입자 직경 $d_p$와 다공도 $\\varepsilon$로부터의 소결판 투과율 $K$. $K$는 입자 직경의 제곱에 비례하여, 작은 $d_p$에서 투과율이 급감하는 이유를 설명한다."}, {"type": "bullet", "text": "주류 단면은 50x80 mm이며, 판은 세라믹 베이스와 간극으로 전도를 제한한 압력 챔버에 놓였고 메시 층이 입구 물의 균일 유동을 보장했다.", "figure_refs": [4]}, {"type": "bullet", "text": "표면온도는 용접 K형 열전대 4개로 보정한 320x240 적외선 카메라로 측정했으며, 주류·냉각제 온도는 차폐 K형 열전대로, 속도는 Pitot 관으로 측정했다.", "figure_refs": [5]}, {"type": "bullet", "text": "증산냉각 효율은 벽·주류·입구 냉각제 온도로 정의했으며, eta = 0.34에서 최대 효율 불확도는 7.5%였다(열전대 +/-0.4%, Coriolis 계 +/-0.075%, IR +/-2%).", "figure_refs": []}, {"type": "formula", "label": "Eq. (2) - 증산냉각 효율", "latex": "\\eta = \\frac{T_w - T_\\infty}{T_c - T_\\infty}", "description": "벽 온도 $T_w$, 주류 온도 $T_\\infty$, 입구 냉각제 온도 $T_c$로부터의 냉각 효율. $\\eta=1$이면 벽이 냉각제 입구 온도에 도달함을 의미한다."}, {"type": "formula", "label": "Eq. (3) - 냉각 효율 불확도 전파", "latex": "\\frac{\\delta\\eta}{\\eta} = \\sqrt{\\left(-\\frac{T_w-T_c}{(T_\\infty-T_c)^2}\\frac{\\delta T_\\infty}{\\eta}\\right)^2 + \\left(\\frac{1}{T_\\infty-T_c}\\frac{\\delta T_w}{\\eta}\\right)^2 + \\left(\\frac{T_\\infty-T_w}{(T_\\infty-T_c)^2}\\frac{\\delta T_c}{\\eta}\\right)^2}", "description": "세 온도 측정으로부터 $\\eta$의 오차 전파. $\\delta T_w&lt;12.8\\,\\mathrm{K}$일 때 최저 $\\eta=0.34$에서 최대 효율 불확도 7.5%를 준다."}, {"type": "bullet", "text": "냉각제 주입비 F는 냉각제 대 주류 질량유속(밀도x속도)의 비로 정의하고 0.10%에서 0.30%까지 변화시켰다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (4) - 냉각제 주입비", "latex": "F = \\frac{\\rho_c u_c}{\\rho_\\infty u_\\infty}", "description": "냉각제 밀도/속도 $\\rho_c u_c$를 주류 $\\rho_\\infty u_\\infty$로 나눈 주입비. 공급 냉각제 양을 지배하는 주 제어 변수이다."}, {"type": "bullet", "text": "Darcy 법칙으로 다공매질 내 압력 손실을 분석했으며, 단위 면적당 질량유속과 단위 질량유량·단위 두께당 압력강하가 동점성계수/투과율과 같음을 이용해 증기가 액체보다 훨씬 큰 유동 저항을 가짐을 정량화했다.", "figure_refs": []}, {"type": "formula", "label": "Eqs. (5)-(7) - Darcy 압력 손실과 단위 질량유량당 저항", "latex": "\\Delta P = \\frac{\\mu V L}{K};\\quad \\dot{m} = \\rho V;\\quad \\overline{\\Delta P} = \\frac{\\Delta P}{\\dot{m}L} = \\frac{\\nu}{K}", "description": "Darcy 압력강하와 그 질량유속·두께 정규화. 증기 동점성계수 $\\nu$(475 K에서 3.54e-5 m2/s)가 액체수(373 K에서 2.95e-7 m2/s)보다 훨씬 크므로 증기 유동 저항이 수 자릿수 높아 증기 차단 효과를 구동한다."}]}, "results": {"content": [{"type": "bullet", "text": "F를 0.15%에서 0.30%로 높이면 표면온도가 낮아지고, 분포는 균일(F=0.15%에서 575 K)에서 비균일(F=0.20-0.25%에서 상류 고온/하류 냉각)로 다시 균일(F=0.30%에서 ~373 K)로 변했다.", "figure_refs": [6]}, {"type": "bullet", "text": "상면(IR)·하면(열전대) 및 하부 유체 온도를 비교해 상변화 계면을 위치시켰다: 낮은 F(0.10-0.15%)에서 판 아래, F=0.20%에서 잘 냉각된 하류 영역의 상면, F=0.25%에서 아래/상면 혼재.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "막 축적으로 상류 열유속이 하류보다 커서 상변화가 먼저 상류에서 일어나고, 그 증기가 상류 기공을 막아 액체가 하류로 우회한다(증기 차단 효과).", "figure_refs": [8]}, {"type": "bullet", "text": "단위 질량유량당 증기 유동 저항이 액체보다 훨씬 크며, 투과율이 입자 직경 제곱에 비례하므로(식 1) 입자 직경이 작아질수록 증기-액체 DP 차이가 급증한다.", "figure_refs": []}, {"type": "bullet", "text": "입자 직경을 600에서 200 um로 줄이면 작은 미세 채널과 큰 내부 표면적이 냉각제-매트릭스 대류를 강화하여 평균 냉각효율이 증가했으나(예: F=0.15%에서 eta 0.45→0.53), 200 um의 최대온도(642.2 K)는 600 um(579.4 K)를 초과했다.", "figure_refs": [9, 10]}, {"type": "bullet", "text": "90 um 판은 효과적으로 냉각되지 않았다: 훨씬 작은 기공으로 F=0.20-0.25%에서 증기가 상류부를 완전히 막아, 입자 직경이 복잡·비선형 효과를 가지며 200 um가 최적 평균효율을 준다.", "figure_refs": [10]}, {"type": "bullet", "text": "냉각제 주입과 완전 냉각 사이 지연이 관찰되었고(600 um 판에서 F=0.25%의 474 s 대 F=0.30%의 282 s), 주입비 증가 또는 입자 직경 감소에 따라 줄며, 지연 대부분이 지연 기간의 후반에 발생한다.", "figure_refs": [11, 12]}, {"type": "bullet", "text": "냉각은 종종 불안정했다: 고온/저온 경계가 주기 ~105 s, 진폭 ~150 K(dp=200 um, F=0.20%)로 비감쇠 진동하며, 주입비 감소 또는 입자 직경 증가에 따라 주기/진폭이 줄었다.", "figure_refs": [13, 14, 18]}]}, "discussion": {"content": [{"type": "bullet", "text": "진동 메커니즘은 표면 아래 증기 영역 계면의 비등으로 구동된다: 튀어오른 액적이 증발해 증기 영역을 키워 고온/저온 경계를 하류로 밀고, 이후 증기가 천천히 배출되며 경계가 되돌아오는 주기를 반복한다.", "figure_refs": [16]}, {"type": "bullet", "text": "진동 주기(~105 s)는 채널 비등 유동 불안정보다 훨씬 길어, 상변화 증산 진동의 원인이 단순 비등 유동 불안정과 다르다.", "figure_refs": [15]}, {"type": "bullet", "text": "600 um 판은 증기 영역이 더 크고 두꺼워 큰 완충 역할을 하고 높은 투과율로 증기가 더 쉽게 배출되어, 입자 직경 증가에 따라 진동 주기/진폭이 줄어든다.", "figure_refs": [18]}, {"type": "bullet", "text": "낮은 F에서는 고온 영역이 더 크고 두꺼워 액적이 뜨거운 판에 튈 가능성이 낮아져, 주입비 감소에 따라 진동 주기와 진폭이 줄어든다.", "figure_refs": [17]}, {"type": "bullet", "text": "초기 냉각 지연이 상류 TPS를 소손시킬 수 있어, 저자는 입자 직경 축소나 비균일 주입(초기 큰 후 작은 F) 사용을 권고한다.", "figure_refs": []}, {"type": "bullet", "text": "온도 진동은 TPS를 균열시킬 수 있는 열응력을 유발하므로, 입자 직경을 키우거나 상류 배기 구멍을 추가해 증기를 빠르게 배출할 것을 권한다.", "figure_refs": []}, {"type": "bullet", "text": "정상 지도 자체가 진동 범위의 중앙값이므로, 저자는 중앙값 경계 위치(예: dp=200 um, F=0.20%에서 X=0.3)를 준정상 분포로 제시한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "냉각 효율은 냉각제 주입비 증가에 따라 커졌고, 낮은 주입비에서 증기 차단 효과가 상대적으로 뜨거운 상류 영역을 남겼으며, 상변화 계면은 경우에 따라 판 아래/내부/상면에 위치했다."}, {"type": "bullet", "text": "평균 냉각효율과 최대온도는 입자 직경이 600에서 200 um로 줄면서 증가했으나, 90 um에서는 훨씬 강한 증기 차단 효과로 판을 효과적으로 냉각할 수 없었다."}, {"type": "bullet", "text": "일부 경우 지연 현상이 발생했고, 주입비 증가 또는 입자 직경 감소에 따라 줄었다."}, {"type": "bullet", "text": "상변화 증산냉각은 종종 고온/저온 경계의 큰 진동으로 불안정했으며, 주기와 진폭은 주입비 감소 또는 입자 직경 증가에 따라 줄었다."}, {"type": "bullet", "text": "균일 투과율 판은 비균일 온도, 긴 초기 지연, 큰 진동을 겪으므로 향후 연구는 구조 또는 주입 방식 최적화를 겨냥한다."}, {"type": "bullet", "text": "결과는 비균일 주입과 상류 증기 배기 권고를 포함하여 상변화 증산냉각 TPS 설계에 실험적 지침을 제공한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "균일 투과율 다공판은 (증기 차단 효과로 인한) 비균일 온도 분포, 긴 초기 냉각 지연, 큰 온도 진동을 겪는다.", "source_quote": "This study shows that transpiration cooling with phase change of a porous plate with uniform permeability may have several problems, such as non-uniform temperature distributions due to the vapor-blockage effect, long delays of the initial cooling, and large oscillations of the temperatures.", "source_section": "conclusion"}, {"claim": "상변화 증산냉각의 온도 진동은 피하기 어렵다.", "source_quote": "The temperature oscillations with phase change transpiration cooling are hard to avoid.", "source_section": "discussion"}, {"claim": "초기 냉각 지연은 열보호 시스템 상류부의 소손(burnout)을 초래할 수 있다.", "source_quote": "The transpiration cooling delay may lead to burn out of the upstream part of the thermal protection system.", "source_section": "discussion"}], "future_works": [{"claim": "향후 연구는 다공판 구조를 최적화하거나 대체 냉각제 주입 방식을 사용하여 상변화 증산냉각을 개선할 것이다.", "source_quote": "Further research will focus on optimizing the structure of the porous plate or alternate methods of injecting the coolant to improve the transpiration cooling with phase change for porous plates.", "source_section": "conclusion"}, {"claim": "지연을 줄이기 위해 비균일 냉각제 주입(초기 큰 주입비 후 작은 주입비)으로 증산냉각 구조를 설계해야 한다.", "source_quote": "The transpiration cooling structure should be carefully designed to reduce the delay by reducing the particle diameter or using non-uniform coolant injection rates with an initially large coolant injection ratio followed by a smaller small injection ratio.", "source_section": "discussion"}, {"claim": "입자 직경을 키우거나 상류부에 구멍을 추가하여 증기를 빠르게 배출함으로써 진동 진폭을 줄여야 한다.", "source_quote": "the transpiration cooling structure should be carefully designed to reduce the oscillation amplitudes by properly increasing the particle diameter or adding holes in the upstream part to quickly exhaust the vapor.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["비행 속도 증가로 극한 열부하(스크램제트 선단 가열 1000 MW/m2 초과, 로켓 연소실 약 3600 K)가 발생해 기존 재료는 능동 냉각 없이 견딜 수 없다.", "상변화(액체) 증산냉각 연구는 기저 메커니즘 이해가 제한된 채 실용 응용에 집중되어 왔다.", "증산냉각의 비정상 효과와 다공매질 특성이 상변화 증산냉각에 미치는 영향에 대한 실험 연구가 부족하며, 둘 다 TPS 설계에 중요하다."], "addressed_by_this_work": ["소결 청동판의 상변화 증산냉각을 800 K / Re=45000 풍동에서 특성화하여, 주입비와 입자 직경에 따른 냉각효율·지연·진동을 정량화했다.", "증기 차단 효과 메커니즘과 주입비에 따른 상변화 계면 이동(판 아래/내부/상면)을 규명하고, 비등과 증기 축적으로 구동되는 진동 메커니즘을 제시했다.", "입자 직경(90/200/600 um)이 정상 효율·지연·진동에 미치는 영향을 지도화하여, 200 um가 최적이며 90 um는 심한 증기 차단으로 실패함을 보였다."], "remaining_unresolved": ["균일 투과율 판은 여전히 비균일 온도·지연·진동을 보이며, 이를 제거할 최적화/비균일 구조는 향후 과제로 남는다.", "예측적 정량 모델은 여기서 개발되지 않았으며, 본 연구는 실험·메커니즘 중심이다.", "피하기 어려운 온도 진동을 완전히 억제하는 수단은 미해결이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

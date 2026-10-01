@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Experimental investigation on transpiration cooling for porous ceramic with liquid water</title>
+    <meta name="keywords" content="transpiration cooling, SiC porous ceramic, liquid water, phase change, arc-heated wind tunnel, thermal protection system, hypersonic, ice beard, pore uniformity">
+    <meta name="paper-authors" content="Bo Zhang, Haiming Huang, Xueling Lu, Jinlong Peng">
+    <meta name="paper-journal" content="Acta Astronautica, Vol. 167, 2020, pp. 117-121 · DOI: 10.1016/j.actaastro.2019.11.009">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Experimental investigation on transpiration cooling for porous ceramic with liquid water</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Bo Zhang, Haiming Huang, Xueling Lu, Jinlong Peng</div>
+            <div class="journal">Acta Astronautica, Vol. 167, 2020, pp. 117-121 · DOI: 10.1016/j.actaastro.2019.11.009</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 극초음속 비행체의 능동 열보호를 목표로, 저밀도 <span class="term">SiC 다공성 세라믹</span>(밀도 $0.98\,\mathrm{g/cm^3}$, 다공도 $69.53\%$)에 <span class="term">액체수</span>를 냉각제로 사용한 <span class="term">증산냉각(transpiration cooling)</span> 아크가열 풍동 실험을 보고한다. 새로운 현상이 관찰되는데, 고엔탈피 환경($15000\,\mathrm{kJ/kg}$)에서 시편 표면에 <span class="term">얼음수염(ice beard)</span>이 형성·재성장하며 그 형상과 크기가 기공 분포의 균일성을 따른다. 주류 비엔탈피 $5500\,\mathrm{kJ/kg}$, 열유속 $1900\,\mathrm{kW/m^2}$, 압력 $7800\,\mathrm{Pa}$, 물 공급 $0.2\,\mathrm{g/s}$ 조건에서 표면온도는 $271\,\mathrm{K}$에서 $360\,\mathrm{K}$까지만 상승하나, 냉각제가 없으면 $1025\,\mathrm{K}$로 급등하여 냉각 효과를 입증한다. 시편은 시험 전후로 변화가 없어 재사용성도 확인된다. <span class="term">관련성</span>: 본 연구는 상변화(액체수) 증산냉각이며 저자가 성능 비균일성을 기공 크기 비균일성에 직접 연결하고 후속 공극률 구배 연구를 예고한다는 점에서, 공극률 분포 제어라는 논문 주제와 직결된다. 다만 본 연구는 순수 실험이며 LTNE/TPMM 모델링이 없고 공극률 구배를 실제로 적용하지는 않는다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">SiC porous ceramic</span><span class="keyword-chip">liquid water</span><span class="keyword-chip">phase change</span><span class="keyword-chip">arc-heated wind tunnel</span><span class="keyword-chip">thermal protection system</span><span class="keyword-chip">hypersonic</span><span class="keyword-chip">ice beard</span><span class="keyword-chip">pore uniformity</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 비행체는 풍상면에서 심한 공력가열을 받아 능동 열보호 시스템이 필수이며, 증산냉각은 가장 효과적이고 재사용 가능한 후보로 여겨진다. 기존 다공 매질(소결 금속 매트릭스)은 고밀도의 한계가 있어, 증산냉각 거동이 거의 연구되지 않은 경량 저밀도 SiC 다공성 세라믹을 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 다양한 다공 매질과 냉각제를 사용한 실험적 증산냉각 연구들, 그리고 액체수 증산냉각 문헌 속에 자신을 위치시킨다. 기존 다공 매질이 대부분 고밀도 금속이었고, 유사한 얼음/증기막 현상을 van Foreest 등이 보고했으며, 기공 균일성은 Huang 등이 지적했음을 강조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실험은 중국항공우주공기역학연구원의 아크가열 풍동에서 수행되며, 압축공기를 전기로 가열하고 노즐로 가속하여 시편에 분사한 뒤 진공 시스템으로 배기하는 동안 뒤쪽에서 액체수를 주입한다. SiC 다공성 세라믹(두께 10 mm, 0.98 g/cm3, 다공도 69.53%)을 여섯 가지 모사 비행 조건을 포괄하는 두 Case 세트로 시험하고, 표면온도는 적외선 시스템으로 읽는다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고엔탈피 Case 1에서는 열유속이 1900 kW/m2로 올라가도 얼음수염이 표면에 형성·재성장하며 표면을 따라 약간만 후퇴하고, 그 형상은 기공 균일성에 의존한다. Case 2에서는 냉각제가 있으면 표면온도가 325-360 K에 머물지만 냉각제를 끊으면 1025 K로 급등하며, 시험 후 세라믹은 물리적으로 변화가 없다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">얼음수염 발견은 유입 공력열과 증발/잠열 손실 사이의 에너지 균형, 그리고 냉각제 전달을 형성하는 기공 분포의 역할로 해석된다. 계측 한계(500 C 적외선 하한)와 얼음의 과도적·비복구적 특성이 데이터의 제약으로 인정된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">아크가열 풍동 시험은 액체수를 쓰는 저밀도 SiC 다공성 세라믹이 극초음속 TPS용으로 효과적이고 재사용 가능한 증산냉각 매질임을 확인한다. 표면 기공 균일성에 따라 형상·크기가 달라지는 새로운 고엔탈피 얼음수염 현상이 보고되고, 대표 조건에서 표면온도가 360 K 부근에 유지된다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 28</span></summary>
+            <ol class="ref-list"><li>A. V. Foreest, M. Sippel, A. Gulhan, B. Esser, B. A. C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophys. Heat Transf., 2009</li><li>G. Huang, Y. H. Zhu, Z. Y. Liao, X. L. Ouyang, P. X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transf., 2017</li><li>G. Q. Xu, Y. P. Liu, X. Luo, J. D. Ma, H. W. Li, Experimental investigation of transpiration cooling for sintered woven wire mesh structures, Int. J. Heat Mass Transf., 2015</li><li>Y. Q. Liu, P. X. Jiang, Y. B. Xiong, Y. P. Wang, Experimental and numerical investigation of transpiration cooling for sintered porous flat plates, Appl. Therm. Eng., 2013</li><li>S. M. Ibrahim, P. Vivek, K. P. J. Reddy, Experimental investigation on transpiration cooling effectiveness for spacecraft entering Martian atmosphere, AIAA J., 2016</li><li>X. F. Xiao, G. B. Zhao, W. X. Zhou, Numerical investigation of transpiration cooling for porous nose cone with liquid coolant, Int. J. Heat Mass Transf., 2018</li><li>B. Zhang, H. M. Huang, X. L. Lu, X. L. Xu, J. Yao, Fabrication and properties of SiC porous ceramics using a polyurethane preparation process, Ceram. Int., 2018</li><li>N. N. Smirnov, V. F. Nikitin, V. R. Dushin, A. Maximenko, M. Thiercelin, J. C. Legros, Instability in displacement of viscous fluids from porous specimens, Acta Astronaut., 2007</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "근접우주 극초음속 비행 중 풍상면은 초고온 환경에 노출되므로, 심한 공력가열 하에서 비행체 안전을 위해 <span class=\"term\">열보호 시스템(TPS)</span>이 필수이다."}, {"type": "bullet", "text": "증산냉각은 차세대 극초음속 비행체에 가장 효과적인 능동 열보호 방식의 유력 후보로 여겨진다."}, {"type": "bullet", "text": "다공성 재료는 높은 다공도와 우수한 고온 내산화성 덕분에 능동 냉각의 핵심이며, 삭마 재료와 달리 여러 번 재사용할 수 있다."}, {"type": "bullet", "text": "다공 재료의 기공 특성(기공 크기와 분포)은 증산냉각 효과를 지배하는 중요한 인자이다."}, {"type": "bullet", "text": "기존에 쓰이던 소결 금속 매트릭스 같은 다공 재료는 여전히 고밀도라는 한계가 있어 TPS 경량 최적화에 불리하다."}, {"type": "bullet", "text": "SiC 다공성 세라믹은 경량, 고온 내산화성, 열적 안정성의 독특한 조합을 제공하지만, 증산냉각에의 적용 연구는 거의 보고되지 않았다."}, {"type": "bullet", "text": "따라서 본 논문은 특수 발포(폴리우레탄) 공정으로 제작한 저밀도 SiC 다공성 세라믹을 액체수 증산냉각의 침투 매질로 채택한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "소결 금속 매트릭스 구조와 직조 와이어 메시 등 다양한 다공 재료가 기존 실험적 증산냉각 연구에서 침투 매질로 사용되었다."}, {"type": "bullet", "text": "van Foreest 등은 액체수 증산냉각을 실증하고 관련 표면 얼음/증기 현상을 보고했으며, 본 연구의 고엔탈피 얼음수염 결과가 이와 일관됨을 보인다."}, {"type": "bullet", "text": "Huang 등은 다공판의 다양한 입자 직경이 증산냉각 효율에 미치는 영향을 실험적으로 조사하여, 기공 특성이 세라믹 내부 냉각제 유동에 영향을 줌을 시사했다."}, {"type": "bullet", "text": "Liu 등과 Xu 등은 소결 다공 평판 및 직조 와이어 메시 구조의 증산냉각을 실험·수치로 연구하여 금속 매질의 기준 성능을 확립했다."}, {"type": "bullet", "text": "Ibrahim 등은 화성 대기 진입 우주선의 증산냉각 효과를, Hong 등은 아크 플라즈마 히터 하의 TiB2-(Cu,Ni) 상호침투 복합재를 연구했다."}, {"type": "bullet", "text": "주기적 셀룰러 코어를 가진 세라믹 매트릭스 샌드위치 구조(Ferrari 등)와 기타 고온 세라믹이 능동 냉각 TPS 옵션으로 검토되어, 경량 SiC 세라믹 대안의 필요성을 부각한다."}]}, "method": {"content": [{"type": "bullet", "text": "아크가열 풍동 시스템은 (디지털 질량유량 제어기로 계량된) 압축공기를 전기 가열부에서 가열하고, 고엔탈피 유동을 노즐로 시편에 분사한 뒤 하류 진공 시스템으로 기체를 제거한다.", "figure_refs": [1]}, {"type": "bullet", "text": "설치부는 냉각 챔버, 솔리드 프레임, SiC 다공성 세라믹으로 구성되며, 세라믹과 프레임 사이 틈은 고온 실리콘으로 밀봉하고 물은 솔리드 프레임의 입구를 통해 들어간다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "SiC 다공성 세라믹은 폴리우레탄 제조 경로로 제작되며, 220 C 공기 중 4시간 폴리카보실란 가교 후 N2 분위기 1300 C에서 2시간 소결했다.", "figure_refs": [3]}, {"type": "bullet", "text": "측정된 시편 물성: 두께 10 mm, 밀도 0.98 g/cm3, 다공도 69.53%, 투과율 2.1e-7 mm2, 열전도도 0.5 W/(m*K), 열확산계수 0.05 mm2/s, 압축강도 16.9 MPa."}, {"type": "bullet", "text": "액체수 주입률은 정확도 0.22%의 계량 펌프로 제어하며(최대 측정률 0.7 +/- 0.00154 g/s), 표면온도는 캡슐 외부 적외선 시스템으로 시편 중심에서 측정한다.", "figure_refs": [7]}, {"type": "bullet", "text": "Case 1(비엔탈피 15000 kJ/kg, 열유속 1200/1700/1900 kW/m2, 압력 1120/1920/2600 Pa, 냉각제 0.3 g/s, Mach 4.3)과 Case 2(엔탈피 2500/5500/5500 kJ/kg, 열유속 650/1200/1900 kW/m2, 압력 9200/3300/7800 Pa, 냉각제 0.2 g/s, Mach 6.2/5.3)로 여섯 비행 상태를 모사한다."}, {"type": "bullet", "text": "삭마를 피하기 위해 냉각제(액체수)를 아크 가열 시작 전에 먼저 시편에 주입하며, 시편은 노즐에서 약 20 cm 떨어져 놓인다.", "figure_refs": []}, {"type": "bullet", "text": "동일 공정·원료의 두 시편을 비교한다: 균질 기공 분포의 시편 A와 비균질(상부는 작고 균일, 하부는 큰 기공) 분포의 시편 B로, 기공 균일성 효과를 분리한다.", "figure_refs": [5]}]}, "results": {"content": [{"type": "bullet", "text": "Case 1에서 물이 세라믹에 주입되자마자 얼음수염이 나타나 표면에서 지속적으로 성장하며, 열유속 1900 kW/m2에서도 제거되지 않고 세라믹 표면 쪽으로 후퇴만 한다.", "figure_refs": [4]}, {"type": "bullet", "text": "표면을 투과한 액체수가 증기로 변해 시편을 덮는 활 모양 증기막 보호층을 형성하며, 얼음은 비평형 증발과 표면수 날림이 유입 열유속보다 더 많은 열을 빼앗아 하부 수층을 얼리기 때문에 생긴다.", "figure_refs": [4]}, {"type": "bullet", "text": "얼음수염이 기공을 완전히 막지 않고 시험 후 빠르게 사라져 캡슐을 열면 보이지 않으므로, 연결된 기공망이 확인된다.", "figure_refs": []}, {"type": "bullet", "text": "기공 균일성이 얼음수염 기하를 지배한다: 시편 A(균질 기공)는 전방향 균일한 비례형 얼음수염을, 시편 B는 개방 기공이 큰 하부에 더 큰 얼음수염을 형성한다.", "figure_refs": [5]}, {"type": "bullet", "text": "Case 2에서 표면온도는 첫 ~95 s 단계에 330 K로 오르고, 엔탈피·열유속이 높아진 2단계에 325 K로 내려가며, 열유속이 증가한 3단계에 360 K에 이른다.", "figure_refs": [6]}, {"type": "bullet", "text": "4단계에서 냉각제율을 0으로 줄이면 표면온도가 1025 K로 급등하여 냉각 이득을 정량화하며, 5단계에서 주류를 멈추면 온도가 내려간다.", "figure_refs": [6]}, {"type": "bullet", "text": "3단계 동안 세라믹 표면온도가 주변 솔리드 프레임 가장자리보다 낮은데, 이는 상변화 잠열과 증기막의 차단 효과에 기인한다.", "figure_refs": [7]}, {"type": "bullet", "text": "시험 전후 시편 비교에서 변화가 없어, SiC 다공성 세라믹이 침투 매질로 재사용 가능함을 나타낸다.", "figure_refs": [8]}]}, "discussion": {"content": [{"type": "bullet", "text": "얼음수염은 높은 비평형 증발률로 설명된다: 표면 수증기의 날림과 증발 손실을 덮기에 부족한 유입 열유속이 하부 수층을 냉각·동결시킨다."}, {"type": "bullet", "text": "고엔탈피(15000 kJ/kg) 설정이 이 얼음수염 관찰을 이전 van Foreest 결과와 구별하는 새로운 조건으로 강조된다."}, {"type": "bullet", "text": "기공 분포 균일성은 냉각제가 어디서 얼마나 나오는지를 제어하여 보호성 얼음/증기층을 직접 형성하므로 결정적 설계 인자로 주장된다."}, {"type": "bullet", "text": "표면온도가 솔리드 프레임 가장자리보다 낮은 것은 상변화 잠열과 증기막이 세라믹으로의 대류 열을 차단하는 복합 효과에 기인한다."}, {"type": "bullet", "text": "적외선 시스템이 Case 1에서 500 C 미만을 측정하지 못해 Case 2용으로 교체되었으며, 저자는 이것이 Case 1 온도 기록을 제한했다고 언급한다.", "figure_refs": [6]}, {"type": "bullet", "text": "얼음수염이 시험 후 빠르게 사라지므로 얼음 형성 강도 데이터를 포착할 수 없어 동결 현상의 정량 분석이 제한된다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "액체수를 쓰는 저밀도 SiC 다공성 세라믹(0.98 g/cm3)의 증산냉각이 극초음속 비행체 열보호에 효과적임을 실험적으로 실증했다."}, {"type": "bullet", "text": "고엔탈피 환경(15000 kJ/kg)에서 시편에 얼음수염이 형성되는 새로운 현상을 발견했다."}, {"type": "bullet", "text": "아크가열 풍동에서 얼음수염의 형상과 크기는 SiC 다공성 세라믹 표면의 기공 균일성에 영향을 받는다."}, {"type": "bullet", "text": "주류 비엔탈피 5500 kJ/kg, 열유속 1900 kW/m2, 압력 7800 Pa에서 표면온도는 시험 중 360 K 부근으로 안정되며, 냉각제가 없으면 1025 K이다."}, {"type": "bullet", "text": "세라믹은 시험 전후 변화가 없어 침투 매질로 재사용 가능함을 확인했다."}, {"type": "bullet", "text": "결과는 극초음속 비행체 능동 열보호 시스템 설계에 유용한 참조를 제공하며, 공극률 효과에 대한 후속 연구를 동기화한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "Case 1에서 사용한 적외선 시스템은 500 C 미만을 측정하지 못해, Case 1 표면온도가 500 C 평탄선으로 잘려 실제 저온을 측정하지 못했다.", "source_quote": "The experimental result of the surface temperatures in the Case 1 shows a straight line at 500°C, because the infrared temperature measurement system is not able to measure temperatures lower than this value.", "source_section": "discussion"}, {"claim": "얼음수염이 시험 후 빠르게 사라져 얼음 형성 강도에 대한 정량 데이터를 수집할 수 없었다.", "source_quote": "Therefore, the data on intensity of ice formation cannot be obtained.", "source_section": "discussion"}], "future_works": [{"claim": "저자는 서로 다른 공극률의 SiC 다공성 세라믹을 제작하여 공극률이 증산냉각 성능에 미치는 영향을 실험적으로 연구할 계획이다.", "source_quote": "so the authors will further prepare SiC porous ceramic with different porosities and conduct experimental research on the influence of the porosity on transpiration cooling performances in the next experimental investigation.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["기존 증산냉각에 쓰이던 다공성 재료(예: 소결 금속 매트릭스)는 고밀도라는 한계가 있어 TPS 경량 최적화에 불리하다.", "SiC 다공성 세라믹은 경량·고온 내산화성을 지님에도 증산냉각 매질로 사용한 연구가 거의 보고되지 않았다.", "이 세라믹에 대한 기공 특성(크기·분포)이 증산냉각 효과에 미치는 영향이 충분히 규명되지 않았다."], "addressed_by_this_work": ["저밀도 SiC 다공성 세라믹(0.98 g/cm3)이 아크가열 풍동에서 액체수 증산냉각 매질로 효과적임을 실증하여, 냉각제 없을 때 1025 K 대비 표면온도를 360 K로 낮췄다.", "이 저밀도 SiC 세라믹에 대한 최초의 아크 풍동 특성화를 제공하며, 예상치 못한 고엔탈피 얼음수염 현상과 재사용성(시험 전후 무변화)을 확인했다.", "균질 시편 A와 비균질 시편 B를 비교하여 기공 분포 비균일성이 얼음수염 형상·크기를 지배함을 정성적으로 보였다."], "remaining_unresolved": ["공극률 크기/구배가 냉각 성능에 미치는 정량적 영향은 미해결이며 예정된 후속 연구로 미뤄졌다.", "고엔탈피 Case 1의 얼음 형성 강도와 500 C 미만 온도장은 계측 한계로 미측정 상태이다.", "예측 모델(예: LTNE/TPMM)이 개발되지 않아 결과는 순수 실험적이며 시험 조건에 한정된다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

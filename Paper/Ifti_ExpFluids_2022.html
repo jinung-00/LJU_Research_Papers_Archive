@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Laminar transpiration cooling experiments in hypersonic flow</title>
+    <meta name="keywords" content="transpiration cooling, hypersonic, laminar boundary layer, pressure-sensitive paint, film effectiveness, coolant concentration, heat flux reduction, ultra-high-temperature ceramic, ZrB2 injector, Mach 7">
+    <meta name="paper-authors" content="Hassan Saad Ifti, Tobias Hermann, Marc Ewenz Rocher, Luke Doherty, Christopher Hambidge, Matthew McGilvray, Luc Vandeperre">
+    <meta name="paper-journal" content="Experiments in Fluids, Vol. 63, Article 102, 2022 · DOI: 10.1007/s00348-022-03446-1">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Laminar transpiration cooling experiments in hypersonic flow</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Hassan Saad Ifti, Tobias Hermann, Marc Ewenz Rocher, Luke Doherty, Christopher Hambidge, Matthew McGilvray, Luc Vandeperre</div>
+            <div class="journal">Experiments in Fluids, Vol. 63, Article 102, 2022 · DOI: 10.1007/s00348-022-03446-1</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 층류 극초음속 경계층에서 증산하는 다공성 분사기 하류의 <span class="term">벽면 냉각제 농도</span> 분포와 그에 대응하는 열유속 감소를 최초로 실험 측정하여 보고한다. 실험은 Oxford High Density Tunnel에서 마하 7(단위 레이놀즈수 $12.9\times10^6$ m$^{-1}$)로, 다공성 ZrB$_2$(UHTC) 분사기(기공 크기 10 마이크론 미만)를 가진 평판에서 수행되었으며; <span class="term">압력감응도료(pressure-sensitive paint, PSP)</span>로 냉각막을 공간 분해하고 박막 게이지로 열유속을 측정했다. 여섯 사례는 질소와 헬륨을 블로잉비 0.0406%에서 0.295%까지 사용했으며, 분사기 2 mm 하류에서 최대 95% 냉각제 농도를, 최저 블로잉비에서도 분사기 길이 3배에 걸쳐 15% 이상의 막 커버리지를 달성했다. 층류 유동에서는 열-물질 전달 유사성이 성립하지 않으므로 PSP 기반 <span class="term">농도 효율</span>은 열유속으로 얻은 열효율과 구별되며, 전 데이터에서 후자가 전자보다 최대 0.3 높게 나타난다. 수정 해석 상관식이 비열비 스케일링 $(c_{p,e}/c_{p,c})^{0.75}$로 열효율을 통합하며, 이는 선행 초음속 연구의 지수 0.33보다 우수했다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">hypersonic</span><span class="keyword-chip">laminar boundary layer</span><span class="keyword-chip">pressure-sensitive paint</span><span class="keyword-chip">film effectiveness</span><span class="keyword-chip">coolant concentration</span><span class="keyword-chip">heat flux reduction</span><span class="keyword-chip">ultra-high-temperature ceramic</span><span class="keyword-chip">ZrB2 injector</span><span class="keyword-chip">Mach 7</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 비행체는 극심한 공력 가열을 받으며, 특히 고 최대가열 부위에서 재사용 가능한 고성능 열보호가 중요하다; 증산냉각은 열과 산화를 모두 막는 이중모드 보호의 후보이다. 냉각은 세 효과로 작동한다: 대류 제거, 고온 횡류로부터 벽을 단열하는 막, 자유류 산소로부터 벽을 차폐하는 것. 거의 모든 선행 혼합 연구가 난류이고 층류에서는 열-물질 전달 유사성이 실패하므로, 본 연구는 마하 7 층류 경계층에서 증산 분사기 하류의 벽면 냉각제 농도를 최초로 측정한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">50년 넘는 방대한 막냉각 연구가 있으나 난류 유동에 집중되어 있다. 소수의 층류 연구(Heufer·Olivier, Hombsch·Olivier, Keller 등, Gulhan·Braun, Richards·Stollery)는 상관 인자를 개발하고 층류의 높은 효율과 냉각제 물성의 역할을 보였으나, 모두 벽면 냉각제 농도가 아닌 열유속 감소만 다루었다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실험은 Oxford High Density Tunnel을 Ludwieg 튜브 모드, 마하 7로 운전하며 x=160 mm에 다공성 ZrB2 분사기를 둔 평판을 사용했다. 압력감응도료가 산소 분압 기반 농도 막효율로 냉각막을 공간 분해하고, Macor 위 백금 박막 게이지가 열유속을 측정(Eckert 상관식 대비 경계층 상태 판정)했다. 질소와 헬륨의 여섯 블로잉 사례를 썼으며, 블로잉비는 측정 플레넘 압력·단위 레이놀즈수·분사기 투과율로 적분형 Darcy-Forchheimer 방정식에서 계산했다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">냉각제 농도는 최고 블로잉비에서 분사기 바로 하류에서 약 95%에 도달하고 하류로 갈수록 단조 감소했으며; 높은 블로잉 사례는 바로 하류에서 평탄역(이산 이원 가스층)을 형성한 반면 최저 블로잉 사례는 이미 혼합된 상태로 시작했다. 헬륨은 약 7배 높은 체적유량으로 동일 블로잉비에서 질소보다 강하고 넓은 막을 형성했다. 열효율은 층류 확산이 난류 혼합보다 느려 농도 효율을 최대 0.3 일관되게 초과했고, 수정 상관식이 열 데이터를 통합했다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">농도 효율과 열효율의 구별은 확산과 전단층 효과가 혼합을 지배하는 층류 유동에서 열-물질 전달 유사성의 붕괴를 직접 증거한다. 헬륨의 7배 체적유량 우위는 열 물성만으로 설명되지 않는 우수한 막 커버리지를 설명하며, 데이터는 보편적 층류 혼합 상관식의 어려움을 드러내어 제안된 수정형을 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">PSP 측정은 분사기 바로 하류에서 최대 95% 냉각제 농도의 우수한 막 커버리지를 보였고, 거리에 따라 단조 감소하는 한편 높은 블로잉 사례는 바로 하류에서 일정 농도(이산 이원 가스층)를 유지했다. 여섯 사례 모두에서 열유속 감소가 달성되었고, 최고 블로잉비에서는 분사기 근처에 과냉각(음 열유속)이 나타났으며, 열효율이 농도 효율을 초과했다. 열효율의 통합이 달성되고 수정 상관식이 제안되었다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 30</span></summary>
+            <ol class="ref-list"><li>K. A. Heufer, H. Olivier, Experimental and numerical study of cooling gas injection in laminar supersonic flow, AIAA Journal, 2008</li><li>M. Hombsch, H. Olivier, Film cooling in laminar and turbulent supersonic flows, Journal of Spacecraft and Rockets, 2013</li><li>M. A. Keller, M. J. Kloker, H. Olivier, Influence of cooling-gas properties on film-cooling effectiveness in supersonic flow, Journal of Spacecraft and Rockets, 2015</li><li>A. Gulhan, S. Braun, An experimental study on the efficiency of transpiration cooling in laminar and turbulent hypersonic flows, Experiments in Fluids, 2010</li><li>B. E. Richards, J. L. Stollery, Laminar film cooling experiments in hypersonic flow, Journal of Aircraft, 1979</li><li>R. J. Goldstein, Film Cooling, Advances in Heat Transfer, 1971</li><li>W. M. Kays, M. E. Crawford, B. Weigand, Convective Heat and Mass Transfer, 4th ed., McGraw-Hill, 2005</li><li>E. R. G. Eckert, Engineering relations for heat transfer and friction in high-velocity laminar and turbulent boundary-layer flow over surfaces with constant pressure and temperature, Trans. ASME, 1956</li><li>H. S. Ifti, T. Hermann, M. McGilvray, L. Larrimbe, R. Hedgecock, L. Vandeperre, Flow characterization of porous ultra-high-temperature ceramics for transpiration cooling, AIAA Journal, 2022</li><li>M. Ewenz Rocher et al., Pressure-sensitive paint diagnostic to measure species concentration on transpiration-cooled walls, Experiments in Fluids, 2022</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "극초음속 비행체는 공력 가열로 극심한 열유속을 겪으며; 기존 히트싱크와 어블레이션은 특히 고 최대가열에서 재사용성이 낮아, 재사용 가능한 고성능 TPS가 탑재체 수송 비용 절감에 중요하다."}, {"type": "bullet", "text": "증산냉각은 다공 재료를 통해 냉각제 가스를 경계층으로 주입하며, 앞전이나 제어핀 접합부에서 기존 TPS와 함께 쓰여 열과 산화 모두에 대한 이중모드 보호를 제공할 수 있다."}, {"type": "bullet", "text": "냉각은 세 효과로 구성된다: 대류로 열이 유체에 의해 제거되고; 냉각막이 벽을 고온 횡류로부터 단열하며; 막이 벽을 자유류 산소로부터 차폐하여 산화를 막아 벽이 더 뜨겁게 작동하며 복사 냉각을 높이고 재결합 가열을 줄인다.", "figure_refs": [1]}, {"type": "bullet", "text": "혼합 문제는 다공 분사기 위와 하류로 나뉘며, 블로잉비(냉각제 대 자유류 질량유속)가 냉각 효율과 상관되는데; 50년 넘는 연구가 있으나 대부분 난류 유동에 대한 것이다."}, {"type": "bullet", "text": "극초음속 비행체는 층류·천이·난류 영역을 모두 지나며 층류 영역에서 최대 가열을 겪을 수 있으나, 층류 막/증산냉각 연구는 소수에 불과하다."}, {"type": "bullet", "text": "층류 유동에서는 열-물질 전달 유사성이 성립하지 않아 벽면 냉각제 농도 분포가 혼합 이해에 중요한 양이 되지만, 층류 극초음속 유동의 그러한 실험 데이터가 없었다."}, {"type": "bullet", "text": "본 논문은 마하 7 층류 유동에서 증산하는 다공성 ZrB2 분사기(기공 10 마이크론 미만) 하류의 벽면 냉각제 농도 분포와 열유속 감소를 PSP와 박막 게이지로 평판에서 최초로 보고한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Goldstein(1971)과 Fujiwara 등(2017)의 리뷰는 50년 넘는 방대한 막냉각 문헌을 정리하며, 주로 난류 유동에 대한 것이다."}, {"type": "bullet", "text": "Heufer·Olivier(2008a)는 층류 속도 분포를 가진 에너지 방정식으로부터 상관 인자를 제안하고, 층류 초음속 평판의 슬롯 분사기로 수치·실험 검증하여 데이터 통합을 달성했다."}, {"type": "bullet", "text": "Hombsch·Olivier(2013)는 초음속에서 다양한 슬롯 형상과 냉각제 가스를 시험하여 막냉각이 난류보다 층류에서 훨씬 효과적임을 보이고 상관식을 제안했다."}, {"type": "bullet", "text": "Keller 등(2015)은 마하 2.6 층류 평판 유동을 다른 냉각제 가스로 직접 수치모사하여, 상관 인자에 비열비의 0.33 거듭제곱을 곱해 데이터를 통합했다."}, {"type": "bullet", "text": "Heufer·Olivier(2008b)는 층류 극초음속에서 막냉각을 입증했고, Gulhan·Braun(2010)은 층류 극초음속 평판에서 다공 분사기 하류의 높은 증산냉각 효율을 보였다."}, {"type": "bullet", "text": "Richards·Stollery(1979)는 마하 10 극초음속 경계층 평판을 접선 주입으로 냉각하고 열전도 기반 이산층 이론을 제안했다."}, {"type": "bullet", "text": "이 층류 연구들은 모두 벽면 냉각제 농도가 아니라 열유속 감소만 다루어, 본 연구가 메우는 공백을 남겼다."}]}, "method": {"content": [{"type": "bullet", "text": "Oxford HDT를 Ludwieg 튜브 모드, 마하 7(단위 레이놀즈수 12.9e6 /m, p0 = 1.738 MPa, T0 = 470.1 K)로 운전했으며; 577 x 125 mm 평판은 받음각 0도로 x = 160 mm에 39.5 x 39.5 mm 부분 소결 ZrB2(UHTC) 다공 분사기(기공 10 마이크론 미만)를 두었다.", "figure_refs": [2, 3]}, {"type": "bullet", "text": "다공성 고속응답 단일발광체 PSP(응답 100 마이크로초 미만, 감도 0.6%/kPa, 0-200 kPa 범위)가 분사기 하류 표면을 도포했으며; Macor 기반 백금 박막 어레이(상류 6개, 하류 16개 게이지)와 Kulite 변환기 4개가 평판에 장착되었다."}, {"type": "bullet", "text": "블로잉비는 주입 냉각제 질량유속 대 경계층 가장자리 질량유속의 비이며, 블로잉 파라미터는 이를 무주입 Stanton 수로 정규화한다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (1) - 블로잉비", "latex": "F = \\frac{\\rho_c u_c}{\\rho_e u_e}", "description": "표면 냉각제 질량유속(아래첨자 c)과 경계층 가장자리 질량유속(아래첨자 e)의 비."}, {"type": "formula", "label": "Eq. (2) - 블로잉 파라미터", "latex": "B_h = \\frac{F}{St_0}", "description": "무주입 분사기 Stanton 수 $St_0$로 정규화한 블로잉비."}, {"type": "bullet", "text": "PSP 발광은 산소로 소광되므로 방출 강도비가 멱법칙 Stern-Volmer 관계를 따르며, 이로부터 외래 가스/공기 주입 간 산소 분압비로 농도 막효율을 정의한다.", "figure_refs": [4]}, {"type": "formula", "label": "Eq. (3) - Stern-Volmer 멱법칙", "latex": "\\frac{I_{ref}}{I} = c_1\\, p_{O2}^{\\,n} + c_2, \\quad 0 < n \\le 1.0", "description": "기준 대 신호 강도비를 산소 분압에 연관; 계수 $c_1$, $c_2$, $n$은 교정 회귀에서 얻는다(공간 평균 $R^2 \\ge 0.99$)."}, {"type": "formula", "label": "Eq. (4) - 농도 막효율", "latex": "\\eta_c = \\frac{C_w - C_e}{C_c - C_e} = 1 - \\frac{p_{O2,\\,foreign\\,gas}}{p_{O2,\\,air}}", "description": "$\\eta_c = 1$은 공기가 외래 가스로 완전 대체됨을, $\\eta_c = 0$은 대체 없음을 의미한다. 난류와 달리 열효율과 등가가 아니다."}, {"type": "bullet", "text": "열유속은 Macor 온도 상승으로부터 Oldfield의 임펄스 응답 컨볼루션(열적 곱 1705, 1차원 반무한 평판)으로 계산했고, 교란 없는 열유속을 Eckert 층류·난류 평판 Stanton 상관식과 비교하여 층류 경계층을 확인했다(자연 천이 x = 310 mm).", "figure_refs": [5]}, {"type": "formula", "label": "Eq. (5) - Eckert 층류 Stanton 수", "latex": "St^{*}_{lam} = \\frac{0.332\\,(Pr^{*})^{-2/3}}{\\sqrt{Re^{*}_x}}", "description": "Eckert 기준 온도(위첨자 *)에서 평가한 층류 평판 Stanton 상관식; 무주입 경계층이 층류임을 확인하는 데 사용한다."}, {"type": "bullet", "text": "열유속 감소는 비냉각 Stanton 수를 기준으로 한 등온 열효율로 표현되며, 작은 블로잉과 자유류와 유사한 냉각제에만 유효하다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (7) - 열(등온 냉각) 효율", "latex": "\\eta_{th} = 1 - \\frac{St_c}{St_0}", "description": "냉각 대 비냉각 Stanton 수; $\\eta_{th}=1$은 벽 열유속 0을 의미한다. 음의 Stanton 수(과냉각)는 $\\eta_{th}&gt;1$을 주며 이때 정의가 무효하다."}, {"type": "bullet", "text": "열효율 데이터는 Heufer-Olivier 인자로 상관되며, 냉각제 가스 효과는 비열비 스케일링으로 포착한다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (8) - Heufer-Olivier 상관 인자", "latex": "\\xi = \\frac{1}{F s}\\sqrt{\\frac{x - x_s}{x_s^{1.16}}\\,\\frac{C^{*} x}{Re_u}}", "description": "$x_s$는 슬롯/분사기 위치, $s$는 그 길이, $C^{*}$는 Eckert 기준 온도의 Chapman-Rubesin 인자; 이 인자가 효율 통합의 근간이다."}, {"type": "bullet", "text": "여섯 사례를 시험했다(질소 사례 1-4, F = 0.0406-0.295%; 헬륨 사례 5-6, F = 0.0416-0.08%); 블로잉비는 플레넘 압력·단위 레이놀즈수·투과율(K_D = 3.726e-14 m^2, K_F = 1.97e-7 m)을 사용한 적분형 Darcy-Forchheimer 방정식의 양의 근에서 얻었다.", "figure_refs": []}, {"type": "formula", "label": "Eq. (17) - 블로잉비에 대한 적분형 Darcy-Forchheimer", "latex": "p_{inj}^2 - p_e^2 = \\frac{Re_u\\,\\mu(T_e)\\,\\mu_c(T_{inj})}{2 L R_c T_{inj} K_D}\\,F + \\frac{(Re_u\\,\\mu(T_e))^2}{K_F}\\,F^2", "description": "플레넘-가장자리 압력차를 Darcy($K_D$)·Forchheimer($K_F$) 투과율을 통해 블로잉비 $F$에 연관; $p_{inj}$와 $Re_u$가 주어지면 $F$에 대해 푼다."}]}, "results": {"content": [{"type": "bullet", "text": "각 가스의 최고 블로잉비(사례 4, 6)에서 농도 효율은 분사기 바로(2 mm) 하류(x = 200-240 mm)에서 약 0.95에 도달하여, 그곳에서 거의 완전한 공기 대체와 ~100% 냉각제 커버리지를 나타냈다.", "figure_refs": [6]}, {"type": "bullet", "text": "최저 블로잉비에서도 막 커버리지가 분사기 길이 3배(3 x 39.5 mm) 하류까지 15% 이상 지속되었고; Mach 각 효과에서 오는 'V'자 막이 2D 가정을 x = 300 mm까지 유효한 중심 영역으로 제한한다.", "figure_refs": [6, 12]}, {"type": "bullet", "text": "높은 블로잉 질소 사례 3, 4는 10-20 mm 하류에서 효율 0.9 부근의 평탄역(이산 이원 가스층)을 보인 후 오목 감소하는 반면, 저 블로잉 사례 1, 2는 이산 영역 없이 이미 부분 혼합된 상태(효율 ~0.5~0.75)로 시작한다.", "figure_refs": [7]}, {"type": "bullet", "text": "동일 블로잉비에서 헬륨은 질소보다 뚜렷이 강하고 넓은 막을 형성한다; 헬륨의 낮은 분자량이 질량유속을 맞추기 위해 더 높은 플레넘 압력을 요구하여 더 빠르고 입자가 많게 배출되어 약 7배 높은 체적유량을 준다.", "figure_refs": [6, 7]}, {"type": "bullet", "text": "열효율은 농도 효율보다 일반적으로 높다(최대 0.3) - 층류에서 열-물질 유사성이 실패하고 느린 확산(난류 혼합 아님)이 지배하여, 농도만으로 시사되는 것보다 나은 열보호를 주기 때문이다.", "figure_refs": [7]}, {"type": "bullet", "text": "최고 블로잉 사례에서는 분사기 근처의 음 열유속(과냉각)이 겉보기 열효율을 1 초과로 끌어올리는데, 등온 정의가 무효한 그 지점의 값을 1로 상한 처리했으며 이는 선행 초음속/극초음속 관찰과 일치한다.", "figure_refs": [7]}, {"type": "bullet", "text": "열효율을 상관 인자에 대해 (c_p,e/c_p,c)^0.75 스케일링으로 도시하면 Keller 등의 지수 0.33보다 데이터를 잘 통합하며; 이 경향은 블로잉비가 더 높고 마하수가 더 낮았던 Hombsch·Olivier 상관식과 벗어난다.", "figure_refs": [8]}]}, "discussion": {"content": [{"type": "bullet", "text": "열효율이 농도 효율을 초과함은 층류 유동에서 열-물질 전달 유사성이 성립하지 않음을 확인한다; 난류 혼합이 없으면 느린 확산이 농도 맵이 시사하는 것보다 더 효과적인 열 막을 보존한다."}, {"type": "bullet", "text": "헬륨의 우수한 막은 열 물성뿐 아니라 물리적 막 자취에 기인한다: 낮은 분자량이 더 높은 플레넘 압력을 강제하여 더 높은 배출 속도와 동일 질량유량 대비 질소의 약 7배 체적유량을 준다.", "figure_refs": [7]}, {"type": "bullet", "text": "높은 블로잉비에서 냉각제가 측방 확산하여 막이 분사기 폭보다 넓어지며, 분사기 위 경계층 박리와 분사기 폭방향 가장자리의 신장 와류가 이를 조력할 수 있다.", "figure_refs": [6]}, {"type": "bullet", "text": "이산 이원 가스층은 충분한 냉각제 질량유속에서만 형성되며(질소 사례 3, 4; 헬륨은 사례 6보다 높은 블로잉비가 필요), 커버리지가 블로잉비로 결정됨을 보인다."}, {"type": "bullet", "text": "제안된 수정 상관식(지수 변경과 [1+0.4(xi-0.96)]^-1 형태)은 본 데이터에 맞지만 선행 상관식과 벗어나, 확산과 전단층 효과가 지배하는 일반 층류 혼합 상관식의 어려움을 강조한다.", "figure_refs": [8]}, {"type": "bullet", "text": "Ludwieg 튜브 HDT의 준정상 다조건 능력은 한 발사당 여러 블로잉비를 주는데, 시험 동안 단위 레이놀즈수가 하락하는 중 플레넘 압력이 유지되어 블로잉비가 단계적으로 증가하기 때문이다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "PSP 농도 데이터는 상대적으로 낮은 블로잉비에서도 분사기 바로 하류에서 최대 95% 냉각제 농도에 이르는 우수한 막 커버리지를 보였다."}, {"type": "bullet", "text": "100 mm 하류에서 농도는 최저 질소 블로잉비(0.0406%)에 약 20%, 최저 헬륨비(0.0416%)에 약 50%였으며; 최고비(질소 0.295%, 헬륨 0.08%)에서는 각각 약 70%와 65%였다."}, {"type": "bullet", "text": "헬륨은 약 7배 높은 체적유량으로 동일 블로잉비에서 질소보다 강력한 막을 형성한다."}, {"type": "bullet", "text": "막은 하류로 단조 감쇠하지만, 높은 블로잉비는 바로 하류에서 농도를 일정하게 유지하여 이후 감쇠하는 이산 이원 가스층을 나타낸다."}, {"type": "bullet", "text": "여섯 사례 모두에서 열유속 감소가 달성되었고, 최고 질소·헬륨 블로잉비에서는 분사기 바로 하류에 음 열유속이 기록되었다."}, {"type": "bullet", "text": "PSP 농도 효율과 박막 열효율을 비교했으며 열효율이 일반적으로 높았다; 열효율의 통합이 달성되고 수정 상관식이 제안되어, 수치·해석 층류 혼합 도구 검증에 기여한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "등온 열효율 정의는 작은 블로잉비와 자유류와 유사한 냉각제에만 유효하며, 과냉각이 일어나는 분사기 근처에서는 무효하다.", "source_quote": "Eq. (7) is only valid for small blowing ratios and cases where the coolant gas is similar to the free-stream gas (Heufer and Olivier 2008a). It is also invalid for downstream locations that are close to the injector.", "source_section": "method"}, {"claim": "모델의 종횡비 때문에 2차원 유동은 Mach 콘이 미치지 않는 'V'자 영역 내에서만 가정할 수 있다.", "source_quote": "A two-dimensional (2D) flow can only be assumed within this 'V' shaped zone (see “Appendix 4”) due to the aspect ratio of the model.", "source_section": "results"}, {"claim": "난류 유동과 달리 층류 혼합 문제에 대한 일반 상관식을 얻는 것은 어렵다.", "source_quote": "The current set of data further demonstrates the difficulty in achieving a general correlation for this mixing problem in laminar flows as opposed to turbulent flows.", "source_section": "discussion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["극초음속 비행체, 특히 앞전·제어핀 접합부 같은 고 최대가열 부위에는 재사용 가능한 고성능 열보호 시스템이 필요하다.", "대부분의 증산/막냉각 혼합 연구는 난류 유동을 다루며 층류(특히 극초음속)에 대한 연구는 소수에 불과한데, 극초음속 비행체는 층류 영역에서 최대 가열을 겪을 수 있다.", "층류 유동에서는 열-물질 전달 유사성이 성립하지 않아 벽면 냉각제 농도가 중요한 양이 되지만, 층류 극초음속 유동의 농도 실험 데이터가 없었다.", "기존 층류 막냉각 연구들은 벽면 냉각제 농도 분포가 아니라 열유속 감소만 측정했다."], "addressed_by_this_work": ["PSP를 사용해 층류 극초음속(마하 7) 유동에서 증산 분사기 하류의 벽면 냉각제 농도 분포를 최초로 실험 측정했다.", "박막 게이지로 동시 열유속 감소를 측정하여 여섯 사례 모두에서 냉각을 확인했으며, 최고 블로잉비에서는 음(과냉각) 열유속을 포함한다.", "층류 유동에서 농도 효율이 열효율과 다름(열효율이 최대 0.3 높음)을 직접 보여 열-물질 전달 유사성의 붕괴를 확인했다.", "(c_p,e/c_p,c)^0.75 비열 스케일링으로 열효율을 통합하는 수정 해석 상관식을 제안했다."], "remaining_unresolved": ["층류 혼합에 대한 일반 상관식은 여전히 난제이며; 제안 상관식은 블로잉비와 마하수가 달라 선행(Hombsch·Olivier) 상관식과 벗어난다.", "열효율 정의는 분사기 근처와 높은 블로잉비(과냉각, 효율 1 초과)에서 붕괴하여 그 영역이 상관식으로 특성화되지 않는다.", "2D 가정이 V자 영역에 한정되어, 측방 확산과 신장 와류의 3차원 막 거동이 완전히 정량화되지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>A Method of Correlating Heat-Transfer Data for Surface Boiling of Liquids</title>
+    <meta name="keywords" content="nucleate boiling, pool boiling, surface boiling, boiling heat transfer correlation, bubble Reynolds number, bubble Nusselt number, C_sf, forced convection surface boiling">
+    <meta name="paper-authors" content="Warren M. Rohsenow">
+    <meta name="paper-journal" content="Transactions of the ASME, Vol. 74, 1952, pp. 969-976 (MIT reproduction) · DOI: 10.1115/1.4015984">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">A Method of Correlating Heat-Transfer Data for Surface Boiling of Liquids</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Warren M. Rohsenow</div>
+            <div class="journal">Transactions of the ASME, Vol. 74, 1952, pp. 969-976 (MIT reproduction) · DOI: 10.1115/1.4015984</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 대부분의 열이 벽에서 액체로 직접 전달되고 향상된 비등 전달이 기포 교반에 의해 구동된다는 물리적 그림에 근거하여 <span class="term">핵비등(표면 비등) 열전달</span>의 합리적 상관식을 제안한다. Fritz 이탈 직경과 Jakob 주파수-직경 관계를 사용해 기포 이탈 직경과 질량 속도로부터 <span class="term">기포 Reynolds 수</span>와 <span class="term">기포 Nusselt 수</span>를 정의한다. 기포 직경과 개체 수를 소거하면 상관식은 액체 과열 그룹 c_l T_x / h_fg, 기포 Reynolds 유사 그룹, 액체 Prandtl 수 사이의 관계로 축약되며, 표면-유체 조합에 의존하는 단일 경험 계수 <span class="term">C_sf</span>를 갖는다. 풀비등 데이터(백금 위 물, 크로뮴 위 벤젠/에틸알코올/n-펜탄, 황동 위 물)와 강제대류 표면 비등 데이터(니켈-물, 스테인리스-물)에 적용하면 각 청정 표면-유체 조합을 지수 0.33과 1.7로 약 +/-20 퍼센트 이내로 적합한다. <span class="term">폐합 관련성</span>: 이는 다공 매질 내 냉각수 증발을 모델링해야 하는 상변화 증산냉각의 표준 비등 열유속 폐합이다.</div>
+            <div class="keywords"><span class="keyword-chip">nucleate boiling</span><span class="keyword-chip">pool boiling</span><span class="keyword-chip">surface boiling</span><span class="keyword-chip">boiling heat transfer correlation</span><span class="keyword-chip">bubble Reynolds number</span><span class="keyword-chip">bubble Nusselt number</span><span class="keyword-chip">C_sf</span><span class="keyword-chip">forced convection surface boiling</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 비등의 향상된 열전달이 액체의 기포 교반에서 오며 비등이 격렬해질수록 강제대류(배관) Reynolds 수 효과가 사라진다는 물리적 관찰에서 출발한다. 따라서 기포 직경과 이탈 속도에 기반한 기포 Reynolds 수로 비등 데이터를 상관짓고자 하며, 시각 증거가 가장 풍부한 풀비등에서 기포 특성을 가져온다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">분석은 선행 기포 동역학 관계에 기반한다: Jakob의 기포 특성 정리와 부착 기포로의 열전달, Fritz의 기포 이탈 직경 관계, Jakob의 주파수-직경 관계. 이들이 기포 Reynolds·Nusselt 수로 결합되는 물리적 하위 모델을 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Fritz와 Jakob 관계를 열유속과 활성 사이트 밀도의 비례성과 결합하여 기포 Reynolds·Nusselt 수를 측정 가능한 양으로 표현한다. (열이 액체로 직접 가므로) Prandtl 수와 액체 과열 그룹을 포함하면 최종 상관식 형태가 되며, 접촉각·상수 항을 흡수한 단일 경험 계수 C_sf를 갖는다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">먼저 Addoms의 14.7~2465 psia 백금 위 물 풀비등 데이터에 적용하면 교차 플롯이 Prandtl 수에서 약 1.7 기울기를 보여, C = 0.013과 +/-20 퍼센트 산포의 최종 상관식(식 14)을 준다. 동일 절차를 다른 풀비등·강제대류 표면 비등 데이터셋에 적용하면 같은 형태의 식을 주며, 표면-유체 의존 계수 C_sf가 표로 정리된다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">강제대류 표면 비등 데이터(Rohsenow-Clark 니켈-물, Kreith-Summerfield 스테인리스-물)는 비등이 격렬해질수록 풀비등 상관식 선으로 수렴하여 유체 속도가 더 이상 중요하지 않음을 확인한다. 계수 C는 생략된 접촉각 항을 반영하므로 모든 표면-유체 조합에 따라 변하며, 작은 벽 과열은 C를 온도 측정 오차에 민감하게 만들고 지수는 잠정적으로 제시된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">기포 Reynolds 수, 기포 Nusselt 수, 액체 Prandtl 수에 기반한 무차원 상관식이 청정 표면의 단일 성분 유체에 대한 핵비등 풀비등과 격렬한 강제대류 표면 비등 데이터를 표면-유체 의존 계수 C를 통해 약 +/-20 퍼센트 이내로 상관짓는다. 지수와 형태는 유의하나 확정적이지 않은 것으로 제안되며, 접촉각과 C에 대한 추가 연구가 필요하다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 9 / total 16</span></summary>
+            <ol class="ref-list"><li>M. Jakob, Heat Transfer, Vol. I, Chap. 29, Wiley, 1949</li><li>W. M. Rohsenow, J. A. Clark, A Study of the Mechanism of Boiling Heat Transfer, Trans. ASME, 1951</li><li>W. Fritz, Physik. Zeitschr., Vol. 36, 1935, p. 379</li><li>M. Jakob, Zeitschr. d. Ver. deutsch. Ing., Vol. 76, 1932, p. 1161</li><li>J. N. Addoms, Heat Transfer at High Rates to Water Boiling Outside Cylinders, D.Sc. thesis, Chem. Eng. Dept., MIT, 1948</li><li>M. T. Cichelli, C. F. Bonilla, Heat Transfer to Liquids Boiling under Pressure, Trans. AIChE, Vol. 41, 1945, pp. 755-787</li><li>D. S. Cryder, A. C. Finalborgo, Heat Transmission from Metal Surfaces to Boiling Liquids, Trans. AIChE, Vol. 33, 1937, p. 346</li><li>F. Kreith, M. Summerfield, Heat Transfer to Water at High Flux Densities, Trans. ASME, Vol. 71, 1949</li><li>F. C. Gunther, F. Kreith, Photographic Study of Bubble Formation in Heat Transfer to Subcooled Water, Heat Transfer and Fluid Mech. Inst., 1949</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "포화 풀비등에 대해 Jakob은 열이 대부분 표면에서 액체로 직접 전달되며, 비등 향상은 이탈하는 기포 뒤의 액체 운동에 의한 교반에서 옴을 보였다."}, {"type": "bullet", "text": "Rohsenow and Clark, Gunther and Kreith는 고도로 과냉각된 액체에서 기포가 표면에 부착된 채 형성·성장·붕괴할 수 있다는 사진 증거를 제시했으나, 향상은 여전히 액체의 기포 교반에 기인한다.", "figure_refs": []}, {"type": "bullet", "text": "열전달률이 상승하고 기포 교반이 격렬해질수록 강제대류 유체 속도(따라서 배관 Reynolds 수) 효과는 점점 덜 중요해진다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "Rohsenow and Clark의 데이터는 비등이 격렬해질수록 다양한 유체 속도의 곡선이 하나의 곡선으로 합쳐짐을 보여, 유체 속도 효과가 사라짐을 확인한다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "따라서 표면을 떠나는 기포의 질량 속도와 직경에 기반한 기포 Reynolds 수로 상관을 구하는 것이 합리적이며, 이는 난류의 척도인 통상의 배관 Reynolds 수와 유사하다."}, {"type": "formula", "label": "Eq. (1) - 기포 Reynolds 수", "latex": "N_{Re,b} = \\frac{G_b\\,D_b}{\\mu_l}", "description": "기포 질량 속도 $G_b$, 기포 이탈 직경 $D_b$, 액체 점성 $\\mu_l$로부터의 기포 Reynolds 수; 가열 표면에서의 국소 유체 교반 척도."}, {"type": "bullet", "text": "풀비등의 기포 특성(Jakob이 정리)이 강제대류 표면 비등보다 더 상세한 시각 증거를 가지므로 사용된다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Jakob은 풀비등의 기포 특성을 정리하고 표면에 부착된 기포로의 열전달을 좋은 근사(식 2로 사용)로 제시했다."}, {"type": "formula", "label": "Eq. (2) - 부착 기포로의 열전달", "latex": "\\left(\\frac{q}{A}\\right)_b = h_{fg}\\,\\rho_v\\,n\\,\\frac{\\pi}{6}\\,D_b^{3}\\,f", "description": "잠열 $h_{fg}$, 증기 밀도 $\\rho_v$, 활성 사이트 수 $n$, 기포 체적 $\\tfrac{\\pi}{6}D_b^3$, 형성 주파수 $f$로부터 단위 면적당 기포가 운반하는 열."}, {"type": "bullet", "text": "Fritz는 표면을 떠나는 기포 직경 관계를 제시했으며, 접촉각 beta와 모세관 길이에 비례한다."}, {"type": "formula", "label": "Eq. (3) - Fritz 기포 이탈 직경", "latex": "D_b = C_d\\,\\beta\\,\\sqrt{\\frac{2\\,g_c\\,\\sigma}{g\\,(\\rho_l - \\rho_v)}}", "description": "Fritz 이탈 직경 관계; $\\beta$는 기포 접촉각(그림 3), $\\sigma$는 표면장력, $g_c$는 단위 환산 계수, $C_d$는 상수."}, {"type": "bullet", "text": "Jakob은 물과 사염화탄소 증기 기포에 대해 기포 형성 주파수와 이탈 직경 사이 관계를 보였으며, 주파수-직경 곱이 상수로 근사된다."}, {"type": "formula", "label": "Eq. (4) - Jakob 주파수-직경 관계", "latex": "f\\,D_b = C_{fd}\\;(\\text{constant})", "description": "기포 형성 주파수 곱하기 이탈 직경이 근사적으로 상수이며, 심각한 오차 없이 사용된다."}, {"type": "bullet", "text": "Jakob은 또한 활성 기포 발생 사이트 수가 주어진 압력에서 열전달률에 거의 비례함을 발견하여, q/A가 기포 열전달 (q/A)_b에 비례하도록 했다."}]}, "method": {"content": [{"type": "bullet", "text": "활성 사이트 수가 열전달률에 비례하므로 q/A ~ (q/A)_b이고 압력 의존 계수 C_q로 쓸 수 있으며, 기포 질량 속도는 기포 체적 유속에서 따른다.", "figure_refs": [3]}, {"type": "formula", "label": "Eq. (5) - 기포 유속 관점의 열유속", "latex": "\\frac{q}{A} = C_q\\,h_{fg}\\,\\rho_v\\,n\\,\\frac{\\pi}{6}\\,D_b^{3}\\,f", "description": "압력 의존 계수 $C_q$를 통해 기포 열전달에 비례하는 열유속."}, {"type": "formula", "label": "Eq. (6) - 기포 질량 속도", "latex": "G_b = \\frac{\\pi}{6}\\,D_b^{3}\\,f\\,\\rho_v\\,n", "description": "기포 체적, 주파수, 증기 밀도, 사이트 밀도로부터 표면을 떠나는 증기 기포의 질량 속도."}, {"type": "bullet", "text": "식 (3), (5), (6)을 (1)에 대입하면 D_b, G_b, n이 소거되어 열유속과 유체 물성으로 기포 Reynolds 수가 표현된다."}, {"type": "formula", "label": "Eq. (7) - 측정 가능 항의 기포 Reynolds 수", "latex": "N_{Re,b} = C_R\\,\\beta\\,\\frac{q/A}{\\mu_l\\,h_{fg}}\\,\\sqrt{\\frac{g_c\\,\\sigma}{g\\,(\\rho_l - \\rho_v)}}", "description": "$C_R = \\sqrt{2}\\,C_d/C_q$의 기포 Reynolds 수; 괄호 안 열유속/모세관 그룹은 무차원이고 $\\beta$는 (무차원) 각을 라디안으로 담는다."}, {"type": "bullet", "text": "기포 Nusselt 수를 정의하고 Fritz 직경 관계를 사용해 막 계수와 동일 모세관 길이로 표현한다."}, {"type": "formula", "label": "Eqs. (8)-(9) - 기포 Nusselt 수", "latex": "N_{Nu,b} = \\frac{h\\,D_b}{k_l} \\;\\;\\Rightarrow\\;\\; N_{Nu,b} = C_N\\,\\beta\\,\\frac{h}{k_l}\\,\\sqrt{\\frac{g_c\\,\\sigma}{g\\,(\\rho_l - \\rho_v)}}", "description": "막 계수 $h$, 기포 직경 $D_b$, 액체 전도도 $k_l$로부터의 기포 Nusselt 수; Fritz 관계로 $C_N = \\sqrt{2}\\,C_d$."}, {"type": "bullet", "text": "대부분의 열이 벽에서 액체로 직접 가므로 액체 Prandtl 수가 포함되어, 유체 속도가 열전달률에 영향을 주지 않는 격렬한 비등·풀비등에 적용 가능한 함수 상관 형태 N_Nu,b = phi_1(N_Re,b, N_Pr)를 준다."}, {"type": "formula", "label": "Eq. (11) - 표면장력으로부터의 접촉각", "latex": "\\cos\\beta = \\frac{\\sigma_{sl} - \\sigma_{vs}}{\\sigma_{lv}}", "description": "기포 접촉각 $\\beta$는 고체-액체, 증기-고체, 액체-증기 표면장력으로, 따라서 유체와 가열 표면 종류로 결정된다; 상관식 적용 시 항 $C_R$, $C_N$, $\\beta$를 생략하여 경험 계수에 흡수한다."}, {"type": "bullet", "text": "기포 Reynolds·Nusselt 수가 모두 q/A를 포함하므로, 그 조합으로 액체 과열 엔탈피 대 증발 잠열 엔탈피 비인 액체 과열 그룹을 도입한다."}, {"type": "formula", "label": "Eq. (12) - 액체 과열 그룹", "latex": "\\frac{N_{Re,b}\\,N_{Pr}}{N_{Nu,b}} = \\frac{c_l\\,T_x}{h_{fg}}", "description": "그룹들의 조합은 액체 과열 엔탈피 $c_l T_x$($T_x$는 벽 과열, 표면 빼기 포화 온도)와 잠열 $h_{fg}$의 비와 같다."}]}, "results": {"content": [{"type": "bullet", "text": "Addoms의 0.024 인치 백금선 위 탈기 증류수 풀비등(14.7~2465 psia)에서 상관식 플롯의 선 위치가 압력에 따라 최대로 상승 후 하강하며, 분석에서 예상된 Prandtl 수 효과를 따른다.", "figure_refs": [4]}, {"type": "bullet", "text": "일정 기포 Reynolds 수에서 c_l T_x / h_fg 대 Prandtl 수의 교차 플롯은 로그-로그 기울기 약 1.7을 주어 Prandtl 지수를 고정한다.", "figure_refs": [4]}, {"type": "formula", "label": "Eq. (14) - Rohsenow 핵비등 상관식", "latex": "\\frac{c_l\\,T_x}{h_{fg}} = C_{sf}\\left[\\frac{q/A}{\\mu_l\\,h_{fg}}\\sqrt{\\frac{g_c\\,\\sigma}{g\\,(\\rho_l - \\rho_v)}}\\right]^{0.33}\\left(\\frac{c_l\\,\\mu_l}{k_l}\\right)^{1.7}", "description": "최종 상관식: 액체 과열 그룹이 $C_{sf}$ 곱하기 0.33승 기포-Reynolds/열유속 그룹과 1.7승 액체 Prandtl 수와 같다; 백금 위 물에 대해 $C_{sf} = 0.013$, +/-20 퍼센트 데이터 산포. (스캔 페이지 이미지에서 직접 판독.)"}, {"type": "bullet", "text": "동일 절차를 Cichelli and Bonilla 데이터(연마 크로뮴 위 벤젠, 에틸알코올, n-펜탄)에 적용하면 같은 형태(식 14)의 식을 주며, 청정 표면의 단일 성분 유체만 상관지었다.", "figure_refs": [5, 6, 7]}, {"type": "bullet", "text": "Cryder and Finalborgo의 황동 위 물 풀비등 데이터도 마찬가지로 식 (14)로 상관지었다.", "figure_refs": [8]}, {"type": "bullet", "text": "결과 표면-유체 계수(표 I)는 물-백금 0.013, 벤젠-크로뮴 0.010, 에틸알코올-크로뮴 0.0027, n-펜탄-크로뮴 0.015, 물-황동 0.0060이다."}]}, "discussion": {"content": [{"type": "bullet", "text": "강제대류 표면 비등 데이터에서 일정 속도·압력 선은 T_x가 증가하고 기포 운동이 열전달을 지배함에 따라 풀비등 상관식 선에 평행한 단일 선으로 수렴한다.", "figure_refs": [9, 10]}, {"type": "bullet", "text": "표면 근처 액체가 포화(또는 준안정 과열) 근처이므로, 풀비등과 과냉각 강제대류 비등 모두에서 유체 물성을 포화 온도에서 평가했다."}, {"type": "bullet", "text": "벽 과열 T_x가 작으므로(대기압 물에서 약 50 F, 2000 psia에서 5-10 F), 측정 표면 온도의 작은 오차가 T_x에서 크게 증폭되어 실험자 간 C 산포를 설명할 수 있다."}, {"type": "bullet", "text": "C 변동의 가장 유의한 원인은 (데이터 부족으로) 기포 Reynolds·Nusselt 수에서 접촉각 항을 생략한 것으로, C가 beta와 따라서 표면-유체 조합의 함수가 된다(식 11)."}, {"type": "bullet", "text": "기포 Reynolds 수의 0.33 지수는 청정 여부와 무관하게 대부분 데이터에 적절했으나, 1.7 Prandtl 지수는 청정 표면에서만 유효했다(더러운 표면에서 0.8-2.0으로 불규칙)."}, {"type": "bullet", "text": "다시 쓰면 상관식은 비비등 강제대류 형태(지수 0.5-0.7의 Reynolds·Prandtl 수 함수 Nusselt)와 평행하여, 지수를 정확하다고 주장하지 않으면서 무차원 그룹 선택을 뒷받침한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "기포 Reynolds 수, 기포 Nusselt 수, Prandtl 수로 구성한 무차원 그룹을 사용하여 핵비등(표면 비등) 열전달 데이터를 상관짓는 방법이 제시된다."}, {"type": "bullet", "text": "청정 표면의 풀비등 데이터는 지수 0.33과 1.7, 표면-유체 의존 계수 C의 식 (14)로 약 +/-20 퍼센트 이내로 상관된다."}, {"type": "bullet", "text": "격렬한 강제대류 표면 비등에서 유체 속도(배관 Reynolds 수)는 더 이상 전달률에 영향을 주지 않으며, 데이터가 풀비등 상관식 선으로 수렴한다."}, {"type": "bullet", "text": "계수 C는 접촉각 beta를 통해 가열 표면/유체 조합에 의존하므로, 모든 표면-유체 쌍에 대해 다른 값이 예상된다."}, {"type": "bullet", "text": "식 (14)의 지수 0.33과 1.7 및 형태는 참값이나 최선 형태로 주장되지 않으나, 무차원 그룹은 비등 데이터 상관에 유의하다고 논증된다."}, {"type": "bullet", "text": "접촉각과 C의 압력·표면-유체 조합에 따른 변동, 그리고 기저 기포 관계식(식 3, 4, 5)의 유효성에 대한 추가 실험 연구가 필요하다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "지수 0.33과 1.7 및 상관식 형태는 참값이나 최선의 함수 형태라고 주장되지 않는다.", "source_quote": "It is not suggested that the exponents 0.33 and 1.7 of equation (14) are the true values nor that the form of equation (14) is the best one.", "source_section": "discussion"}, {"claim": "기포 접촉각 beta에 대한 압력 효과는 가용 정보 부족으로 무시되었다, 즉 beta를 압력 독립으로 가정했다.", "source_quote": "For lack of available information the effect of pressure on beta was disregarded in applying equation (10) to existing data.", "source_section": "discussion"}, {"claim": "1.7 지수는 청정 표면에서만 유효하며, 더러운 표면에서는 0.8과 2.0 사이로 불규칙했다.", "source_quote": "the 1.7 exponent appeared to be valid only for clean surfaces. With dirty surfaces the value of this exponent was erratic, varying between 0.8 and 2.0.", "source_section": "discussion"}], "future_works": [{"claim": "기포 접촉각과 계수 C가 압력 및 가열 표면/유체 조합 종류에 따라 어떻게 변하는지에 대한 추가 실험 연구가 필요하다.", "source_quote": "Further experimental work is needed to study the variation of bubble contact angle and coefficient C with pressure and with type of heating surface fluid combination.", "source_section": "conclusion"}, {"claim": "기포 Reynolds 수와 기포 Nusselt 수를 구성하는 데 사용된 관계식(식 3, 4, 5)의 유효성을 시험하기 위한 추가 실험 연구가 필요하다.", "source_quote": "Further experimental work is needed to study the validity of equations (3), (4) and (5) which were used in obtaining the terms bubble Reynolds number and bubble Nusselt number.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["비등 열전달 데이터에 합리적 상관식이 없었으며, 비등이 격렬해지면 강제대류 유체 속도(배관 Reynolds 수)가 열전달률에 영향을 미치지 않게 되므로 기포 기반 상관식이 필요하다.", "강제대류 표면 비등에서 액체 과냉각이 상관을 복잡하게 하는 추가 변수로 나타났다.", "비등 열전달의 기포 교반 메커니즘을 포착하는 무차원 그룹 집합이 확립되지 않았다."], "addressed_by_this_work": ["Fritz와 Jakob 관계를 사용해 기포 이탈 직경과 질량 속도로부터 기포 Reynolds 수와 기포 Nusselt 수를 정의하여, c_l T_x / h_fg, 기포 Reynolds 그룹, Prandtl 수의 상관식으로 축약했다.", "막 계수를 h = (q/A) / T_x로 정의하여 액체 과냉각을 별도 변수로서 제거했는데, 데이터를 q/A 대 벽 과열로 플롯하면 과냉각 효과가 붕괴하기 때문이다.", "상관식(식 14)이 풀비등 데이터(Addoms, Cichelli-Bonilla, Cryder-Finalborgo)와 강제대류 표면 비등 데이터(Rohsenow-Clark, Kreith-Summerfield)를 청정 표면-유체 조합에 대해 약 +/-20 퍼센트 이내로, 표로 정리된 C_sf 값과 함께 적합했다."], "remaining_unresolved": ["계수 C_sf는 표면-유체 조합에 의존하며 사전 예측되지 않고, 다양한 조합의 접촉각 beta 데이터가 필요하다.", "지수 0.33과 1.7 및 상관식 형태는 잠정적이며, 1.7 지수는 더러운 표면에서 실패한다.", "접촉각 beta의 압력 의존성은 데이터 부족으로 가정되어 배제되었다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Effect of Fluid Dispersion Coefficients on Particle-to-Fluid Heat Transfer Coefficients in Packed Beds - Correlation of Nusselt Numbers</title>
+    <meta name="keywords" content="packed bed, particle-to-fluid heat transfer, Nusselt number correlation, axial thermal dispersion, modified D-C model, interstitial heat transfer coefficient, local thermal non-equilibrium">
+    <meta name="paper-authors" content="N. Wakao, S. Kaguei, T. Funazkri">
+    <meta name="paper-journal" content="Chemical Engineering Science, Vol. 34, No. 3, 1979, pp. 325-336 · DOI: 10.1016/0009-2509(79)85064-2">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Effect of Fluid Dispersion Coefficients on Particle-to-Fluid Heat Transfer Coefficients in Packed Beds - Correlation of Nusselt Numbers</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">N. Wakao, S. Kaguei, T. Funazkri</div>
+            <div class="journal">Chemical Engineering Science, Vol. 34, No. 3, 1979, pp. 325-336 · DOI: 10.1016/0009-2509(79)85064-2</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 충전층 <span class="term">입자-유체 Nusselt 수</span>가 낮은 Reynolds 수에서 비정상적으로 감소하는 것처럼 보이는 오래된 이상 현상을 해소한다. 저자들은 이것이 실제 효과가 아니라 너무 작은 축방향 유체 열확산 계수나 연속 고체상(C-S)/원 분산-동심(D-C) 모델을 사용한 부적절한 데이터 환산의 산물이라고 주장한다. 발표된 정상·비정상 열전달 데이터를 검토하여 신뢰할 수 없는 세트를 폐기하고, 나머지를 Wakao가 제안한 큰 축방향 유효 열확산 계수를 사용하는 <span class="term">수정 D-C 모델</span>로 재평가한다. Reynolds 수 15~8500에서 보정된 데이터는 물질전달 상관식의 유사 형태 <span class="term">Nu = 2 + 1.1 Pr^(1/3) Re^0.6</span>의 단일 곡선으로 붕괴하며, Re -&gt; 0에서 단일 구 전도 극한 Nu -&gt; 2를 올바르게 회복한다. <span class="term">폐합 관련성</span>: 이 상관식은 국소 열적 비평형 다공 매질 모델의 표준 계면(입자/섬유-유체) 열전달 계수 폐합이다.</div>
+            <div class="keywords"><span class="keyword-chip">packed bed</span><span class="keyword-chip">particle-to-fluid heat transfer</span><span class="keyword-chip">Nusselt number correlation</span><span class="keyword-chip">axial thermal dispersion</span><span class="keyword-chip">modified D-C model</span><span class="keyword-chip">interstitial heat transfer coefficient</span><span class="keyword-chip">local thermal non-equilibrium</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">충전층 입자-유체 열전달은 오랫동안 낮은 Reynolds 수에서 Nusselt 수의 비정상적 감소를 보여 왔으며, 데이터 산포가 크고 이론 극한값이 갈렸다. 논문은 저자들의 앞선 물질전달 보정을 열전달로 확장하며, 명시된 유효성 기준을 만족하는 측정에만 주목한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 경쟁하는 이론 극한-Nusselt 추정과 선행 연구자들이 사용한 데이터 환산 모델을 개관하며, 연속 고체상(C-S) 모델과 원 분산-동심(D-C) 모델(둘 다 비판됨)을 저자들의 수정 D-C 모델과 구분한다. 각 데이터셋의 모델 선택이 열전달 계수를 어떻게 편향시켰는지도 검토한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">축방향 유체 열확산 계수가 핵심이다: 원 D-C 모델은 작은 계수를, 수정 D-C 모델은 큰 축방향 유효 열확산 계수(높은 유량에서 Peclet 수 2로 표현 가능)를 사용한다. 검토된 모든 열전달 계수를 수정 D-C 모델로 재계산하며, 무차원 수는 표면 질량 속도와 입자 직경으로 정의된다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">수정 D-C 모델로 재평가하면 저자들의 기준을 통과하는 정상·비정상 데이터셋 모두가 상관식 곡선으로 붕괴한다. 재평가 데이터는 더 이상 낮은 Re 비정상 감소를 보이지 않으며, 제외된 소수 데이터셋은 정상 방법이 무효이거나 모델/주파수 정보가 불충분한 경우이다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">분석은 외견상 낮은 Re Nusselt 이상이 서로 다른 모델(일부 신뢰 불가 또는 비판됨)로 환산된 데이터를 섞고 부적절한 확산 계수를 사용한 데서 비롯됨을 보인다. 수정 D-C 모델의 큰 축방향 유효 열확산 계수가 이상을 제거하며, 결과 상관식은 물질전달 유사체를 반영한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">발표된 열전달 데이터를 수정 D-C 모델에서 축방향 유체 열확산으로 보정하여 Re = 15~8500에서 Nu = 2 + 1.1 Pr^(1/3) Re^0.6으로 상관지었다. 충전층 반응기 설계에 상관식을 적용할 때는 큰 축방향 유효 열확산 계수도 사용해야 한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 47</span></summary>
+            <ol class="ref-list"><li>N. Wakao, Chem. Eng. Sci., 1976, 31, 1115 (axial thermal dispersion coefficients)</li><li>N. Wakao, T. Funazkri, Chem. Eng. Sci., 1978, 33, 1375 (analogous mass-transfer / Sherwood correlation)</li><li>D. J. Gunn, J. F. C. De Souza, Chem. Eng. Sci., 1974, 29, 1363</li><li>D. Kunii, J. M. Smith, AIChE J., 1961, 7, 29</li><li>H. Littman, R. G. Barile, A. H. Pulsifer, Ind. Eng. Chem. Fundam., 1968, 7, 554</li><li>S. Kaguei, B. Shiozawa, N. Wakao, Chem. Eng. Sci., 1977, 32, 507</li><li>N. Wakao, S. Kaguei, H. Nagai, Chem. Eng. Sci., 1977, 32, 1261</li><li>G. A. Turner, L. Otten, Ind. Eng. Chem. Process Des. Dev., 1973, 12, 417</li><li>D. Handley, P. J. Heggs, Trans. Instn. Chem. Engrs., 1968, 46, T251</li><li>A. V. Bradshaw, A. Johnson, N. H. McLachlan, Y.-T. Chiu, Trans. Instn. Chem. Engrs., 1970, 48, T77</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "이 열전달 연구는 발표된 입자-유체 물질전달 데이터를 축방향 유체 확산 계수로 보정한 저자들의 앞선 물질전달 연구(Wakao and Funazkri 1978)를 확장한다."}, {"type": "bullet", "text": "명시된 조건을 만족하는 측정만 고려된다: 층 내 모든 입자가 활성이고, 열전달 층의 입자 층 수가 2 초과.", "figure_refs": [1]}, {"type": "bullet", "text": "Nu 대 Re로 플롯하면 수집된 데이터는 상당한 산포와 낮은 Reynolds 수에서의 비정상적 Nusselt 수 감소를 보인다.", "figure_refs": [1]}, {"type": "bullet", "text": "이 이상 현상은 오랫동안 논쟁되었으며 모든 실험 연구자가 지지한 것은 아니다(예: Littman and Shva, Gunn and De Souza는 각각 약 0.4와 10의 극한 Nu를 추정)."}, {"type": "bullet", "text": "이론 추정이 갈린다: Pfeffer and Happel은 공극률 0.4에서 약 13(자유 표면 모델), Miyauchi는 약 18, Sorensen and Stewart는 약 3.9(입방 구 배열의 크리핑 유동)을 얻었다."}, {"type": "bullet", "text": "Wakao와 공동연구자들은 낮은 Re 비정상 감소를 실제 물리가 아니라 데이터 환산에 사용된 기초 방정식의 결함 탓으로 돌린다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Cornish는(정전기-열 유추) 조밀 입자계의 열전달 계수가 무한 매질 단일 구보다 훨씬 작다고 주장했고, Kunii and Suzuki는 이상 현상을 유동 채널링에, Nelson and Galloway는 각 입자 주변 유체 요소의 갱신에 돌렸다."}, {"type": "bullet", "text": "Schlunder는(평행 모세관 다발 가정) 낮은 Re에서 유량 감소에 따라 전달 계수가 감소함을 보였다."}, {"type": "bullet", "text": "Kunii and Smith, Cybulski et al.은 연속 고체상(C-S) 모델로 계수를 결정했으나, Wakao et al.은 C-S 모델이 정상상태 열전달 계수 결정에 확장될 수 없음을 보였다."}, {"type": "bullet", "text": "Eichhorn and White, Baumeister and Bennett, Pei et al.은 입자 내 열 생성에 고주파 가열을 사용했으나 각 데이터셋은 이후 비판되었다(비선형 고체 온도 프로파일, 큰 반경 온도차, 접촉점 열 생성)."}, {"type": "bullet", "text": "Gunn and De Souza는 주파수 응답 측정에서 D-C 모델의 축방향 유체 열확산 계수가 입자외 물질 확산 값보다 상당히 큼을 처음 발견했고, Vortmeyer는 이 큰 계수의 의미를 논했다."}, {"type": "bullet", "text": "Kaguei et al.은 C-S 모델을, Wakao et al.은 원 D-C 모델을 비판하며, 특히 C-S나 원 D-C 모델의 계수가 수정 D-C 값과 다른 낮은 Reynolds 수에서 수정 D-C 모델이 유리함을 보였다."}]}, "method": {"content": [{"type": "bullet", "text": "1차원 정상 축방향 분산 에너지 수지는 대류, 입자-유체 교환(h_p a), 축방향 분산 항을 결합하며, 원 D-C 모델은 층류/난류 추정의 작은 계수 a_f를, 수정 D-C 모델은 큰 축방향 유효 분산 계수 a_L을 사용한다."}, {"type": "bullet", "text": "높은 유량에서 축방향 유체 분산은 Peclet 수 2(a_L,유체 = 0.5 D_p U)로 표현되며, 유효 분산 계수는 추가로 정체층 유효 열전도도 기여를 포함한다."}, {"type": "formula", "label": "Eq. (6) - 충전층 입자-유체 Nusselt 상관식", "latex": "Nu = 2 + 1.1\\,Pr^{1/3}\\,Re^{0.6}", "description": "핵심 결과: Prandtl과 Reynolds 수의 함수로서의 입자-유체 Nusselt 수로, 저자들의 물질전달(Sherwood) 상관식과 유사하다; 상수 2는 정체 단일 구 전도 극한(Re -&gt; 0)이다."}, {"type": "formula", "label": "Nusselt 수 정의", "latex": "Nu = \\frac{h_p\\,D_p}{k_F}", "description": "열전달 계수 $h_p$, 입자 직경 $D_p$, 유체 열전도도 $k_F$로부터의 입자-유체 Nusselt 수(논문 기호에 따름)."}, {"type": "formula", "label": "Reynolds 수 정의", "latex": "Re = \\frac{D_p\\,G}{\\mu}", "description": "입자 직경 $D_p$, 표면 질량 속도 $G = \\rho_F u$, 유체 점성 $\\mu$에 기반한 Reynolds 수(논문 기호에 따름)."}, {"type": "formula", "label": "Prandtl 수 정의", "latex": "Pr = \\frac{C_F\\,\\mu}{k_F}", "description": "유체 비열 $C_F$, 점성 $\\mu$, 열전도도 $k_F$로부터의 Prandtl 수(논문 기호에 따름)."}, {"type": "bullet", "text": "정상상태 열전달 연구는 상세 층높이/공극률 데이터가 없는 논문을 제외하고 수정 D-C 모델로 재계산되며, 보정 절차는 열/물질 구분을 제외하고 물질전달 연구와 평행하다(부록 A)."}]}, "results": {"content": [{"type": "bullet", "text": "보정된 정상상태 데이터를 Nu 대 Re로 플롯하면 유사 물질전달 상관식 곡선(식 6)을 따르며, 낮은 Re에서는 데이터가 곡선보다 약간 위에 놓인다.", "figure_refs": [2]}, {"type": "bullet", "text": "입자 내 열 생성/제거가 없는 정상상태에서는 유체와 고체 온도가 본질적으로 같아 그러한 정상 측정에서 열전달 계수를 결정할 수 없으며, 이는 여러 정상 데이터셋이 폐기된 핵심 이유이다."}, {"type": "bullet", "text": "비정상 스텝 응답 데이터(Handley and Heggs, Bradshaw et al.)를 수정 D-C 모델로 재평가하면 Reynolds 수가 감소함에 따라 원래 Schumann 모델 값보다 상당히 높아지며, 오차 측도가 0.02 미만일 때 일치를 양호로 판정한다.", "figure_refs": [4, 5]}, {"type": "bullet", "text": "주파수 응답 오차 지도는 낮은 유량(예: Gunn and De Souza)에서 골짜기가 넓어 Nusselt 수를 특정할 수 없음(Nu ~ 10 또는 Nu = 20-90 같은 범위)을 보이는 반면, 높은 Re 데이터(Turner et al., Re 1200-4600)는 신뢰할 수 있는 계수를 준다.", "figure_refs": [6, 7, 8]}, {"type": "bullet", "text": "샷 응답 데이터(Wakao et al.)는 명확한 Nusselt 수를 주지 않았으나 수정 D-C 모델의 이점을 확인했고, Goss and Turner의 시뮬레이션 예(Re = 950)는 가파른 오차 골짜기를 가져 결정된 Nu가 신뢰할 만하다.", "figure_refs": [9]}, {"type": "bullet", "text": "모든 기준을 통과한 데이터셋(참고문헌 16, 18-23, 25, 39, 40, 45, 46)을 수정 D-C 모델로 재평가하면 전 Reynolds 범위에서 상관식으로 잘 표현된다.", "figure_refs": [10]}]}, "discussion": {"content": [{"type": "bullet", "text": "원래의 Nu 대 Re 플롯은 서로 다른 모델(Schumann, C-S, D-C)로 얻은 열전달 데이터를 섞으며, 그중 여럿은 신뢰할 수 없거나 계산 절차상 비판되었다."}, {"type": "bullet", "text": "C-S와 원 D-C 모델은 낮은 Re에서 비정상적으로 낮은 열전달 계수를 생성하나, 큰 축방향 유효 열확산 계수를 쓰는 수정 D-C 모델은 그렇지 않다."}, {"type": "bullet", "text": "연구자들(예: Kunii and Smith)이 비정상적으로 낮은 계수를 얻은 경우, Gunn and De Souza는 올바른 대수적 해석이면 오히려 무한히 큰 계수를 준다고 지적하여 모델 의존성을 강조했다."}, {"type": "bullet", "text": "높은 Reynolds 수의 비정상 측정은 가정된 축방향 확산 계수가 수정 D-C 값에 가깝기 때문에 신뢰할 수 있는 계수를 주며, 낮은 Re 비정상 결정은 조건이 나쁘다."}, {"type": "bullet", "text": "보정된 열전달 데이터는 물질전달(Sherwood) 상관식을 밀접하게 평행하여, 일관된 확산 계수를 사용하면 열/물질 유추를 뒷받침한다."}, {"type": "bullet", "text": "충전층 반응기 설계·해석을 위해 저자들은 이 열전달 상관식과 함께 큰 축방향 유효 열확산 계수를 반드시 사용해야 한다고 강조한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "발표된 열전달 데이터를 Wakao가 제안한 축방향 유체 열확산 계수로 보정하고, 수정 D-C 모델의 재평가 데이터를 유사 물질전달 형태 Nu = 2 + 1.1 Pr^(1/3) Re^0.6으로 상관지었다."}, {"type": "bullet", "text": "상관식은 Reynolds 수 15~8500에서 성립하며 Re -&gt; 0에서 올바른 정체 단일 구 전도 극한 Nu -&gt; 2를 회복한다."}, {"type": "bullet", "text": "낮은 Reynolds 수에서의 외견상 Nusselt 수 감소는 부적절한 확산 계수와 데이터 환산 모델의 산물이며 실제 물리 효과가 아니다."}, {"type": "bullet", "text": "열전달 상관식을 충전층 반응기 설계·해석에 사용할 때는 축방향 유효 열확산 계수(큰 값)도 사용해야 한다."}, {"type": "bullet", "text": "신뢰할 수 있는 열전달 계수는 높은 유량의 비정상 측정에서 얻어지며, 정상 측정은 사용 가능하려면 내부 열 생성/제거가 필요하다."}, {"type": "bullet", "text": "연속 고체상 또는 원 분산-동심 모델로 환산된 데이터셋은 상관식 평가 시 수정 D-C 결과와 섞어서는 안 된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "정상상태에서 고체 입자에 열 생성·제거가 없으면 유체와 고체 온도가 본질적으로 같으므로, 정상상태 측정에서는 열전달 계수를 결정할 수 없다.", "source_quote": "Heat transfer coefficients cannot, therefore, be determined from the steady heat transfer measurements unless heat is generated or removed in solid particles", "source_section": "results"}, {"claim": "검토된 열전달 데이터가 다루는 높은 유량(Re = 8500까지)에서의 정체층 유효 열전도도 측정이 존재하지 않는다.", "source_quote": "The heat transfer measurements reviewed in this section have been made in the Reynolds number up to 8500. As far as the authors know, no measurements have been made on k_e^0 at such high flow rates", "source_section": "method"}, {"claim": "오차 지도가 가파르고 데이터 산포가 큰 낮은 유량에서는 Nusselt 수를 신뢰성 있게 결정할 수 없다.", "source_quote": "small error (say, eS = 0.05) indicates that Nusselt numbers cannot be determined at low flow rates, although Gunn et al. have determined the definite values of a_r and Nu", "source_section": "discussion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["충전층 입자-유체 Nusselt 수는 상당한 산포와 낮은 Reynolds 수에서의 외견상 비정상적 감소를 보이며 오랫동안 논쟁거리였다.", "이론·실험 극한 Nusselt 수가 크게 갈리고(약 0.4~18), 선행 데이터 환산은 너무 작은 축방향 확산 계수나 비정상적으로 낮은 계수를 주는 C-S/원 D-C 모델을 사용했다.", "저자들의 앞선 물질전달(Sherwood) 상관식에 유사한 통일되고 신뢰할 수 있는 열전달 상관식이 부재했다."], "addressed_by_this_work": ["발표된 정상·비정상 열전달 데이터를 비판적으로 검토하여 신뢰할 수 없는 데이터를 폐기하고 나머지를 큰 축방향 유효 열확산 계수의 수정 D-C 모델로 재평가했다.", "수정 D-C 모델 데이터가 비정상적으로 감소하지 않으므로, 낮은 Re 이상 현상이 실제 물리가 아니라 부적절한 확산 계수/모델의 산물임을 보였다.", "Re = 15~8500의 보정 데이터를 물질전달 상관식의 유사 형태 Nu = 2 + 1.1 Pr^(1/3) Re^0.6으로 상관지었으며 올바른 Nu -&gt; 2 전도 극한을 가진다."], "remaining_unresolved": ["내부 열 생성·제거가 없는 정상상태 측정은 열전달 계수 결정에 여전히 사용 불가하다.", "매우 높은 유량에서의 유효 축방향/정체 열전도도가 측정되지 않았다.", "가파른 오차 지도와 데이터 산포로 약 Re = 15 미만의 명확한 Nusselt 수를 확립할 수 없었다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

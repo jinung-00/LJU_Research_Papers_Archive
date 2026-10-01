@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction and Validation of Flow Properties in Porous Lattice Structures</title>
+    <meta name="keywords" content="metal foam, additive manufacturing, permeability, inertial coefficient, lattice Boltzmann method, pore-scale simulation, Forchheimer, Octet lattice, TKD, unit cell">
+    <meta name="paper-authors" content="Ashreet Mishra, David Korba, Inderjot Kaur, Prashant Singh, Like Li">
+    <meta name="paper-journal" content="Journal of Fluids Engineering (ASME), Vol. 145, No. 4, April 2023, Art. 041402 · DOI: 10.1115/1.4056524">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Basic_Theory">
+    <meta name="paper-category" content="">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Prediction and Validation of Flow Properties in Porous Lattice Structures</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Ashreet Mishra, David Korba, Inderjot Kaur, Prashant Singh, Like Li</div>
+            <div class="journal">Journal of Fluids Engineering (ASME), Vol. 145, No. 4, April 2023, Art. 041402 · DOI: 10.1115/1.4056524</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 논문은 <span class="term">격자 볼츠만 방법(LBM)</span> 기공 규모 모델을 구현하여 네 가지 적층제조(AM) 금속 폼 단위셀 위상 - <span class="term">Cube, Face-Diagonal(FD)-Cube, Tetrakaidecahedron(TKD), Octet</span> - 을 통한 유동을 넓은 다공도 범위 0.5 &lt; phi &lt; 0.95에서 시뮬레이션한다. 압력 구배 대 평균 속도 프로파일은 바인더 제팅 420 스테인리스강 시료 자체 실험으로 검증된다. <span class="term">새로운 하이브리드 모델</span>이 제안되는데, 선형 LBM(관성 무시)이 먼저 단일 점에서 고유 투과율을 추출하고, 이어 표준 2차 LBM과 최소제곱이 관성(Forchheimer) 계수를 준다. 이는 종래 다항 피팅보다 선택 속도 범위에 덜 민감함이 입증된다. 정규화 투과율 K/d^2(이중 지수)과 관성계수 C_e(멱법칙)에 대한 편리한 상관식이 네 구조 모두에 제공된다. <span class="term">폐합 관련성</span>: 도출된 K(phi)와 C_e(phi)는 체적 평균 다공 매질·증산냉각 모델에 공급할 거시규모 유동 폐합 그 자체이다.</div>
+            <div class="keywords"><span class="keyword-chip">metal foam</span><span class="keyword-chip">additive manufacturing</span><span class="keyword-chip">permeability</span><span class="keyword-chip">inertial coefficient</span><span class="keyword-chip">lattice Boltzmann method</span><span class="keyword-chip">pore-scale simulation</span><span class="keyword-chip">Forchheimer</span><span class="keyword-chip">Octet lattice</span><span class="keyword-chip">TKD</span><span class="keyword-chip">unit cell</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">개방셀 금속 폼은 컴팩트 열교환기에 매력적인 다공 매질이며, AM은 이제 맞춤형 격자 섬유 형상과 조절 가능한 유동 물성을 가능케 한다. 투과율과 관성계수의 효율적 예측이 필요하나 AM 폼 유동 상세 연구는 확률적 폼에 비해 부족하다. LBM이 강력한 기공 규모 도구로 소개되며, 논문은 넓은 다공도 범위의 네 주기적 AM 격자를 대상으로 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">관련 문헌은 확률적 폼의 실험 압력강하 상관식, 이상화·재구성 폼의 수치 기공 규모 연구, LBM 스킴 평가, 최근 AM 격자 열 물성 연구를 아우른다. 동일한 네 격자가 이전에 유효 열전도도(Wang et al.)로 연구되어 본 유동 물성 결정을 동기화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">D3Q19 다중완화시간 LBM(2차 및 관성 없는 선형 형태)이 일정 체적력 압력 구배 하에서 주기 경계와 섬유 bounce-back 무활주 조건으로 주기 격자의 3D 유동을 시뮬레이션한다. 투과율은 Darcy 법칙에서, 관성계수는 Forchheimer 관계에서 따르며, 하이브리드 모델은 단일 선형-LBM 점에서 K를, 최소제곱으로 C_e를 추출하고 명시적 LBM-물리 단위 변환을 사용한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">선형 LBM이 해석적 BCC 투과율과 일치하고 하이브리드 모델이 그리드 전반에서 문헌 Octet 투과율을 2 퍼센트 이내로 재현하여 접근법을 검증한다. 실험 스케일 압력 구배 곡선은 LBM과 약 15 퍼센트(FD-Cube/TKD/Octet)~25 퍼센트(Cube) 일치한다. 하이브리드 모델은 다항 피팅보다 매끄럽고 범위에 덜 민감한 K와 C_e를 주며, FD-Cube가 최대 유동 저항, Cube가 최소를 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">전통 폼 모델(Ergun/Kozeny-Carman형)이 AM 격자 관성계수를 포착하지 못하므로 저자들은 AM 전용 상관식을 개발한다. 이중 지수 형태가 느린·빠른 성장 영역 모두에서 K/d^2를 적합하고, 멱법칙이 전 다공도 범위에서 C_e를 적합하여, 선행 연구의 좁은 범위용 단일 지수·선형 피팅을 능가한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">넓은 다공도 범위의 LBM 시뮬레이션(2차·선형 형태)을 자체 실험으로 검증하여 네 AM 격자 유동을 특성화했다: FD-Cube가 최대 유동 저항, Cube가 최소, Octet/TKD가 우수한 혼합을 보인다. 새로운 하이브리드 방법이 피팅 속도 범위에 낮은 민감도로 K/d^2와 C_e를 평가했고, 이중 지수·멱법칙 상관식이 제안·교차 검증되었다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 56</span></summary>
+            <ol class="ref-list"><li>C. Pan, L. S. Luo, C. T. Miller, An Evaluation of Lattice Boltzmann Schemes for Porous Medium Flow Simulation, Comput. Fluids, 2006</li><li>D. d'Humieres, Multiple-Relaxation-Time Lattice Boltzmann Models in Three Dimensions, Philos. Trans. R. Soc. A, 2002</li><li>P. Ekade, S. Krishnan, Fluid Flow and Heat Transfer Characteristics of Octet Truss Lattice Geometry, Int. J. Therm. Sci., 2019</li><li>I. Kaur, P. Singh, Flow and Thermal Transport Through Unit Cell Topologies of Cubic and Octahedron Families, Int. J. Heat Mass Transfer, 2020</li><li>N. Wang, I. Kaur, P. Singh, L. Li, Prediction of Effective Thermal Conductivity of Porous Lattice Structures and Validation With Additively Manufactured Metal Foams, Appl. Therm. Eng., 2021</li><li>N. Dukhan, Correlations for the Pressure Drop for Flow Through Metal Foam, Exp. Fluids, 2006</li><li>L. Tadrist, M. Miscevic, O. Rahli, F. Topin, About the Use of Fibrous Materials in Compact Heat Exchangers, Exp. Therm. Fluid Sci., 2004</li><li>S. Ergun, A. A. Orning, Fluid Flow Through Randomly Packed Columns and Fluidized Beds, Ind. Eng. Chem., 1949</li><li>A. S. Sangani, A. Acrivos, Slow Flow Through a Periodic Array of Spheres, Int. J. Multiphase Flow, 1982</li><li>G. S. Beavers, E. M. Sparrow, Non-Darcy Flow Through Fibrous Porous Media, ASME J. Appl. Mech., 1969</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "개방셀 금속 폼은 교차연결 섬유를 통한 유체 혼합과 높은 유체-고체 접촉 면적을 촉진하여 무게·공간 제약 열교환기에 유리하며, AM 격자 구조 폼은 맞춤형 섬유 형상·크기의 자유도를 제공하는 다음 세대이다."}, {"type": "bullet", "text": "격자 기하 수정으로 유동 물성(투과율, 관성계수, 마찰계수)을 효율적으로 예측하면 AM 금속 폼의 이해와 설계가 향상된다."}, {"type": "bullet", "text": "초기 실험 연구(Beavers and Sparrow; Mancin et al.; Kim et al.; Hwang et al.; Bhattacharya et al.)는 압력강하/속도 데이터에서 투과율과 관성계수를 구하고 Reynolds 수로 Darcy 대 비-Darcy(Forchheimer) 영역을 특성화했다."}, {"type": "bullet", "text": "이상화 단위셀(Kelvin 셀, TKD)이나 재구성 영상을 사용한 수치 연구가 유동 물성을 예측했으며, 재구성 실제 기하가 이상화 Kelvin 셀보다 실험 압력강하·Nusselt 수와 더 잘 일치했다."}, {"type": "bullet", "text": "LBM은 단순 명시적 알고리즘, 편리한 경계조건 처리, 복잡 기하 보존 능력을 갖춘 다공 매질 유동·열전달의 강력한 도구이며, 선행 LBM 연구는 패킹 매질과 BCC/FCC/단순입방 구조의 투과율을 평가했다."}, {"type": "bullet", "text": "AM 금속 폼의 유동·열전달 상세 연구는 확률적 폼에 비해 부족하며, 최근 AM 연구(Ekade and Krishnan; Dixit et al.; Kaur and Singh; Wang et al.)는 열 물성을 다뤘으나 유동 물성은 종합적 열전달 평가에 필수로 남는다."}, {"type": "bullet", "text": "본 연구는 Cube, FD-Cube, TKD, Octet 격자에 대해 0.5 &lt; phi &lt; 0.95에서 LBM 시뮬레이션으로 투과율·관성계수를 구하고 자체 AM 실험으로 검증하여 간극을 메운다.", "figure_refs": [1]}]}, "related_works": {"content": [{"type": "bullet", "text": "Mancin et al.과 Kim et al.은 압력강하 데이터에서 2차 확장 Darcy(Forchheimer) 식으로 알루미늄 폼의 투과율·관성계수를 평가하고 일반 압력강하 상관식을 종합했다."}, {"type": "bullet", "text": "Liu et al.은 단위 Kelvin 셀로 이상화 폼 유동을 모델링했고, Bai and Chung은 이상화 TKD 셀로 개방 마이크로채널보다 1~2 차수 높은 압력강하를 보고했다."}, {"type": "bullet", "text": "Iasiello et al.과 Diani et al.은 3D 재구성 폼 영상을 시뮬레이션하여 실제 재구성 기하가 이상화 Kelvin 셀보다 실험 압력강하·Nusselt 수와 더 잘 일치함을 발견했다."}, {"type": "bullet", "text": "Pan et al.은 Darcy 법칙 투과율에 대해 LBM 스킴(표준 bounce-back, 선형 보간 bounce-back, 다중반사)을 평가했으며, LBM은 무작위 패킹 매질과 주기 BCC/FCC/단순입방 구조에 적용되었다."}, {"type": "bullet", "text": "Takeuchi et al.은 비-Darcy 계수에 대한 기공 규모 이질성 효과의 2D LBM 연구를 수행하여 더 이질적인 매질에서 높은 관성계수와 채널링 효과를 관찰했다."}, {"type": "bullet", "text": "Ekade and Krishnan, Dixit et al., Kaur and Singh, Wang et al.은 열전도도·열전달·계면 계수에 대해 AM Octet/TKD 격자를 연구했으며, Wang et al.은 동일한 네 격자를 유효 열전도도로 연구하여 본 유동 물성 동반 연구를 직접 동기화한다."}, {"type": "bullet", "text": "Kumar and Topin 및 기타 리뷰가 전통 개방셀 폼의 압력강하 상관식을 정리했으나, 넓은 다공도 범위의 포괄적 AM 격자 결과는 여전히 부재했다."}]}, "method": {"content": [{"type": "bullet", "text": "네 주기 격자(Cube, FD-Cube, TKD, Octet)는 0.5 &lt; phi &lt; 0.95에 걸치며 다공도는 섬유 직경 대 단위셀 길이(L/d) 비로 설정된다. 150dx 단위셀에서 phi = 0.95 섬유 직경은 24.71dx(Cube), 15.00dx(FD-Cube), 13.50dx(TKD), 9.49dx(Octet)이다.", "figure_refs": [1]}, {"type": "bullet", "text": "D3Q19 다중완화시간 LBM(d'Humieres)이 두 형태로 사용된다: 표준 2차 모델과 비선형 모멘트 항을 0으로 설정하여 Stokes 유동/Darcy 거동을 강제하는 축소 선형 모델."}, {"type": "bullet", "text": "일정 압력 구배 -dp/dz가 x, y, z 주기 경계와 고체 섬유 bounce-back 무활주로 체적력으로 부과되며, 반복 간 유동장 L2 노름 오차가 1e-6 미만일 때 정상상태로 선언한다."}, {"type": "bullet", "text": "투과율은 시뮬레이션된 단일 점에 적용한 Darcy 법칙에서 정의된다."}, {"type": "formula", "label": "Eq. (13) - Darcy 법칙 투과율", "latex": "K = \\frac{\\mu\\,\\bar{u}_z}{\\left(-\\dfrac{dp}{dz}\\right)}", "description": "동점성 $\\mu$, 평균 유동방향 속도 $\\bar{u}_z$, 부과 압력 구배로부터의 고유 투과율; 저-$Re_K$(Darcy) 유동에 유효."}, {"type": "bullet", "text": "높은 속도에서 관성력이 중요하며, 비-Darcy(Forchheimer) 영역은 2차 항을 더하므로 압력 구배는 선형(A)과 2차(B) 계수로 표현된다.", "figure_refs": [4]}, {"type": "formula", "label": "Eq. (14) - Forchheimer(비-Darcy) 압력 구배", "latex": "-\\frac{dp}{dz} = A\\,\\bar{u}_z + B\\,\\bar{u}_z^{\\,2}", "description": "2차 압력강하 법칙; $A$와 $B$가 각각 투과율과 관성계수를 결정한다."}, {"type": "formula", "label": "Eq. (15) - A, B로부터의 투과율·관성계수", "latex": "K = \\frac{\\mu}{A},\\qquad C_e = \\frac{B\\sqrt{K}}{\\rho_f}", "description": "선형 계수 $A$로부터의 투과율과 2차 계수 $B$, 유체 밀도 $\\rho_f$로부터의 관성계수 $C_e$."}, {"type": "bullet", "text": "하이브리드 모델에서 선형 LBM이 단일 압력강하/속도 점에서 K를 주고(크기 독립), 이어 Forchheimer 영역의 2차-LBM 프로파일이 최소제곱으로 C_e를 주며, 이는 다항 피팅보다 점 선택에 덜 민감하다.", "figure_refs": [5]}, {"type": "formula", "label": "Eq. (16) - 최소제곱 관성계수", "latex": "C_e = \\frac{\\displaystyle\\sum_i \\left(\\frac{1}{\\rho_f}\\left|\\frac{dp}{dz}\\right|_i - \\frac{\\mu}{K}\\bar{u}_{z,i}\\right)\\bar{u}_{z,i}^{\\,2}\\,\\sqrt{K}}{\\displaystyle\\sum_i \\bar{u}_{z,i}^{\\,4}}", "description": "선형 모델의 투과율 $K$를 사용해 모든 LBM 데이터 점 $i$에 걸친 $C_e$의 최소제곱 추정; 속도 범위 민감도를 줄인다. (2단 조판으로 깨진 영역에서 전사했으며, 대수 형태는 식 14-15와 정합하나 자체 점검에서 불확실로 처리.)"}, {"type": "formula", "label": "Eq. (19) - 해석적 BCC 투과율(검증)", "latex": "K = \\frac{2L^3}{G\\,\\pi\\,d\\,C_D^{*}}", "description": "선형 LBM 검증에 사용된 BCC 구 구조의 해석적 투과율(Sangani and Acrivos); 단위셀 길이 $L$, 구 직경 $d$, BCC 상수 $G = 12$, 무차원 항력계수 $C_D^{*}$."}, {"type": "bullet", "text": "phi = 0.91 BCC 구조의 격자 독립성 연구가 L = 150dx를 선택했으며(상대 오차 약 6.6 퍼센트로 점근), LBM-물리 단위 변환은 속도와 압력 구배를 길이비와 점성으로 스케일한다.", "figure_refs": [6]}]}, "results": {"content": [{"type": "bullet", "text": "선형-LBM 정규화 투과율이 해석적 BCC 해와 넓은 다공도 범위에서 일치하며, phi = 0.75 이상에서 150dx 해상도의 구 곡률 계단화로 약간의 편차가 있다.", "figure_refs": [6]}, {"type": "bullet", "text": "Octet 구조의 하이브리드 모델 검증은 문헌 데이터 대비 그리드 간 2 퍼센트 미만 투과율 편차를 보이며, 관성계수는 참조와 유사한 경향을 따르고 최소제곱법이 참조 2차 피팅보다 덜 민감하다.", "figure_refs": [7]}, {"type": "bullet", "text": "실험적으로, 네 바인더 제팅 420 스테인리스 시료(측정 phi 약 0.87 vs 설계 0.89)의 스케일 압력 구배 대 속도 곡선이 LBM과 일치하며, 최대 상대 오차는 약 15 퍼센트(FD-Cube, TKD, Octet)와 25 퍼센트(Cube)로 AM 거칠기·기하 불완전성에 기인한다.", "figure_refs": [8]}, {"type": "bullet", "text": "표면·내부 속도 등고선은 Cube가 최고 속도 크기(최저 저항)를, FD-Cube가 입구에서 유동 교착을, TKD와 Octet이 더 균일한 고속 분포로 우수한 유체 혼합을 보임을 나타낸다.", "figure_refs": [9, 10]}, {"type": "bullet", "text": "FD-Cube가 주어진 속도에서 최고 압력강하(상당한 유동 차단)를, 이어 Octet, TKD, Cube 순을 보이며, 평균 속도 대 다공도는 두 영역(0.5 &lt; phi &lt; 0.8 완만 상승, 0.8 &lt; phi &lt; 0.95 급격)을 보인다.", "figure_refs": [4, 11]}, {"type": "bullet", "text": "하이브리드 모델은 투과율을 속도/압력 크기와 무관하게 추출하므로 다항 피팅보다 크고 매끄러운 K/d^2를 주는 반면, 다항 피팅은 선택 데이터 범위에 따라 변한다.", "figure_refs": [12, 13]}, {"type": "bullet", "text": "Cube, TKD, Octet은 유사한 K/d^2와 C_e를 갖는 반면 FD-Cube는 뚜렷이 낮은 K/d^2와 훨씬 큰 C_e를 가지며, 이는 최대 유동 저항과 일관된다.", "figure_refs": [14, 15]}, {"type": "bullet", "text": "TKD/Octet의 본 LBM K/d^2는 전통 폼 상관식 근처에 있으나, LBM C_e(5.42e-2~0.53)는 Tadrist et al.의 범위(2.42e-2~0.10)로 포착되지 않아 새 AM 전용 상관식을 동기화한다.", "figure_refs": [16, 17]}]}, "discussion": {"content": [{"type": "bullet", "text": "많은 준경험 상관식이 폼 형태학으로 K와 C_e를 표현하며, Ergun형 일반 형태는 상수 A_c(Ergun 150, Kozeny-Carman 180)로 K/d^2를 다공도의 함수로 준다."}, {"type": "formula", "label": "Eq. (23) - Ergun형 정규화 투과율", "latex": "\\frac{K}{d^2} = \\frac{\\phi^3}{A_c\\,(1-\\phi)^2}", "description": "스트럿 직경 $d$와 상수 $A_c$(100~865; Ergun 150, Kozeny-Carman 180)의 정규화 투과율 일반 Ergun 형태."}, {"type": "formula", "label": "Eq. (24) - 보편 관성계수 형태", "latex": "C_e = \\frac{B_c\\,(1-\\phi)}{\\phi^2\\,d}", "description": "상수 $B_c$(0.65~2.6)의 Tadrist et al. 관성계수 보편 형태; 여기 관찰된 AM 격자 $C_e$ 범위를 포착하지 못한다."}, {"type": "bullet", "text": "전통 형태가 AM C_e 범위를 놓치므로 새 수치 상관식이 제안된다: K/d^2에 대한 이중 지수(느린·빠른 지수 성장 포착)와 0.5 &lt; phi &lt; 0.95에서 C_e에 대한 멱법칙."}, {"type": "formula", "label": "Eq. (25) - AM 정규화 투과율 상관식", "latex": "\\frac{K}{d^2} = a_K\\,e^{\\,b_K \\phi} + c_K\\,e^{\\,d_K \\phi}", "description": "이중 지수 상관식; 구조 의존 상수 a_K, b_K, c_K, d_K(표 3)가 각 격자를 적합하며 R^2이 거의 100 퍼센트이다."}, {"type": "formula", "label": "Eq. (26) - AM 관성계수 상관식", "latex": "C_e = a_{ce}\\,\\phi^{\\,b_{ce}} + c_{ce}", "description": "멱법칙 상관식; 구조 의존 상수 a_ce, b_ce, c_ce(표 4), R^2이 98 퍼센트 초과(FD-Cube는 phi = 0.7~0.95에서만 유효)."}, {"type": "bullet", "text": "TKD 셀(전통 폼의 이상 반복 단위)에 대해 본 K와 C_e 상관식은 Hwang et al.과 Dukhan의 전통 폼 데이터를 포괄하여 제안 상관식에 신뢰를 준다.", "figure_refs": [20, 21]}]}, "conclusion": {"content": [{"type": "bullet", "text": "넓은 다공도·속도·압력강하 범위의 수치·실험 연구가 검증된 LBM 모델로 Cube, FD-Cube, TKD, Octet 격자의 유동을 특성화했다."}, {"type": "bullet", "text": "FD-Cube가 최대 유동 저항(주어진 속도에 최대 압력차)을, Cube가 최소를 보였으며, Octet과 TKD는 우수한 유체 혼합으로 열전달 강화 열교환기에 적합하다."}, {"type": "bullet", "text": "미미한 시뮬레이션-실험 차이는 AM 공정의 표면 거칠기와 인쇄 불완전성에 기인했다."}, {"type": "bullet", "text": "새로운 하이브리드 방법이 정규화 투과율 K/d^2와 관성계수 C_e를 평가했으며 통상 다항 피팅보다 피팅 속도 범위에 덜 민감했다."}, {"type": "bullet", "text": "하이브리드 방법은 기하가 보존되면(CAD 또는 마이크로 CT) 비균일/비주기 폼에 확장 가능하며, 특성 길이 척도는 대표 치수(섬유/기공 직경, 단위셀 길이, 수력 직경)에 의존한다."}, {"type": "bullet", "text": "구조별 이중 지수 K/d^2(phi)과 멱법칙 C_e(phi) 상관식이 제안되고 TKD 셀에 대해 전통 폼 데이터와 합리적으로 일치하여, 향후 열교환기 특성화·설계에의 사용을 뒷받침한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "시뮬레이션-실험 불일치(FD-Cube/TKD/Octet 약 15 퍼센트, Cube 25 퍼센트)는 기공 규모 모델이 나타내지 않는 AM 시료의 불완전 기하와 표면 거칠기에 기인한다.", "source_quote": "These differences between the simulations and experiments are mainly attributed to the imperfect geometry and surface roughness in the AM samples.", "source_section": "results"}, {"claim": "FD-Cube 구조의 관성계수 상관식은 저다공도에서 C_e가 매우 커지므로 다공도 0.7~0.95에서만 유효하다.", "source_quote": "The C_e correlation for the FD-Cube structure is considered valid for phi from 0.7 to 0.95. This is due to the very large C_e at low porosities with the FD-Cube lattice, which are not suitable for most practical applications.", "source_section": "results"}], "future_works": [{"claim": "하이브리드 방법은 기하가 3D CAD나 마이크로 CT 재구성으로 보존되면 비균일/비주기 위상의 금속 폼에 적용될 수 있다.", "source_quote": "the proposed \"hybrid\" method for evaluating K/d2 and C_e can be applied to metal foams with nonuniform or nonperiodic topologies if the geometry of the metal foam is preserved (e.g., via 3D CAD design or uCT tomography reconstruction of fabricated samples).", "source_section": "conclusion"}, {"claim": "개발된 상관식은 AM 개방셀 금속 폼을 사용하는 열교환기와 유동 조절 장치의 특성화·설계·시험 미래 연구에 사용될 수 있다.", "source_quote": "These correlations can be used in future studies for characterizing, designing, and testing heat exchangers, flow regulation devices, and other focus areas that use AM open-cell metal foams.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["AM 금속 폼의 유동·열전달 물성 상세 연구는 확률적 폼에 비해 부족하나, 투과율과 관성계수는 결합 유동·열전달 해석에 필수적이다.", "문헌은 넓은 다공도 범위에 걸친 AM 격자(Octet, FD-Cube, Cube, TKD)의 포괄적 압력강하 결과가 부족하며, 유사 유동 조건에서의 비교가 여전히 필요하다.", "종래의 다항(이중 영역 Darcy + Forchheimer) 압력강하/속도 데이터 피팅은 선택 점의 수와 분포에 강하게 민감하여 추출된 투과율과 관성계수가 신뢰하기 어려울 수 있다."], "addressed_by_this_work": ["네 AM 격자 위상의 기공 규모 LBM 시뮬레이션을 0.5 &lt; phi &lt; 0.95에서 수행하여 유동장·압력강하·유동 물성을 특성화하고 자체 실험으로 검증했다.", "새로운 하이브리드 모델(단일 점에서 K를 구하는 선형 LBM, 이어 최소제곱 2차 LBM으로 C_e)이 다항 피팅보다 피팅 범위에 덜 민감하게 유동 물성을 결정한다.", "네 구조 모두에 이중 지수 K/d^2(phi)과 멱법칙 C_e(phi) 상관식을 개발(K는 R^2 거의 100 퍼센트, C_e는 98 퍼센트 초과)하고 TKD 셀에 대해 전통 폼 상관식과 교차 확인했다."], "remaining_unresolved": ["AM 인쇄 불완전성과 표면 거칠기(평균 약 26 마이크론)가 모델링되지 않아 15~25 퍼센트 시뮬레이션-실험 편차가 남는다.", "상관식은 반복 주기 단위셀에 대해 검증되었으며, 하이브리드 방법을 비균일/비주기 폼에 적용하고 적절한 특성 길이 척도를 선택하는 것은 미해결로 남는다.", "FD-Cube 관성계수 상관식은 저다공도에서 비실용적으로 큰 C_e 때문에 phi = 0.7~0.95로 제한된다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
