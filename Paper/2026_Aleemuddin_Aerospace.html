@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Hypersonic Leading-Edge Cooling—A Comprehensive Review</title>
+    <meta name="keywords" content="hypersonic, thermal protection system / TPS, leading edge, transpiration cooling, film cooling, regenerative cooling, ablation, aerothermal heating, porous media cooling, hybrid cooling">
+    <meta name="paper-authors" content="Mohammed Aleemuddin, Md Amzad Hossain, Adittya Barua">
+    <meta name="paper-journal" content="Aerospace (MDPI), Vol. 13, Art. 573, 2026 · DOI: 10.3390/aerospace13070573">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Hypersonic Leading-Edge Cooling—A Comprehensive Review</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Mohammed Aleemuddin, Md Amzad Hossain, Adittya Barua</div>
+            <div class="journal">Aerospace (MDPI), Vol. 13, Art. 573, 2026 · DOI: 10.3390/aerospace13070573</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 광범위한 리뷰는 극초음속 리딩에지 냉각의 전 지형을, 극초음속 비행체의 역사적 진화부터 최신 열방호 전략의 체계적 조사까지 아우른다. 먼저 7부 과제 분류(공기역학, 재료/구조, 추진, 유도/제어, 모델링/시뮬레이션, 환경/운용, 비용/신뢰성)를 제시한 뒤, 냉각을 여섯 영역으로 분류한다: 수동 열방호, 능동 내부 냉각(재생, <span class="term">증산</span>, 극저온), 능동 외부/유동 제어(막, 제트 분사, 블로잉/석션, 충격파 조작), 전자기/플라즈마 기반(MHD, 플라즈마 액추에이션, 전자 증산냉각), 기하/적응형(무딤화, 모핑, SMA), 하이브리드 결합 시스템. 증산냉각에 관해서는, 불연속(분절 다공성) 배치가 냉각제를 최고 열부하 영역으로 보내 더 균일한 벽 온도를 내면서 냉각제 소비를 줄인다고 지적하는데, 이는 공간적으로 맞춤화된 냉각과 밀접히 관련된 구배 공극률 아이디어다. 저자들은 재사용 기체가 경직된 장벽에서 다기능·능동 반응형 시스템으로 이행해야 한다고 결론짓고 다부작 리뷰 시리즈를 개시한다.</div>
+            <div class="keywords"><span class="keyword-chip">hypersonic</span><span class="keyword-chip">thermal protection system / TPS</span><span class="keyword-chip">leading edge</span><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">film cooling</span><span class="keyword-chip">regenerative cooling</span><span class="keyword-chip">ablation</span><span class="keyword-chip">aerothermal heating</span><span class="keyword-chip">porous media cooling</span><span class="keyword-chip">hybrid cooling</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 비행체는 기술 진보의 정점으로, 리딩에지 공기가 반응성 이온화 플라즈마가 되고 정체 온도가 9000-12000 K에 이르는 마하 27 초과 속도에 도달한다. 리뷰는 Sanger-Bredt Silbervogel과 V-2에서 X-1/X-15 프로그램까지의 역사적 진화를 추적하고, 전략·민간 추동 요인을 조사하며, 리딩에지 개념이 노즈콘, 스크램제트 카울 립, 뭉툭한 재진입 전방체를 아우르며 각기 다른 열방호 전략을 요구함을 설명한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 리딩에지 냉각을 수십 년의 극초음속 개발과 기존 재료/구조 리뷰 속에 위치시키며, 현존 문헌이 냉각 메커니즘을 고립적으로 다룬다고 주장한다. 각 과제 영역을 대표 냉각 기법에 연결하는 단일 분류로 통합하고, 다부작 리뷰 시리즈의 공식 개시로 자리매김한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰의 분석 방법은 극한 속도에서 심각해지는 물리적 한계를 진단하는 7부 과제 틀(2장)로, 대표 지배 관계식으로 뒷받침된다. 공력 가열은 대류 가열 관계식과 열화학 비평형 소스항을 갖는 보존형 지배방정식으로 특성화되며, 냉각 전략이 대응해야 할 물리를 확립한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">핵심 조사는 냉각을 여섯 영역으로 분류한다. 수동 방호(고온 재료, 복사, 융제, 단열, 히트싱크, 전도 확산)는 기본 방어를, 능동 내부 냉각(막, 증산, 재생, 발한, 상변화, 히트파이프, 극저온)은 지속 열유속 관리를 제공하며, 능동 외부/유동 제어, 전자기/플라즈마, 기하/적응형, 하이브리드가 분류를 완성한다. 증산냉각은 균일 방호로 강조되며, 불연속 다공성 배치가 냉각제 소비를 줄이면서 온도 균일도를 개선한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">토론은 여섯 영역 각각의 실용 기능과 적용성을 명확히 하며, 열방호 해법이 임무 목표·재사용성·운용 한계에 맞춰져야 하고 통합 시스템 선택으로 다뤄져야 함을 강조한다. 수동은 단기 고엔탈피 임무에, 능동 내부(증산 포함)는 지속 고유속에, 외부 유동 제어는 제한된 내부 공간에, EM/플라즈마는 보조로, 기하/적응형은 수동 회복력 추가로, 하이브리드는 메커니즘 간 하중 분산에 적합하다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 리딩에지 냉각을 수동, 능동 내부, 능동 외부, 전자기/플라즈마, 기하/적응형, 하이브리드 결합 영역으로 분류하는 포괄적 구조·물리 틀을 확립하고, 종합 표(14-16)에 집대성한다. 미래 재사용 기체가 경직된 장벽에서 다기능·능동 반응형 스마트 시스템으로 이행해야 한다고 결론짓고, 재료 중심의 후속 편을 포함한 다부작 리뷰 시리즈를 개시한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 7 / total 117</span></summary>
+            <ol class="ref-list"><li>D. M. Van Wie, Hypersonics: Past, present, and potential future, Johns Hopkins APL Tech. Dig., 2021</li><li>E. Sanger, I. Bredt, A Rocket-Driven Long-Range Bomber (translation of 1944 German report), U.S. Air Force Air Documents</li><li>H. Hu, J. Zheng, A. Lin, H. Huang, X. Liang, Hybrid Opposing Jet and Stepped Transpiration Cooling for Hypersonic Leading Edges</li><li>R. Fusaro, D. Ferretto, N. Viola, R. Scigliano, V. De Simone, M. Marini, Liquid metal heat-pipe solution for hypersonic thermal management</li><li>G. S. Firstov, J. Van Humbeeck, Y. N. Koval, High-temperature shape memory alloys: Some recent developments, Mater. Sci. Eng.</li><li>S. H. Dansereau, Composites for Hypersonic and High Heat Flux Applications: From Fibers to Failure, Doctoral Dissertation</li><li>M. J. Neufeld, The Rocket and the Reich: Peenemunde and the Coming of the Ballistic Missile Era, Harvard University Press</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "현대 극초음속 비행체는 마하 27(~9300 m/s)을 넘는 속도에 도달하며, 리딩에지 공기가 화학적으로 반응성이고 열적으로 이온화된 플라즈마로 변해 정체 온도가 9000-12000 K에 이르는 가장 극한의 인공 환경 중 하나다.", "figure_refs": []}, {"type": "bullet", "text": "초기 아이디어는 Sanger-Bredt Silbervogel 준궤도 폭격기로 거슬러 가며, 실용적 관심은 V-2(마하 5를 넘은 최초의 인공 물체)와 Operation Paperclip 같은 전후 프로그램에서 생겨났다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "X-15 프로그램은 1967년 마하 6.7에 도달해 공력 가열·구조 데이터를 산출하고 Mercury, Gemini, Apollo의 열차폐 설계를 뒷받침했다.", "figure_refs": []}, {"type": "bullet", "text": "극초음속 비행은 군사적 신속 타격·기동 이점과 민간의 2시간 미만 대륙간 이동을 제공하며, 고온 재료·TPS·구조·적층제조의 진보를 추동한다.", "figure_refs": [3, 4]}, {"type": "bullet", "text": "리딩에지는 자유류 유동 속 고열 정체 영역(세장형 노즈콘, 스크램제트 카울 립, 뭉툭한 재진입 전방체)이므로, 열방호 전략은 비행체 아키텍처에 따라 결정된다.", "figure_refs": []}, {"type": "bullet", "text": "형상 중시 공기흡입·양력체 기체는 에어로서피스 보존을 위해 비융제 방식(능동 냉각, 히트파이프, 복사 구조)이 필요한 반면, 소모성 탄도 재진입체는 질량 효율적 융제 차폐를 선호한다.", "figure_refs": []}, {"type": "bullet", "text": "리뷰는 문제(7부 과제 틀, 2장)에서 완화(6부 냉각 메커니즘 조사, 3-8장)로 구조화되며, 분류 체계와 구조 로드맵(그림 6-7)을 갖춘다.", "figure_refs": [6, 7]}]}, "related_works": {"content": [{"type": "bullet", "text": "전후 로켓 기술과 고속 비행 진보는 공유된 국제 이정표와 전시 Sanger-Bredt 부스트-글라이더 연구에 기반해, 냉전 기간 극초음속 공기역학·추진·재료과학을 가속했다.", "figure_refs": [4]}, {"type": "bullet", "text": "통합 재료·구조 리뷰 틀[31]은 통합 전산 재료 공학을 실험 검증과 연결하여 내화 금속, C/C-SiC 복합재, 초고온 세라믹을 다룬다.", "figure_refs": [13]}, {"type": "bullet", "text": "과제 분류(그림 6)는 공기역학, 재료/구조, 추진, 유도/제어, 모델링/시뮬레이션, 환경/운용, 비용/신뢰성을 아우른다.", "figure_refs": [6]}, {"type": "bullet", "text": "냉각 메커니즘 분류(그림 7)는 기법을 수동, 능동 내부, 능동 외부/유동 제어, 전자기/플라즈마, 기하/적응형, 하이브리드 결합으로 분류하며 각 대표 방법을 제시한다.", "figure_refs": [7]}, {"type": "bullet", "text": "공개된 미국 극초음속 R&amp;D 자금(10년간 ~150-200억 달러)은 전략적 중요성을 반영하나, 리뷰는 재정 비교보다 물리 메커니즘과 재료 한계에 집중한다.", "figure_refs": [5]}, {"type": "bullet", "text": "본 논문은 연속 다부작 리뷰 시리즈의 첫 편으로 자리매김하며, 이후 권은 UHTC와 고온 형상기억합금 재료를 심층 분석한다.", "figure_refs": []}]}, "method": {"content": [{"type": "bullet", "text": "7개의 상호 연관 과제 영역이 정의된다: 공기역학, 재료/구조, 추진, 유도/제어, 모델링/시뮬레이션, 환경/운용, 비용/신뢰성 - 어느 하나의 약점도 열방호나 임무 신뢰성을 저해할 수 있다.", "figure_refs": []}, {"type": "bullet", "text": "노즈·리딩에지 부근의 강한 충격파계가 급격한 압력/온도 구배를 만들고, 충격파 충돌은 국부 열유속을 부착 유동의 수 배로 높일 수 있으며, 난류 천이 예측은 여전히 불확실하다.", "figure_refs": [8]}, {"type": "bullet", "text": "열 하중은 표준 대류 가열 관계식으로 비교된다.", "figure_refs": []}, {"type": "formula", "label": "식 (1) - 대류 가열 관계식", "latex": "q''=h\\,(T_r-T_w)", "description": "국부 열전달 계수 h, 회복 온도 T_r, 벽 온도 T_w로부터의 표면 열유속 q''; 해석은 유한속도 화학(해리, 재결합, 진동 비평형)을 포함한다."}, {"type": "bullet", "text": "선형 안정성 이론만으로는 극초음속 천이를 설명할 수 없으므로, 충격파 피팅을 결합한 고차 직접수치모사가 자유류 교란 성장과 비선형 붕괴를 추적한다.", "figure_refs": [11]}, {"type": "formula", "label": "식 (2) - 보존형 지배방정식", "latex": "\\frac{\\partial U}{\\partial t}+\\frac{\\partial F_j}{\\partial x_j}-\\frac{\\partial F_j^{v}}{\\partial x_j}=W", "description": "보존형으로, U=[rho, rho u, E]^T는 보존 변수, F_j와 F_j^v는 비점성·점성 플럭스, W는 열화학 비평형 소스항이다."}, {"type": "bullet", "text": "재료는 고온 강도 유지, 산화 저항, 열충격 내성을 지녀야 하며, 내화 금속·C/C-SiC 복합재·ZrB2-SiC/HfB2-SiC UHTC는 취성, 산화 침식, 열팽창 불일치에 직면하고 적층 구조와 코팅으로 대응한다.", "figure_refs": [13]}, {"type": "bullet", "text": "모델링·시뮬레이션은 충격 동역학, 난류, 화학, 구조 응답의 결합을 요하나 많은 비행 조건을 지상 시험으로 재현할 수 없어 예측 불확실성이 커진다.", "figure_refs": []}]}, "results": {"content": [{"type": "bullet", "text": "수동 열방호는 고온 세라믹/CMC(단시간 &gt;2000 C 견딤), 복사면, 융제(열분해·표면 침식), 단열/열차폐층, 히트싱크, 전도 열확산을 사용한다.", "figure_refs": []}, {"type": "bullet", "text": "<span class=\"term\">증산냉각</span>은 조절된 냉각제(수소, 질소, 또는 물)를 다공벽을 통해 보내 연속 보호층을 형성하며 마하 7-10 영역에서 효과적이다. 아크젯 시험은 다공성 인코넬과 C/C를 1700 C 이하로 유지한다.", "figure_refs": []}, {"type": "formula", "label": "식 (20) - 증산 벽 에너지 평형", "latex": "q_{wall}=h\\,(T_g-T_w)-\\dot{m}_c\\,(h_{out}-h_{in})", "description": "대류항과 냉각제 제거항을 갖는 벽 열유속; 표면 온도가 오르면 증가한 냉각제 유량이 내재적 자가 조절 응답을 제공한다."}, {"type": "bullet", "text": "증산은 펌프 구동(정밀하나 무거움) 또는 온도 유발 압력 구배에 의한 수동 제어가 가능하며, 막냉각 대비 최소 공력 교란으로 더 균일한 방호를 제공해 재사용 부품에 적합하나 국부 파손을 막으려면 균일한 기공 구조가 필요하다.", "figure_refs": []}, {"type": "formula", "label": "식 (21) - 증산 냉각 효율", "latex": "\\eta=\\frac{T_w-T_\\infty}{T_c-T_\\infty}", "description": "벽-자유류정체 구배를 냉각제 주입 온도 T_c에 관련시키는 국부 증산 냉각 효율로, 냉각제 주입이 벽 온도를 얼마나 낮추는지 정량화한다."}, {"type": "bullet", "text": "마하 6, 20 km에서 불연속(다공/비다공 교대) 증산 표면 참조 연구는 분절 배치가 냉각제를 고열 영역으로 보내 더 균일한 벽 온도를 냄을 발견했다 - 정체 온도가 1218 K에서 486 K로 낮아지고 냉각 효율 0.874를 달성하며 냉각제 소비를 줄였다.", "figure_refs": [55, 56]}, {"type": "bullet", "text": "재생 냉각은 연소 전 연료/극저온 추진제를 채널로 순환시켜 벽 열을 흡수하고 추진제를 예열하며, 액체 로켓과 스크램제트의 표준이다.", "figure_refs": []}, {"type": "formula", "label": "식 (22) - 재생 흡수 열량", "latex": "\\dot{Q}=\\dot{m}\\,c_p\\,(T_{out}-T_{in})", "description": "질량유량, 비열, 냉각제 온도 상승으로부터 냉각제가 흡수한 총 열량; 이 에너지는 이후 연소 중 방출된다."}, {"type": "bullet", "text": "능동 외부/유동 제어(냉각제 제트 분사, 질량 주입/가스 시딩, 블로잉/석션, 충격파 조작, 펄스/합성 제트)는 열을 직접 추출하기보다 경계층과 충격 상호작용을 바꾼다.", "figure_refs": []}, {"type": "bullet", "text": "전자기/플라즈마 방법(MHD 유동 제어, 정전 경계층 제어, 플라즈마 액추에이션, 아크/글로 방전, RF/마이크로파 이온화, 레이저 결합, 전자 증산냉각)은 질량 주입 없이 이온화 유동을 조작해 가열을 줄인다.", "figure_refs": []}, {"type": "bullet", "text": "기하/적응형 전략(리딩에지 무딤화, 샤프-블런트 하이브리드, 주름 쉘, 가변 형상, 형상기억합금 모핑 스킨)은 가열 패턴을 재편하고 복사 면적을 넓히며, 하이브리드 결합 시스템은 증산을 재생·복사·히트파이프·ETC와 결합한다.", "figure_refs": []}]}, "discussion": {"content": [{"type": "bullet", "text": "수동 열방호는 단기 고엔탈피 임무나 백업층에 신뢰성 있는 저복잡도 방어를 주나, 산화 민감성·융제 수명·세라믹 열충격 취약성으로 제한된다.", "figure_refs": []}, {"type": "bullet", "text": "능동 내부 냉각 - 다공 표면으로 균일 벽 온도를 주는 증산, 열을 추진제로 보내는 재생, 그리고 히트파이프/PCM - 은 지속 고유속에 필수이나 복잡성·질량·펌프/밸브/누설 관리 요구를 더한다.", "figure_refs": []}, {"type": "bullet", "text": "능동 외부 유동·경계층 제어(막, 이산 제트, 질량 주입, 석션/블로잉)는 유동장을 바꿔 열 피크를 재배치하며 내부 공간이 제한될 때 유리하나 유동 조건과 충격-냉각제 상호작용에 민감하다.", "figure_refs": []}, {"type": "bullet", "text": "전자기·플라즈마 방법(MHD, 플라즈마 액추에이터, 전기장 구동 냉각제 수송)은 이온화 유동에서 빠른 비접촉 열 완화를 가능케 하나 상당한 전력과 내구 부품을 요하여 보조 시스템으로 최적이다.", "figure_refs": []}, {"type": "bullet", "text": "기하·적응형 전략은 표면 재형상과 전도 삽입물로 가열을 수동 저감하나 날카로운 에지의 구조 건전성과 피로가 핵심 과제로 남는다.", "figure_refs": []}, {"type": "bullet", "text": "하이브리드 시스템은 메커니즘을 결합한다(예: 증산 + 복사 코팅, 재생 + 다공층, 매립 히트파이프, ETC/플라즈마 변조). 가변·극한 임무에 유용하며 통합(체적, 질량, 접근, 중복성)이 주된 과제다.", "figure_refs": []}, {"type": "bullet", "text": "열방호 해법은 임무 목표·재사용 요구·운용 한계에 맞춰야 하며, 고립된 재료나 메커니즘이 아닌 통합 시스템 선택으로 접근해야 한다.", "figure_refs": []}]}, "conclusion": {"content": [{"type": "bullet", "text": "분석은 최신 열관리 방법론을 여섯 영역으로 통합하고 그 메커니즘과 운용 범위를 종합 표(기본 냉각/수동은 표 14, 유동 조작/능동 제어는 표 15, 하이브리드 구성은 표 16)에 집대성한다.", "figure_refs": []}, {"type": "bullet", "text": "분류 체계를 전산 모델링·고엔탈피 시험 데이터와 결합하면, 미래 재사용 기체가 지속적 극초음속 비행을 견디려면 다기능·능동 반응형 스마트 시스템이 되어야 함을 뒷받침한다.", "figure_refs": []}, {"type": "bullet", "text": "증산냉각은 균일 방호와 핫스팟 완화를 주는 것으로 요약되며, 엄격한 기공 공차·막힘·다공 매체 산화로 제한된다.", "figure_refs": []}, {"type": "bullet", "text": "본 논문은 극한 온도 항공우주 시스템에 관한 연속 다부작 리뷰 시리즈의 공식 개시다.", "figure_refs": []}, {"type": "bullet", "text": "다음 권은 신규 다성분 UHTC와 고온 형상기억합금의 미세구조 공학, 공정, 고온 산화 동역학을 심층 분석할 것이다.", "figure_refs": []}, {"type": "bullet", "text": "후속 편은 Zr-Cu, Ti-Ni-Zr, Ti-Ni-Hf 계의 비교 안정성·상변태 데이터를 통합하여 형상 중시 극초음속 리딩에지의 구조 개발 로드맵을 수립할 것이다.", "figure_refs": []}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "많은 관련 극초음속 비행 조건은 지상 시험 설비에서 유지될 수 없어 실험 검증을 제한하고 예측된 열·기계 하중의 불확실성을 높인다.", "source_quote": "Many relevant flight conditions cannot be sustained in ground testing facilities, which limits experimental validation and increases uncertainty in predicted thermal and mechanical loads.", "source_section": "method"}, {"claim": "수동 설계는 재사용 비행체나 장기·가변 열 내구가 필요한 임무에 불충분할 수 있으며, 융제 수명 한계와 세라믹의 열충격 취약성이 있다.", "source_quote": "Passive designs may not suffice for reusable vehicles or missions requiring extended or variable thermal endurance.", "source_section": "discussion"}, {"claim": "전자기·플라즈마 기반 방법은 상당한 전력과 내구성 있는 부품을 요구하여 주 시스템보다 보조 시스템으로 가장 효과적이다.", "source_quote": "Limitations involve high power needs, component loading, and complex integration, making them most effective as supplemental rather than primary systems.", "source_section": "discussion"}, {"claim": "증산냉각은 기공 막힘, 냉각제 관리, 엄격한 제조 공차에 직면하며, 국부 파손을 막기 위해 균일한 기공 구조와 재료 강도가 필수적이다.", "source_quote": "Challenges include pore clogging, coolant management, and manufacturing tolerances.", "source_section": "results"}], "future_works": [{"claim": "미래 재사용 기체는 지속적 극초음속 비행을 견디기 위해 경직된 물리적 장벽에서 다기능·능동 반응형 스마트 시스템으로 이행해야 한다.", "source_quote": "future reusable airframes must transition from rigid physical barriers into multifunctional, actively responsive smart systems to survive sustained hypersonic flight.", "source_section": "conclusion"}, {"claim": "다부작 리뷰 시리즈가 개시되며, 다음 권은 신규 초고온 세라믹과 고온 형상기억합금의 미세구조 공학, 공정, 고온 산화 동역학을 심층 분석할 것이다.", "source_quote": "The upcoming volume in this review series will expand directly upon the material and morphing limits defined in the adaptive domains, investigating the microstructural engineering, processing innovations, and high-temperature oxidation kinetics of novel multicomponent ultrahigh-temperature ceramics and high-temperature shape-memory alloys (HTSMAs).", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["마하 27 초과 속도에서 리딩에지 공기는 화학적으로 반응성이며 열적으로 이온화된 플라즈마가 되고 정체 온도가 9000-12000 K에 이르러, 기존 재료는 고급 냉각 없이 생존할 수 없다.", "극심한 정체 가열과 열화학 효과 하 리딩에지 생존성이 모든 극초음속 비행체 부류의 1차 기술 제약이다.", "냉각 전략 문헌은 다수 메커니즘에 걸쳐 파편화되어 있고 각 과제를 기술적 해법에 연결하는 통합 틀이 없다."], "addressed_by_this_work": ["통합된 7부 과제 분류와 6영역 냉각 메커니즘 분류를 제공하며, 각 절/소절을 해당 극초음속 과제에 매핑한다.", "수동, 능동 내부(증산/재생 포함), 능동 외부, 전자기/플라즈마, 기하/적응형, 하이브리드 냉각을 조사·비교하고 강점/한계를 종합 표로 요약한다.", "냉각 전략이 각 특정 비행체 구성의 구조·공력·운용 제약에 대해 균형을 이뤄야 함을 보인다(예: 소모성 뭉툭체에는 융제, 형상 중시 기체에는 비융제 능동 냉각)."], "remaining_unresolved": ["지상 시험 설비가 많은 비행 조건을 재현할 수 없어 실험 검증과 하중 예측이 불확실하다.", "재사용·장기·극한 임무에 단일 냉각 메커니즘이 불충분하며, 하이브리드의 견고한 시스템 수준 통합이 미해결 설계 과제로 남는다.", "방법 전반에 내구성 문제(융제 수명, 세라믹 열충격, 기공 막힘, EM/플라즈마의 높은 전력)가 지속된다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
