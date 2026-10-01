@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>An Experimental Investigation on Transpiration Cooling Part II: Comparison of Cooling Methods and Media</title>
+    <meta name="keywords" content="Transpiration cooling, Film cooling, Turbine blade, Liquid coolant, Phase change, Cooling efficiency, Gaseous coolant, Infrared thermography, Stagnation region, Experimental">
+    <meta name="paper-authors" content="J.-H. Wang, J. Messner, H. Stetter">
+    <meta name="paper-journal" content="International Journal of Rotating Machinery, Vol. 10, No. 5, 2004, pp. 355-363 · DOI: 10.1080/10236210490474476 (Taylor & Francis, printed on the paper) · reissue DOI: 10.1155/S1023621X04000363 (Hindawi, after the journal changed publishers)">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">An Experimental Investigation on Transpiration Cooling Part II: Comparison of Cooling Methods and Media</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">J.-H. Wang, J. Messner, H. Stetter</div>
+            <div class="journal">International Journal of Rotating Machinery, Vol. 10, No. 5, 2004, pp. 355-363 · DOI: 10.1080/10236210490474476 (Taylor & Francis, printed on the paper) · reissue DOI: 10.1155/S1023621X04000363 (Hindawi, after the journal changed publishers)</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 실험 Part II는 적외선 열화상을 이용해 고온 가스 풍동에서 터빈 블레이드형 원형 튜브 위의 <span class="term">물질전달 냉각 방법과 매체</span>를 정량 비교한다. 첫 실험에서는 압축 공기로 소결 다공성 튜브(<span class="term">증산냉각</span>)와 4열의 이산 홀을 가진 고체 튜브(<span class="term">막냉각</span>)를 냉각하고, 둘째 실험에서는 같은 다공성 튜브에 기체와 액체(물) 매체를 순차 주입한다. 기체 매체를 쓰면 같은 주입 유량에서 증산냉각이 선단 정체 영역과 측면에서 막냉각보다 높은 냉각 효과와 큰 냉각제 피복을 주지만, 후단 정체 영역에서는 특히 얇은 후단을 가진 블레이드의 경우 전통적 이산 홀 주입이 더 나을 수 있다. 같은 다공 표면에서 기체와 액체 매체의 피복은 거의 동일하지만, <span class="term">액체 물 증발 냉각</span>이 기체 냉각보다 훨씬 효과적이어서 정체 영역에서는 최고 기체 주입율(4 g/s)조차 최저 물 주입율(0.08 g/s)보다 낮은데, 이는 상변화가 경계층 유동과 무관한 매우 큰 히트싱크를 제공하기 때문이다. 저자들은 액체 증발이 가스터빈 블레이드의 정체 영역 냉각 문제를 해결할 수 있다고 결론짓는다.</div>
+            <div class="keywords"><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Film cooling</span><span class="keyword-chip">Turbine blade</span><span class="keyword-chip">Liquid coolant</span><span class="keyword-chip">Phase change</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Gaseous coolant</span><span class="keyword-chip">Infrared thermography</span><span class="keyword-chip">Stagnation region</span><span class="keyword-chip">Experimental</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 막냉각을 고온 입구 온도로부터 터빈 부품을 보호하는 널리 쓰이는 방식으로 자리매김하되 성능이 제어 어려운 많은 인자에 의존함을 지적하여 더 유망한 방법 탐색을 동기화하며, 증산냉각이 최소 냉각제 방출로 가장 효과적인 기법이라는 Leontiev의 예측으로 비교의 틀을 세운다. 현대 터빈이 많은 냉각 매체를 소비하므로 물이 대체 냉각제로 고려되나, 저전도 불투과 재료에서는 물방울 유발 온도 구배로 증발이 열적 파손을 일으킬 수 있다. 더 높은 전도도/확산율과 공극 균질화 물방울을 가진 소결 다공성 재료는 물 직접 냉각을 가능케 하여, 터빈 부품 설계자를 위한 방법·매체의 정량 비교라는 본 논문의 목표를 설정한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">관련 연구는 물 및 물-공기 냉각제에 관한 가스터빈 냉각 문헌과 동반 Part I 논문에서 가져온다. 물 주입 연구는 액체 증발이 매우 효과적 히트싱크이나 저전도 불투과 베인 재료에서는 문제적임을 확립하며, Part I은 본 정량 비교가 의존하는 적외선 측정 기법·보정·시편/풍동 설명을 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">두 실험을 슈투트가르트 대학교 열터보기계 연구소의 고온 가스 풍동에서 수행하며, 세 개의 적외선 투과 창(선단·측면·후단)을 통해 적외선 열화상을 사용한다. 첫 실험에서는 외형 치수가 동일한(외경 36.5 mm, 높이 52 mm, 두께 3.5 mm) 두 원형 튜브를 쓴다. 증산냉각용 소결 크롬-니켈강 다공성 튜브(공극률 21%)와 막냉각용 4열 이산 홀 고체 튜브(선단·후단 라인에 +/-15도 엇갈림 2열)이며 압축 공기로 냉각하고, 자유류는 240 C·400 g/s, 냉각제는 30 C이다. 둘째 실험에서는 같은 다공성 튜브에 기체와 액체(물) 매체를 순차 주입하며 자유류 200 C, 냉각제는 30 C(공기)와 20 C(물)이다. 표면 온도는 VARIOSCAN 3021과 AGA 782 적외선 시스템으로 측정하고, 국소·평균 냉각 효과를 온도 강하 등고선도에서 계산한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">기체 매체로 같은 주입율에서, 다공성 증산냉각은 선단 정체 영역(표 1)과 시편 측면(표 2)에서 막냉각보다 높은 온도 강하, 큰 보호 면적, 더 균일한 냉각 효과를 달성하는데, 이는 증산 효과가 전 영역의 공극 출구에서 유지되는 반면 막 냉각제는 주류와 빠르게 혼합되기 때문이다. 후단 정체 영역에서도 증산이 더 큰 면적을 덮고 높은 평균 효과를 주지만(표 3), 막홀 출구 근처에서는 후단 주입이 국소적으로 높고 더 균일한 효과를 낼 수 있어 얇은 후단에 유리할 수 있다. 매체의 경우 다공 측면에서는 기체와 액체 냉각의 피복이 거의 동일하고 효과도 비슷하나, 선단·후단 정체 영역에서는 액체 물 증발이 기체 증산보다 훨씬 효과적이어서 최고 기체율(4 g/s)조차 최저 물율(0.08 g/s)보다 낮은데, 이는 상변화가 약한 정체 영역 경계층과 무관한 큰 히트싱크를 제공하기 때문이다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고찰은 경향을 물리적으로 설명한다. 증산냉각이 같은 주입율에서 막냉각을 능가하는 이유는 냉각제가 낮은 운동량으로 전 공극 표면에서 나와 천천히 혼합되어 효과를 유지하는 반면 막 냉각제는 주류와 빠르게 혼합되기 때문이다. 그러나 증산은 외부 압력 분포에 매우 민감하다. Darcy 법칙에 의해 국소 효출 질량유량은 벽 압력 강하에 비례하므로, 후단 영역의 구속 와류와 비균일 압력이 그곳에서 증산을 비균일하게 만들며 이산 홀 주입은 구속 와류를 약화시켜 축 방향 균일성을 높인다. 정체 영역에서 액체 물의 큰 이점은 상변화에 기인한다. 고온 가스에 맞은 분자가 상변화에 충분한 에너지를 얻는 충돌 구동 히트싱크는 경계층 유동과 무관하며, 약한 정체 영역 경계층에 의존하는 기체 증산과 대조된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 기체 매체에서 다공성 증산냉각이 선단 정체 영역과 시편 측면에서 막냉각보다 높은 평균 냉각 효과를 주지만, 후단 정체 영역에서는 특히 얇은 후단 블레이드의 경우 전통적 이산 홀 주입이 더 나을 수 있다고 결론짓는다. 다공성 증산냉각 효과는 외부 표면 압력 분포와 냉각제 챔버 출구 위치에 매우 민감하므로, 최적 냉각 분포를 만드는 적절한 챔버 위치와 형상 선택이 냉각 설계의 궁극적 목표여야 한다. 끝으로 액체 냉각제는 노즐 가이드 베인 보호에서 기체 매체를 대체할 수 있다. 기체와 액체 냉각 면적은 거의 동일하나 액체 증발 효과가 특히 선단·후단 정체 영역에서 훨씬 높아 가스터빈 블레이드 정체 영역 냉각 문제를 없앨 방법을 제공한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 4 / total 4</span></summary>
+            <ol class="ref-list"><li>A.I. Leontiev, Heat and mass transfer problems for film cooling, ASME Journal of Heat Transfer 121 (1999) 509-527</li><li>G.J. Van Fossen, The feasibility of water injection into the turbine coolant to permit gas turbine contingency power for helicopter application, ASME Journal of Engineering for Power 105 (1983) 635-642</li><li>N.V. Nirmalan, J.A. Weaver, L.D. Hylton, An experimental study of turbine vane heat transfer with water-air cooling, ASME Journal of Turbomachinery 120 (1998) 50-60</li><li>T.J. Biesiadny, G.A. Klann, D.A. Clark, B. Berger, Contingency power for small turboshaft engines using water injection into turbine cooling air, AIAA Paper No. 87-1906 (1987)</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "막냉각은 고온 입구 온도로부터 터빈 부품을 보호하는 가장 널리 쓰이는 방식의 하나이지만, 그 성능은 많은 인자(벽 곡률, 홀 크기와 형상, 주입 각도, 3차원 외부 유동, 비정상성, 난류, 압축성)에 지배되어 이상적 막냉각 효과를 얻기 어렵다."}, {"type": "bullet", "text": "Leontiev(1999)는 다른 방법에 비해 증산냉각이 가장 효과적인 기법이며 최소한의 냉각제 방출로 요구 벽온도를 얻을 수 있다고 예측했다. 본 논문은 증산냉각과 막냉각의 비교를 제시한다."}, {"type": "bullet", "text": "현대 가스터빈은 냉각 매체 소비가 매우 커 압축기 토출 공기로 터빈 부품을 냉각하기가 매우 어려우며, 물이 산업용 가스터빈 엔진 노즐 가이드 베인용 기체 냉각제의 대체 후보로 고려되었다."}, {"type": "bullet", "text": "선행 연구(Van Fossen 1983, Biesiadny 등 1987, Nirmalan 등 1998)는 냉각 매체로서 물-공기 혼합을 조사했다. 물은 액체 증발이 매우 큰 히트싱크를 제공하므로 가장 효과적 냉각제이지만, 저전도도/확산율의 고급 불투과 재료(니켈 초합금, 세라믹)에서는 물방울이 만드는 큰 온도 구배로 증발이 열적 파손을 일으킬 수 있다."}, {"type": "bullet", "text": "소결 다공성 재료는 그러한 불투과 재료보다 훨씬 높은 열전도도와 확산율을 가지며 물방울 크기가 공극을 통해 균질화될 수 있어, 둘째(증산) 실험에서 물을 냉각 매체로 직접 쓸 기회를 제공한다."}, {"type": "bullet", "text": "본 논문 Part I은 적외선 열화상 기법의 적용을 제시했고, 본 Part는 막냉각과 증산냉각, 그리고 다공성 증산냉각에서 기체와 액체 매체의 차이를 정량 비교하여 설계자가 냉각 방법과 매체를 선택하고 냉각제 챔버 구성을 개선하며 냉각제 소비를 제어하도록 돕는다."}]}, "related_works": {"content": [{"type": "bullet", "text": "물 주입 냉각 계열: Van Fossen(1983)은 헬리콥터 가스터빈 비상 출력을 위한 터빈 냉각제로의 물 주입 가능성을 평가하여 액체 물의 큰 히트싱크 잠재력을 확립했다."}, {"type": "bullet", "text": "물-공기 혼합 계열: Biesiadny 등(1987)은 터빈 냉각 공기로의 물 주입을 이용한 소형 터보샤프트 엔진의 비상 출력을 연구했고, Nirmalan 등(1998)은 물-공기 냉각 터빈 베인 열전달을 실험했으며, 둘 다 대체 냉각제로서 물 사용에 정보를 제공한다."}, {"type": "bullet", "text": "막냉각 기준: Leontiev(1999)는 막냉각의 열·물질전달 문제를 검토하고 증산냉각이 최소 냉각제 방출로 가장 효과적인 기법이라 예측하여, 여기서 검증되는 비교 가설을 제공한다."}, {"type": "bullet", "text": "동반 Part I: 본 논문 첫 부분은 적외선 열화상 기법, 그 보정, 다공성 재료의 공기 투과 특성, 풍동 배치를 제시했으며 Part II에서 모두 재사용된다."}, {"type": "bullet", "text": "문헌에서의 재료 논거: 고급 불투과 베인 재료(니켈 초합금, 세라믹)는 열전도도와 확산율이 낮아 직접 물 증발이 열적 파손을 일으키는 반면, 소결 다공성 금속은 높은 전도도와 공극 균질화 물방울로 이를 완화한다."}, {"type": "bullet", "text": "측정 기법 토대: 적외선 등고선도를 정량화하는 국소·평균 냉각 효과 정의와 픽셀-방위 삼각 관계는 Part I에서 확립되었고 본 결과 전반에 적용된다."}]}, "method": {"content": [{"type": "bullet", "text": "시편(실험 1): 한 튜브는 다공성 증산냉각 효과를 내기 위한 공극률 21%의 소결 크롬-니켈강이고, 다른 하나는 선단·후단 정체 영역과 측면에서 막냉각을 모사하는 4열 이산 주입 홀을 가진 고체 재료이며, 선단/후단 홀은 주류에 대해 +/-15도의 두 엇갈린 경사각을 갖는다.", "figure_refs": [1]}, {"type": "bullet", "text": "두 튜브는 외형 치수가 동일하다(외경 36.5 mm, 높이 52 mm, 두께 3.5 mm). 여러 폐쇄 실링이 주입 냉각제를 원하는 영역으로 제어하며, 영역별 독립 주입을 위해 냉각제 챔버와 실링 구성이 정의된다.", "figure_refs": [1]}, {"type": "bullet", "text": "설비 및 측정: 실험은 슈투트가르트 대학교 고온 가스 풍동에서 수행되며 선단·측면·후단 뷰를 주는 세 적외선 투과 창을 쓴다. 적외선 스캐너와 시편의 상대 위치 및 뷰 각도(+/-60도와 0도)가 설정되고 보정은 Part I을 따른다.", "figure_refs": [2]}, {"type": "bullet", "text": "운전 조건: 실험 1의 자유류는 240 C·질량유량 400 g/s이며 기체 냉각제는 30 C로 주입되고, 매체 비교인 실험 2의 자유류는 200 C·400 g/s이며 30 C 압축 공기와 20 C 순수 물을 같은 냉각제 챔버에 순차 주입한다.", "figure_refs": []}, {"type": "formula", "label": "국소 냉각 효과 (Part I에서 정의)", "latex": "\\eta_{loc} = \\frac{T_{iw} - T_{cw}}{T_\\infty - T_c}", "description": "국소 냉각 효과는 초기(미냉각) 벽 $T_{iw}$에서 냉각된 벽 $T_{cw}$까지의 온도 강하를 자유류-냉각제 온도차 $T_\\infty - T_c$로 정규화한 값이며, 그 차가 일정할 때 등고선도로 시각화된다."}, {"type": "formula", "label": "면적에 대한 평균 냉각 효과", "latex": "\\eta_{avg} = \\frac{\\int_A (T_{iw} - T_{cw})\\,dA}{(T_\\infty - T_c)\\,A}", "description": "평균 냉각 효과는 셈한 면적 $A$에 대해 벽 온도 강하를 적분하고 $(T_\\infty - T_c)A$로 정규화하며, 면적은 부록의 단순 삼각 픽셀-방위 관계로 셈한다."}, {"type": "bullet", "text": "적외선 영상 및 매체 비교 절차: 원 열화상(240x360 픽셀, 실험 1은 VARIOSCAN 3021, 실험 2는 AGA 782)은 시편 표면에서만 처리하며, 매체 비교에서는 물 증발 냉각이 대응 기체 효과와 일치할 때까지 물 주입율을 조절하여 기체:액체 주입율 비 33.75, 20.625, 12.5를 얻는다.", "figure_refs": [6]}, {"type": "formula", "label": "부록 — 픽셀 번호-방위각 관계", "latex": "\\theta_i = \\arccos\\!\\left(\\frac{s-i}{s-1}\\cos\\theta_1\\right)", "description": "픽셀 번호 $i$의 방위각 $\\theta_i$는 서수 경계선 픽셀 $s$와 기준각 $\\theta_1$로부터 이 삼각 관계로 계산되며, 냉각 면적을 셈할 때 영상 픽셀을 실제 표면 위치로 사상하는 데 쓰인다(표 4)."}]}, "results": {"content": [{"type": "bullet", "text": "선단 정체 영역(기체): 증산냉각이 막냉각보다 높은 온도 강하, 큰 보호 면적, 더 균일한 효과를 달성하며, 평균 효과 표는 1.5-3.5 g/s 전 구간에서 증산(TL)이 막(FL)을 크게 능가함을 보인다(예: 1.5 g/s에서 0.0332 대 0.0053, 3.5 g/s에서 0.0823 대 0.0295).", "figure_refs": [3]}, {"type": "bullet", "text": "시편 측면(기체): 같은 주입율에서 증산냉각 효과가 막냉각보다 높고 보호 면적도 크다(표 2: 1.0-2.5 g/s에서 TS 0.0245-0.0452 대 FS 0.0073-0.0228). 막냉각은 냉각제 막이 덮은 외부 표면에만 나타나 혼합으로 빠르게 감쇠하는 반면, 증산은 낮은 주입 운동량으로 공극을 통해 나와 천천히 혼합된다.", "figure_refs": [4]}, {"type": "bullet", "text": "측면 증산 비균일성: 최저율(1.0 g/s)에서는 최고 냉각 효과가 챔버 출구 근처(고운동량 냉각제가 챔버 바닥에 충돌하는 반대편)에 국한되었다가 주입율이 커지면 규칙적으로 확장되며, 효과는 주입 챔버 출구로부터의 거리에 민감하다.", "figure_refs": [4]}, {"type": "bullet", "text": "후단 정체 영역(기체): 증산냉각이 막냉각보다 큰 면적을 덮고 높은 평균 효과를 주지만(표 3: 1.0-3.0 g/s에서 TT 0.0214-0.0539 대 FT 0.0061-0.0207), 막홀 출구 근처에서는 후단 주입이 축 방향으로 국소적으로 높고 더 균일한 효과를 낸다.", "figure_refs": [5]}, {"type": "bullet", "text": "다공 측면 매체 비교: 선단 라인에서 +/-45도의 두 챔버에 기체 다음 액체 냉각제를 공급하며(기체:액체 주입율 비 33.75, 20.625, 12.5), 두 매체의 피복은 거의 동일하고 냉각 효과도 매우 비슷하며, 최고 기체율(4 g/s)에서는 120-160도 범위에서 기체 냉각이 물 증발과 국소적으로 맞먹거나 능가할 수 있다.", "figure_refs": [6]}, {"type": "bullet", "text": "선단·후단 정체 영역 매체 비교: 같은 주입율에서 액체와 기체의 피복은 거의 동일하지만 액체 증발 냉각이 훨씬 효과적이어서, 최고 기체율(4 g/s)의 대응 효과가 최저 물율(0.08 g/s)의 물 증발 효과보다 낮다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "측면과 정체 영역의 대비: 측면에서는 기체와 액체 냉각이 거의 동일하나, 두 정체 영역에서는 기체 증산이 대응 물 증발 효과에 미치지 못하는데, 기체 증산이 정체 영역에서 매우 약한 경계층 유동 특성에 의존하기 때문이다.", "figure_refs": [7, 8]}]}, "discussion": {"content": [{"type": "bullet", "text": "증산이 막냉각을 능가하는 이유: 막냉각 효과는 냉각제 막이 덮은 외부 표면에만 존재하고 냉각제-주류 혼합으로 빠르게 감쇠하는 반면, 증산 냉각제는 낮은 주입 운동량으로 내부 표면에서 공극을 통해 나와 천천히 혼합되므로 더 높고 넓게 분포된 효과를 유지한다.", "figure_refs": [4]}, {"type": "bullet", "text": "Darcy 법칙 비균일성: 내부 챔버 압력은 일정하지만 구속 와류와 끝벽 경계층 효과가 후단 영역 축 방향의 외부 압력 분포를 비균일하게 만들며, Darcy 법칙에 의해 국소 효출 질량유량이 벽 압력 강하에 비례하므로 증산 수준은 비균일하고 압력 강하가 가장 큰 곳에서 가장 높다.", "figure_refs": [5]}, {"type": "bullet", "text": "막홀의 후단 영역 이점: 고체 튜브의 후단 주입에서는 고속 냉각제가 주류로 직접 들어가 구속 와류를 약화시켜 축 방향 균일성을 높이며, 3/4 스팬의 더 높은 냉각 효과 섬은 막힘 유발 역류가 작은 막냉각 영역을 형성하는 것으로 설명된다.", "figure_refs": [5]}, {"type": "bullet", "text": "기체 증산의 정체 영역 물리: 기체 증산냉각은 외부 표면 경계층 유동 특성에 의존하는데, 정체 영역에서는 그 유동이 매우 약해 그곳의 기체 증산이 튜브 측면보다 훨씬 약하다.", "figure_refs": [8]}, {"type": "bullet", "text": "액체 증발이 정체 영역에서 지배하는 이유: 액체 표면 분자가 고온 가스 유동에 맞으면 에너지가 상승해 액체 상태를 유지하지 못하고 상변화하며, 기체-액체 분자의 이 충돌은 경계층 유동과 무관하므로 경계층이 약한 곳에서도 액체 증발이 매우 큰 히트싱크와 높은 냉각 효과를 제공한다.", "figure_refs": [8]}, {"type": "bullet", "text": "설계 함의: 증산냉각 효과는 외부 압력 분포와 냉각제 챔버 출구 위치에 민감하므로 압력 강하가 큰 위치가 높은 냉각 효과를 얻으며, 챔버 위치와 형상이 핵심 설계 변수가 된다.", "figure_refs": []}]}, "conclusion": {"content": [{"type": "bullet", "text": "막냉각과 비교하여, 기체 매체를 쓴 다공성 증산냉각은 선단 정체 영역과 시편 측면에서 더 높은 평균 냉각 효과를 주지만, 후단 정체 영역에서는 특히 얇은 후단을 가진 터빈 블레이드의 경우 이산 막홀을 통한 전통적 주입 냉각이 더 나을 수 있다."}, {"type": "bullet", "text": "다공성 증산냉각 효과는 냉각 벽 외부 표면의 압력 분포와 냉각제 챔버 출구 위치에 매우 민감하므로, 냉각 효과의 최적 분포를 만드는 적절한 챔버 위치와 형상 선택이 냉각 설계의 궁극적 목표여야 한다."}, {"type": "bullet", "text": "액체 냉각제는 산업용 가스터빈 엔진 노즐 가이드 베인 보호에서 기체 냉각 매체의 대체로 고려될 수 있다. 기체와 액체 매체의 냉각 면적은 거의 동일하나 액체 증발 효과가 특히 선단·후단 정체 영역에서 기체 냉각보다 훨씬 높다."}, {"type": "bullet", "text": "다공성 증발 냉각의 이 중요한 특성은 가스터빈 블레이드의 현 냉각 기법에서 정체 영역 문제를 없앨 수 있게 하는데, 증발이 약한 정체 영역 경계층과 무관한 큰 히트싱크를 제공하기 때문이다."}, {"type": "bullet", "text": "정량적 평균 냉각 효과 표(표 1-3)는 같은 기체 주입율에서 증산냉각이 선단 영역과 측면에서 막냉각을 꾸준히 능가함을 보여, 측정된 적외선 데이터로 방법 비교를 뒷받침한다."}, {"type": "bullet", "text": "매체 비교는 기체 효과를 맞추려면 물 유량보다 훨씬 큰 기체 유량이 필요함을 보이며(기체:액체 주입율 비 12.5-33.75), 정체 영역에서 최고 기체율(4 g/s)조차 최저 물율(0.08 g/s)보다 낮아 그곳에서 액체 증발의 우월성을 정량화한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [], "future_works": [], "motivation_resolution": {"motivating_problems": ["막냉각 성능은 제어하기 어려운 많은 인자(벽 곡률, 홀 크기와 형상, 주입 각도, 3차원 외부 유동, 비정상성, 난류, 압축성)에 지배되어 이상적 막냉각 효과를 얻기 어려우므로 더 유망한 냉각 방법이 요구된다.", "현대 가스터빈은 냉각 매체 소비가 매우 커 압축기 토출 공기로의 냉각이 어려운데, 물은 대체 냉각제로 매력적이나 저전도 불투과 재료에서는 물방울이 만드는 큰 온도 구배로 증발이 열적 파손을 유발할 수 있다.", "같은 다공 표면에서 증산냉각 대 막냉각, 기체 대 액체 매체를 정량 비교한 자료가 터빈 부품 설계자에게 부족했다(Part I은 적외선 측정 기법을 소개했고 Part II가 정량 비교를 제공한다)."], "addressed_by_this_work": ["두 적외선 열화상 실험이 방법과 매체를 정량 비교하여, 기체 매체에서 증산냉각이 같은 주입율에서 선단 정체 영역과 시편 측면에서 막냉각보다 높은 평균 냉각 효과와 큰 피복을 줌을 보인다.", "소결 다공성 재료(높은 열전도도/확산율, 공극을 통한 물방울 크기 균질화)는 물을 냉각제로 직접 쓸 수 있게 하며, 액체 물 증발 냉각이 특히 선단·후단 정체 영역에서 기체 냉각보다 훨씬 효과적임을 보인다.", "주입율과 영역별 평균 냉각 효과 표(표 1-3)를 제공하여 냉각 방법과 매체 선택, 냉각제 챔버 구성 및 소비 설계를 안내한다."], "remaining_unresolved": ["후단 정체 영역에서는 특히 얇은 후단을 가진 터빈 블레이드의 경우 전통적 이산 막홀 주입이 증산냉각을 능가할 수 있어, 증산냉각이 보편적으로 우월하지는 않다.", "증산냉각 효과는 냉각 벽 외부 압력 분포와 냉각제 챔버 출구 위치에 매우 민감하며, 최적 챔버 위치와 형상 선택이 냉각 설계의 궁극적 목표로 언급되나 여기서 해결되지는 않는다.", "실험은 실제 회전 터빈 블레이드가 아닌 고온 가스 풍동 내 원형 튜브 시편을 사용하므로, 정량 결과를 실제 엔진 조건으로 옮기는 문제가 미해결로 남는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
