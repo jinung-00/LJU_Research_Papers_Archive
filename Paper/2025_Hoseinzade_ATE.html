@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Numerical investigations of transpiration cooling of N2–He binary mixture in hypersonic laminar flow</title>
+    <meta name="keywords" content="Numerical, Transpiration cooling, Hypersonic, TPS, CFD, Porous media, Cooling efficiency, Blowing ratio, UHTC, Nitrogen-helium binary mixture">
+    <meta name="paper-authors" content="Davood Hoseinzade, Esmail Lakzian, Ikhyun Kim">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 268, 2025, Art. 125827 · DOI: 10.1016/j.applthermaleng.2025.125827">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Numerical investigations of transpiration cooling of N2–He binary mixture in hypersonic laminar flow</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Davood Hoseinzade, Esmail Lakzian, Ikhyun Kim</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 268, 2025, Art. 125827 · DOI: 10.1016/j.applthermaleng.2025.125827</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 논문은 마하 7 극초음속 평판 위의 <span class="term">증산냉각</span>을 다루는 2차원 정상 <span class="term">CFD</span> 해석(ANSYS Fluent, 밀도 기반 solver)으로, 질소–헬륨 이진 기체 냉각제를 일정 분출비로 UHTC 다공체 스트립을 통해 주입한다. 다공체 영역은 Darcy–Forchheimer 운동량 저항과 유효 2매체 에너지 방정식으로 모델링되며, 혼합 기체의 수송 물성(점성·전도도·비열·확산계수)은 기체분자운동론과 이상기체 혼합 법칙으로 산출된다. 핵심 설계 상충관계는 헬륨이 냉각 성능은 가장 좋지만 큰 저장 체적을 요구한다는 점이며, 저자들은 8% He / 92% N2 혼합이 평균 열 효율 1을 달성하면서 저장 체적을 285 cm³로, 즉 순수 헬륨 대비 78.5% 감소시킨다는 것을 보인다. 이 연구는 냉각제 저장 체적과 열 효율을 극초음속 열보호의 두 지배적 설계 매개변수로 제시하고, 헬륨 비율 약 4% 이상에서 과냉각(국소 효율 1 초과)이 발생함을 보인다.</div>
+            <div class="keywords"><span class="keyword-chip">Numerical</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Hypersonic</span><span class="keyword-chip">TPS</span><span class="keyword-chip">CFD</span><span class="keyword-chip">Porous media</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Blowing ratio</span><span class="keyword-chip">UHTC</span><span class="keyword-chip">Nitrogen-helium binary mixture</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">공력 가열은 극초음속 비행체의 핵심 생존 과제이며, 능동 냉각제 주입은 공력 형상을 바꾸지 않고 벽면을 보호할 수 있어 선호된다. 저자들은 증산냉각(다공 벽을 통해 강제로 냉각제를 경계층으로 주입)을 가장 효과적인 능동 방법으로 위치시키고, 높은 냉각 효율과 저장 체적을 균형 잡는 냉각제 선택을 미해결 문제로 제시한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">문헌 조사(표 1)는 실험·수치·해석 모델을 망라하는 냉각제 종류 연구를 정리하며, 높은 비열과 낮은 밀도 때문에 헬륨이 우수하다는 결론이 반복된다. Oxford 그룹(Ifti, Hermann, McGilvray)의 선행 극초음속 증산냉각 연구가 본 연구의 실험·수치 기준선을 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">2차원 정상 밀도기반 Fluent 모델이 주흐름의 압축성 연속·운동량·에너지 방정식을 풀고, 다공체 스트립에서는 Darcy–Forchheimer 및 유효전도도 형태를 풀어낸다. 혼합 점성·전도도·비열·질량확산계수는 기체분자운동론과 이상기체 혼합 법칙에서 산출되며, 열 효율은 스탠턴수와 Eckert 기준 온도 관계로 정의되고 실험에 대해 검증된다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">냉각제 주입은 혼합층 비열을 높이고 벽 근처 온도를 낮춰 벽 열유속을 줄인다. 헬륨 분율이 증가할수록 혼합 $C_p$가 점진적으로 높아지고 밀도와 점성이 낮아지며, 헬륨 약 4% 이상에서 벽 온도 구배가 음으로 바뀌어 표적 벽 시작점에서 과냉각이 나타난다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">공학적 이득은 저장 체적 문제로 재구성된다. 질량유량이 작게 유지되므로 냉각제 질량이 아니라 저장 체적이 설계를 지배한다. 가벼운 기체(He)를 무거운 기체(N2)와 혼합하면 밀도는 낮추면서 비열은 높여, 8% He 혼합이 저장 체적의 일부만으로 순수 헬륨 효율에 맞춘다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">냉각제 저장 체적과 열 효율이 극초음속 열보호의 두 지배적 설계 매개변수로 식별된다. 헬륨을 질소와 혼합하면 헬륨의 냉각 이점을 살리면서 저장 체적을 크게 줄이며, 8% He / 92% N2 혼합은 285 cm³에서 효율 1을 달성한다—순수 헬륨 대비 78.5% 감소.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 40</span></summary>
+            <ol class="ref-list"><li>H.S. Ifti, T. Hermann, M. Ewenz Rocher, et al., Laminar transpiration cooling experiments in hypersonic flow, Experiments in Fluids, 2022</li><li>H.S. Ifti, T. Hermann, M. McGilvray, J. Merrifield, Numerical simulation of transpiration cooling in a laminar hypersonic boundary layer, Journal of Spacecraft and Rockets, 2022</li><li>D. Hoseinzade, I. Kim, Multiobjective optimization of porous medium for efficient transpiration cooling of hypersonic vehicles using genetic algorithm, Physics of Fluids, 2024</li><li>M.A. Keller, M.J. Kloker, H. Olivier, Influence of cooling-gas properties on film-cooling effectiveness in supersonic flow, Journal of Spacecraft and Rockets, 2015</li><li>A. Gülhan, S. Braun, An experimental study on the efficiency of transpiration cooling in laminar and turbulent hypersonic flows, Experiments in Fluids, 2011</li><li>E.R.G. Eckert, Engineering relations for heat transfer and friction in high-velocity laminar and turbulent boundary-layer flow, Journal of Fluids Engineering, 1956</li><li>Y.Q. Liu, P.X. Jiang, S.S. Jin, J.G. Sun, Transpiration cooling of a nose cone by various foreign gases, International Journal of Heat and Mass Transfer, 2010</li><li>H.S. Ifti, T. Hermann, M. McGilvray, Analytical model of transpired-coolant concentration at downstream wall in high-speed laminar flow, AIAA Journal, 2023</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "극초음속 설계에서 공력 가열로부터 표면을 보호하는 것이 중요하며, 자유류 레이놀즈수가 높을수록 표면 온도가 상승하고 냉각 열 효율이 감소한다."}, {"type": "bullet", "text": "냉각제 주입은 능동 보호 전략이다. 냉각제를 경계층에 주입하면 단열 기막이 형성되고 벽 근처 점성이 낮아지며 경계층 프로파일에 역류를 일으키지 않는다."}, {"type": "bullet", "text": "<span class=\"term\">효출 냉각(effusion cooling)</span>은 배열된 이산 구멍을 통해 주입하는 반면, 다공체 재료를 통한 주입은 <span class=\"term\">증산냉각</span>이며, 다공체는 층류 부층에 냉각제를 분배한다."}, {"type": "bullet", "text": "극초음속 경계층으로의 냉각제 침투는 동압을 정압으로 변환하는 저강도 충격파를 생성하여 국소 온도를 높이고 인젝터 하류 유동을 새 조건으로 적응시킨다.", "figure_refs": [9]}, {"type": "bullet", "text": "비열 $C_p$가 큰 냉각제(He, H2)는 낮은 질량유량에서 높은 열 효율을 주지만 더 큰 저장을 요구하며, 헬륨은 검토된 문헌 전반에서 일관되게 우수한 효율을 보인다.", "figure_refs": [1]}, {"type": "bullet", "text": "식별된 공백: 저장 체적 최소화와 열 효율 극대화를 동시에 달성하기 위해 극초음속 층류 유동에서 N2–He 이진 혼합을 다룬 선행 연구가 없었다."}, {"type": "bullet", "text": "명시된 목표는 Eulerian–Eulerian 접근법을 사용하여 저장 체적을 최소화하면서 인젝터 하류 20 mm의 50 mm 표적 스트립에서 평균 열 효율 1을 달성하는 것이다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Liu 등과 Langener &amp; Wolfersdorf는 고온 극초음속 유동에서 헬륨이 더 큰 비열 때문에 아르곤·공기보다 우수함을 실험적으로 보였다."}, {"type": "bullet", "text": "Richards &amp; Stollery(Ma = 10 기막 냉각)는 이산 층 이론을 제안하고 높은 비열 때문에 수소가 가장 효율적임을 찾았다."}, {"type": "bullet", "text": "Keller 등은 초음속 유동에서 He와 H2가 최상임을 수치적으로 찾았고, 확산계수는 무시할 수준이며 전도도·점성·프란틀수·몰질량·밀도·비열이 중요하다고 보고했다.", "figure_refs": [1]}, {"type": "bullet", "text": "Hombsch &amp; Olivier는 평판 위 층류/난류 증산 데이터를 수집하고 각 영역에 대한 경험 상관식을 제안했다."}, {"type": "bullet", "text": "Ifti 등은 ZrB2(UHTC) 다공체 평판으로 극초음속 증산냉각을 연구하고 분출비 대비 열 효율 상관식을 제안했으며, 이들의 실험·수치가 본 연구의 검증 대상이다.", "figure_refs": [1]}, {"type": "bullet", "text": "표 1은 다수의 냉각제 종류 연구(Kerth, Kuhn &amp; Hald, Leontiev, Gülhan, Dahmen, Xu, Naved)를 요약하며, 반복되는 결론은 헬륨이 열 효율을 극대화하지만 저장 체적 비용을 치른다는 것이다.", "figure_refs": [1]}, {"type": "bullet", "text": "Ifti 등(해석 모델)은 유사 조건에서 헬륨이 질소 대비 약 2배의 체적을 요구한다고 지적하여 혼합 절충안을 직접 동기부여했다."}]}, "method": {"content": [{"type": "bullet", "text": "형상은 Ifti 등을 모사한다. 선단으로부터 160 mm 위치에 길이 39.5 mm, 두께 5 mm의 다공체 스트립이 있으며, 마하 7 층류 주흐름과 속도입구·압력원거장·대칭(50 mm에서 ∂u/∂y = 0)·293 K 등온 no-slip 벽 경계조건을 사용한다.", "figure_refs": [1]}, {"type": "bullet", "text": "다공체 물성은 UHTC-7 값을 사용한다. 공극률 0.416과 투과도·Forchheimer 계수를 가지며, 질량유량 입구가 주흐름 질량유량 대비 일정 분출비를 유지한다."}, {"type": "bullet", "text": "자유 주흐름(공기)은 단위 레이놀즈수 Reu = 12.9×10^6 m^-1, 전체 온도 470.1 K, 전체 압력 1.738 MPa로 유입되며, 냉각제와 벽은 293 K이다."}, {"type": "bullet", "text": "자유 유동 보존 방정식(연속·운동량·에너지)은 전엔탈피 $H$와 열유속 $Q=\\nabla\\cdot(k\\nabla T)$를 가진 압축성 이상기체에 대해 풀린다."}, {"type": "formula", "label": "식 (1) — 자유 유동 보존식(연속·운동량·에너지)", "latex": "\\frac{\\partial \\rho}{\\partial t}+\\nabla\\cdot(\\rho \\mathbf{V})=0,\\quad \\frac{\\partial}{\\partial t}(\\rho \\mathbf{V})+\\nabla\\cdot(\\rho \\mathbf{V}\\mathbf{V})=-\\nabla p+\\nabla\\cdot\\boldsymbol{\\tau},\\quad \\frac{\\partial}{\\partial t}(\\rho H)+\\nabla\\cdot(\\rho \\mathbf{V}H)=-\\nabla\\cdot(\\rho \\mathbf{V})+\\nabla\\cdot(\\boldsymbol{\\tau}\\cdot\\mathbf{V})+\\nabla\\cdot(k\\nabla T)", "description": "극초음속 주흐름을 위한 전엔탈피 수송을 포함한 압축성 나비에–스토크스 방정식. $H=h+\\tfrac{1}{2}u_i u_j$."}, {"type": "bullet", "text": "다공체 스트립 내부에서는 방정식에 공극률 $\\varepsilon$ 가중치가 붙고, 운동량 균형에 Darcy(점성) 및 Forchheimer(관성) 저항항이 추가된다."}, {"type": "formula", "label": "식 (2) — 다공체 운동량(Darcy–Forchheimer)", "latex": "\\frac{\\partial}{\\partial t}(\\varepsilon\\rho \\mathbf{V})+\\nabla\\cdot(\\varepsilon\\rho \\mathbf{V}\\mathbf{V})=-\\varepsilon\\nabla P+\\nabla\\cdot\\varepsilon\\boldsymbol{\\tau}-\\frac{\\varepsilon^{2}}{K}\\mu \\mathbf{V}-\\frac{\\varepsilon^{3}F}{\\sqrt{K}}\\rho|\\mathbf{V}|\\mathbf{V}", "description": "$K$는 투과도, $F$는 Forchheimer(관성) 계수이며, 다공체 에너지 방정식은 유효전도도 $\\varepsilon k+(1-\\varepsilon)k_{porous}$를 사용한다."}, {"type": "bullet", "text": "밀도는 이상기체 법칙을 따르고 점성은 Lennard-Jones 파라미터 $\\sigma,\\Omega$를 통해 기체분자운동론으로 산출된다."}, {"type": "formula", "label": "식 (4) — 기체분자운동론 점성", "latex": "\\mu = 2.67\\times10^{-6}\\,\\frac{\\sqrt{M_w T}}{\\sigma^{2}\\Omega_{\\mu}}", "description": "단일 종의 Chapman–Enskog 점성이며, 혼합 물성은 식 (5)의 이상기체 혼합 법칙으로 결합된다."}, {"type": "bullet", "text": "혼합 물리 물성(점성·전도도·$C_p$)은 몰분율 가중 종 물성으로부터 조립된다."}, {"type": "formula", "label": "식 (5) — 이상기체 혼합 법칙", "latex": "Z = \\sum_{n}\\frac{X_n Z_n}{\\sum_{m}X_m \\varnothing_{nm}}", "description": "$Z$는 임의의 혼합 수송 물성, $X$는 몰분율, $\\varnothing_{nm}$은 Wilke형 상호작용 인자(식 6)이다."}, {"type": "bullet", "text": "국소 열 효율은 냉각/비냉각 스탠턴수(또는 열유속) 비로 정의되며, 스탠턴수는 Eckert 기준 온도로 정규화된다.", "figure_refs": [3]}, {"type": "formula", "label": "식 (9) — 국소 열 효율", "latex": "\\eta_{th,local}=1-\\frac{St_c}{St_{unc}}=1-\\frac{q_c}{q_{unc}}", "description": "효율 1은 냉각 벽면 열유속이 0으로 떨어진 것을, 1 초과는 과냉각을 의미한다."}, {"type": "bullet", "text": "주입 질량유속은 분출비로 특징지어지며, 성능은 표적 스트립 전체에 걸친 평균 열 효율로 평가된다."}, {"type": "formula", "label": "식 (13) &amp; (14) — 분출비와 평균 열 효율", "latex": "F=\\frac{\\rho_c u_c}{\\rho_e u_e},\\qquad \\eta_{th}=\\frac{\\int_{x=0.23}^{0.28}\\eta_{th,local}\\,dx}{\\int dx}", "description": "$F$는 모든 사례에서 0.0818%로 고정되며, 평균 효율은 x = 0.23–0.28 m의 50 mm 표적 벽에서 적분된다."}, {"type": "bullet", "text": "격자 독립성은 99,000개 셀 이상에서 확보되며(첫 노드 0.01 mm, 성장비 1.1), Ifti 등과의 검증은 효율·농도·스탠턴수에 대해 4.4% 평균 오차를 준다.", "figure_refs": [2, 3]}]}, "results": {"content": [{"type": "bullet", "text": "다공체 영역(0.16–0.1995 m)에서 냉각제 침투는 혼합층 비열을 높이고 벽 열유속을 감소시키며, 냉각제는 층류 경계층 내에 머무른다.", "figure_refs": [4]}, {"type": "bullet", "text": "F = 0.0818%의 순수 질소는 x = 0.23 m에서 과냉각이 없고, 인젝터 하류의 속도 구배도 거의 변하지 않는다.", "figure_refs": [4]}, {"type": "bullet", "text": "헬륨 비율의 작은 증가도 혼합 비열을 크게 높이고(He $C_p$는 N2/공기의 약 5배) 혼합 밀도와 점성을 낮춘다.", "figure_refs": [5, 7]}, {"type": "bullet", "text": "일정 질량유량에서 낮은 혼합 밀도는 냉각제 체적유량과 주입 속도를 높여 냉각제 층을 두껍게 하고 하류 헬륨 몰농도를 증가시킨다.", "figure_refs": [5, 6]}, {"type": "bullet", "text": "헬륨을 약 4% 이상으로 높이면 x = 0.23 m에서 음의 무차원 온도 구배(과냉각, 국소 효율 1 초과)가 발생하며, 순수 헬륨은 하류 전역에서 완전히 음의 구배를 만든다.", "figure_refs": [8]}, {"type": "bullet", "text": "다공체 영역 주변에서 저강도 충격파가 형성되며, 8% He 혼합의 큰 $C_p$는 충격으로 가열된 유체의 경계층 침투를 억제한다.", "figure_refs": [9, 10]}, {"type": "bullet", "text": "인젝터 하류 점성은 헬륨 추가로 감소하며, 8% He에서는 충돌 영역의 가열 유체가 인젝터 이후 경계층에 다시 진입하지 않는다.", "figure_refs": [10]}, {"type": "bullet", "text": "열 효율은 헬륨 질량분율에 비례해 증가하며, 목표 평균 효율 1은 8% He / 92% N2로 달성된다.", "figure_refs": [11]}]}, "discussion": {"content": [{"type": "bullet", "text": "순수 헬륨으로 평균 효율 1을 달성하려면 293 K, 200 bar에서 60초 냉각 동안 1326 cm³ 저장이 필요하다."}, {"type": "bullet", "text": "8% He / 92% N2 혼합은 285 cm³만으로 동일한 효율을 달성하며(78.5% 감소), 이는 낮은 몰질량(18.928 vs 28 g/mol)이 더 두꺼운 냉각제 층을 만들기 때문이다.", "figure_refs": [11]}, {"type": "bullet", "text": "모든 사례에서 냉각제 질량유량이 2 g/s 미만으로 유지되므로, 냉각제 질량이 아니라 저장 체적이 고속 비행체 설계의 구속 제약이다."}, {"type": "bullet", "text": "열 효율과 냉각 길이가 시간에 독립임이 확인되어, 60초 저장 체적을 공학 참조값으로 직접 사용할 수 있다.", "figure_refs": [11]}, {"type": "bullet", "text": "헬륨을 높이면 혼합층 몰농도와 비열이 증가하고 벽 근처 온도를 벽 온도 근처(또는 그 이하)로 낮춰 연속적으로 0 또는 음의 벽 열유속을 유발한다.", "figure_refs": [6, 7]}, {"type": "bullet", "text": "혼합 사례는 순수 질소보다 다공체 영역 위에 더 강한 충격파를 만들며, 그 결과 충돌 영역의 정압 온도 상승은 혼합의 높은 비열로 완화된다.", "figure_refs": [9]}, {"type": "bullet", "text": "순수 N2 대비 1.5배 높은 체적유량으로 인한 더 두꺼운 냉각제 층은 Ifti 등의 해석적 냉각제 농도 모델과 일치한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "평균 열 효율 1을 달성하기 위해 9개 증산냉각 사례(순수 N2 + 8개 N2–He 혼합)를 시뮬레이션했다."}, {"type": "bullet", "text": "순수 헬륨은 1326 cm³(F = 0.08%)가 필요한 반면 8% He / 92% N2는 285 cm³만(F = 0.0818%)으로 충분하여 78.5% 체적을 감소한다.", "figure_refs": [11]}, {"type": "bullet", "text": "가벼운 기체를 무거운 기체와 혼합하면 밀도를 낮추면서 비열을 높여 효율을 높이고 저장 체적을 최소화한다."}, {"type": "bullet", "text": "결과는 열보호 시스템의 공간·중량 효율을 최적화하며, 이는 극초음속 비행체 패키징에 결정적이다."}, {"type": "bullet", "text": "모델은 Ifti 등의 실험·수치 데이터에 대해 4.4% 평균 오차로 검증되어 혼합 설계 결론을 뒷받침한다.", "figure_refs": [3]}, {"type": "bullet", "text": "과냉각(국소 효율 1 초과)은 헬륨 약 4% 이상에서 발생하므로, 과도한 국소 과냉각 없이 평균 효율 1에 도달하도록 혼합 비율을 조정해야 한다.", "figure_refs": [8]}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "냉각제 주입은 단상 기체만 다루며 액체 냉각제나 상변화는 고려하지 않아 액체 상변화 증산냉각 영역에는 적용이 제한된다.", "source_quote": "In the transpiration cooling simulation, the continuity, momentum, energy equations, and the equation of state are used for two non-reacting special species.", "source_section": "method"}, {"claim": "분출비가 단일 고정값(F = 0.0818%)으로 유지되어 혼합 성능 결론이 주입률 전반에 대해 스윕되지 않았다.", "source_quote": "In the present study, the blowing ratio of the coolant was considered a constant value of 0.0818%.", "source_section": "method"}, {"claim": "유동은 층류 극초음속 경계층(냉각/비냉각 모두 완전 층류로 검증)으로 국한되어 천이 및 난류 영역은 제외된다.", "source_quote": "According to Fig. 3(c), the uncooled case exhibits a fully laminar flow.", "source_section": "results"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["헬륨은 냉각 효율이 가장 좋지만 큰 냉각제 저장 체적을 요구하며, 이는 극초음속 비행체 설계에 치명적인 패널티이다.", "저자들이 아는 한, 냉각 성능과 저장 크기를 균형 잡기 위해 극초음속 층류 유동에서 N2–He 기체 혼합을 검토한 선행 연구가 없었다.", "냉각제 물성(비열·밀도·점성)과 표적 벽면의 과냉각 발현 사이의 관계가 혼합에 대해 정량화되지 않았다."], "addressed_by_this_work": ["8% He / 92% N2 혼합은 저장 체적 285 cm³만으로 평균 열 효율 1을 달성하며, 이는 순수 헬륨 대비 78.5% 체적 감소이다.", "기체분자운동론 + 이상기체 혼합 CFD 모델을 구축하고 Ifti 등의 실험(평균 오차 4.4%)에 대해 검증하여 고정 분출비에서 9개의 N2–He 혼합을 평가했다.", "헬륨 분율 증가가 혼합 비열을 높이고 밀도·점성을 낮추는 과정을 규명하고, 헬륨 약 4% 초과 시 x = 0.23 m에서 음(과냉각)의 벽면 온도 구배가 형성됨을 확인했다."], "remaining_unresolved": ["액체 상변화 냉각제 및 다양한 분출비 조건에서의 성능은 다루지 않는다.", "천이/난류 극초음속 영역과 3차원 인젝터 효과는 2차원 층류 범위 밖이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
