@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization experiments and mechanisms investigation of phase-change transpiration cooling based on TPMS porous structures</title>
+    <meta name="keywords" content="Experimental, Transpiration cooling, TPMS, Phase change, Two-phase flow, Boiling heat transfer, Vapor blockage, Cooling efficiency, Liquid saturation, Capillary hysteresis, Pressure fluctuation">
+    <meta name="paper-authors" content="Fei He, Juntao Xu, Zhizhao Zhou, Shupeng Xie, Tianle Feng">
+    <meta name="paper-journal" content="International Journal of Heat and Mass Transfer, Vol. 271, 2026, Art. 129380 · DOI: 10.1016/j.ijheatmasstransfer.2026.129380">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Visualization experiments and mechanisms investigation of phase-change transpiration cooling based on TPMS porous structures</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Fei He, Juntao Xu, Zhizhao Zhou, Shupeng Xie, Tianle Feng</div>
+            <div class="journal">International Journal of Heat and Mass Transfer, Vol. 271, 2026, Art. 129380 · DOI: 10.1016/j.ijheatmasstransfer.2026.129380</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 연구는 고온 주류 환경에서 <span class="term">상변화 증산냉각(phase-change transpiration cooling)</span> 중 3D 프린팅된 <span class="term">삼중 주기 극소곡면(TPMS)</span> 다공성 구조 내부의 기액 이상 유동을 처음으로 직접 관찰하는 <span class="term">공극 규모(pore-scale) 가시화</span> 플랫폼을 구축한다. 메탄올 냉각제를 사용하는 W형(I-WP) 레진 시편에 대해 미시 영상, 압력, 표면 온도를 동기 계측하여 <span class="term">급격한 냉각 성능 저하(rapid cooling deterioration)</span>와 <span class="term">완만한 냉각 약화(slow cooling weakening)</span>라는 두 가지 뚜렷한 냉각 진화 영역을 규명하였다. 저자들은 공극 목에서의 <span class="term">모세관 이력현상(capillary hysteresis)</span>과 구조 하단의 대규모 <span class="term">모세관 흡입(capillary imbibition)</span>을 실험적으로 포착하고, 거시적 압력 변동을 급격한 모세관력 변화(액계면 불안정에 의해 유발되는 Haines 점프)와 기포의 성장 및 이동으로 귀속시켰다. 냉각 효율은 주류 온도와 주입률에 대해 단조적으로 변하지 않고, 단순한 매개변수 경향이 아니라 기포 성장률과 이동성에 의해 주로 지배됨을 보였다. 본 연구는 냉각 성능 저하가 단일 모드를 따른다는 가정과 성능이 운전 조건에 선형적으로 의존한다는 가정을 반박하는 직접적 공극 규모 실험 증거를 제공한다.</div>
+            <div class="keywords"><span class="keyword-chip">Experimental</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">TPMS</span><span class="keyword-chip">Phase change</span><span class="keyword-chip">Two-phase flow</span><span class="keyword-chip">Boiling heat transfer</span><span class="keyword-chip">Vapor blockage</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Liquid saturation</span><span class="keyword-chip">Capillary hysteresis</span><span class="keyword-chip">Pressure fluctuation</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공성 구조에서의 이상 유동과 열전달은 항공우주 열방호를 비롯한 고열유속 응용의 기반이지만, 복잡한 골격 내부에서 모세관력·계면 진화·상변화가 연성되는 현상은 제대로 규명되지 못했다. 증산냉각은 다공성 매트릭스의 큰 비표면적과 분출되는 냉각제 막을 활용하지만, 기액 이상 유동은 냉각을 구동하는 동시에 그 안정성을 위협한다. 저자들은 기존 연구가 거시적 물리량에 집중하고 신뢰도가 불확실한 공극 규모 모델에 의존해 왔음을 지적하며, 증산냉각 중 공극 내 이상 유동을 직접 가시화한다는 명확한 공백을 제시한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 선행 연구를 세 갈래로 개관한다. 거시적 불안정성·최적화 연구, 공극 규모 수치 모델링, 그리고 유동 가시화 실험이다. 각 갈래는 고유의 성과를 인정받지만 증산냉각 중 공극 내 이상 유동을 직접 관찰하지 못했다는 한계로 지적된다. 특히 구배 공극률을 갖는 TPMS 구조(Cheng 등)와 공극 규모 LBM 모델링이 본 연구의 직접적 맥락을 이룬다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">암시적 함수의 등위면 매개변수에 공극률을 연결하여 W형(I-WP) TPMS 다공성 시편을 생성하고 마이크로 광경화 적층으로 레진 제작한다. 시편은 금속 유로에 삽입되어 커버 슬립을 통해 입체 현미경으로 측면 관찰되며, 고온 풍동에 장착된다. 세 가지 주류 온도와 세 가지 주입률을 조합한 정유량 주입 9개 케이스에 대해 압력·표면온도·현미경 영상을 동기 계측한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">9개 케이스 전반의 가시화 결과, 시스템은 각각 특유의 결합된 압력·표면온도 응답을 갖는 두 냉각 진화 영역 중 하나를 따른다. 급격한 냉각 성능 저하 영역은 액계면 후퇴, 증기 침입, 냉각 성능 저하 단계를 거쳐 증기가 냉각제 저장소로 돌파할 때 정점에 이른다. 완만한 냉각 약화 영역은 고효율 냉각, 전이, 냉각 약화 단계를 거치며 구속 기포의 성장·이동과 안정적 증기 채널 형성이 지배한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">저자들은 두 변동 신호를 서로 다른 물리적 기원으로 추적한다. 급격한 저하 영역의 큰 계단형 변동은 액 메니스커스가 공극 목에서 모세관 이력현상과 Haines 점프를 겪으며 모세관력이 급격히 붕괴할 때 발생하고, 증기가 하단 목을 통해 저장소로 돌파할 때 정점에 이른다. 완만한 약화 영역의 주기적 변동은 구속 기포의 성장과 이동에서 비롯된다. 9개 케이스 분석은 냉각 성능이 주류 온도와 주입률에 비단조적이며 기포 성장률과 이동성이 지배 인자임을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 연구는 TPMS 구조에서 상변화 증산냉각 중 이상 유동의 공극 규모 가시화를 최초로 달성하고, 뚜렷한 압력 신호를 갖는 두 냉각 진화 영역을 규명하며, 압력 변동을 모세관력 붕괴와 기포 역학에 귀속시킨다. 핵심 주장은 단순한 매개변수 경향이 아니라 기포 성장률과 이동성이 냉각 성능을 지배한다는 것이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 30</span></summary>
+            <ol class="ref-list"><li>G. Huang, Y. Zhu, et al., Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transf., 2017.</li><li>Y. Luan, F. He, et al., An experimental investigation on instability of transpiration cooling with phase change, Int. J. Therm. Sci., 2020.</li><li>H. Su, J. Wang, et al., Numerical investigation on transpiration cooling with coolant phase change under hypersonic conditions, Int. J. Heat Mass Transf., 2019.</li><li>Y. Chen, S. Du, et al., Numerical investigation of transient phase-change transpiration cooling based on variable properties of coolant, Appl. Therm. Eng., 2021.</li><li>Z. Zhou, Y. Lv, et al., Pore-scale investigation of transpiration cooling based on triply periodic minimal surface, Int. J. Therm. Sci., 2024.</li><li>Z. Cheng, R. Xu, et al., Transpiration cooling with phase change by functionally graded porous media, Int. J. Heat Mass Transf., 2023.</li><li>Z. Liu, P. Tian, et al., Investigations on phase-change transpiration cooling performance of TPMS-based ceramic structures, Appl. Therm. Eng., 2025.</li><li>H. Hu, P. Jiang, et al., Role of trapped liquid in flow boiling inside micro-porous structures: pore-scale visualization and heat transfer enhancement, Sci. Bull., 2021.</li><li>S. Wang, D. Li, et al., Pore-scale simulation of convective evaporation in transpiration cooling: a lattice Boltzmann study, Int. Commun. Heat Mass Transf., 2026.</li><li>H. Hu, P. Jiang, et al., A modified energy equation model for flow boiling in porous media and its application to transpiration cooling at low pressures with transient effect, Int. J. Heat Mass Transf., 2020.</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다공성 구조에서의 이상 유동과 열전달은 항공우주 열방호, 수소 에너지 변환, 신에너지 저장, 고열유속 전자소자 냉각 전반에 걸쳐 나타나며, 모세관력·계면 진화·상변화 효과로 인해 복잡한 다공성 골격 내 연성 메커니즘은 매우 복잡하여 장비·시스템의 열 안전성과 효율 향상을 위한 공통의 근본 문제가 된다."}, {"type": "bullet", "text": "<span class=\"term\">증산냉각(transpiration cooling)</span>은 다공성 구조의 큰 비표면적을 활용하여 냉각제와 고체 매트릭스 사이의 대류 열전달을 강화하며, 표면에서 분출되는 냉각제가 비교적 균일한 증기 또는 액막을 형성하여 유입 열유속에 대한 열 차단막으로 작용한다."}, {"type": "bullet", "text": "저자들은 증산냉각의 실용적 장점으로 재사용성, 매우 균일한 냉각 성능, 고열유속 환경에 대한 뛰어난 적응성을 들며, 이는 극한 열유속 시나리오에서의 연구 동기가 된다."}, {"type": "bullet", "text": "다공성 구조 내 기액 이상 유동과 열전달은 핵심 열방출 메커니즘인 동시에 냉각 성능과 안정성에 큰 도전 과제가 되는데, 이는 선행 연구에서 보고된 증기 폐색, 냉각 이력현상, 온도 진동, 주기적 냉각제 압력 변동으로 드러난다."}, {"type": "bullet", "text": "기존 불안정성 연구는 주로 다공성 구조의 거시적 물리량(공극률, 주입률)과 최적화에 집중하여, 공극 내부의 상변화라는 근본 문제에 대한 직접적 연구가 부족하다."}, {"type": "bullet", "text": "특정 구조 특성을 반영한 공극 규모 수치 연구(토모그래피 기반 격자 볼츠만 모델링, TPMS 역설계 모델링)가 등장했으나, 미세 공극 내 상변화 메커니즘에 대한 이해 부족으로 수치 결과가 실제 상변화 연성 과정과 괴리될 수 있어 공극 규모 실험의 필요성이 부각된다."}, {"type": "bullet", "text": "핵심 공백은 다음과 같다. 기존 가시화(유리구슬, 정적 건조)는 주류 열환경이 없으므로, 증산냉각 중 다공성 구조 내 기액 이상 유동의 가시화는 아직 달성되지 못했으며 공극 규모 실험 연구에 큰 공백이 남아 있다."}, {"type": "bullet", "text": "이 공백을 메우기 위해 저자들은 정교한 W형 TPMS 다공성 구조와 상변화 증산냉각 미시 실험 시스템을 설계하여 공극 내 기액 분포를 성공적으로 가시화하고, 공극 목에서의 모세관 이력현상과 하단의 대규모 모세관 흡입을 최초로 관찰하였다.", "figure_refs": [1]}, {"type": "bullet", "text": "유동 비등 특성으로부터 급격한 냉각 성능 저하와 완만한 냉각 약화라는 두 가지 뚜렷한 증산냉각 진화 영역을 제안하고, 영역 전환·압력 변동·운전 조건에 따른 냉각 성능의 비단조 변화의 내재 메커니즘을 분석한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Huang 등은 소결 금속 다공성 판의 상변화 증산냉각에서 증기 폐색, 냉각 이력현상, 온도 진동을 관찰하여, 본 논문이 공극 규모에서 탐구하는 불안정성 현상학을 확립하였다."}, {"type": "bullet", "text": "Luan 등은 다공성 구조 내 냉각제 압력이 온도 변화와 연성된 주기적 변동을 보임을 밝혔고, Su 등은 질량유량과 주입 압력의 관계가 일대일이 아니며 이상 유동 상태 전환 시 계단형 압력 변화가 나타남을 수치적으로 보였다."}, {"type": "bullet", "text": "Chen 등은 수치해석으로 표면 온도 진동과 열전달 저하를 재현·분석하여 출구 경계의 비균일 유동 분포에 그 원인을 돌렸으며, 이후 연구들은 공극률·주입률 등 거시 매개변수를 상관시키고 다각적 최적화를 수행하였다."}, {"type": "bullet", "text": "Wang 등은 토모그래피로 세라믹 열방호 타일의 다공성 구조를 직접 모델링하여 비등온 상변화 유사퍼텐셜 격자 볼츠만 모델로 주입률에 따른 상태 진화를 밝혔고, Zhou 등은 역설계를 통한 TPMS 증산냉각 모사로 공극 구조 특성이 주류-냉각제 혼합에 큰 영향을 줌을 보고하였다."}, {"type": "bullet", "text": "Cheng 등은 다공성 TPMS 구조를 증산냉각 실험에 처음 도입하여 구배 공극률 TPMS를 제작하고 상변화 증산냉각 영역에서의 적용성을 검증하였으며, Liu 등은 액체 분출과 온도 변동을 줄이는 다공성 세라믹 TPMS를 제작하였다."}, {"type": "bullet", "text": "Hu 등은 식각된 다공성 채널에서 유동 비등을 관찰하여 기포 핵생성·성장·합체와 기액 전환을 기록함으로써, 본 연구에서 다루는 기포 역학의 미세채널 유비를 제공하였다."}, {"type": "bullet", "text": "Liu 등은 친수성 유리구슬로 등가 다공성 구조를 만들어 정적 건조 가시화로 모세관 구동 상변화를 관찰하였고, Kharaghani 등은 마이크로토모그래피로 액계면을 표지하였다. 두 연구 모두 모세관 고리가 건조를 가속함을 보였으나 주류 열환경이 없어 실제 증산냉각과 물리적으로 다르다."}, {"type": "bullet", "text": "이들 갈래에 공통된 한계는, 다공성 구조 내 가시화는 이루어졌으나 고온 주류 하의 실제 증산냉각 중 공극 내 기액 이상 분포를 포착한 사례가 없다는 점이며, 바로 이 역량이 본 논문의 기여이다."}]}, "method": {"content": [{"type": "bullet", "text": "우수한 구조 강도 때문에 선택된 W형 TPMS 다공성 구조가 금속 유로와 함께 시편을 구성하며, MATLAB 기반 알고리즘이 공극률을 TPMS 암시적 함수의 등위면 매개변수 delta에 연결하고 해당 등위면을 추출하여 원하는 공극률의 3D STL 모델을 생성한다.", "figure_refs": [1]}, {"type": "formula", "label": "식 (1) — W형(I-WP) TPMS 암시적 곡면", "latex": "\\delta = 2\\left(\\cos x \\cos y + \\cos y \\cos z + \\cos x \\cos z\\right) - \\cos 2x - \\cos 2y - \\cos 2z", "description": "W형(I-WP) 삼중 주기 극소곡면의 암시적 레벨셋 함수로, 등위값 delta가 공극률을 결정하므로 delta를 변화시키며 등위면을 추출하면 지정된 공극률의 출력 가능한 형상이 생성된다. (해당 식은 PDF 페이지에서 직접 판독하였으며 전사는 확실함.)"}, {"type": "bullet", "text": "시편은 1 mm 단위 셀 크기와 0.7 공극률로 주기적으로 배열된 480개 단위 셀로 구성되며, 최소 단면에서 공극 크기는 약 400 마이크로미터, 최대 단면에서 약 600 마이크로미터로 등가 공극 크기는 약 500 마이크로미터이고, 전체 치수는 유동 방향 높이 10 mm에 4 mm × 12 mm 단면이다.", "figure_refs": [1]}, {"type": "bullet", "text": "다공성 구조는 Nanoarch P140 3D 프린터로 10 마이크로미터 적층 두께, HTL 표준 레진을 사용해 제작되어 맞춤 금속 유로에 삽입되며, 유로의 내부 직사각형 냉각제 저장소는 4 mm × 12 mm 단면을 갖고 저장소 바닥은 다공성 하면에서 37.5 mm 아래에 있으며 냉각제는 측면 원형 입구 채널로 공급된다.", "figure_refs": [1]}, {"type": "bullet", "text": "USTC 고온 풍동 실험실에 설치된 미시 실험 시스템은 고온 풍동(압축기·건조기·필터·아크 풍동), 전자 주입 펌프, 데이터 취득 시스템으로 구성되며, 측면에 장착된 현미경 카메라가 커버 슬립을 통해 다공성 구조를 관찰한다.", "figure_refs": [2]}, {"type": "bullet", "text": "계측 장비로는 주류 속도용 CTA04 열선 풍속계, XFP01-BD 전자 주입 펌프(정확도 ±0.5%), 표면온도용 K26E9 적외선 카메라(±1%), 저장소 압력용 HDP200-A 압력 센서(0~10 kPa, ±0.1%), 저장소 온도용 K형 열전대(233~1400 K, ±0.75%), 측면 기액 관찰용 NSZ-10 입체 현미경이 포함된다.", "figure_refs": [2]}, {"type": "bullet", "text": "구조가 레진이고 냉각제가 비점 65.7도C의 메탄올이므로 주류 공기 온도는 80~100도C, 풍속 10.16 m/s로 설정하고 냉각제 주입률은 0.089%, 0.119%, 0.149%로 둔다."}, {"type": "bullet", "text": "각 시험은 다공성 구조를 냉각제로 완전 포화시킨 상태에서 시작하여 정유량 주입을 가하며 저장소 압력과 상면 온도를 감시하고 동기화된 입체 현미경 영상을 기록하는데, 표 1의 9개 케이스는 주류 온도 80·90·100도C와 세 가지 주입률을 조합한 것이다."}]}, "results": {"content": [{"type": "bullet", "text": "상변화 증산냉각 상태는 도달하는 최종 냉각 단계에 따라 분류되는 급격한 냉각 성능 저하와 완만한 냉각 약화의 두 뚜렷한 진화 영역을 거치며, 각각은 최종 상태·변동 패턴·변동 지속시간이 다른 특징적 표면온도-압력 응답(냉각 성능 저하 곡선과 냉각 약화 곡선)에 대응하고, Case 1과 Case 9가 대표 조건으로 선택되었다."}, {"type": "bullet", "text": "급격한 냉각 성능 저하 영역에서 과정은 액계면 후퇴 단계, 증기 침입 단계, 냉각 성능 저하 단계로 나뉘며, 액계면이 급격히 하강하고 유동이 기액 이상 유동으로 전환되며 기상이 잔류 액을 압축하여 액막 영역을 형성한다.", "figure_refs": [3]}, {"type": "bullet", "text": "증기 침입 단계에서는 액막 영역이 확장되고 젖은 영역이 축소되며 증기가 하층으로 침입하고, 최종 냉각 성능 저하 단계에서는 증기가 지배적이 되어 하단 부근에만 소량의 액이 남고 상부 영역의 냉각제는 불안정한 액막으로 존재한다.", "figure_refs": [3]}, {"type": "bullet", "text": "Case 1에서 내부 압력은 초기에 점진적으로 감소한 뒤 격렬한 변동 구간을 거쳐 급격한 상승 후 비교적 높은 수준을 유지하며, 초기에는 완전 포화되어 상면 온도가 낮지만 냉각제 공급 부족으로 구조가 급속히 액계면 후퇴에 진입하여 상류에 건조 영역이 나타나고 표면 온도가 상승한다.", "figure_refs": [4, 5]}, {"type": "bullet", "text": "증기상이 하단층에 침입하면 강한 압력 변동이 발생하고 하단 부근 액포화도가 주기적으로 변동하며 구조 하단에서 대규모 모세관 흡입이 동반되고, 변동 후 전체 포화도가 이전보다 낮아지며 냉각제 저장소로 부분 확장된 증기가 냉각제 공급을 차단하여 냉각 성능 저하 단계를 유발한다.", "figure_refs": [5]}, {"type": "bullet", "text": "완만한 냉각 약화 영역에서 과정은 고효율 냉각 단계(완전 포화, 연속적 액상 유동, 효과적 냉각), 전이 단계(완전히 젖었으나 공극 형상에 의해 기포 성장이 구속되고 기액 재배열이 지속됨), 냉각 약화 단계(기포 축적으로 안정적 증기 채널과 증기 점유 영역이 형성되고 표면 온도가 안정화됨)로 나뉜다.", "figure_refs": [6]}, {"type": "bullet", "text": "Case 9에서 압력 곡선은 결국 안정 상태에 접근하는 주기적 변동을 보이고 표면 온도는 결합된 진동 거동을 나타내며, 기포는 초기에 분산 분포하다가 구속 기포가 이웃 공극으로 확장되어 압력을 올리고 공극 간 기포 네트워크로 합쳐져 상향 이동하여 표면에서 탈출한다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "기포 네트워크 형성에서 상향 탈출까지의 과정은 점진적 압력 상승 후 급강하의 한 주기에 해당하며, 진화가 지속되면 안정적 증기 채널이 형성되고 그 채널을 따라 증기 폐색이 발생하여 시스템이 점차 냉각 약화 단계로 진입하는데, 이 단계에서 고정 위치의 기포 네트워크가 파열·합체하고 액계면이 약간 후퇴하며 짧아진 냉각제 공급 경로가 안정화를 촉진한다.", "figure_refs": [8]}]}, "discussion": {"content": [{"type": "bullet", "text": "급격한 냉각 성능 저하 영역에서 계단형 압력 상승은 모세관 흡입을 동반하며 구조 내 포화도의 비단조 변화를 확증하는데, 증기가 공극 목에서의 모세관 이력현상 때문에 단위 셀을 가로질러 규칙적 패턴으로 확장되며, W형 TPMS에서는 공극 목이 각 단위 셀 양측에 규칙적으로 분포한다.", "figure_refs": [9]}, {"type": "bullet", "text": "동적 접촉각 변화가 큰 모세관력 변화를 일으킨다. 액 메니스커스가 공극 목에 있을 때 곡률과 국소 모세관 압력차가 최대가 되어 증기 압력이 이를 초과해야 밀어낼 수 있고, 일단 통과하면 메니스커스가 표면 에너지를 낮추려 팽창하여 모세관력이 급락하고 증기가 다음 목을 돌파하지 못할 때까지 밀려든다."}, {"type": "bullet", "text": "공극 목과 공극의 크기가 다르므로 단일 돌파가 연쇄 반응을 일으켜 증기를 여러 공극 층으로 밀어넣으며, 냉각제 저장소와 연결된 최하단 목에서는 모세관 이력현상이 Haines 점프를 일으켜 증기가 저장소로 확장되고 증기 압력이 낮아지며 잔존 메니스커스가 후퇴하여 대규모 모세관 흡입과 계단형 압력 상승을 유발한다.", "figure_refs": [9]}, {"type": "bullet", "text": "저자들은 급격한 저하 영역의 대진폭 변동이 증기가 냉각제 저장소로 진입할 때 발생하며 메니스커스 불안정에 의한 급격한 모세관력 변화와 강한 모세관 흡입이 그 원인이고, 이후 모세관력이 완전히 붕괴하여 구조가 지속적 냉각 성능 저하에 진입한다고 결론짓는다."}, {"type": "bullet", "text": "완만한 냉각 약화 영역에서 전이 단계의 주기적 압력 진동은 기포 성장·이동과 결부되며, 구조를 포화 상태로 유지하여 포화도 변화 영향을 제거한 고유량 주입 시험(70·80도C에서 F = 2.99% 및 1.49%)은 기포가 적어도 기포 성장·이동이 변동을 크게 구동함을 확증한다.", "figure_refs": [10, 11]}, {"type": "bullet", "text": "목보다 작은 기포는 목을 쉽게 통과하지만 성장하면 공극 크기에 구속된 구속 기포가 되어 목을 통해 인접 공극으로 확장되고 공극 간 기포 네트워크를 형성하여 상향 이동하며 띠 형태 구조로 발전하는데, 이렇게 진화하는 기액 분포가 이상 유동 패턴을 바꾸어 냉각 단계 간 전환 메커니즘을 제공한다.", "figure_refs": [10]}, {"type": "bullet", "text": "9개 케이스 전체를 분류하면(표 2·3은 과정 평균 상면 온도 TAVG, 냉각 성능 저하 도달 시간 t_det, 냉각 약화 도달 시간 t_wea, 균일도 지표인 표면온도 표준편차 sT를 보고), 낮은 주입률(F = 0.089%)은 급격한 냉각 성능 저하를 유발하는 경향이 있고 높은 주입률(F = 0.149%)은 일관되게 완만한 냉각 약화로 진화하여 주입률이 영역을 결정하는 핵심 인자가 된다.", "figure_refs": [12, 13]}, {"type": "bullet", "text": "모든 급격한 저하 케이스에서 계단형 압력 상승이 나타나 액이 구조를 빠져나갈 때 급격한 모세관력 변화가 불가피함을 확증하며, Case 1·5의 다수의 늦게 발생하는 점프는 낮은 주류 온도와 높은 주입률이 저하 개시를 지연시킴을 가리키고, sT는 진화와 강하게 상관된다(저하 시 높고 약화 시 낮으나 최종 냉각이 악화되는 Case 3·7에서는 큼).", "figure_refs": [12]}, {"type": "bullet", "text": "F = 0.089%에서 구조는 80·90도C에서 저하에 진입하지만 100도C에서는 약화로 진화하여 냉각 효율이 주류 온도에 따라 먼저 감소했다가 증가하는데, 높은 온도가 더 많은 기포 핵생성 자리와 빠른 성장을 만들어 구속 기포가 액계면 하강을 지연시키므로 높은 주류 온도가 반드시 최종 냉각 상태를 악화시키지는 않는다.", "figure_refs": [14, 15]}, {"type": "bullet", "text": "F = 0.149%에서는 모든 케이스가 완만한 약화 경로로 진화하며 90도C 케이스가 가장 효율적이다. 80도C에서는 느린 기포 성장이 상향 이동을 저해하여 기포가 구속된 채 상면을 고갈시켜 대규모 계면 후퇴와 효율 저하를 초래하는 반면, 90~100도C에서는 빠른 성장과 지속적 재배열이 띠 형태 네트워크의 상향 이동을 촉진하여 높은 효율을 유지하고, 700초에는 세 케이스 모두 상류 영역 부근에서 증기 폐색이 나타난다.", "figure_refs": [14, 16]}, {"type": "bullet", "text": "전반적으로 냉각 성능은 주류 온도나 주입률에 단조적으로 변하지 않으며 기포 성장률과 이동성이 지배 인자이므로, 낮은 주입률에서는 적절한 온도 상승이 기포 성장을 가속하고 계면 후퇴를 지연시키는 반면 높은 주입률에서는 지나치게 낮은 온도가 느린 기포 확산과 나쁜 이동성, 불균일한 냉각제 분포, 조기 성능 저하를 초래한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "TPMS 다공성 구조에서 상변화 증산냉각 중 내부 유동의 가시화를 최초로 달성하여, 이상 유동과 기포 성장, 공극 목에서의 모세관 이력현상, 구조 하단 부근의 모세관 흡입을 직접 포착하였다."}, {"type": "bullet", "text": "급격한 냉각 성능 저하와 완만한 냉각 약화라는 두 뚜렷한 냉각 진화 영역을 규명하고, 결합된 압력·가시화 결과로부터 압력 변동 특성과 내부 유동 영역 사이의 대응 관계를 명확히 확립하였다."}, {"type": "bullet", "text": "압력 변동 메커니즘을 규명하였다. 급격한 냉각 성능 저하에서는 모세관 흡입을 동반한 액계면 불안정에 의한 급격한 모세관력 변화에서 비롯되고, 완만한 냉각 약화에서는 주로 기포 성장과 이동에 결부된다."}, {"type": "bullet", "text": "냉각 성능은 주류 온도나 냉각제 주입률에 단조적으로 변하기보다 기포 성장률과 기포 이동성에 의해 주로 지배되어, 단일 성능 저하 모드 가정과 성능의 선형적 운전 조건 의존 가정을 뒤집는다."}, {"type": "bullet", "text": "본 결과는 상변화 역학과 공극 규모 유체 수송 사이의 연성에 대한 직접적 실험 증거를 제공하여, 복잡한 다공성 구조 내 기액 이상 상호작용과 그 진화에 대한 새로운 관점을 제시한다."}, {"type": "bullet", "text": "저자들은 이 발견을 상변화 증산냉각에서 고성능 TPMS 다공성 구조의 최적화 및 제어를 위한 이론적·실험적 토대로 자리매김한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [], "future_works": [], "motivation_resolution": {"motivating_problems": ["기존 증산냉각 연구는 다공성 구조의 거시적 물리량(공극률, 주입률)에 초점을 맞추어 왔으며, 공극 내부의 상변화라는 근본 문제에 대한 직접적 연구가 부족하였다.", "상변화 증산냉각의 공극 규모 수치해석은 미세 공극 내부 메커니즘에 대한 이해 부족으로 인해 실제 상변화 연성 과정과 괴리될 수 있다.", "기존 유동 가시화 연구(유리구슬 충전, 정적 건조)는 주류 열환경이 없어 실제 증산냉각과 물리적으로 다르며, 따라서 증산냉각 중 다공성 구조 내부의 기액 이상 유동은 지금까지 가시화된 적이 없었다.", "거시적 압력 변동의 물리적 기원과 운전 조건에 따른 냉각 성능의 비단조 변화는 규명되지 않았다."], "addressed_by_this_work": ["고온 풍동에 결합된 TPMS 기반 미시 가시화 시스템을 구축하여 상변화 증산냉각 중 공극 규모의 기액 이상 유동을 직접 관찰함으로써 가시화 공백을 해소하였다.", "공극 목에서의 모세관 이력현상과 하단의 대규모 모세관 흡입을 최초로 실험 포착하여, 공극 규모 모델을 검증할 수 있는 직접적 공극 내 상변화 증거를 제공하였다.", "두 가지 냉각 진화 영역(급격한 냉각 성능 저하와 완만한 냉각 약화)을 규명하고, 압력 신호 특성과 내부 이상 유동 상태 사이의 대응 관계를 확립하였다.", "압력 변동이 급격한 모세관력 변화(액계면 불안정과 Haines 점프)와 기포 성장·이동에서 비롯됨을 보이고, 냉각 효율이 기포 성장률과 이동성에 지배되어 운전 조건에 비단조적으로 의존함을 보였다."], "remaining_unresolved": ["실험은 80~100도C에서 메탄올을 사용하는 레진 TPMS 시편을 쓰므로 실제 고온 열방호 조건과는 거리가 멀어, 관찰된 영역 거동을 고엔탈피 항공우주 환경으로 전이할 수 있는지는 확립되지 않았다.", "결과는 단위 셀 및 시편 규모에서의 정성적·시각적 관찰이며, 공극 규모 메커니즘을 거시적 설계 변수(공극률 구배나 비균일 열유속 등)와 연결하는 예측 모델은 도출되지 않았다.", "단일 W형 TPMS 형상과 단일 공극률(0.7)만 시험하여, 공극 구조와 공극률 구배가 영역 경계에 미치는 영향은 규명되지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
