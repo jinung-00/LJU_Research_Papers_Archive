@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Transpiration cooling for conformal and recessed apertures in hypersonic flow with a turbulent boundary layer</title>
+    <meta name="keywords" content="transpiration cooling, porous media cooling, hypersonic, turbulent boundary layer, backward-facing step, blowing ratio, Stanton number, infrared thermography, coolant injection, slot cooling">
+    <meta name="paper-authors" content="Rowland Penty Geraets, Andrew Hyslop, Sebastien Wylie, Jim Merrifield, Matthew McGilvray">
+    <meta name="paper-journal" content="Experiments in Fluids, Vol. 67, Art. 157, 2026 · DOI: 10.1007/s00348-026-04270-7">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Transpiration cooling for conformal and recessed apertures in hypersonic flow with a turbulent boundary layer</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Rowland Penty Geraets, Andrew Hyslop, Sebastien Wylie, Jim Merrifield, Matthew McGilvray</div>
+            <div class="journal">Experiments in Fluids, Vol. 67, Art. 157, 2026 · DOI: 10.1007/s00348-026-04270-7</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 실험 연구는 극초음속 비행체의 전자기 센서 개구부(윈도우)에 대한 <span class="term">증산냉각(transpiration cooling)</span>을 평가하며, 옥스퍼드 고밀도 터널에서 마하 6.1 자유류와 난류 경계층 조건으로 METAPOR CE170 다공성 이젝터가 장착된 평판 모델을 사용한다. 균일(conformal) 형상 외에, 이젝터 상류 또는 하류의 후향 계단(backward-facing step)이 단열 슈라우드/패치 사출 후 남는 함몰(recessed) 형상을 모사한다. 적외선 열화상으로 이젝터 위와 하류의 스탠턴수 비 냉각 성능을 매핑한다. 균일 형상에서 이젝터 직접 냉각은 Mickley 막 이론과 Naved 등의 상관식 예측보다 낮았고, 슬롯 냉각 상관식과의 비교는 동일 질량유량에서 대부분의 개구부 관련 영역에서 증산냉각이 유리하지 않음을 시사한다. 함몰 형상은 이득 또는 손해가 될 수 있다. 상류 계단은 분리 영역을 냉각제로 채워 재부착 가열 피크를 제거하는 반면, 하류 계단은 재부착부의 약 10% 오버슛을 제외하면 균일 형상과 같거나 더 나은 냉각을 준다.</div>
+            <div class="keywords"><span class="keyword-chip">transpiration cooling</span><span class="keyword-chip">porous media cooling</span><span class="keyword-chip">hypersonic</span><span class="keyword-chip">turbulent boundary layer</span><span class="keyword-chip">backward-facing step</span><span class="keyword-chip">blowing ratio</span><span class="keyword-chip">Stanton number</span><span class="keyword-chip">infrared thermography</span><span class="keyword-chip">coolant injection</span><span class="keyword-chip">slot cooling</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 대류 가열은 평형 벽 온도를 EM 센서 윈도우 재료 한계 이상으로 끌어올리므로, 개구부는 광학 왜곡을 막기 위해 균일 온도 분포를 갖는 능동 냉각(막 또는 증산)이 필요하다. 보호 슈라우드/패치가 비행 중 사출되므로 개구부가 후향 계단 뒤 함몰부에 놓여 열부하가 바뀐다. 그러한 비균일 형상에 대한 증산냉각 데이터가 없어, 이 연구를 옥스퍼드 HDT 마하 6.1에서 수행하게 되었다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 냉각 효율 척도와 직접(이젝터 위)·하류 냉각에 쓰이는 상관식들을 개관한다. Moyer-Rindal 보정을 포함한 Mickley 막 이론, Naved 등의 난류 경계층 보정, Hombsch-Olivier 슬롯 냉각 상관식이 그 예다. 이들이 분사 파라미터와 비교 기준선을 정의한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">0도 받음각 평판 모델에 PEEK 하우징의 50x50 mm METAPOR CE170 다공성 이젝터(기공 ~20 um, 공극률 0.19)를 장착한 함몰 가능 시험 모듈로 균일·하류 함몰·완전 함몰(최대 10 mm) 형상을 구현한다. 질소 냉각제 질량유량은 질량유량 제어기로 설정하고 Darcy-Forchheimer 투과율 교정으로 정량화한다. 표면 열유속은 MWIR 적외선 열화상(임펄스 응답 역해법)과 22개 박막 게이지 배열로 얻으며, 마하 6.1 HDT 난류 경계층에서 수행한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">균일 형상에서 경계층은 이젝터 전에 난류로 확인되며, 이젝터 직접 냉각은 Mickley 막 이론과 Naved 상관식보다 현저히 낮고, 분사 막에 의한 압축 충격파와 경계층 날림(blow-off)이 의심된다. 비냉각 데이터가 난류 열전달 상관식과 일치함에도 Naved 등의 유사 실험과 직접·하류 냉각 모두에서 큰 미설명 불일치가 나타난다. 개구부 관련 비교는 이젝터 하류 끝을 제외하면 증산냉각이 슬롯 냉각 대비 뚜렷한 이점이 없음을 시사한다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">함몰 형상의 비냉각 열유속 프로파일은 예상대로 분리(낮은 열유속), 재부착 피크, 전향 계단 상승을 보인다. 냉각 시 완전 함몰은 이젝터를 분리 영역 내에 두어 냉각제가 재순환부를 채우고 함몰 전폭을 냉각해 재부착 피크를 줄이거나 제거하며, 하류 함몰은 계단 상류에서 균일 형상처럼 거동하고 냉각제가 재순환부 위를 지난다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">균일·함몰 개구부 형상의 증산냉각을 마하 6.1 난류에서 스탠턴수 비로 평가했다. 직접 균일 냉각은 Mickley 막 이론보다 나빴고(예측보다 많은 냉각제 필요), 선행 Naved 실험과 큰 미설명 불일치가 지속된다. 함몰 형상은 이젝터 위치에 따라 국부 냉각을 개선/저하시킬 수 있으며, 데이터는 초기 설계 관련 평가는 제공하나 일반 함몰 형상 상관식에는 불충분하다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 25</span></summary>
+            <ol class="ref-list"><li>I. Naved et al., Transpiration-Cooling Heat Transfer Experiments in Laminar and Turbulent Hypersonic Flows, J. Thermophys. Heat Transfer, 2023</li><li>H. S. Mickley, Heat, mass, and momentum transfer for flow over a flat plate with blowing or suction (NACA TN 3208), 1954</li><li>C. B. Moyer, R. A. Rindal, An analysis of the coupled chemically reacting boundary layer and charring ablator (NASA CR-1065), 1968</li><li>M. Hombsch, H. Olivier, Film Cooling in Laminar and Turbulent Supersonic Flows, J. Spacecraft and Rockets, 2013</li><li>R. J. Goldstein, Film cooling, Advances in Heat Transfer, 1971</li><li>A. Gulhan, S. Braun, An experimental study on the efficiency of transpiration cooling in laminar and turbulent hypersonic flows, Exp. Fluids, 2011</li><li>H. S. Ifti et al., Laminar transpiration cooling experiments in hypersonic flow, Exp. Fluids, 2022</li><li>D. E. Nestler, A. R. Saydah, W. L. Auxer, Heat transfer to steps and cavities in hypersonic turbulent flow, AIAA J, 1969</li><li>E. R. G. Eckert, Survey of boundary layer heat transfer at high velocities and high temperatures (WADC TR 59-624), 1960</li><li>M. L. G. Oldfield, Impulse Response Processing of Transient Heat Transfer Gauge Signals, J. Turbomachinery, 2008</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "극초음속 비행체는 큰 대류 가열을 겪으며, 대류 열유속·재복사·구조 전도의 균형으로 정해지는 평형 표면 온도가 재료 운용 한계를 초과할 수 있고, EM 센서 윈도우는 광학 왜곡을 막기 위해 추가로 균일한 온도 필드가 필요하다.", "figure_refs": []}, {"type": "bullet", "text": "두 가지 능동 냉각이 고려된다: (슬롯/홀을 통한) 막냉각과 다공성 재료를 통한 <span class=\"term\">증산냉각</span>. 두 경우 모두 분사된 냉각제가 하류 입사 열유속을 줄이며, 효율은 막이 주류와 섞이면서 감소한다.", "figure_refs": [1]}, {"type": "bullet", "text": "증산냉각에서는 하류 막냉각에 더해, 냉각제가 통과하며 다공성 이젝터 자체가 냉각된다(직접 냉각).", "figure_refs": [1]}, {"type": "bullet", "text": "개구부는 필요할 때까지 단열 슈라우드/패치로 보호될 수 있으며, 이를 제거하면 개구부가 함몰부에 놓여 평면 형상 대비 열부하가 변한다.", "figure_refs": []}, {"type": "bullet", "text": "극초음속 유동의 후향 계단은 하류에 분리·재순환(낮은 열유속)과 재부착 가열 오버슛을 만든다. 이는 많이 연구되었으나 증산냉각에 대해서는 아니다.", "figure_refs": []}, {"type": "bullet", "text": "공동 윈도우 연구는 접선 슬롯 분사를, 증산 연구는 균일 평판/쐐기를 다뤘기에 비균일 공동 형상의 증산냉각 상관식이 존재하지 않는다.", "figure_refs": []}, {"type": "bullet", "text": "본 연구는 평판 균일 표면과 후향 계단 직상류/직하류에서의 냉각 효율을 마하 6.1 난류 경계층 HDT에서 조사하여 Naved 등(2023)과 직접 비교할 수 있게 한다.", "figure_refs": []}]}, "related_works": {"content": [{"type": "bullet", "text": "냉각 효율은 냉각 유무에 따른 단열 벽 온도로 정의되며, 순간 냉각/비냉각 열유속과 스탠턴수로도 표현된다(h_c=h_nc 가정, 분사비 1 미만에서 유효).", "figure_refs": []}, {"type": "formula", "label": "식 (1) - 냉각 효율", "latex": "\\eta_{th}=\\frac{T_{aw}-T_{aw,c}}{T_{aw}-T_f}=1-\\frac{\\dot{q}_c/h_c}{\\dot{q}_{nc}/h_{nc}}\\approx 1-\\frac{St_c}{St_0}", "description": "냉각 효율: 냉각으로 달성한 온도 감소를 가능한 최대 감소로 나눈 값으로, 냉각/비냉각 스탠턴수 비로 근사된다. 벽이 냉각제 온도에 도달하면 eta_th=1이다."}, {"type": "formula", "label": "식 (2) - 스탠턴수", "latex": "St=\\frac{\\dot{q}}{\\rho_e u_e c_p (T_r-T_w)}", "description": "열유속, 경계 밀도/속도, 비열, 회복-벽 온도차로부터의 스탠턴수. 단시간 터널에서 벽 온도가 거의 일정(주변 온도)이므로 T_aw는 T_r와 근사적으로 같다."}, {"type": "bullet", "text": "직접 냉각은 Mickley(1954) 막 이론을 쓰며 Moyer &amp; Rindal(1968)이 인자 lambda(층류 0.5, 난류 0.4)로 갱신했고, 막 이론은 무한 형상에서의 균일 분사를 가정한다.", "figure_refs": []}, {"type": "formula", "label": "식 (3)-(5) - 막 이론, 분사 파라미터, 분사비", "latex": "\\frac{St}{St_0}=\\frac{2\\lambda B_h}{e^{2\\lambda B_h}-1},\\quad B_h=\\frac{F}{St_0},\\quad F=\\frac{\\rho_c u_c}{\\rho_e u_e}", "description": "Mickley/Moyer-Rindal 직접 냉각 비 St/St_0와 분사 파라미터 B_h(분사비를 비냉각 스탠턴수로 나눔), 분사비 F(분사-자유류 질량플럭스 비)."}, {"type": "bullet", "text": "Naved 등(2023)은 난류 경계층 성장 보정(튜닝 D=3, n=1.4)과 분자량 인자 M_e/M_f(질량 분사를 체적 분사로 변환)를 추가했다.", "figure_refs": []}, {"type": "formula", "label": "식 (6) - Naved 난류 경계층 보정", "latex": "\\frac{St}{St_0}=\\frac{\\omega}{e^{\\omega}-1},\\quad \\omega=D\\,B_h\\left(\\frac{x-x_s}{x}\\right)^{0.8}\\left(\\frac{M_e}{M_f}\\right)^{n}", "description": "난류 경계층 성장을 보정한 직접 냉각 비로, x는 리딩에지로부터의 거리, x_s는 슬롯/이젝터 위치다. (일부 깨진 원문 라인에서 전사했으며 내부 비의 방향은 신뢰도가 낮은 것으로 취급.)"}, {"type": "bullet", "text": "하류 냉각은 상관식 파라미터 xi_t를 쓰는 Hombsch &amp; Olivier(2013) 슬롯 냉각과, Naved 등(2023) 하류 상관식으로 비교된다. 둘 다 길이가중 분사비 Fs를 사용해 슬롯과 다공성 이젝터를 스팬 단위폭당으로 비교한다.", "figure_refs": []}, {"type": "bullet", "text": "Hombsch-Olivier 상관식 파라미터 xi_t는 단위 레이놀즈수, 온도비, 유선방향 거리, Fs를 결합한다. [참고: 식 (7)의 인쇄 형태는 원문에서 심하게 깨져 있어, 지수/묶음을 임의로 재구성하지 않고 서술로만 보고한다.]", "figure_refs": []}, {"type": "formula", "label": "식 (8)-(9) - Hombsch 및 Naved 하류 효율", "latex": "\\eta=\\begin{cases}1 & \\xi_t\\le 1.85\\\\ \\left(1+0.32(\\xi_t-1.85)\\right)^{-0.8} & \\xi_t>1.85\\end{cases}\\qquad \\eta=\\begin{cases}1 & \\xi_t\\le 4.5\\\\ \\left(1+0.15(\\xi_t-4.5)\\right)^{-0.8} & \\xi_t>4.5\\end{cases}", "description": "Hombsch-Olivier 슬롯 냉각 효율(좌)과 Naved 등의 하류 증산냉각 피팅(우). 서로 다른 계수는 냉각제 분사 방식이나 유동/분사 조건이 하류 효율에 영향을 줌을 시사한다."}]}, "method": {"content": [{"type": "bullet", "text": "모델은 날카로운 리딩에지, 67.5 mm 위치의 0.5 mm 경계층 트립, 입사 경계층 특성을 재는 22개 박막 열전달 게이지(86-182 mm)를 가지며, 시험 모듈은 평면이거나 최대 10 mm 함몰된다(공동 길이-깊이 비 29와 20.5로 폐공동 유동).", "figure_refs": [2, 3]}, {"type": "bullet", "text": "세 형상이 시험된다: 균일(평면), 하류 함몰(냉각 패치가 후향 계단 상류), 완전 함몰(패치도 하류 플레이트와 같은 깊이로 함몰).", "figure_refs": [3]}, {"type": "bullet", "text": "다공성 이젝터는 플레넘 내 12 mm METAPOR CE170 블록(기공 ~20 um, 공극률 0.19)이며, 질소 냉각제를 흐름 5초 전 시작해 공급하고 플레넘 압력(Kulite)·온도(세선 열전대)를 측정한다. 평균 질량유량 불확도는 6.7%다.", "figure_refs": []}, {"type": "bullet", "text": "실험은 옥스퍼드 고밀도 터널(Ludwieg 튜브 모드) 마하 6.08, 단위 레이놀즈수 19.1e6 /m, 질소 자유류, 이젝터에서 난류 경계층 조건으로 진행했고, 유효 시험 시간은 20 ms의 두 번째 준정상 플래토(표 1)다.", "figure_refs": []}, {"type": "bullet", "text": "표면 열유속은 MWIR IRT(TELOPS M3K, 4000 fps, 사파이어 윈도우), 현장 흑체 교정, 임펄스 응답 역 열전달법과 TFHTG 배열로 매핑했고, 재료 열침투율(rho c k)이 필요하며 반무한·단시간 가정 하에 유효하다.", "figure_refs": []}, {"type": "bullet", "text": "결과는 스탠턴수 비 St/St_0(냉각 대 비냉각 샷)로 제시하며, 170-180 mm 중심선 Macor 구간으로부터의 추가 St/St_0 기준 정규화로 샷 간 기준선 차이를 보정한다. 계통 불확도는 TFHTG 10%, IRT 12.9%다.", "figure_refs": []}, {"type": "bullet", "text": "분사 냉각제 질량유량은 플레넘/자유류 물성으로부터 Darcy-Forchheimer 식으로 계산하며, 투과율 상수 K_D=6.943e-13 m^2, K_F=3.419e-8 m를 현장 Nelder-Mead 교정으로 구한다(원재료 편차로 개별 조각마다 교정).", "figure_refs": [16]}, {"type": "formula", "label": "식 (11) - Darcy-Forchheimer 투과율", "latex": "\\frac{p_i^2-p_\\infty^2}{2 p_i L}=\\frac{\\mu_i}{\\rho_i A K_D}\\dot{m}+\\frac{1}{\\rho_i^2 A^2 K_F}\\dot{m}^2", "description": "두께 L, 면적 A의 다공성 이젝터를 통한 냉각제 질량유량과 플레넘/주변 압력을 Darcy(K_D)·Forchheimer(K_F) 투과율 상수로 연결하는 압축성 Darcy-Forchheimer 관계식."}, {"type": "bullet", "text": "유출 균일성은 이동 피토관으로 특성화했고, 정규화 유출 압력은 가장자리 누설이 없고 약 4곳의 제트만 평균의 약 20배임을 보인다.", "figure_refs": [15]}, {"type": "formula", "label": "식 (10) - 정규화 유출 압력", "latex": "p^*=\\frac{p_o/p_i}{\\langle p_o/p_i\\rangle}", "description": "정규화 유출 압력: 국부 유출-플레넘 압력비를 표면 평균으로 나눈 값으로 이젝터 유출 균일성 평가에 사용된다."}]}, "results": {"content": [{"type": "bullet", "text": "비냉각 중심선 스탠턴수가 Eckert 난류 예측과 일치하며(~140 mm부터 난류, ~100 mm부터 천이), 이젝터에서 난류 경계층임을 확인한다.", "figure_refs": [4]}, {"type": "bullet", "text": "열유속 감소는 막이 발달하며 이젝터를 따라 개선되고 냉각제가 섞이며 하류로 감소한다. 최고 분사비에서 분사 막 장애로 인한 압축 충격파가 보이며 분사비와 함께 강해진다.", "figure_refs": [5, 6]}, {"type": "bullet", "text": "이젝터 위에서 측정 St/St_0는 Mickley 막 이론과 Naved 상관식 모두와 잘 맞지 않는다. 230 mm 부근 열유속 상승은 압축 충격파 때문으로 보이며, 높은 B_h에서의 경계층 날림이 후보 원인이다.", "figure_refs": [7]}, {"type": "bullet", "text": "Naved(F=0.264%에서 이젝터 리딩에지 부근 충격파 유발 상승이 St/St_0=1.4까지)와 달리, 현재 연구는 동일 분사비에서 즉시 1 아래로 떨어지고 0.7을 넘지 않는다 - 매우 유사한 실험 간의 크고 미설명된 거동 차이다.", "figure_refs": [7]}, {"type": "bullet", "text": "하류에서는 이젝터 직하류의 짧은 불일치 후 Hombsch-Olivier 슬롯 냉각 상관식과 잘 맞는다. 단위 레이놀즈수(19.1e6 대 37.2e6 /m)와 트립 형상이 Naved와 달라 경계층 두께·혼합·냉각막 충격파에 영향을 준다.", "figure_refs": [8]}, {"type": "bullet", "text": "냉각제 질량유량을 맞추면 현재 결과는 이젝터 대부분에서 Hombsch 슬롯 및 Naved 직접 증산 상관식보다 낮은 냉각 효율을 보이며, 이는 부분적으로 압축 충격파와 유한 이젝터 길이 때문이다.", "figure_refs": [9]}, {"type": "bullet", "text": "개구부가 이젝터 하류에 있으면 이 형상에서 증산냉각은 슬롯 냉각(Hombsch)보다 열등해 보이나, Naved 상관식은 이젝터 직후 짧은 영역을 제외하면 우수함을 함의한다. 결론은 상관식 기반이며 일반화할 수 없다.", "figure_refs": [9]}]}, "discussion": {"content": [{"type": "bullet", "text": "비냉각 시 함몰 형상은 분리/재순환부의 낮은 열유속, 재부착 피크, 하류 전향 계단의 2단 상승(분리 후 재부착 충격파)을 보인다. 전향 계단 영역은 실제 시스템에서 비현실적이므로 생략한다.", "figure_refs": [10, 11]}, {"type": "bullet", "text": "완전 함몰에서는 이젝터가 적어도 부분적으로 분리 영역 내에 있어 냉각제가 재순환부로 들어가 이젝터만이 아닌 함몰 전폭을 냉각한다.", "figure_refs": [11, 12]}, {"type": "bullet", "text": "5 mm 완전 함몰에서 분사는 재부착 피크를 균일 수준 아래로 낮추나 국부 피크가 남고, 10 mm 함몰에서는 어떤 분사비에서도 피크가 보이지 않으며 분사가 재부착점을 더 하류로 민다.", "figure_refs": [13]}, {"type": "bullet", "text": "하류 함몰에서는 냉각제 증가가 재부착 피크 가열을 완전 함몰보다 덜 효과적으로 줄이며(재부착이 직접 냉각이 아닌 하류 냉각), 분사가 재부착을 약간 상류로 이동시킨다 - 완전 함몰과 반대 효과다.", "figure_refs": [13]}, {"type": "bullet", "text": "분사비를 맞춘 네 형상 비교: 완전 함몰은 이젝터 전역과 하류 ~25 mm까지 더 큰 열유속 감소를, 그 이후로는 냉각제 횡방향 확산과 혼합 증가로 더 나쁜 감소를 준다.", "figure_refs": [14]}, {"type": "bullet", "text": "하류 함몰은 재부착부 약 10% 단기 오버슛을 제외하면 균일 형상과 같거나 더 나은 냉각을 주어, 함몰 상류 이젝터가 균일 대비 거의 부정적 영향이 없다.", "figure_refs": [14]}, {"type": "bullet", "text": "재부착 하류에서 완전 함몰의 균일 대비 냉각 손실은 15%를 넘지 않았고 시험한 200 mm 주행 길이 내에 균일 수준으로 회복했다.", "figure_refs": [14]}]}, "conclusion": {"content": [{"type": "bullet", "text": "균일 형상 직접 냉각은 기존 상관식(예: Mickley 막 이론)보다 나빠, 설계 벽 온도 달성에 예측보다 상당히 많은 냉각제가 필요함을 의미한다. 후보 원인은 압축 충격파 가열, 경계층 날림, 유한 이젝터 길이, 입사 경계층 차이다.", "figure_refs": []}, {"type": "bullet", "text": "Hombsch 슬롯 냉각 상관식 대비 증산냉각은 이젝터 하류 1/4까지 직접 냉각에서, 고려 영역의 하류 냉각에서 덜 효과적이었으나, 이 상관식 기반 비교는 일반화해서는 안 된다.", "figure_refs": []}, {"type": "bullet", "text": "Naved 등의 유사 실험과 직접·하류 냉각 모두에서 크고 미설명된 불일치가 남아, 냉각막 거동이 단위 레이놀즈수, 트립 형상, 경계층 구조, 냉각제 유발 충격파 상호작용에 민감함을 시사한다.", "figure_refs": []}, {"type": "bullet", "text": "완전 함몰 형상에서는 가장 낮은 분사비에서도 재부착 열유속 피크가 줄었고(10 mm는 피크 없음), 분리 영역 냉각이 동등 분사비의 균일 형상을 능가했다.", "figure_refs": []}, {"type": "bullet", "text": "재부착 하류의 냉각 손실은 최대 15%였고 200 mm 내에 균일 수준으로 회복했으며, 하류 함몰은 재부착부 약 10% 오버슛을 제외하면 균일 형상과 같거나 더 나았다.", "figure_refs": []}, {"type": "bullet", "text": "함몰 형상은 계단 대비 이젝터 위치에 따라 국부 냉각을 개선/저하시킬 수 있으며, 평판 상관식을 비균일 개구부 형상에 유효하다고 가정할 수 없고 설계 상관식 제안 전 더 많은 데이터가 필요하다.", "figure_refs": []}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "증산냉각이 슬롯 냉각보다 열등하다는 비교는 Hombsch &amp; Olivier 상관식(직접 비교 가능한 실험 데이터가 아님)에만 근거하며 형상·조건 특정적이어서 일반화할 수 없다.", "source_quote": "However, this comparison is correlation-based and geometry-specific, so should not be generalised from the present work alone.", "source_section": "results"}, {"claim": "시험한 다공성 이젝터는 유한한 유선방향 길이를 가져 막 이론 예측 냉각 수준에 도달하지 못할 수 있으며, 더 긴 이젝터는 증산냉각의 상대 성능을 개선할 수 있다.", "source_quote": "The present ejector length is also finite, so the relative performance of transpiration cooling may improve for a longer porous ejector.", "source_section": "conclusion"}, {"claim": "현재 데이터는 함몰 형상에 대한 일반 상관식을 개발하기에 불충분하며, 따라서 평판 상관식을 비균일 개구부 형상에 적용할 수 있다고 가정할 수 없다.", "source_quote": "The present dataset is insufficient to develop a general correlation for recessed geometries. Therefore, correlations for flat plate geometries cannot be assumed to apply to non-conformal aperture geometries that may arise from shroud or patch ejection on a vehicle.", "source_section": "conclusion"}, {"claim": "동일 터널·모델·마하수의 Naved 등 유사 실험과의 큰 불일치 원인이 명확히 규명되지 않았다.", "source_quote": "The reason for such a large difference in behaviour between such similar experiments is not clear.", "source_section": "results"}], "future_works": [{"claim": "비행체 설계용 함몰 형상 상관식을 제안하기 전에 더 넓은 범위의 형상과 유동 조건에 대한 추가 데이터가 필요하다.", "source_quote": "Further data over a wider range of geometries and flow conditions would be required before a correlation suitable for vehicle design use could be proposed.", "source_section": "conclusion"}, {"claim": "증산냉각 대 슬롯 냉각의 상대 성능이 개선되는지 보기 위해 더 긴 다공성 이젝터 시험이 제안된다.", "source_quote": "A longer porous ejector could improve the relative performance of transpiration cooling compared with slot cooling.", "source_section": "results"}], "motivation_resolution": {"motivating_problems": ["극초음속 비행에서 높은 평형 벽 온도가 윈도우 재료 한계(예: 용융 실리카 약 1200 K)를 초과하므로, EM 센서 개구부는 광학 왜곡을 막기 위해 균일한 온도 분포를 갖는 능동 냉각이 필요하다.", "개구부를 보호하던 단열 슈라우드/패치가 비행 중 사출되면 개구부가 함몰부(후향 계단)에 놓여 평면 형상 대비 열부하가 변한다.", "공동 내 윈도우 냉각 연구는 접선 슬롯 분사를, 증산 연구는 균일 평판/쐐기를 다뤘기에 이러한 비균일 함몰 형상에 대한 증산냉각 상관식이 존재하지 않는다."], "addressed_by_this_work": ["마하 6.1 난류 조건에서 균일 및 두 가지 함몰(상류/하류 계단) 형상에 대해 다공성 이젝터 위와 하류의 증산냉각 성능(IRT 스탠턴수 비)을 정량화했다.", "상류 후향 계단이 분리 영역을 냉각제로 채워 재부착을 하류로 이동시키고 재부착 가열 피크를 제거함을, 하류 계단은 재부착부 약 10% 오버슛을 제외하면 균일 형상과 같거나 더 나은 냉각을 줌을 보였다.", "함몰 형상이 계단 대비 이젝터 위치에 따라 국부 냉각을 개선하거나 저하시킬 수 있다는 초기 설계 관련 평가를 제공했다."], "remaining_unresolved": ["함몰 개구부 형상에 대한 설계 사용 가능한 일반 상관식이 확립되지 않았다(데이터 범위 불충분).", "Naved 등 유사 실험과의 큰 불일치 원인(단위 레이놀즈수, 트립 형상, 충격파 상호작용)이 미해결이다.", "더 긴 이젝터가 개구부용으로 증산냉각을 슬롯 냉각과 경쟁력 있게 만드는지 미검증이다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
