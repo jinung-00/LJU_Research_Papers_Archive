@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Numerical investigation on transpiration cooling performance of turbine blades with non-uniform porosity</title>
+    <meta name="keywords" content="Numerical, Transpiration cooling, Turbine blade, Graded porosity, Non-uniform permeability, Cooling efficiency, Coolant distribution, Permeability, CFD, Blowing ratio">
+    <meta name="paper-authors" content="Hongfei Ma, Haiou Sun, Hao Fu, Yigang Luan, Tao Sun, Pietro Zunino">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 235, 2023, Art. 121394 · DOI: 10.1016/j.applthermaleng.2023.121394">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Numerical investigation on transpiration cooling performance of turbine blades with non-uniform porosity</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Hongfei Ma, Haiou Sun, Hao Fu, Yigang Luan, Tao Sun, Pietro Zunino</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 235, 2023, Art. 121394 · DOI: 10.1016/j.applthermaleng.2023.121394</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 논문은 문헌에서 지배적인 평판 형상을 넘어, 내부 사행(serpentine) 냉각 유로를 갖는 실제 C3X 캐스케이드 터빈 블레이드의 <span class="term">증산냉각</span>을 수치적으로 연구한다. Darcy-Forchheimer-Brinkman 다공 처리와 국소 열평형(LTE) 가정을 적용한 정상상태 공액(conjugate) CFD 모델(Fluent, SST $k\text{-}\omega$)을 사용해 냉각제 질량유량비와 균일·영역별 비균일·유동방향 구배 공극률 분포의 영향을 조사한다. 핵심 결과는 공극률 분포가 냉각제가 어디로 스며 나오는지를 지배하여 표면 온도 균일성을 좌우한다는 것으로, 전연에서 후연으로 감소하는 구배(Case4, $\varepsilon$ 0.4→0.2)가 균일 기준 대비 전체 냉각효율을 13.97% 높인다. 사용자의 구배 공극률 $\varepsilon(x)$ 문제 관점에서 이 논문은 공간 공극률을 조정해 냉각을 균등화한다는 설계 의도의 선례이지만, 기체 냉각제·상변화 없음·국소 열평형을 사용하고 공극률 구성을 정식 최적화나 도출된 설계법칙이 아니라 사례 비교로 선택한다는 한계가 있다.</div>
+            <div class="keywords"><span class="keyword-chip">Numerical</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Turbine blade</span><span class="keyword-chip">Graded porosity</span><span class="keyword-chip">Non-uniform permeability</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Coolant distribution</span><span class="keyword-chip">Permeability</span><span class="keyword-chip">CFD</span><span class="keyword-chip">Blowing ratio</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">터빈 입구 온도 상승이 고온 블레이드 재료를 앞지르므로 더 효율적인 냉각이 필요하며, 증산냉각은 막냉각·효출냉각·이중벽 방식 중 가장 높은 냉각효율을 제공한다. 선행 연구 대부분이 평판을 사용했고 실제 블레이드의 공극률을 다룬 연구가 드물기 때문에, 본 연구는 실제 C3X 캐스케이드 블레이드에서 냉각제 질량유량비와 공극률 분포를 조사하고 비균일·구배 공극률 전략을 제안한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">선행 연구는 막냉각 파라미터 연구, 이중벽·효출냉각, 적층제조 다공 구조, 공극률과 기계적 강도의 상충을 아우른다. 여러 연구가 비균일 또는 구배 공극률을 다루며, 동반 최적화 연구(Wang 등)는 Kriging과 유전 알고리즘으로 블레이드 공극률 분포를 최적화하여 본 사례 기반 공극률 분포 연구의 배경을 이룬다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">4-패스 사행 내부 유로를 갖는 C3X 캐스케이드 블레이드의 정상상태 공액 열전달 모델을 Fluent의 SST $k\text{-}\omega$ 모델로 해석한다. 다공 블레이드 벽은 Darcy-Forchheimer-Brinkman 운동량 처리와 Ergun 투과율·관성 상관식, 국소 열평형 하 병렬 유효전도도 모델을 사용하며, 냉각효과·질량유량비·압력/질량유량 손실계수를 정의하고 격자와 난류 모델을 NASA·Kim 실험 데이터로 검증한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">전체 냉각효율은 질량유량비와 함께 상승하며 흡입면이 압력면보다 잘 냉각된다; 압력·질량유량 손실이 사행 유로를 따라 누적되어 후연이 냉각제 부족을 겪는다. 사행 블레이드에는 최적 균일 공극률이 존재하는 반면 단일 챔버 블레이드는 낮은 공극률에서 더 잘 냉각되며, 영역별·구배 공극률 방식이 냉각제를 재배분하여 0.4→0.2 구배(Case4)가 최상의 결과(+13.97%)를 준다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">공극률은 투과율을, 따라서 냉각제가 벽을 떠나는 위치와 속도를 제어하며, 이는 막 형성과 주류 침투의 경쟁을 결정한다. 완만한 감소형 구배가 큰 공력 손실 없이 막 안정성을 최대화하지만, 이득은 후연을 굶기는 사행 유로 압력 손실로 제한된다; 본 연구는 공간 공극률 설계를 냉각 균일성과 연결하여 물리는 다르나 사용자의 구배 공극률 목표와 직접 관련된다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">실제 C3X 캐스케이드 블레이드에서 전체 증산냉각 효율은 질량유량비와 함께 상승하고(흡입면이 압력면보다 우수), 사행 유로 압력 손실이 후연을 굶기며, 사행 구성에는 최적 균일 공극률이 존재하고, 적절한 감소형 구배 공극률이 표면 온도 균일성을 개선하여 균일 기준 대비 효율을 최대 13.97% 높인다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 9 / total 36</span></summary>
+            <ol class="ref-list"><li>M. Kim, D.H. Shin, B.J. Lee, J. Lee, Experimental and numerical investigation of micro-scale effusion and transpiration air cooling on cascaded turbine blades, Case Stud. Therm. Eng., 2022</li><li>M. Kim, D.H. Shin, J.S. Kim, B.J. Lee, J. Lee, Experimental investigation of effusion and transpiration air cooling for single turbine blade, Appl. Therm. Eng., 2021</li><li>W. Wang, G. Tao, D. Ke, J. Luo, J. Cui, Transpiration cooling of high pressure turbine vane with optimized porosity distribution, Appl. Therm. Eng., 2023</li><li>G. Huang, L. He, Influence of inhomogeneous porosity on effusion cooling, Int. J. Heat Mass Transf., 2019</li><li>G. Huang, Z. Min, L. Yang, P.-X. Jiang, M. Chyu, Transpiration cooling for additive manufactured porous plates with partition walls, Int. J. Heat Mass Transf., 2018</li><li>R. Li, J. Liu, Y. Shi, M. Du, Z. Xie, 316L Stainless Steel with Gradient Porosity Fabricated by Selective Laser Melting, J. Mater. Eng. Perform., 2010</li><li>S. Ergun, A.A. Orning, Fluid flow through randomly packed columns and fluidized beds, Ind. Eng. Chem., 1949</li><li>L.D. Hylton, M.S. Mihelc, E.R. Turner, D.A. Nealy, R.E. York, Analytical and Experimental Evaluation of the Heat Transfer Distribution over the Surfaces of Turbine Vanes, NASA CR-168015, 1983</li><li>A.V. Vikulin, N.L. Yaroslavtsev, V.A. Zemlyanaya, Investigation into Transpiration Cooling of Blades in High-Temperature Gas Turbines, Therm. Eng., 2019</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "가스터빈 성능은 터빈 입구 온도에 비례해 향상되지만 블레이드 재료가 이를 따라가지 못하므로, 블레이드 보호를 위해 더 효율적인 냉각이 필요하다."}, {"type": "bullet", "text": "막냉각은 고전적 방식으로 홀 간격·배열·형상·분사각을 통해 성능이 조정되어 왔으며, 이중벽 효출냉각은 충돌냉각과 막냉각을 결합한다."}, {"type": "bullet", "text": "증산냉각은 냉각제가 다공벽을 통해 균일하게 스며 나와 보호막을 형성하는 방식으로 가장 높은 냉각효율을 제공하며, 적층제조로 미세 냉각 유로를 만들 수 있게 되면서 블레이드에 적용이 가능해졌다.", "figure_refs": [1]}, {"type": "bullet", "text": "증산냉각 연구 대부분이 평판 형상을 사용하므로 엔진 적용을 위해 실제 곡면 블레이드로 확장이 필요하며, C3X 블레이드 실험(Kim 등)은 증산냉각이 효출·내부 냉각을 능가함을 보인다."}, {"type": "bullet", "text": "실제 블레이드에서 공극률이 증산냉각에 미치는 영향을 다룬 연구는 드물며, 공극률이 높아지면 인장강도가 낮아지므로 냉각을 희생하지 않으면서 적절한 공극률을 선택해야 한다."}, {"type": "bullet", "text": "본 연구는 캐스케이드 C3X 블레이드의 전체 냉각효율에 대한 냉각제 질량유량비와 균일 공극률의 영향을 조사하여 최적 공극률 선정 근거를 제공한다."}, {"type": "bullet", "text": "역압력구배 하 주류 침투로 인한 국소 냉각 실패를 겨냥하여, 영역별 비균일 공극률과 유동방향으로 균일하게 변하는 구배 공극률의 두 분포 방법을 제안해 표면 온도 균일성과 전체 효율을 개선한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "막냉각 연구는 홀 형상·배열·트렌치 형상을 최적화했으며, 능선형 돌기는 효율을 높였으나 압력강하를 증가시켰고 블로잉비와 홀 위치가 핵심 인자였다."}, {"type": "bullet", "text": "충돌과 막냉각을 결합한 이중벽 효출냉각이 수치·실험적으로 연구되었으며, 이중벽 증산 시스템의 곡률과 열·기계 응력 효과도 포함된다."}, {"type": "bullet", "text": "적층제조(Inconel 718, 316L의 SLM)는 제어 가능한 기공 구조의 다공 블레이드를 가능케 하며, SLM Inconel 다공판은 기존 소결판보다 높은 인장강도를 보였다."}, {"type": "bullet", "text": "Li 등은 SLM 층별 스캔 속도를 바꿔 구배 공극률의 316L을 제작했고(스캔 속도 증가 시 공극률 상승·인장강도 하락), 구배 공극률이 제작 가능함을 입증했다."}, {"type": "bullet", "text": "Wang 등은 Kriging 대리모델과 유전 알고리즘을 결합해 블레이드 영역별 공극률 분포를 최적화하여 분사비 1.2%·2.0%에서 최적 증산냉각을 얻었다(동반 고압 베인 연구)."}, {"type": "bullet", "text": "Huang 등은 비균일 공극률이 표면막·내부 기공 냉각에는 크게 영향을 주지만 전체 효율에는 거의 영향이 없음을, 격벽은 냉각을 해치지 않으면서 인장강도를 높임을 밝혔다."}, {"type": "bullet", "text": "Kim 등은 EDM과 AM으로 C3X 블레이드를 제작해 아음속 고온 캐스케이드에서 질량유량비 5.3%일 때 증산냉각이 전체 효율 0.6, 효출냉각이 0.4임을 측정했으며, 기존 연구는 실제 블레이드의 공극률보다 분사비·기공 크기·홀 배열에 주로 집중했다."}]}, "method": {"content": [{"type": "bullet", "text": "형상: C3X 블레이드(높이 64 mm, 벽두께 2 mm, 코드 72 mm)에 세 개의 내부 격벽으로 사행 유로를 형성하며, 냉각제는 전연 유로로 들어와 일부가 스며 나와 막을 형성하고 나머지는 후연 유로로 배출된다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "경계조건은 Kim 실험을 따른다: 주류 입구 20 m/s, 전온도 373 K, 대기압 출구; 냉각제 293 K, 0-300 LPM; 다공 영역은 스테인리스강 304(고체) 내 공기(유체)로 기준 공극률 0.53."}, {"type": "bullet", "text": "주류는 정상상태 연속·운동량·화학종 수송·에너지 방정식의 텐서 형태로 지배된다."}, {"type": "formula", "label": "식 (1-4) — 주류 보존 방정식(텐서 형태)", "latex": "\\frac{\\partial}{\\partial x_i}(\\rho u_i)=0,\\quad \\frac{\\partial(\\rho u_i u_j)}{\\partial x_i}=-\\frac{\\partial P}{\\partial x_i}+\\frac{\\partial \\tau_{ij}}{\\partial x_j},\\quad \\nabla(\\rho u_i c_i)=\\nabla\\big((\\rho D_{i,j}+\\mu_t/Sc_t)\\nabla c_i\\big),\\quad \\frac{\\partial}{\\partial x_i}\\big(u_i(\\rho E+P)\\big)=\\nabla\\!\\left(\\lambda\\frac{\\partial T}{\\partial x_i}+u_j\\tau_{ij}\\right)", "description": "고온 주류에 대한 연속·운동량·화학종 질량전달(난류 Schmidt 수 $Sc_t$ 포함)·에너지 방정식."}, {"type": "bullet", "text": "다공 영역에서는 Brinkman 확장 운동량 방정식에 점성(Darcy) 항과 관성(Forchheimer) 손실 항이 추가된다."}, {"type": "formula", "label": "식 (5) — 다공 영역 운동량(Forchheimer-Brinkman 확장 Darcy)", "latex": "\\frac{\\partial(\\rho \\varepsilon u_i u_j)}{\\partial x_i}=-\\frac{\\partial(\\varepsilon P)}{\\partial x}+\\frac{\\partial}{\\partial x_i}\\!\\left(\\varepsilon \\mu_e \\frac{\\partial u}{\\partial x_i}\\right)-\\frac{\\varepsilon^2 \\mu_f}{K}\\,u-\\frac{\\varepsilon^2 \\rho F}{\\sqrt{K}}\\,|U|\\,u", "description": "다공벽 운동량: $\\varepsilon$ 공극률, $\\mu_e$ 유효점성, $\\mu_f$ 냉각제 점성, $K$ 투과율, $F$ 관성계수, $U$ 기공속도 크기."}, {"type": "bullet", "text": "공극률은 고체/공극 체적으로부터 기하학적으로 정의되어 모델을 실제 블레이드 질량과 연결한다."}, {"type": "formula", "label": "식 (6) — 공극률 정의", "latex": "\\varepsilon=\\frac{V_{porous}}{V}=\\frac{V-V_{solid}}{V}=1-\\frac{m/\\rho_{solid}}{V}", "description": "$V_{porous}$ 공극 체적, $V_{solid}$ 고체 체적, $V$ 블레이드 총 체적, $m$ 블레이드 질량, $\\rho_{solid}$ 고체 밀도."}, {"type": "bullet", "text": "투과율 $K$와 관성계수 $F$는 Ergun-Orning 상관식(입자경 기반)을 따르고, 유효전도도는 병렬 모델을 사용한다."}, {"type": "formula", "label": "식 (7-9) — Ergun 투과율/관성과 유효전도도", "latex": "K=\\frac{d_p^2\\,\\varepsilon^3}{150(1-\\varepsilon)^2},\\qquad F=\\frac{1.75}{\\sqrt{150}\\,\\varepsilon^{3/2}},\\qquad \\lambda_{eff}=\\varepsilon\\lambda_{fluid}+(1-\\varepsilon)\\lambda_{solid}", "description": "입자경 $d_p$와 공극률로부터의 투과율·관성계수, 그리고 체적가중 병렬 결합(국소 열평형)으로의 유효전도도."}, {"type": "bullet", "text": "성능 지표: 전체 냉각효과, 냉각제-주류 질량유량비, 전압력 손실계수, 냉각제 질량유량 손실계수."}, {"type": "formula", "label": "식 (10-13) — 성능 정의", "latex": "\\Phi=\\frac{T_m-T_s}{T_m-T_c},\\quad M=\\frac{\\rho_c v_c A_c}{\\rho_m v_m A_m},\\quad \\varphi=\\frac{P_{c,in}-P_{c,out}}{P_{c,in}},\\quad \\psi=\\frac{m_{c,in}-m_{c,out}}{m_{c,in}}", "description": "냉각효과 $\\Phi$(표면 대 주류/냉각제 온도), 질량유량비 $M$, 전압력 손실 $\\varphi$, 내부 유로를 따른 질량유량 손실 $\\psi$."}, {"type": "bullet", "text": "수치: Fluent·SST $k\\text{-}\\omega$(벽 전단 유동에 적합), all-$y^+$ 벽 처리와 $y^+\\approx1$이 되도록 조정한 첫 층 높이; 4개 격자 독립성 검사로 mesh 3(3.46 M 셀) 선택.", "figure_refs": [4]}, {"type": "bullet", "text": "검증: 중앙면 압력·온도 분포가 NASA C3X 베인 보고서와 일치하고, 냉각제 속도장이 300 LPM에서 Kim의 연기선 가시화와 일치한다.", "figure_refs": [5, 7]}]}, "results": {"content": [{"type": "bullet", "text": "전체 냉각효율은 냉각제 질량유량비와 함께 증가한다: M=1.3%에서는 얇은 막이 주류를 차단하지 못하고, M=5.3%에서는 표면 대부분이 0.5 효과를 넘으며 M=8%에서는 후연 일부를 제외한 대부분 영역이 0.7+에 도달한다.", "figure_refs": [6, 8]}, {"type": "bullet", "text": "흡입면이 대체로 압력면보다 잘 냉각되며, 전연 부근에서는 블레이드 높이에 따라 냉각이 감소하고(첫 챔버가 하단에서 공급), 냉각효율 정점은 첫 챔버 내 x/C=±0.125 부근에 있다.", "figure_refs": [8, 9]}, {"type": "bullet", "text": "전압력 손실과 질량유량 손실계수는 사행 유로를 따라 커지며 첫째→둘째 유로의 90도 전환부에서 최대이고, 넷째 챔버에서 질량유량 손실 85% 초과·압력 손실 거의 100%에 달해 냉각제가 후연에 도달하지 못한다.", "figure_refs": [10]}, {"type": "bullet", "text": "정압·벡터장은 냉각제 압력이 낮을 때 고온 주류가 정체 영역에서 첫 챔버로 들어와 전연 효율을 낮추고, 냉각제 유량이 커지면 침투가 압력면 넷째 챔버와 후연으로 이동함을 보인다.", "figure_refs": [12, 13]}, {"type": "bullet", "text": "사행 블레이드에서는 균일 공극률이 0.2에서 0.8로 증가할 때 평균 냉각효율이 먼저 증가 후 감소하여 최적 균일 공극률이 존재함을 나타내며, 입자경이 클수록 그 최적점이 낮아지고 질량유량비가 공극률보다 더 큰 영향을 준다.", "figure_refs": [14]}, {"type": "bullet", "text": "단일 냉각 챔버(모든 냉각제가 스며 나옴)에서는 공극률이 낮을수록 비표면적과 간극 열전달이 커져 효율이 공극률에 따라 단조 감소하므로, 두 챔버 구성은 반대의 공극률 경향을 따른다.", "figure_refs": [19, 20]}, {"type": "bullet", "text": "영역별 비균일 공극률(전연 Part A, 후방 Part B): 최적 사례 $\\varepsilon(A,B)=(0.5,0)$ — 고체 불투과 전연 — 가 평균 효율 0.76-0.79에 도달하며, 냉각제를 더 높은 막 속도로 하류로 배출하고 전연 침투를 차단하여 균일 저공극률보다 훨씬 우수하다.", "figure_refs": [21, 22]}, {"type": "bullet", "text": "사용자 정의 함수(UDF)로 구현한 유동방향 구배 공극률: 전연에서 후연으로 감소하는 공극률이 가장 효과적이며, Case4(0.4→0.2)가 균일 $\\varepsilon=0.2$ 대비 13.97% 높은 최고 평균 효율을, 증가형 0.2→0.8 구배(Case1)는 16.26% 낮은 효율을 준다.", "figure_refs": [25]}, {"type": "formula", "label": "사례 비교 — 구배 공극률 효율 이득", "latex": "\\Delta\\Phi_{Case1}(0.2\\to0.8)=-16.26\\%,\\;\\; \\Delta\\Phi_{Case2}(0.8\\to0.2)=-5.02\\%,\\;\\; \\Delta\\Phi_{Case3}(0.6\\to0.2)=-4.07\\%,\\;\\; \\Delta\\Phi_{Case4}(0.4\\to0.2)=+13.97\\%", "description": "균일 $\\varepsilon=0.2$ 기준 대비 각 유동방향 구배의 냉각효율 변화; 완만한 감소형 구배(0.4→0.2)가 최적이다."}]}, "discussion": {"content": [{"type": "bullet", "text": "공극률은 블레이드 투과율을 설정한다: 너무 낮으면 안정적 부착막을 형성하지 못하고(내부 압력은 여전히 침투에 저항 가능), 너무 높으면 냉각제가 불균일하게 분포하여 주류가 압력면 챔버로 들어와 효율이 떨어진다.", "figure_refs": [15, 16]}, {"type": "bullet", "text": "$\\varepsilon=0.8$에서는 투과율 증가로 주류가 전연과 압력면을 침투해 넷째 챔버 냉각제 온도를 급격히 올리고 전체 증산냉각을 저하시킨다.", "figure_refs": [17]}, {"type": "bullet", "text": "흡입면 후연의 재순환/와류 영역은 냉각제 분사와 함께 두꺼워져 경계층을 불안정하게 하고 국소 냉각을 줄이며, 전연 공극률을 낮추면 압력면 침투가 약해지고 재순환 영역이 축소된다.", "figure_refs": [23, 24]}, {"type": "bullet", "text": "완만한 감소형 구배(0.4→0.2)는 침투 균일성과 막 안정성을 개선하고 경계층 박리를 약화시키며 주류 공력에는 거의 영향이 없다 — 저자가 권장하는 실용적 최적점이다.", "figure_refs": [25, 26]}, {"type": "bullet", "text": "전연 냉각제 면적을 줄여 출구 속도를 높이면 냉각에 도움이 되지만, 과도하면(예: 불투과 전연이 국소 제트를 강제) 막을 불안정하게 하고 주류 공력을 해치는 설계 상충이 있다."}, {"type": "bullet", "text": "사용자의 $\\varepsilon(x)$ 문제와의 관련성: 사용자 연구처럼 이 논문도 공간 공극률 프로파일을 조정해 표면 응답을 균등화하며, 하류/고부하 영역으로 갈수록 단조 감소하는 $\\varepsilon$가 균일성을 개선함을 확인한다; 다만 단상 기체 냉각제, 국소 열평형(단일 온도) 다공 모델을 사용하고, 비균일 열유속 역설계로부터 $\\varepsilon(x)$를 도출하기보다 이산 사례 비교로 프로파일을 선택한다."}, {"type": "bullet", "text": "동반 Wang 등의 베인 연구와 달리 여기서는 대리모델/유전 최적화가 사용되지 않으며, '최적' 구배는 손으로 설계한 네 사례 중 최선이므로 $\\varepsilon(x)$에 대한 닫힌 형태나 알고리즘적 설계법칙은 생성되지 않는다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "전체 증산냉각 효율은 냉각제 질량유량과 함께 개선되며, 주류 침투로 인해 압력면이 흡입면보다 덜 냉각된다."}, {"type": "bullet", "text": "전압력 손실과 유량 손실계수는 사행 유로를 따라 커져 넷째 챔버에서 거의 100%에 도달하고 후연 냉각 실패를 악화시킨다."}, {"type": "bullet", "text": "사행 유로 블레이드에서 M=5.3%일 때 전체 효율이 공극률에 따라 증가 후 감소하므로 최상의 전체 냉각을 위한 최적 균일 공극률이 존재한다."}, {"type": "bullet", "text": "단일 냉각 챔버에서는 공극률 증가 시 효율이 감소하며, 적절한 구배 공극률이 표면 온도 균일성을 개선하여 최대 냉각효율이 균일 분포보다 13.97% 높다(Case4, 0.4→0.2)."}, {"type": "bullet", "text": "국소 냉각은 블레이드를 손상시킬 수 있는 주류 침투에 여전히 취약하여, 적층제조로 가능한 충돌/막/증산 복합 냉각을 향후 과제로 제시한다."}, {"type": "bullet", "text": "실용적으로 공극률은 전연에서 후연으로 완만히 감소해야 하며, 전연 공극률 최대화는 역효과이고 핵심 영역의 합리적 공극률이 냉각 성능을 결정한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "공극률을 조정해도 후연 영역은 냉각제 전압력 손실이 거의 100%에 도달하고 압력면 주류가 침투하기 때문에 냉각이 어렵게 남는다.", "source_quote": "However, the temperature of the blade trailing edge, which is influenced by numerous factors, has not greatly decreased.", "source_section": "discussion"}, {"claim": "특정 블레이드 영역의 국소 냉각은 주류 침투에 매우 취약하여 보호 성능을 떨어뜨리고 심한 경우 블레이드 손상으로 이어질 수 있다.", "source_quote": "the effectiveness of localized cooling in specific regions is highly susceptible to degradation due to the intrusion of mainstream flow. In severe cases, this can even lead to blade damage.", "source_section": "conclusion"}], "future_works": [{"claim": "적층제조로 구현 가능한, 기존 충돌냉각·막냉각·증산냉각을 통합한 복합 냉각 방식을 탐구하여 터빈 블레이드의 열보호를 더 향상시켜야 한다.", "source_quote": "the utilization of a combined cooling technique that integrates traditional impingement cooling, film cooling, and transpiration cooling can be considered to enhance the thermal protection effectiveness of turbine blades.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["대부분의 증산냉각 연구가 평판 형상을 사용하여 실제 곡면 터빈 블레이드에서의 거동이 잘 규명되어 있지 않다.", "실제 블레이드에서 공극률이 증산냉각 성능에 미치는 영향을 다룬 연구가 비교적 적으며, 공극률이 높아지면 재료 인장강도가 낮아진다.", "블레이드의 역압력구배 하에서 국소 영역이 주류 침투와 냉각 실패를 겪는다.", "냉각 성능과 기계적 건전성을 균형 잡는 최적 공극률 선정 규칙이 부재하다."], "addressed_by_this_work": ["사행 유로를 갖는 실제 C3X 캐스케이드 블레이드의 공액 CFD 모델로 질량유량비 1.3%-8% 범위에서 표면 냉각과 내부 유동을 해석한다.", "공극률 의존성을 규명한다: 사행 유로 블레이드에서는 최적 균일 공극률이 존재한다(효율이 공극률에 따라 증가 후 감소).", "영역별 비균일 전략(전연 영역을 거의 고체인 저공극률 구역으로)과 유동방향 구배 전략이 침투를 완화하며, 0.4→0.2 구배(Case4)가 효율을 13.97%, 표면 온도 균일성을 개선한다.", "공극률이 블레이드 투과율과 냉각제 배분을 조정함을 보여, 전연 침투를 억제하는 실용적 경로를 제시한다."], "remaining_unresolved": ["후연 냉각은 그곳에서 냉각제 압력이 소진되기 때문에 여전히 열악하며, 해결책은 제시되지 않았다.", "각 공극률 방식의 기계적 강도 손실은 정성적으로만 논의되고 냉각과 함께 정량화·동시 최적화되지 않았다.", "제안된 충돌/막/증산 복합 냉각은 제안에 그치고 해석되지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
