@@ -193,15 +193,34 @@
             gap: 4px;
             margin-bottom: 10px;
         }
+        /* Keyword chips — colored by facet (keyword_glossary.yaml `facets`); detail terms grey,
+           research-type tags outline-only. Order on the card: research type → facets → detail. */
         .card-keyword {
             display: inline-block;
             padding: 2px 8px;
             font-size: 10.5px;
             font-weight: 500;
             border-radius: 4px;
-            color: white;
+            border: 1px solid transparent;
             letter-spacing: 0.1px;
+            background: var(--kw-bg, #eef1f4);
+            color: var(--kw-fg, #57606a);
         }
+        .f-application { --kw-bg: #e3efff; --kw-fg: #0b4f9c; }
+        .f-phenomenon  { --kw-bg: #fff0e0; --kw-fg: #9a4a00; }
+        .f-model       { --kw-bg: #f1e9ff; --kw-fg: #5b2a9e; }
+        .f-technique   { --kw-bg: #ddf4f0; --kw-fg: #0b6b5e; }
+        .f-material    { --kw-bg: #e6f4e3; --kw-fg: #2d6a1f; }
+        .f-parameter   { --kw-bg: #fde8ec; --kw-fg: #9b1c3a; }
+        .card-keyword.f-research_type { --kw-bg: transparent; --kw-fg: var(--text); border-color: var(--text-muted); font-weight: 600; }
+        :root[data-theme="dark"] .card-keyword { --kw-bg: #21262d; --kw-fg: #9da7b3; }
+        :root[data-theme="dark"] .f-application { --kw-bg: #0f2a4a; --kw-fg: #8cc4ff; }
+        :root[data-theme="dark"] .f-phenomenon  { --kw-bg: #3a2410; --kw-fg: #ffb77a; }
+        :root[data-theme="dark"] .f-model       { --kw-bg: #2a1d45; --kw-fg: #c9a8ff; }
+        :root[data-theme="dark"] .f-technique   { --kw-bg: #0f322d; --kw-fg: #7fd8c8; }
+        :root[data-theme="dark"] .f-material    { --kw-bg: #1a3216; --kw-fg: #9bd68a; }
+        :root[data-theme="dark"] .f-parameter   { --kw-bg: #3d1620; --kw-fg: #ff9fb3; }
+        :root[data-theme="dark"] .card-keyword.f-research_type { --kw-bg: transparent; --kw-fg: var(--text); }
         .card-title {
             font-size: 15px;
             font-weight: 600;
@@ -326,7 +345,8 @@
         .card-tier-badge.tier-3 { background: #757575; }
 
         /* Topic / Category filter — multi-select checkbox groups */
-        .topic-filter, .category-filter {
+        .keyword-legend .card-keyword { font-size: 11px; }
+        .topic-filter, .category-filter, .keyword-legend {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -417,7 +437,7 @@
             <div class="hero-title">
                 <div class="curator">Curated by JINUNG LEE</div>
                 <h1>Research Hub</h1>
-                <div class="meta">총 <strong>44</strong>편 · 마지막 갱신 2026-10-01 16:06</div>
+                <div class="meta">총 <strong>44</strong>편 · 마지막 갱신 2026-10-01 16:21</div>
             </div>
             <div class="hero-actions">
             <nav class="site-tabs" aria-label="Site sections">
@@ -440,6 +460,7 @@
         <div class="tier-filter" id="tier-filter"></div>
         <div class="topic-filter" id="topic-filter"></div>
         <div class="category-filter" id="category-filter"></div>
+        <div class="keyword-legend" id="keyword-legend"></div>
     </div>
 
     <main>
@@ -501,16 +522,30 @@
             return cats.length ? cats : [topic];
         }
 
-        const KEYWORD_PALETTE = [
-            '#FF6B6B', '#4ECDC4', '#FFA94D', '#95E1D3', '#C9B1FF',
-            '#FFB4B4', '#6BCF7F', '#FF8FB1', '#5B8DEF', '#F4A261',
-            '#A8DADC', '#E29578', '#90BE6D', '#F9C74F', '#577590'
-        ];
-        function keywordColor(kw) {
-            let h = 0;
-            const k = kw.toLowerCase();
-            for (let i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) | 0;
-            return KEYWORD_PALETTE[Math.abs(h) % KEYWORD_PALETTE.length];
+        // Facet of each core keyword (from keyword_glossary.yaml); absent = detail term.
+        const KEYWORD_FACETS = {"Review": "research_type", "Analytical": "research_type", "Numerical": "research_type", "Experimental": "research_type", "Transpiration cooling": "application", "TPS": "application", "Hypersonic": "application", "Re-entry": "application", "Scramjet": "application", "Nose cone": "application", "Turbine blade": "application", "Porous media heat and mass transfer": "phenomenon", "Phase change": "phenomenon", "Two-phase flow": "phenomenon", "Boiling heat transfer": "phenomenon", "Vapor blockage": "phenomenon", "Dryout heat flux": "phenomenon", "Flow instability": "phenomenon", "Capillary diffusion": "phenomenon", "Interstitial heat transfer": "phenomenon", "LTNE": "model", "Two-temperature model": "model", "Three-temperature model": "model", "TPMM": "model", "LTNE-TPMM": "model", "SMM": "model", "SPM": "model", "Kinetic enthalpy": "model", "CFD": "technique", "DNS": "technique", "LBM": "technique", "PNM": "technique", "RSM": "technique", "Optimization": "technique", "Porous media": "material", "Graded porosity": "material", "Non-uniform permeability": "material", "Heterogeneous porous media": "material", "Layered porous structure": "material", "Lattice structure": "material", "TPMS": "material", "CMC": "material", "Additive manufacturing": "material", "Liquid coolant": "material", "Permeability": "parameter", "Effective thermal conductivity": "parameter", "Liquid saturation": "parameter", "Non-uniform heat flux": "parameter", "Cooling efficiency": "parameter", "Coolant distribution": "parameter", "Blowing ratio": "parameter", "Injection pressure": "parameter", "Pressure drop": "parameter", "Boundary conditions": "parameter", "Transient": "parameter", "Low pressure": "parameter"};
+        const FACET_LABELS = [["research_type", "Research type"], ["application", "Application"], ["phenomenon", "Phenomenon"], ["model", "Model"], ["technique", "Technique"], ["material", "Material & structure"], ["parameter", "Parameter"]];   // ordered [[key, label], ...]
+        const FACET_RANK = Object.fromEntries(FACET_LABELS.map(([k], i) => [k, i]));
+        const DETAIL_RANK = FACET_LABELS.length;
+        // Research-type tags use a fixed order (Review → Analytical → Numerical → Experimental).
+        const RESEARCH_TYPE_ORDER = ["Review", "Analytical", "Numerical", "Experimental"];
+        // research type first, then facets in legend order, detail terms last (stable within)
+        function orderKeywords(kws) {
+            return kws.map((k, i) => {
+                const rt = RESEARCH_TYPE_ORDER.indexOf(k);
+                return { k, i: rt >= 0 ? rt : 100 + i, r: FACET_RANK[KEYWORD_FACETS[k]] ?? DETAIL_RANK };
+            }).sort((a, b) => a.r - b.r || a.i - b.i).map(o => o.k);
+        }
+        function keywordChip(k) {
+            const f = KEYWORD_FACETS[k];
+            return `<span class="card-keyword${f ? ' f-' + f : ''}">${k}</span>`;
+        }
+        function buildKeywordLegend() {
+            const el = document.getElementById('keyword-legend');
+            if (!el || !FACET_LABELS.length) return;
+            const chips = FACET_LABELS.map(([k, label]) => `<span class="card-keyword f-${k}">${label}</span>`);
+            chips.push('<span class="card-keyword">Detail</span>');
+            el.innerHTML = '<span class="filter-group-label">Keyword</span>' + chips.join('');
         }
 
         const state = {
@@ -707,9 +742,7 @@
             const card = document.createElement('div');
             card.className = 'card' + (isRead(paper) ? ' read' : '');
             const kws = paper.keywords || [];
-            const kwHtml = kws.map(k =>
-                `<span class="card-keyword" style="background:${keywordColor(k)}">${k}</span>`
-            ).join('');
+            const kwHtml = orderKeywords(kws).map(keywordChip).join('');
             const tierBadge = (paper.tier !== null && paper.tier !== undefined)
                 ? `<span class="card-tier-badge tier-${paper.tier}">T${paper.tier}</span>`
                 : '';
@@ -859,6 +892,7 @@
         renderTierFilter();
         renderTopicFilter();
         renderCategoryFilter();
+        buildKeywordLegend();
         render();
     </script>
     <script>
