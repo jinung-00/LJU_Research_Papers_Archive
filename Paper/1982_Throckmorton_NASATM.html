@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Preliminary Analysis of STS-3 Entry Heat-Transfer Data for the Orbiter Windward Centerline</title>
+    <meta name="keywords" content="Experimental, Re-entry, Hypersonic, TPS, Non-uniform heat flux, Space Shuttle, Aerodynamic heating, Nonequilibrium chemistry, Boundary layer transition, Flight test">
+    <meta name="paper-authors" content="David A. Throckmorton, H. Harris Hamilton II, E. Vincent Zoby">
+    <meta name="paper-journal" content="NASA Technical Memorandum 84500, NASA Langley Research Center, June 1982 (Subject Category 34; 48 pp.) · no DOI">
+    <meta name="paper-tier" content="3">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Preliminary Analysis of STS-3 Entry Heat-Transfer Data for the Orbiter Windward Centerline</div>
+                <span class="tier-badge tier-3">Tier 3 — 미등록</span>
+            </div>
+            <div class="authors">David A. Throckmorton, H. Harris Hamilton II, E. Vincent Zoby</div>
+            <div class="journal">NASA Technical Memorandum 84500, NASA Langley Research Center, June 1982 (Subject Category 34; 48 pp.) · no DOI</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 NASA 기술 각서는 STS-3 재진입의 스페이스 셔틀 궤도선 풍상측 중심선 열전달 비행 데이터를 예비 환산한 것이다. 개발 비행 계측(DFI) 열전대가 보고한 13개 중심선 위치(x/L = 0.025~0.986)의 표면 온도를, 역 1차원 과도 전도 및 재복사 해석(불확도 &lt;10 퍼센트)을 통해 대류 가열률로 변환하여, 최대 가열부터 경계층 천이까지 걸친 21개 궤적점에서 산출했다. 산출된 벽 온도·가열률 표와 재구성된 비행 환경(고도, 속도, 받음각, 자유류 조건)을 두 가지 근사 평형 공기 가열 기법(Zoby, Hamilton)과 비교한다. 비교 결과 전방 동체 비행 가열은 ~60 km 이상 고도에서 평형 예측보다 최대 ~35 퍼센트 낮게 나타나 충격층 내 <span class="term">비평형 화학</span>에 기인하며, 저고도로 갈수록 일치가 점차 개선된다. 보고서는 또한 촉매 코팅·표면 오염 이상을 기록하고 기술 공동체에 벤치마크 데이터의 조기 접근을 제공한다.</div>
+            <div class="keywords"><span class="keyword-chip">Experimental</span><span class="keyword-chip">Re-entry</span><span class="keyword-chip">Hypersonic</span><span class="keyword-chip">TPS</span><span class="keyword-chip">Non-uniform heat flux</span><span class="keyword-chip">Space Shuttle</span><span class="keyword-chip">Aerodynamic heating</span><span class="keyword-chip">Nonequilibrium chemistry</span><span class="keyword-chip">Boundary layer transition</span><span class="keyword-chip">Flight test</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">재진입 중 궤도선 TPS 표면 온도 측정은 공력열역학 환경을 규명하는 기반이다. 이 보고서는 STS-3 풍상측 중심선 온도를 대류 가열률로 환산하고 두 근사 예측 기법과 비교하여, 데이터에 대한 조기 접근을 공동체에 제공하는 것을 목표로 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">이 연구는 두 근사 평형 공기 가열 기법과 선행 STS-1/STS-2 재진입 가열 해석에 기반한다. Zoby 기법은 등가 축대칭체 상관식을 갖는 신속 비점성 유동장을, Hamilton 기법은 국부 무한 후퇴각 실린더 해석을 사용하며, 둘 다 풍동 및 엄밀 계산으로 검증되었다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">풍상측 중심선 표면 온도는 재진입 중 초당 1회 샘플링되는 DFI 열전대에서 얻는다. 온도를 평활화하고 1차원 과도 전도 및 재복사 해석으로 역산하여 대류 가열률을 구하며, 비행 환경은 궤적, 대기, 표면압-동압 상관식으로 재구성한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">평활화된 온도-시간 이력(그림 2)과 21개 궤적점의 벽 온도·가열률 표(Table I)는 최대 가열부터 후기 경계층 천이까지 걸친다. Zoby, Hamilton과 비교한 가열 분포(그림 3)는 재진입 초기에 전방 동체 비행 가열이 평형 예측보다 상당히 낮고 후기에 수렴하며, 국부 촉매·오염 이상을 보인다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">전방 동체 가열 부족과 회복은 표면 촉매와 충격층 비평형 화학으로 해석된다. ~60 km 이상에서 비평형 효과가 지배하고, ~60 km 이하에서는 평형 예측이 더 잘 일치하나 독립적 STS-2 증거는 비평형 효과가 지속됨을 시사한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">예비 STS-3 풍상측 중심선 열전달 해석은 21개 궤적점의 비행 가열을 표로 제공하고 두 평형 공기 기법과 비교하여, 60 km 이상에서 비평형 화학이 비행 가열에 크게 영향을 미치고 60 km 이하에서는 평형 예측이 더 잘 일치한다(잔류 비평형 증거 존재)고 결론짓는다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 8 / total 13</span></summary>
+            <ol class="ref-list"><li>D. A. Throckmorton, Benchmark Aerodynamic Heat Transfer Data from the First Flight of the Space Shuttle Orbiter, AIAA Paper 82-0003, 1982</li><li>E. V. Zoby, J. N. Moss, K. Sutton, Approximate Convective Heating Equations for Hypersonic Flows, Journal of Spacecraft and Rockets, 1981</li><li>H. H. Hamilton II, Approximate Method of Predicting Heating on the Windward Side of Space Shuttle Orbiter and Comparisons to Flight Data, AIAA Paper 82-0823, 1982</li><li>E. V. Zoby, Analysis of STS-2 Experimental Heating Rates and Transition Data, AIAA Paper 82-0822, 1982</li><li>J. L. Shinn, J. N. Moss, A. L. Simmonds, Viscous Shock Layer Heating Analysis for the Shuttle Windward Plane with Surface Finite Catalytic Recombination Rates, AIAA Paper 82-0842, 1982</li><li>J. V. Rakich, D. A. Stewart, Results of a Flight Experiment on the Catalytic Efficiency of the Space Shuttle Heat Shield, AIAA Paper 82-0944, 1982</li><li>H. R. Compton, J. T. Findlay, G. M. Kelly, M. L. Heck, Shuttle (STS-1) Entry Trajectory Reconstruction, AIAA Paper 81-2459, 1981</li><li>J. M. Price, R. C. Blanchard, Determination of Atmospheric Properties for STS-1 Aerothermodynamic Investigations, AIAA Paper 81-2430, 1981</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "궤도선 TPS 공력 표면에서 측정한 온도는 궤도 재진입 중 공력열역학 환경의 규명을 가능하게 한다."}, {"type": "bullet", "text": "측정 온도는 TPS 내부 열전도와 TPS 표면 재복사의 엄밀 해석에 입력되어 대류 열전달률을 결정한다."}, {"type": "bullet", "text": "보고서는 STS-3 임무 재진입의 궤도선 풍상측 중심선 대류 가열률 데이터를 제시한다."}, {"type": "bullet", "text": "비행 데이터는 평형 공기에서 대류 열전달률을 계산하는 두 근사 기법의 결과와 비교된다."}, {"type": "bullet", "text": "기체 기준 길이는 L = 32.89 m이며, 가열은 풍상측 중심선을 따라 무차원 길이 x/L의 함수로 보고된다."}, {"type": "bullet", "text": "명시된 목적은 기술 공동체에 궤도선 열전달 데이터의 폭넓은 집합에 조기 접근을 제공하는 것이다(예비 해석)."}]}, "related_works": {"content": [{"type": "bullet", "text": "Zoby 근사 기법(ref. 2)은 신속 비점성 유동장 절차와, 등엔트로피 또는 가변 엔트로피 에지 조건에 대한 층류·난류 가열식, 평형 공기 상관식을 사용하여 중심선을 등가 축대칭체로 근사한다."}, {"type": "bullet", "text": "Zoby 기법은 셔틀 비행 설계 조건에서 지상 시험 데이터 및 더 엄밀한 예측(refs. 3, 4)과 층류·난류 유동에 대해 검증되었고 궤도선 재진입 가열에 이전에 사용되었다(refs. 5, 6)."}, {"type": "bullet", "text": "Hamilton 근사 기법(ref. 7)은 국부 무한 후퇴각 실린더 해석에 기반해 풍상측 층류·난류 가열을 계산하며, 평형 공기 열역학과 가변 경계층 에지 엔트로피를 포함한다."}, {"type": "bullet", "text": "Hamilton 기법은 풍동 데이터와 양호한 일치를 보였고 궤도선 재진입 가열 해석에 이전에 사용되었다."}, {"type": "bullet", "text": "선행 STS-2 해석(refs. 6, 12)과 촉매 표면 실험(refs. 9, 13)은 유사 비행 조건에서 경계층 내 비평형 화학 효과의 증거를 제공했다."}, {"type": "bullet", "text": "기본 가열률 환산 기법 자체는 벤치마크 STS-1 데이터로 문서화되어 있고(ref. 1), 비행 환경 재구성은 궤적(ref. 10) 및 대기(ref. 11) 기법을 활용한다."}, {"type": "bullet", "text": "특정 타일 관련 실험으로는 x/L = 0.285의 타일 간극 가열(ref. 8)과 x/L = 0.297, 0.402의 촉매 코팅 타일(ref. 9)이 있다."}]}, "method": {"content": [{"type": "bullet", "text": "궤도선은 개발 비행 계측(DFI)을 탑재한다: 4500개 이상의 센서와, 표면 코팅과 열적으로 접촉한 열전대를 통한 200개 이상 위치의 공력 표면 온도 측정을 포함한다."}, {"type": "bullet", "text": "16개 열전대가 기체 풍상측 중심선을 따라 배치되며(그림 1), 재진입 전 기간 초당 1회 열 데이터를 기록한다.", "figure_refs": [1]}, {"type": "bullet", "text": "측정된 온도-시간 이력은 평활화되고, 평활 데이터가 원시 온도 데이터를 정확히 대표하는지 확인하는 대화형 검토를 거친다."}, {"type": "bullet", "text": "TPS 내부 열전도와 TPS 표면 재복사의 역 1차원 과도 해석(ref. 1)이 대류 열전달률을 산출하며, 평가된 불확도는 +/-10 퍼센트 미만이다."}, {"type": "bullet", "text": "각 궤적점의 비행 환경 변수는 재진입 궤적 재구성(고도, 속도, 받음각; ref. 10)과 재진입 당일 대기 모델링(자유류 온도; ref. 11)으로 구축된다."}, {"type": "bullet", "text": "대기 밀도는 국부 표면 압력계수와 자유류 동압의 상관(풍동 및 유동장 계산 기반)으로 x/L = 0.025의 측정 압력을 이용해 구하며, 자유류 압력은 기체 법칙으로 따라온다."}, {"type": "bullet", "text": "보고서에는 표시된 지배 방정식이 없으며, 환산 및 예측 절차는 여기서 재서술하지 않고 refs. 1, 2, 7을 참조하여 정의된다."}]}, "results": {"content": [{"type": "bullet", "text": "Table I은 13개 풍상측 중심선 위치(x/L = 0.025~0.986)를 21개 시각(225~1300 s)에 걸쳐 수록하며, Mach ~26.7에서 ~5.2, 고도 ~88 km에서 ~36.5 km를 다룬다.", "figure_refs": [2]}, {"type": "bullet", "text": "가열은 동체를 따라 강하게 비균일하고 시간에 따라 증가 후 감소한다: 노즈 위치 x/L = 0.025는 약 192~205 kW/m2(640~745 s)에서 정점을 찍고, 하류 위치는 수 배 낮다(예: x/L = 0.986은 약 10~19 kW/m2).", "figure_refs": [2]}, {"type": "bullet", "text": "t = 270 s(그림 3a)에서 전방 동체 비행 데이터는 평형 예측보다 최대 ~35 퍼센트 낮고 후방 데이터는 예측과 비교적 잘 일치하며, 전방 불일치는 충격층 비평형 화학에 기인한다.", "figure_refs": [3]}, {"type": "bullet", "text": "t = 350 s(그림 3b)에서 x/L = 0.166 위치는 인접점보다 상당히 높게(예: 1193 K / 112 kW/m2) 읽히는데, 이 타일은 STS-2에서 고촉매 재료로 코팅되었고 세척에도 불구하고 높은 촉매 효율을 유지한다.", "figure_refs": [3]}, {"type": "bullet", "text": "t = 640 s(그림 3c)에서 전방 가열이 증가해 x/L = 0.10 하류에서 평형 수준에 접근하는데, 이는 음향 센서 커버(x/L = 0.106, 0.204) 용융에 따른 오염으로 표면 촉매 효율이 증가한 결과로 보인다.", "figure_refs": [3]}, {"type": "bullet", "text": "t = 520 s(그림 2e, 2g)의 급격한 유의 온도 상승은 이 오염의 개시를 표시하며, 이는 STS-2의 여러 중심선 위치에서 이전에 관찰된 현상이다.", "figure_refs": [2]}, {"type": "bullet", "text": "후기 시각(그림 3d, 3e)에서 비행 데이터와 평형 예측이 점차 더 잘 일치하며, 후기 Table I 점(t &gt;= 1120 s)에서 후방 위치(x/L = 0.795~0.986)가 급격히 상승해 중심선의 ~90 퍼센트에 걸친 경계층 천이와 일치한다.", "figure_refs": [3]}]}, "discussion": {"content": [{"type": "bullet", "text": "고고도에서 전방 동체 비행 가열이 평형 예측보다 낮은 것은 충격층 내 비평형 화학으로 설명되며, 평형 공기 기법은 이를 표현할 수 없다."}, {"type": "bullet", "text": "비정상적으로 높은 x/L = 0.166 값은 이전 STS-2 코팅의 잔류 표면 촉매 효율이 기준 타일 대비 국부 가열을 높임을 보여준다."}, {"type": "bullet", "text": "음향 센서 커버 용융에 따른 오염이 하류 타일에 물질을 퇴적시켜 촉매 효율을 높이고 후기 측정 가열을 증가시킨다."}, {"type": "bullet", "text": "오염 개시 시각은 급격한 t = 520 s 온도 상승으로 입증되어, 가열 증가를 유동 변화가 아닌 물리적 표면 변화와 연관짓는다."}, {"type": "bullet", "text": "60 km 이상 고도에서 비행 가열은 비평형 화학의 영향을 크게 받고, 60 km 이하에서는 비행 데이터와 평형 예측이 잘 일치한다."}, {"type": "bullet", "text": "저고도 조건에서도 다른 계산(ref. 12)과 STS-2의 촉매 표면 실험(ref. 13)은 유의한 비평형 화학 효과가 여전히 존재해야 함을 시사하여, 평형 일치를 액면 그대로 받아들이지 말 것을 경고한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "STS-3 재진입의 궤도선 풍상측 중심선 열전달 데이터 예비 해석이 제시된다."}, {"type": "bullet", "text": "비행 데이터는 화학적 평형 공기에서 대류 열전달률을 계산하는 두 근사 기법의 예측과 비교되었다."}, {"type": "bullet", "text": "60 km 초과 고도에서 비행 열전달률은 비평형 화학 효과의 영향을 크게 받는다."}, {"type": "bullet", "text": "60 km 미만 고도에서 비행 데이터와 평형 화학 예측은 양호하게 일치한다."}, {"type": "bullet", "text": "그러한 저고도 조건에서도 다른 계산과 실험은 유의한 비평형 화학 효과가 여전히 나타나야 함을 시사한다."}, {"type": "bullet", "text": "21개 궤적점의 벽 온도·가열률 표는 기술 공동체에 조기 공개된 벤치마크 비행 데이터셋을 제공한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "x/L = 0.691 및 0.946 위치는 STS-3에서 계측기가 정상 작동하지 않아 열전달 데이터가 제시되지 않았다.", "source_quote": "No data are presented for the measurements located at x/L =0.691 and 0.946, as these instruments did not operate properly on STS-3.", "source_section": "results"}, {"claim": "대류 가열률은 역전도 환산 기법에서 평가된 +/-10 퍼센트 미만의 불확도를 갖는다.", "source_quote": "The uncertainty of heating rates determined by this method has been assessed (ref. 1) to be less than ~ 10 percent.", "source_section": "method"}, {"claim": "이 해석은 명시적으로 예비적이며, 기술 공동체에 궤도선 열전달 데이터에 대한 조기 접근을 제공하는 것만을 목적으로 한다.", "source_quote": "The paper is intended to provide the technical community with early access to a wide range of orbiter heat-transfer data.", "source_section": "introduction"}, {"claim": "두 비교 기법은 화학적 평형을 가정하므로, 비행 데이터가 드러내는 비평형 화학 효과를 표현할 수 없다.", "source_quote": "The comparisons indicate that at altitudes greater than 60 kilometers, flight heat-transfer rates are significantly influenced by nonequilibrium chemistry effects.", "source_section": "discussion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["궤도 재진입 중 궤도선 TPS가 겪는 공력열역학 환경을 비행 측정으로부터 규명해야 한다.", "기술 공동체는 궤도선 풍상측 중심선 열전달 데이터의 폭넓은 집합에 조기 접근할 필요가 있다.", "근사 평형 공기 대류 가열 예측 기법의 정확도를 실제 비행 데이터에 대해 평가해야 한다."], "addressed_by_this_work": ["보고된 풍상측 중심선 위치들에 대해 21개 궤적점에서 벽 온도와 대류 가열률을 표로 작성하고 각 점의 비행 환경을 재구성했다.", "온도-시간 이력과 열전달 분포를 임무 직후 신속히 공개한 벤치마크 비행 데이터로 제공했다.", "Zoby와 Hamilton 평형 기법이 비행 데이터와 일치하는 영역과 벗어나는 영역을 정량화하여 ~60 km 이상에서 비평형 화학의 영향을 분리했다."], "remaining_unresolved": ["비평형 화학 효과는 평형 기법으로 포착되지 않으며, 다른 STS-2 계산/실험에 따르면 60 km 이하에서도 여전히 유의하다.", "촉매 효율 및 표면 오염 이상(x/L = 0.166의 잔류 촉매 타일, 음향 센서 커버 용융 오염)이 데이터를 교란하며 완전히 모델링되지 않았다.", "여러 계측 위치가 고장 났거나 다른 실험용으로 배정되어 중심선 커버리지에 공백이 남았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
