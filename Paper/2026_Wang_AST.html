@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>The influence of permeability anisotropy on transpiration cooling under uniform and non-uniform pressure conditions</title>
+    <meta name="keywords" content="Numerical, Transpiration cooling, Hypersonic, Porous media, Permeability, Non-uniform permeability, LTNE, CMC, Cooling efficiency, Injection pressure, Anisotropy">
+    <meta name="paper-authors" content="Xiaojuan Wang, Xiaoqiang Fan, Bing Xiong">
+    <meta name="paper-journal" content="Aerospace Science and Technology, Vol. 171, 2026, Art. 111629 · DOI: 10.1016/j.ast.2026.111629">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">The influence of permeability anisotropy on transpiration cooling under uniform and non-uniform pressure conditions</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Xiaojuan Wang, Xiaoqiang Fan, Bing Xiong</div>
+            <div class="journal">Aerospace Science and Technology, Vol. 171, 2026, Art. 111629 · DOI: 10.1016/j.ast.2026.111629</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 수치 연구는 세라믹 기지 복합재(CMC) 다공벽의 <span class="term">투과율 이방성</span>이 극초음속 앞전의 <span class="term">증산냉각</span>에 미치는 영향을, 균일 및 비균일 출구 압력 조건에서, 그리고 탄소 침적으로 인한 국부 공극 막힘의 유무에 따라 분석한다. Darcy-Brinkman-Forchheimer 운동량 방정식을 포함한 2D 체적평균 <span class="term">LTNE</span> 모델을 유한체적 CFD로 풀며, 측방향 투과율은 측방향 공극률 파라미터 $\varepsilon_x$를 통해 변화시킨다. 막힘이 없는 균일 출구 압력에서는 이방성이 유동장과 온도장을 거의 바꾸지 않으나, 국부 막힘이 있으면 측방향 투과율이 낮아질수록 고체 최고 온도가 4.97~9.37 % 상승한다. 비균일 출구 압력에서는 일반적으로 낮은 측방향 투과율이 유리하며, 역침투가 존재할 경우 막힘이 이를 억제하여 중심축 최고 온도를 100 K 이상 떨어뜨린다. 막힘 조건에서 지배 인자는 고온 주류의 역침투 발생 여부이다.</div>
+            <div class="keywords"><span class="keyword-chip">Numerical</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Hypersonic</span><span class="keyword-chip">Porous media</span><span class="keyword-chip">Permeability</span><span class="keyword-chip">Non-uniform permeability</span><span class="keyword-chip">LTNE</span><span class="keyword-chip">CMC</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Injection pressure</span><span class="keyword-chip">Anisotropy</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 비행은 노즈콘과 앞전에 극심한 공력 가열을 부과하며, 다공성 CMC 벽을 통한 증산냉각은 유망한 능동 열보호 방식이다. CMC의 복잡한 성형 공정은 투과율을 강한 이방성으로 만들지만 기존 연구는 투과율을 등방성으로 모델링했으며, 본 논문은 이 이방성이 국부 공극 막힘과 함께 실제적 비균일 압력 하에서 냉각에 어떻게 영향을 미치는지 규명하고자 한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 기존 막힘·이방성 연구에 형상과 파라미터를 근거하고, 증산냉각 및 다공매질 문헌에서 검증 데이터와 물성/닫힘 상관식을 가져온다. 측방향 냉각제 이동을 구동하는 비균일 압력이 아니라 외부 비균일 열유속을 연구한 선행 연구와 대비하여 자리매김한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">2D 압축성 층류 다공 유동을 Darcy-Brinkman-Forchheimer 운동량 방정식과 2방정식 LTNE 에너지 정식화로 풀며, 온도 의존 기체 물성을 사용한다. 이방성은 측방향 공극률 파라미터를 통해 x와 y 방향 투과율을 다르게 부여하여 부과하고, 균일 및 비균일(0.01~0.1 MPa) 압력 출구 경계에서 800x200 격자의 유한체적 CFD로 해석한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">막힘이 없는 균일 출구 압력에서는 측방향 투과율이 유동장·온도장을 거의 바꾸지 않으나, 국부 막힘이 있으면 측방향 투과율이 낮아질수록 고온단 최고 고체 온도가 4.97~9.37 % 상승한다. 비균일 출구 압력에서는 양상이 반대로, 일반적으로 낮은 측방향 투과율이 냉각을 개선하며, 막힘 결과는 고온 주류의 역침투 발생 여부에 달려 있다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">해석은 주류 역침투를 지배 메커니즘으로 규명한다. 역침투가 존재하면 측방향 투과율을 낮추거나 막힘을 추가하는 것이 고온 기체 역류를 억제해 냉각을 개선하지만, 역침투가 없으면 동일한 변화가 폐색 영역의 냉각제를 고갈시켜 국부 핫스팟을 만든다. 냉각제 주입 압력은 역침투 감소와 유효 출구 면적 감소 사이의 경쟁을 반영한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">등방성 고체 열전도율을 가진 단순화된 2D LTNE 다공 모델을 사용하여, 본 논문은 투과율 이방성이 국부 막힘과 함께 균일 및 비균일 출구 압력에서 증산냉각을 어떻게 형성하는지 정량화한다. 실제 노즈콘 공력을 모사하는 비균일 압력 경우는, 낮은 측방향 투과율과 막힘이 도움이 되는지 해가 되는지를 결정하는 핵심 스위치가 역침투임을 드러낸다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 30</span></summary>
+            <ol class="ref-list"><li>L. Meng, P. Jiang, F. Jiang, et al., Influence of porosity and heat flux non-uniformities on transpiration cooling, J. Tsinghua Univ. 46 (2) (2006) 230-233</li><li>Y. Liu, Y. Xiong, P. Jiang, et al., Effects of local geometry and boundary condition variations on transpiration cooling, Int. J. Heat Mass Transf. 62 (2013) 362-372</li><li>Y. Yang, B. Zhang, X. Fan, et al., Transpiration cooling performances of oriented porous structures with lateral permeability under local block conditions, Appl. Therm. Eng. 243 (2024) 122633</li><li>P. Daniel, V. W. Jens, B. Hannah, Analysis of anisotropy effects for transpiration cooled CMC leading edges using OpenFOAM, 20th AIAA Int. Space Planes and Hypersonic Systems Conf., Glasgow, 2015</li><li>X. Wang, X. Fan, S. Wang, et al., Discussion of the design method for porosity driven by pressure differences during transpiration cooling, Int. Commun. Heat Mass Transf. 152 (2024) 107260</li><li>H. Su, Numerical Investigations on the Cooling Capacity and Characteristics of Flow and Heat Transfer of Transpiration Cooling (PhD thesis), Univ. of Science and Technology of China, Hefei, 2020</li><li>B. Alazmi, K. Vafai, Analysis of variants within the porous media transport models, J. Heat Transf. 122 (2) (2000) 303-326</li><li>B. Eisfeld, K. Schnitzlein, The influence of confining walls on the pressure drop in packed beds, Chem. Eng. Sci. 56 (2001) 4321-4329</li><li>W. Dong, J. Wang, S. Chen, et al., Modelling and investigation on heat transfer deterioration during transpiration cooling with liquid coolant phase-change, Appl. Therm. Eng. 128 (2018) 381-392</li><li>R. Xu, Y. Huang, P. Jiang, et al., Internal heat transfer coefficients in microporous media with rarefaction effects, Sci. China Technol. Sci. 55 (10) (2012) 2869-2876</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "높은 마하수에서의 공력 가열은 노즈콘과 앞전 표면 온도를 2500 K 가까이 끌어올린다. 마하 15 공기흡입식 비행체의 경우 노즈콘 정체점 열유속은 13.6 MW/m2, 흡입구 립은 39.7 MW/m2에 달하며, HTV-2 공학적 추정치는 노즈에서 24 MW/m2, 날개 앞전을 따라 9.4 MW/m2이다."}, {"type": "bullet", "text": "여러 열보호 방식 중 <span class=\"term\">증산냉각</span>은 높은 냉각 용량과 낮은 냉각제 소비로 선호된다. 최대 냉각 용량은 $6\\times10^{7}$~$1.4\\times10^{9}$ W/m2에 이르며, 동일 온도 강하 기준으로 냉각 면적은 다공 제트 냉각의 약 47배이다."}, {"type": "bullet", "text": "이 방식은 여전히 비효율적인 공간적 냉각제 수송과 냉각 수요와의 불일치 문제를 안고 있다. 내외부 압력차로 구동되어 냉각제가 가열이 완만한 하류로 우선 유동하므로, 정체점과 날카로운 앞전은 냉각제가 부족해진다."}, {"type": "bullet", "text": "CMC는 고온 내성 때문에 증산 기지로 점점 많이 쓰이지만 복잡한 성형이 이방성 물성을 낳는다. Daniel은 유동에 평행한 섬유가 수직 섬유 대비 Darcy 투과율은 약 3배, Forchheimer 투과율은 약 5배라고 보고했다."}, {"type": "bullet", "text": "기존 CMC 해석은 흔히 투과율을 등방성으로 취급하고 고체 열전도율만 수정했는데, 이는 실제 재료와 맞지 않는다. 이 등방성 가정이 본 논문이 겨냥하는 핵심 공백이다."}, {"type": "bullet", "text": "탄소 침적에 의한 국부 막힘은 냉각을 더욱 저하시킨다. Meng은 막힘이 유동 저항을 높여 냉각제를 우회시킴을, Liu는 냉각측에 가까운 막힘일수록 영향이 작음을, Yang은 측방향 투과율을 높이는 배향 채널 모델을 제시했으나 비균일 열유속·압력을 고려하지 않았음을 보였다."}, {"type": "bullet", "text": "다공벽 내 측방향 냉각제 유동은 주로 외부 주류가 형성하는 비균일 압력으로 구동되므로, 본 논문은 투과율 이방성이 냉각제 분포를 어떻게 재구성하는지, 그리고 국부 막힘이 있을 때 그 효과가 균일·비균일 출구 압력에서 어떻게 달라지는지를 묻는다."}, {"type": "bullet", "text": "명시된 목표는 LTNE 가정 하의 단순화된 2D 다공 모델을 구축하고 막힘 무/유 경우에 대한 이방성 효과를 수치 해석하여, 실제 증산냉각 부품에 대한 이론적 참고를 제공하는 것이다.", "figure_refs": [2]}]}, "related_works": {"content": [{"type": "bullet", "text": "표 1은 선행 막힘 연구의 계산 구성(Meng 50x5 mm 판에 6.5x1.5 mm 막힘, Liu 60x5 mm에 4x1 mm, Yang 30x5 mm에 4x1 mm)과 공극률을 정리하며, 이는 본 연구의 30x5 mm 판 선정을 이끈다."}, {"type": "bullet", "text": "Meng은 막힘이 유동 저항을 높이고 균일 열유속에서도 막힘 영역 온도를 올리며, 고전도율 기지가 벽 전체 온도를 끌어올림을 보였다."}, {"type": "bullet", "text": "Liu는 막힘 영역의 위치가 그 영향을 바꾸며, 냉각측 위치가 전체 냉각에 가장 작은 영향을 줌을 보고했다."}, {"type": "bullet", "text": "Yang은 측방향 투과율을 높여 막힘이 유발하는 과도한 냉각제 구동 압력을 완화하는 배향 채널 모델을 도입했으나, 실제 비행의 비균일 열유속·압력 조건을 무시했다."}, {"type": "bullet", "text": "Daniel 등은 OpenFOAM으로 증산냉각 CMC 앞전의 이방성 효과를 해석하여, 본 연구가 채택한 이방성 투과율 동기를 제공했다."}, {"type": "bullet", "text": "기존 내부 유동·열전달 연구는 외부 비균일 열유속 효과에 집중한 반면, 측방향 냉각제 유동은 물리적으로 외부 주류가 형성하는 비균일 압력 분포로 구동된다."}, {"type": "bullet", "text": "저자들의 이전 연구는 마하 4.2에서 노즈콘 표면 압력이 대략 0.01~0.1 MPa 범위임을 확립했으며, 이것이 본 모델의 비균일 출구 압력 범위를 고정한다."}, {"type": "bullet", "text": "검증 데이터는 Su의 단층 증산 모델과 Liu의 청동/세라믹 경우에서, 투과율·관성계수·열전달 상관식은 Ergun, Vafai, Alazmi, Xu에서 가져왔다."}]}, "method": {"content": [{"type": "bullet", "text": "형상은 냉각제 챔버 위의 다공판(30x5 mm, W x H)으로, 직경 100 um 금속 입자를 소결해 공극률 $\\varepsilon=0.3$, 등방성 고체 열전도율 $\\lambda_s=2$ W/(m K)이며, 둔한 앞전을 이 2D 영역으로 단순화한다.", "figure_refs": [1]}, {"type": "bullet", "text": "이방성은 x 방향 점성·관성 저항을 설정하는 측방향 공극률 $\\varepsilon_x$로 도입된다. $\\varepsilon_x=0.01$에서 x 방향 저항은 y 방향보다 3자리수 커져 사실상 단방향(완전 배향) 투과율이 된다."}, {"type": "bullet", "text": "입구 레이놀즈수가 100 미만으로 유지되므로 유동은 2D 압축성 층류로 취급되며, 유체는 온도 의존 물성을 가진 압축성 이상기체이다."}, {"type": "formula", "label": "식 (1) - 비열 다항식", "latex": "c_p(T) = -1.1111\\times10^{-10}\\,T^5 + 9.929\\times10^{-8}\\,T^4 - 5.035\\times10^{-5}\\,T^3 + 1.486\\times10^{-2}\\,T^2 - 2.369\\,T + 1161.5", "description": "기체 냉각제의 정압 비열을 정적 온도 $T$에 대한 5차 다항식으로 피팅한 것."}, {"type": "formula", "label": "식 (2) - 운동론 기반 열전도율", "latex": "\\lambda = \\frac{15}{4}\\frac{R}{M_w}\\mu\\left[\\frac{4}{15}\\frac{c_p M_w}{R} + \\frac{1}{3}\\right]", "description": "운동론으로부터 구한 기체 열전도율로, $R$은 보편기체상수, $M_w$는 분자량이다."}, {"type": "formula", "label": "식 (3) - Sutherland 점성", "latex": "\\mu = \\mu_0\\left(\\frac{T}{T_0}\\right)^{3/2}\\frac{T_0+S}{T+S}", "description": "Sutherland 법칙에 의한 동점성으로, 공기에 대해 $\\mu_0=1.716\\times10^{-5}$ kg/(m s), $T_0=273.11$ K, $S=110.56$ K이다."}, {"type": "formula", "label": "식 (4) - 연속방정식", "latex": "\\frac{\\partial(\\rho_f\\varepsilon u_p)}{\\partial x} + \\frac{\\partial(\\rho_f\\varepsilon v_p)}{\\partial y} = 0", "description": "다공매질 내 정상 체적평균 연속방정식으로, $u_p$, $v_p$는 공극 속도이다."}, {"type": "formula", "label": "식 (5) - x 운동량 (Darcy-Brinkman-Forchheimer)", "latex": "\\frac{\\partial(\\rho_f\\varepsilon u_p u_p)}{\\partial x} + \\frac{\\partial(\\rho_f\\varepsilon u_p v_p)}{\\partial y} = -\\frac{\\partial(\\varepsilon p_p)}{\\partial x} + \\frac{\\partial}{\\partial x}\\!\\left(\\varepsilon\\mu_e\\frac{\\partial u_p}{\\partial x}\\right) + \\frac{\\partial}{\\partial y}\\!\\left(\\varepsilon\\mu_e\\frac{\\partial u_p}{\\partial y}\\right) - \\frac{\\mu_f}{K_x}\\varepsilon^2 u_p - \\varepsilon^3\\frac{\\rho_f F_x}{\\sqrt{K_x}}\\,|U_p|\\,u_p", "description": "방향별 Darcy($K_x$)·Forchheimer($F_x$) 저항항으로 이방성을 담은 x 방향 운동량 균형."}, {"type": "formula", "label": "식 (6) - y 운동량 (Darcy-Brinkman-Forchheimer)", "latex": "\\frac{\\partial(\\rho_f\\varepsilon u_p v_p)}{\\partial x} + \\frac{\\partial(\\rho_f\\varepsilon v_p v_p)}{\\partial y} = -\\frac{\\partial(\\varepsilon p_p)}{\\partial y} + \\frac{\\partial}{\\partial x}\\!\\left(\\varepsilon\\mu_e\\frac{\\partial v_p}{\\partial x}\\right) + \\frac{\\partial}{\\partial y}\\!\\left(\\varepsilon\\mu_e\\frac{\\partial v_p}{\\partial y}\\right) - \\frac{\\mu_f}{K_y}\\varepsilon^2 v_p - \\varepsilon^3\\frac{\\rho_f F_y}{\\sqrt{K_y}}\\,|U_p|\\,v_p", "description": "y 방향 운동량 균형으로, 비율 $K_x/K_y$가 투과율 이방성을 표현한다."}, {"type": "formula", "label": "식 (7) - 유체상 에너지", "latex": "\\frac{\\partial(\\rho_f c_{pf}\\varepsilon u_p T_f)}{\\partial x} + \\frac{\\partial(\\rho_f c_{pf}\\varepsilon v_p T_f)}{\\partial y} = \\frac{\\partial}{\\partial x}\\!\\left(\\varepsilon\\lambda_f\\frac{\\partial T_f}{\\partial x}\\right) + \\frac{\\partial}{\\partial y}\\!\\left(\\varepsilon\\lambda_f\\frac{\\partial T_f}{\\partial y}\\right) + h_v(T_s - T_f)", "description": "상간 교환항 $h_v(T_s-T_f)$로 고체와 결합되는 유체 에너지 방정식."}, {"type": "formula", "label": "식 (8) - 고체상 에너지", "latex": "\\frac{\\partial}{\\partial x}\\!\\left[(1-\\varepsilon)\\lambda_s\\frac{\\partial T_s}{\\partial x}\\right] + \\frac{\\partial}{\\partial y}\\!\\left[(1-\\varepsilon)\\lambda_s\\frac{\\partial T_s}{\\partial y}\\right] = h_v(T_s - T_f)", "description": "고체 에너지 방정식으로, 2방정식 LTNE 형식은 $T_s$와 $T_f$를 분리해 유지한다."}, {"type": "formula", "label": "식 (9) - 투과율과 관성계수", "latex": "K = \\frac{\\varepsilon^3 d_p^2}{150(1-\\varepsilon)^2}, \\qquad F = \\frac{1.75}{\\sqrt{150\\,\\varepsilon^3}}", "description": "투과율 $K$와 관성계수 $F$를 공극률 및 입자 직경 $d_p$에 관계시키는 Ergun/Vafai 닫힘식."}, {"type": "formula", "label": "식 (10) - 누셀수 상관식", "latex": "Nu_{sf} = \\frac{h_{sf} d}{\\lambda_f} = (0.933\\varepsilon^2 - 0.245\\varepsilon + 0.0165)\\,Re_d^{0.8}\\,Pr^{1/3}", "description": "틈새 열교환을 평가하는 데 쓰이는 고체-유체 열전달 계수 상관식."}, {"type": "bullet", "text": "체적 계수는 $h_v=h_{sf}a_{sf}$를 따르고 비표면적은 $a_{sf}=6(1-\\varepsilon)/d_p$(식 11-13)이며, 입구 레이놀즈수는 $Re_d=\\varepsilon\\rho U_p d_p/\\mu$이다."}, {"type": "bullet", "text": "3x1 mm 국부 막힘 영역은 공극률 0.001의 등방성 다공매질로 모델링하여 탄소 침적에 의한 거의 완전한 공극 폐색을 근사한다."}, {"type": "formula", "label": "식 (14) - 가열 표면 경계조건", "latex": "(1-\\varepsilon)\\lambda_s\\left.\\frac{\\partial T_s}{\\partial y}\\right|_{y/H=1} = h(T_\\infty - T_s)", "description": "일정한 주류 온도 $T_\\infty=1000$ K와 일정한 $h$를 가진 고온 표면의 대류 가열 경계조건."}, {"type": "bullet", "text": "경계조건: $y/H=-1$에서 질량유량 입구로 $\\dot m_{in}=0.05$~$0.5$ kg/s, $T_{c,in}=300$ K; $y/H=1$에서 균일 또는 구배(0.01~0.1 MPa) 압력 출구; 챔버-판 계면에 내부 경계; 그리고 단열 측벽이다."}, {"type": "bullet", "text": "유한체적 해법은 SIMPLE 압력-속도 결합과 2차 상류 기법을 800x200 정렬 격자에 적용하며, 잔차 $1\\times10^{-6}$ 미만으로 수렴시킨다."}]}, "results": {"content": [{"type": "bullet", "text": "균일 압력, 막힘 없음: 냉각제가 압력 강하를 따라 거의 수직 유선으로 흐르고, 고온단과 중심축 온도 분포가 모든 측방향 투과율에서 일치하므로, 여기서 이방성은 사실상 무관하다.", "figure_refs": [4, 5, 6]}, {"type": "bullet", "text": "균일 압력, 막힘 있음: 폐색이 냉각제 유동을 교란해 국부 고온 영역을 만들며, 측방향 투과율이 낮아질수록 막힌 영역은 냉각제가 거의 공급되지 않아(질량유속이 0에 근접) 고온 영역이 확산된다.", "figure_refs": [7, 8, 9]}, {"type": "bullet", "text": "막힘이 없는 경우 대비 고온측 최고 고체 온도는 측방향 투과율이 낮아질수록 4.97 %, 6.07 %, 8.61 %, 9.37 % 증가하므로, 균일 압력에서는 막힘이 있을 때 높은 측방향 투과율이 유리하다.", "figure_refs": [10]}, {"type": "bullet", "text": "비균일 압력, 막힘 없음: $\\varepsilon_x=0.5$에서 냉각제가 고온단 부근에서 측방향 이동하고 고온 주류가 매질로 역침투하여 평평한 고온 영역을 형성한다. $\\varepsilon_x=0.1$에서 유동은 거의 단방향이 되고, $\\varepsilon_x=0.01$에서는 주류가 냉각제 챔버로 직접 역류한다.", "figure_refs": [11, 12]}, {"type": "bullet", "text": "측방향 투과율이 낮아질수록 고온 영역은 평평한 고온측 띠에서 집중된 냉각측 형태로 이동하고 최고 온도가 떨어진다(m=0.05 kg/s에서 770 K→712 K). 외부 고압이 매질을 지나며 감쇠되고 횡방향 챔버 유동이 약화되기 때문이다.", "figure_refs": [18]}, {"type": "bullet", "text": "출구 질량유속 연(kite) 그래프는 역삼투 범위가 $\\varepsilon_x=0.5$에서 12.7 mm, $\\varepsilon_x=0.01$에서 5.2 mm로 줄어듦을 보이며, 계면 대 출구 질량유속 차($\\Delta m_1$, $\\Delta m_2$)는 측방향 재분배가 매질에서 일어나는지 챔버에서 일어나는지를 정량화한다.", "figure_refs": [13, 14]}, {"type": "bullet", "text": "표 2는 고온단 평균·최고 온도를 제시한다. m=0.05 kg/s에서 최고 온도는 769.6 K($\\varepsilon_x=0.5$)에서 712.9 K($\\varepsilon_x=0.01$)로 떨어지나, m=0.5 kg/s에서는 모든 경우가 320 K 부근으로 수렴하여 고유량에서는 이방성 이점이 사라짐을 보인다."}, {"type": "bullet", "text": "비균일 압력, 막힘 있음: 결과는 역삼투가 지배한다. 역삼투가 일어나면 막힘이 이를 억제해 중심축 최고 온도를 낮추나(m=0.05 kg/s에서 181, 114, 116, 120 K 감소), 역삼투가 없으면 막힘이 국부 과열을 유발한다.", "figure_refs": [15, 16, 17]}, {"type": "bullet", "text": "중심축을 따라, m=0.2 kg/s에서 막힘은 측방향 투과율이 낮아질수록 최고 온도를 254, 316, 260, 261 K 올리고, m=0.5 kg/s에서는 103, 60, 67, 70 K 올리지만, 냉각제 유동이 충분해 시스템은 적절히 냉각된다.", "figure_refs": [19]}, {"type": "bullet", "text": "표 3은 막힘이 냉각제 주입 압력에 두 가지 상반된 효과를 가함을 보인다. 주류 역침투를 저지하면 압력을 낮추고, 유효 출구 면적을 줄이면 압력을 높이므로, 저유량에서는 투과율과 함께 압력이 떨어지지만 고유량에서는 상승한다."}]}, "discussion": {"content": [{"type": "bullet", "text": "측방향 투과율이 도움이 되는지 해가 되는지는 압력장에 달려 있다. 균일 압력에서는(측방향 구동 구배 없음) 거의 무관하나, 횡방향 냉각제 이동을 구동하는 비균일 압력에서는 결정적이 된다."}, {"type": "bullet", "text": "비균일 압력에서 측방향 투과율을 낮추면 재분배가 다공매질 내부가 아니라 냉각제 챔버로 밀려나, 고온 주류의 역침투가 약화되고 고체 골격에 대한 직접 가열이 감소한다.", "figure_refs": [14]}, {"type": "bullet", "text": "열전달 모식도는 막힘 주변을 세 영역(PL, PM, PR)으로 구분한다. 높은 측방향 투과율에서는 냉각제가 여전히 막힌 PM 영역을 순환(대류 더하기 전도)하지만, 낮은 투과율에서는 PM 영역에 냉각제가 없어 전도만으로 가열되어 고온 영역이 커진다.", "figure_refs": [17]}, {"type": "bullet", "text": "역삼투가 존재할 때 막힘은 고온 기체 역류를 물리적으로 차단하므로 유리하며, 저유량에서 중심축 최고 온도를 100 K 이상 떨어뜨린다."}, {"type": "bullet", "text": "역삼투가 없을 때 지배적 열경로는 냉각제-골격 간 대류이므로, 자기 영역에 냉각제를 공급하지 못하는 막힘은 측방향 투과율이 낮아질수록 악화되는 국부 과열을 낳는다."}, {"type": "bullet", "text": "냉각제 유량이 증가하면 역침투가 사라지고 서로 다른 측방향 투과율의 온도장이 수렴하므로, 이방성에 대한 실용적 민감도는 저주입률에서 가장 크다."}, {"type": "bullet", "text": "주입 압력 경향은 메커니즘 경쟁을 담는다. 저유량에서는 역침투 억제가 지배(투과율 감소에 따라 압력 하강)하고, 고유량에서는 유효 출구 면적 감소가 지배(압력 상승)한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "균일 출구 압력에서는 투과율 이방성이 냉각제 입구 유량 범위 전반에 걸쳐 유동장이나 온도 분포에 유의한 영향을 미치지 않는다."}, {"type": "bullet", "text": "막힘이 없는 비균일 출구 압력에서는 역삼투 발생 여부와 관계없이 낮은 측방향 투과율이 더 나은 냉각을 주지만, 유량이 증가할수록 그 이점은 감소한다."}, {"type": "bullet", "text": "국부 막힘이 있으면 측방향 투과율의 효과는 역침투에 달려 있다. 역침투가 일어나면 막힘이 전체 냉각에 이롭고, 없으면 막힘이 국부 내부 온도 상승을 유발한다."}, {"type": "bullet", "text": "냉각제 주입 압력에 대한 영향도 달라진다. 막힘이 없으면 낮은 측방향 투과율은 낮은 주입 압력을 뜻하나, 막힘이 있으면 역침투 억제가 압력을 낮추는 동시에 유효 출구 면적 축소가 압력을 높이므로 유량에 따라 압력이 상승할 수 있다."}, {"type": "bullet", "text": "비균일 압력 출구(0.01~0.1 MPa)는 실제 앞전에 물리적으로 타당한 조건이며, 이방성 관리(예: 의도적으로 낮은 측방향 투과율)를 실용적인 냉각 신뢰성 수단으로 만든다."}, {"type": "bullet", "text": "본 연구는 탄소 침적 막힘이 발생하기 쉬운 실제 CMC 부품에 증산냉각을 적용하기 위한 이론적 참고를 제공한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "구조물 표면의 냉각 기막, 표면 전단력, 그리고 주류와 냉각제의 혼합이 모두 모델에서 무시된다.", "source_quote": "However, the following three fundamental assumptions are still adopted: the effect of the cooling film on the surface of the structure is neglected, the effect of shear force on the surface is disregarded, and mixing of the mainstream and coolant is not considered.", "source_section": "method"}, {"claim": "투과율만 이방성으로 모델링하고 고체 기지의 열전도율은 등방성으로 취급한다.", "source_quote": "Assuming isotropic thermal conductivity, the influence of material permeability anisotropic on cooling performance is analyzed under both uniform and non-uniform pressure outlet conditions.", "source_section": "conclusion"}, {"claim": "외부 공력 가열을 표면을 따라 일정한 주류 온도와 일정한 열전달 계수로 단순화한다.", "source_quote": "it was assumed that the mainstream temperature and the heat transfer coefficient remained constant along the path.", "source_section": "method"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["기존 CMC 증산냉각 연구는 투과율을 등방성으로 취급하고 고체 열전도율만 수정하여, 실제 CMC의 강한 이방성 투과율과 부합하지 않았다.", "외부 주류가 부과하는 비균일 압력 하에서 투과율 이방성이 냉각제의 측방향 분포에 미치는 영향이 규명되지 않았다.", "국부 막힘(탄소 침적)이 표면 또는 공극 내부에서 발생할 때, 이방성의 영향이 막힘이 없는 조건과 어떻게 달라지는지 알려지지 않았다.", "기존의 내부 유동·열전달 연구는 측방향 냉각제 유동을 실제로 구동하는 비균일 압력 분포가 아니라 외부 비균일 열유속에 집중했다."], "addressed_by_this_work": ["방향별 투과율(측방향 공극률 파라미터로 설정된 Kx)을 가진 2D LTNE 모델을 구축하여 균일 및 비균일 출구 압력에서 이방성을 모사했다.", "막힘이 없는 균일 압력에서는 이방성이 무시할 만하고, 비균일 압력에서는 낮은 측방향 투과율이 냉각을 개선함(유량이 증가할수록 차이가 감소)을 보였다.", "막힘 상호작용을 규명했다. 즉 역침투가 존재하면 막힘이 유리(중심축 최고 온도 100 K 이상 감소)하고, 역침투가 없으면 막힘이 국부 과열을 유발하며, 막힘이 냉각제 주입 압력에 미치는 이중 효과도 정량화했다."], "remaining_unresolved": ["비균일 열유속과 비균일 압력의 조합은 다루지 않았으며, 공력 가열은 일정한 열전달 계수로 단순화되었다.", "단상 기체 냉각제만 고려하며 냉각제 상변화는 모델링하지 않았다.", "3D 형상과 실제 CMC 미세구조 이방성(이방성 고체 열전도율 포함)은 단순화된 2D 등방성 열전도율 모델로 포착되지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
