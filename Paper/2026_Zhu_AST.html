@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Thermal and mechanical responses of porous C/SiC and SiC ceramics during phase-change transpiration cooling under non-uniform heat flux</title>
+    <meta name="keywords" content="Experimental, Transpiration cooling, Phase change, Non-uniform heat flux, CMC, Vapor blockage, Flow instability, Boiling heat transfer, Liquid coolant, Cooling efficiency">
+    <meta name="paper-authors" content="P.F. Zhu, Z.R. Xue, H.B. Ke, F. Qin, X.G. Wei, S.Y. Liu, W.Q. Li">
+    <meta name="paper-journal" content="Aerospace Science and Technology, Vol. 178, 2026, Art. 113260 · DOI: 10.1016/j.ast.2026.113260">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Thermal and mechanical responses of porous C/SiC and SiC ceramics during phase-change transpiration cooling under non-uniform heat flux</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">P.F. Zhu, Z.R. Xue, H.B. Ke, F. Qin, X.G. Wei, S.Y. Liu, W.Q. Li</div>
+            <div class="journal">Aerospace Science and Technology, Vol. 178, 2026, Art. 113260 · DOI: 10.1016/j.ast.2026.113260</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 실험 연구는 비균일 산소-아세틸렌 화염 하에서 직조형 다공 C/SiC와 입자 소결 SiC 세라믹의 상변화(액체 물) <span class="term">증산냉각</span>을 비교하며, 산소/연료비와 냉각제 질량유량 전반에 걸쳐 열 응답과 기계 응답을 모두 매핑한다. 충분한 냉각제에서는 SiC가 더 높은 등방 열전도도 덕에 더 낮고 균일하게 냉각되며, 낮은 냉각제에서는 둘이 뚜렷이 갈린다 — C/SiC는 비가역 국소 과열을, SiC는 내부 압력 펄스를 최대 56.4 kPa까지 생성하는 주기적 증기 폐색/배출/재습윤 진동(주기 209-320 s)을 겪는다. 파손 경로는 미세구조에 따라 다르다: 저강도 SiC(굽힘 10.6 MPa)는 열피로 파괴로, 강인한 직조 C/SiC(189 MPa)는 기계적으로 견디나 SiO2 막과 C 섬유의 수화-산화 부식으로 열화한다. 사용자의 구배 공극률 $\varepsilon(x)$ 문제에는 설계 연구가 아니라 실험적 재료 선정 논문이지만 매우 관련 있다: 균일 냉각을 동기부여하는 비균일 열유속 → 반경 방향 온도차 → 열응력 결과를 정확히 정량화하고, LTNE-TPMM이 재현해야 할 증기 폐색/진동 현상을 기록하며, 측정된 재료/수송 물성을 제공한다.</div>
+            <div class="keywords"><span class="keyword-chip">Experimental</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Phase change</span><span class="keyword-chip">Non-uniform heat flux</span><span class="keyword-chip">CMC</span><span class="keyword-chip">Vapor blockage</span><span class="keyword-chip">Flow instability</span><span class="keyword-chip">Boiling heat transfer</span><span class="keyword-chip">Liquid coolant</span><span class="keyword-chip">Cooling efficiency</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">증산냉각은 고효율 능동 열보호 방식(이론 최대 열유속 최대 1400 MW/m2)으로, 금속보다 고온 다공 세라믹(C/C, C/SiC, SiC, ZrB2)으로 점차 구현된다. 선행 세라믹 연구는 비균일 열하중과 냉각제 공급 전반의 열·기계 성능을 체계적으로 비교하지 않았고, C/SiC 대 SiC 비교와 다상 불안정성·열응력·열화 경로의 연결이 미지여서 본 실험 연구를 동기부여한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">문헌은 다공 세라믹을 선호되는 증산냉각 재료군으로 확립하고 개별 재료 성능(C/C, Cf/SiC, SiC, ZrB2, Mullite)을 기록하지만, 대부분 균일 또는 단일 조건 하중에서 개별적으로 다룬다. 저자들의 C/SiC 증기 폐색·수성 산화에 관한 선행 연구가 본 연구의 열화 메커니즘 초점을 세운다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">탈이온수(12 degC)를 정해진 질량유량으로 유량계를 통해 플레넘으로 펌핑해 30 mm x 6 mm 다공 디스크를 투과시키고, 산소-아세틸렌 토치(노즐 0.9 mm, 6 cm 거리)로 O/F비 1.0/1.2/1.4에서 가열한다. 표면·배면 온도(IR 카메라 + K형 열전대)와 입구 압력을 0.5 s마다 기록하며, 측정된 중심 열유속은 1.34/0.89/0.57 MW/m2로 중심-가장자리 강한 비균일성을 보이고, 재료 물성은 SEM·DSC·LFA·수은 압입법으로 특성화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">충분한 냉각제(4.0 g/min)에서는 SiC가 높은 등방 전도도로 더 낮고 균일하게 냉각되는 반면, C/SiC의 낮은 면내 전도도는 큰 반경 온도차를 준다. 냉각제가 1.5-2.0 g/min로 낮아지면 거동이 갈린다: C/SiC는 국소적·비가역적으로 과열되고, SiC는 증기 폐색/배출/재습윤으로 주기 진동(209-320 s)하며 최대 56.4 kPa의 입구 압력 펄스를 생성한다. 이후 열화는 미세구조에 따라 — SiC 열피로 파괴 대 C/SiC 수화-산화 부식 — 으로 나뉜다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">두 세라믹은 열 성능과 기계적 강건성을 상충하며, 미세구조가 냉각 거동과 파손 모드를 모두 결정한다. SiC의 높은 등방 전도도는 균일 냉각을 주지만 취성과 증기 폐색 압력 펄스가 열피로 파괴를 일으키고, C/SiC의 인성은 열-기계 충격을 견디나 직조 C 섬유 구조가 과열 증기에서 부식된다. 이는 반경 온도 비균일이 재료를 파괴하는 열응력을 유발하므로 공간 온도장 제어(사용자의 균일 냉각 목표)가 왜 중요한지를 직접 보여준다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">비균일 화염 열유속 하에서 직조 다공 C/SiC와 입자 소결 SiC를 실험적으로 비교한 결과, SiC는 충분한 냉각제에서 우수한 냉각 균일성을 주지만 낮은 냉각제에서 증기 폐색으로 진동하며 강한 압력 펄스와 함께 기계적으로 열피로 파괴되고, C/SiC는 국소 과열되며 우수한 강도에도 화학적으로 수화-산화 부식으로 열화한다. 재료 선택은 열 균일성 대 구조 건전성의 상충이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 41</span></summary>
+            <ol class="ref-list"><li>P.F. Zhu, X.K. Song, Q.L. Song, Y.H. Cao, W.Q. Li, An experimental investigation on phase-change transpiration cooling with SiC porous ceramic, Appl. Therm. Eng., 2025</li><li>P.F. Zhu, R.Q. Wang, F. Qin, T.T. Jing, W.Q. Li, An experimental investigation on transpiration cooling with phase change subjected to non-uniform flame, Int. J. Heat Mass Transf., 2024</li><li>P.F. Zhu, Z.R. Xue, F. Qin, G.Q. He, W.Q. Li, Vapor blockage and aqueous oxidation in C/SiC porous ceramic during transpiration cooling with phase change, Int. J. Heat Mass Transf., 2025</li><li>G. Huang, Y. Zhu, Z. Liao, X.L. Ouyang, P.X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transf., 2017</li><li>B. Zhang, H. Huang, B. Zhao, J. Huang, W. Li, Influence of mass ratios between SiC particles and chopped carbon fibers on properties of C/SiC/SiO2 porous ceramics, Ceram. Int., 2021</li><li>Z. Huang, et al., Achieving high permeability of in-situ formed lightweight Cf/SiC(rGO)p/SiC porous ceramics with improved interfacial compatibility for transpiration cooling, J. Eur. Ceram. Soc., 2022</li><li>H.S. Ifti, T. Hermann, M. McGilvray, L. Larrimbe, R. Hedgecock, L. Vandeperre, Flow characterization of porous ultra-high-temperature ceramics for transpiration cooling, AIAA J., 2022</li><li>A. Lin, J. Huang, B. Zhao, H. Huang, Transpiration cooling performance of carbon fiber oxidation-induced Mullite/Al2O3 porous ceramic composite for hypersonic vehicles, 2025</li><li>T. Hermann, M. McGilvray, I. Naved, Performance of transpiration-cooled heat shields for reentry vehicles, AIAA J., 2020</li><li>I. Naved, T. Hermann, M. McGilvray, Numerical simulation of transpiration cooling for a high-speed vehicle with substructure, AIAA J., 2021</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "증산냉각은 냉각제를 다공벽으로 침투시켜 잠열을 흡수하고 보호 표면막을 형성하여 극초음속 비행체를 보호하며, 높은 냉각효율과 적은 냉각제 소모를 제공한다."}, {"type": "bullet", "text": "다공 재료는 금속 또는 세라믹이며, 금속(소결 분말, 와이어 메시)은 전도도가 높지만 저온/산화 저항·고밀도·저강도 문제로, 연구는 저밀도·&gt;1500 degC 저항·화학 안정성의 고온 세라믹(C/C, C/SiC, SiC, ZrB2)으로 옮겨갔다."}, {"type": "bullet", "text": "선행 세라믹 연구: Naved(다공 C/C, 헬륨, 열구배 -65%), Zhang(Cf/SiC, 1.9 MW/m2에서 3.9 g/min 물로 400 degC 미만), Zhu(SiC판, 17% 분사에서 중심 103 degC), ZrB2/Mullite 연구(균일 냉각·~90% 효율)."}, {"type": "bullet", "text": "그럼에도 비균일 열하중과 냉각제 공급의 넓은 범위에 걸친 다공 세라믹 열·기계 성능 차이의 체계적 조사가 없다."}, {"type": "bullet", "text": "다공 C/SiC 대 SiC의 상변화 증산냉각 비교 성능이 열린 간극이다."}, {"type": "bullet", "text": "다상 불안정성(dry-out, 진동)·과도 열응력·궁극적 열화와 파손을 지배하는 메커니즘 간의 관계가 미지다."}, {"type": "bullet", "text": "미세구조(직조 대 입자 소결)가 거시적 열화 경로(부식 대 피로 파괴)를 어떻게 결정하는지 미지이며, 본 연구는 비균일 화염 하에서 C/SiC와 SiC를 미세구조·기계·열응력 분석과 함께 비교한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Naved 등은 다공 C/C(헬륨, 블로잉비 0.04)가 날개 가장자리 열구배를 65% 줄임을, Hermann 등은 헬륨 0.47 kg만으로 다공 ZrB2 재진입 전연을 1527 degC 미만으로 유지함을 수치적으로 보였다."}, {"type": "bullet", "text": "Zhang은 1.9 MW/m2에서 3.9 g/min 물로 표면을 400 degC 미만으로 유지한 다공 Cf/SiC를, Zhu는 1500 degC 화염 17% 분사에서 중심을 103 degC로 안정화한 다공 SiC(ε=50.27%)를 제작했다."}, {"type": "bullet", "text": "Huang은 저밀도(1.12 g/cm3)·양호한 압축강도(6.41 MPa)의 다공 Cf/SiC(rGO)px/SiC를, Ifti는 균일 투과(표준편차 25.1%)의 다공 ZrB2(41% 공극률)를 제작했다."}, {"type": "bullet", "text": "Lin은 5.3 MW/m2에서 다공 Mullite/Al2O3 노즈콘을 실험적으로 냉각하여 0.5 g/s 물로 표면을 224.3 degC·90% 효율로 안정화했다."}, {"type": "bullet", "text": "이들 연구는 개별 재료를 대체로 균일 또는 단일점 조건에서 다루며, 비균일 하중·다양한 냉각제 공급 하 재료 간 열·기계 비교가 아니다."}, {"type": "bullet", "text": "저자들의 선행 연구(Zhu 등 2025)는 C/SiC의 상변화 증산냉각 중 증기 폐색과 수성(수화-산화) 산화를 XPS/XRD/FT-IR로 확인하여 여기서 검토하는 부식 메커니즘을 확립했다."}, {"type": "bullet", "text": "유동 비등 불안정성 문헌(마이크로채널 진동, 증기 폐색)이 다공 SiC에서 관찰된 주기적 폐색/배출/재습윤 거동을 틀 짓는다."}]}, "method": {"content": [{"type": "bullet", "text": "구성: 플런저 펌프가 12 degC 탈이온수를 Coriolis 유량계와 체크밸브를 거쳐 물 수집기로 공급하고, 거기서 상부에 고정된 지름 30 mm·두께 6 mm 증산 디스크를 투과하며, 산소-아세틸렌 토치가 6 cm 위에서 표면을 가열한다.", "figure_refs": [1]}, {"type": "bullet", "text": "산소는 1.7 L/min 고정, 아세틸렌은 1.2/1.4/1.6 L/min로 O/F비 1.4/1.2/1.0을 주며, IR 카메라와 K형 열전대로 중심/가장자리 상면 온도와 3개 배면 반경 온도를, 하부 압력 변환기로 압력을 0.5 s마다 800 s 기록한다."}, {"type": "bullet", "text": "재료: 화학기상침투(CVI)로 제작한 직조 다공 C/SiC(이방성, 번들 간극 ~9 μm; 면내/두께 방향 전도도 87.5-60.7 / 51.1-30.7 W/(m·degC))와 입자 소결 다공 SiC(등방성, ~40 μm 각진 입자, 전도도 151.2-3.3 W/(m·degC)).", "figure_refs": [2]}, {"type": "bullet", "text": "기하/수송 물성(수은 압입법): SiC 공극률 38.4%·투과율 7.6e-13 m2·기공경 12.1 μm·비표면적 161,600 m2/m3; C/SiC 39.2%·1.8e-13 m2·19.0 μm·125,500 m2/m3.", "figure_refs": [2]}, {"type": "bullet", "text": "측정된 중심 열유속은 O/F 1.0/1.2/1.4에서 1.34, 0.89, 0.57 MW/m2이며, 유속은 중심에서 가장자리로 감소하고(O/F=1.0에서 중심-가장자리 차 최대 1.05 MW/m2), 근벽 화염 온도는 1460.6/1408.0/1352.4 degC다.", "figure_refs": [3]}, {"type": "bullet", "text": "증산냉각 효과는 주류·벽·냉각제 온도로 정의되며 오차 전파(최대 상대 불확도 ~5.36%)로 불확도를 구한다."}, {"type": "formula", "label": "식 (1) — 증산냉각 효과", "latex": "\\eta=\\frac{T_\\infty-T_w}{T_\\infty-T_c}", "description": "실제 벽 온도 감소 대 이상 최대 감소의 비; $T_\\infty$ 주류, $T_w$ 상면, $T_c$ 냉각제 입구 온도."}, {"type": "bullet", "text": "두 재료의 미세구조가 달라 유효전도도 모델이 다르다: 등방 소결 SiC는 Zehner-Schlunder형 충전 구 모델, 직조 C/SiC는 프랙탈(굴곡도/면적 프랙탈 차원) 모델을 쓰며, C/SiC의 축/반경 $k_{eff}$(8.0/11.8 W/(m·degC))가 SiC(13.0)보다 낮다."}, {"type": "formula", "label": "식 (4) — 소결 SiC 유효전도도(충전 구)", "latex": "k_{i,eff}=1.8k_i\\left\\{1-\\sqrt{1-\\varepsilon}+\\frac{2\\sqrt{1-\\varepsilon}}{M}\\left[\\frac{B_p-1+M}{M^2}\\ln\\!\\left(\\frac{1}{1-M}\\right)-\\frac{B_p+1}{2}-\\frac{B_p-1}{M}\\right]\\right\\}\\;(i=v,l)", "description": "등방 유효전도도로 $B_p=1.25[(1-\\varepsilon)/\\varepsilon]^{10/9}$, $M=1-B_p k_l/k_s$; $k_s$, $k_i$는 고체·냉각제 전도도."}, {"type": "formula", "label": "식 (5) — 직조 C/SiC 유효전도도(프랙탈) [전사 불확실]", "latex": "k_{i,eff}=\\frac{L_0^{1-D_T}(2-D_f)\\,(d_{p,max}^{\\,1+D_T-D_f}-d_{p,min}^{\\,1+D_T-D_f})}{(1+D_T-D_f)\\,(d_{p,max}^{\\,2-D_f}-d_{p,min}^{\\,2-D_f})}\\cdot\\frac{\\tau^2-1}{\\tau}\\cdot\\frac{1}{k_1+k_2}\\;(i=v,l)", "description": "이방 프랙탈 전도도 모델($L_0$ 특성 길이, $D_T=1.18$ 굴곡 프랙탈 차원, $D_f=1.28$ 면적 프랙탈 차원, 직렬 $k_1=((1-\\varepsilon)/k_s+\\varepsilon/k_i)^{-1}$, 병렬 $k_2=(1-\\varepsilon)k_s+\\varepsilon k_i$). 주: 마지막 인자들의 정확한 묶음이 원문 레이아웃에서 모호하여 본 전사는 불확실로 표시하며, 재사용 전 PDF 대조가 필요하다."}, {"type": "formula", "label": "식 (6) — 굴곡도", "latex": "\\tau=\\frac{1}{2}\\left[1+\\frac{1}{2}\\sqrt{1-\\varepsilon}+\\frac{\\sqrt{(1-\\sqrt{1-\\varepsilon})^2+\\tfrac{1-\\varepsilon}{4}}}{1-\\sqrt{1-\\varepsilon}}\\right]", "description": "다공 매질의 굴곡도($L_0$=19.0 μm인 C/SiC에서 1.71로 평가)."}]}, "results": {"content": [{"type": "bullet", "text": "4.0 g/min에서 C/SiC 표면 온도가 모든 O/F비에서 SiC보다 일관되게 높은데, 이는 낮은 전도도와 비표면적이 낮은 기공 Reynolds 수와 작은 간극 열전달 계수를 주기 때문이며, C/SiC 중심은 108 degC(물 포화점 초과)에 이른다.", "figure_refs": [4]}, {"type": "bullet", "text": "C/SiC는 더 낮은 가장자리 온도와 더 큰 반경 온도차(O/F 감소 시 확대)를 보이는데, 이는 더 큰 유효 반경 열저항과 냉각제를 가장자리로 배출시키는 더 강한 중심 증기 폐색 때문이며, 배면 중심이 훨씬 차가워(~19 degC 대 SiC ~38 degC) 더 큰 중심 축방향 온도차를 준다.", "figure_refs": [4]}, {"type": "bullet", "text": "1.5 g/min에서 응답이 근본적으로 다르다: C/SiC는 내부적으로 열을 방출하지 못해 국소 과열되어 열전대 한계(&lt;1050 degC)를 초과하며, O/F=1.4에서만 892/130 degC(중심/가장자리)로 안정화한다.", "figure_refs": [4]}, {"type": "bullet", "text": "SiC는 1.5 g/min에서 증기 폐색-배출-재습윤으로 주기 진동하며, 진동 주기가 O/F 감소에 따라 길어진다(O/F=1.0 320 s, 1.2 218 s, 1.4 209 s), 중심 최고 온도 875/850/765 degC, 진폭 760/736/661 degC.", "figure_refs": [4]}, {"type": "bullet", "text": "O/F=1.2에서 냉각제를 2.5→2.0 g/min로 낮추면 C/SiC 중심/가장자리/배면이 1010/251/128 degC에 이르고 dry-out 고온(&gt;300 degC) 면적이 표면의 12%→40%로 커지며, SiC는 진동(주기 206 s)하며 고온 면적이 9.6%→45.2%→26.7%로 순환한다.", "figure_refs": [5]}, {"type": "bullet", "text": "입구 압력은 모세관력(Young-Laplace, $P_c=\\sigma/r$)이 증기·Darcy·중력·공력 압력과 경쟁해 지배되며, C/SiC Pin은 먼저 떨어졌다가(2.0 g/min에서 -3.1 kPa) 회복하는 반면 SiC는 증기 배출 시 56.4 kPa 펄스로 급등한다(증기/액적의 폭발적 분출 동반).", "figure_refs": [5]}, {"type": "formula", "label": "식 (7) — 입구 압력 균형", "latex": "P_{in}=(P_v+P_d+P_G+P_a)-P_c", "description": "증기·Darcy·중력·공력 압력에서 모세관 압력 $P_c=\\sigma/r$을 뺀 입구 압력(모세관 흡입 지배 시 음수)."}, {"type": "bullet", "text": "열화(O/F=1.0, 2.0 g/min): C/SiC는 이방성 부식 홈과 C 섬유 박리, 7.1% 질량 손실(7.0→6.5 g)을 수화-산화 부식으로 겪는다 — 표면 SiC가 SiO2로 산화되고 과열 증기가 이를 Si(OH)4로 휘발시켜 C 섬유를 노출·소모한다.", "figure_refs": [6]}, {"type": "formula", "label": "식 (8-10) — 수화-산화 부식 반응", "latex": "SiC+\\tfrac{3}{2}O_2(g)=SiO_2+CO(g);\\quad SiO_2+2H_2O(g)=Si(OH)_4(g);\\quad 2C(s)+O_2(g)=2CO(g)", "description": "표면의 SiO2 막 산화, 과열 증기에 의한 휘발, 노출된 탄소 섬유의 후속 산화."}, {"type": "bullet", "text": "SiC는 대신 주기적 열응력(Pin 1.4-48.2 kPa 변동, 진폭 740 degC) 하에서 2021 s에 열피로로 파괴되며, 낮은 굽힘강도(10.6 MPa)가 계산된 열응력을 초과하는 반면 C/SiC(189 MPa)는 임계값보다 훨씬 낮아 온전히 유지된다.", "figure_refs": [6, 7]}, {"type": "formula", "label": "식 (11) — 최대 열응력", "latex": "\\sigma=\\frac{E\\,\\alpha\\,\\Delta T}{1-\\nu}", "description": "탄성계수 $E$·열팽창계수 $\\alpha$·온도차 $\\Delta T$·Poisson 비 $\\nu$로부터의 열응력; SiC $\\sigma_{max}\\approx37.0$ MPa(&gt; 강도 10.6 MPa → 파괴), C/SiC $\\sigma_{max}\\approx36.6$ MPa(&lt;&lt; 189 MPa → 온전)."}]}, "discussion": {"content": [{"type": "bullet", "text": "SiC의 높은 등방 전도도는 열을 분산시켜 적절한 냉각제에서 더 낮고 균일한 표면 온도를 주는 반면, C/SiC의 이방성은 열을 중심에 집중시키고 반경 온도차를 넓힌다."}, {"type": "bullet", "text": "낮은 냉각제에서 증기 폐색이 동역학을 설정한다: SiC에서는 폐색-배출-재습윤 순환이 온도 진동과 큰 압력 펄스(최대 56.4 kPa)를 내고, C/SiC는 낮은 투과율이 열을 가두어 단조 국소 과열을 일으킨다."}, {"type": "bullet", "text": "파손은 미세구조가 결정한다: 입자 소결 SiC는 10.6 MPa 강도가 ~37 MPa 순환 열응력과 압력 펄스를 견디지 못해 기계적으로 열피로 파괴(소결 넥을 따른 균열)된다."}, {"type": "bullet", "text": "직조 C/SiC는 화학적으로 파손한다: 189 MPa 강도로 열-기계 충격은 견디나 수화-산화 부식이 보호 SiO2 막을 휘발시키고 C 섬유를 소모하여 홈·박리·7.1% 질량 손실을 야기한다."}, {"type": "bullet", "text": "따라서 재료 선정은 상충이다: 열 균일성을 위한 SiC, 가혹한 열-기계 충격 하 구조 건전성을 위한 C/SiC; 모든 조건에서 이상적인 것은 없다."}, {"type": "bullet", "text": "사용자의 $\\varepsilon(x)$ 문제와의 관련성: 공극률 설계가 없는 실험적 재료 선정 연구이지만, 사용자의 구배 공극률 연구가 겨냥하는 바로 그 연쇄 — 비균일 열유속 → 반경 온도차 → 열응력(식 11) → 파괴 — 를 정량화하여, '비균일 열유속 하 균일 냉각'을 효율 지표가 아니라 구체적 구조 생존 요구로 만든다."}, {"type": "bullet", "text": "또한 LTNE-TPMM 모델을 위한 검증급 현상과 데이터를 제공한다: 측정된 증기 폐색 압력 펄스, 진동 주기, dry-out 면적 분율, 그리고 C/SiC·SiC의 온도 의존 전도도·비열·투과율·공극률·열팽창 전체 데이터."}]}, "conclusion": {"content": [{"type": "bullet", "text": "충분한 냉각제(4.0 g/min)에서 SiC의 높은 등방 열전도도가 C/SiC 대비 우수한 중심 냉각효율과 온도 균일성을 준다."}, {"type": "bullet", "text": "1.5 g/min에서 C/SiC는 국소적·비가역적으로 과열되고, 투과율이 더 높은 SiC는 반복 증기 폐색/배출 순환으로 주기 진동(209-320 s, 진폭 661-760 degC)한다."}, {"type": "bullet", "text": "그 순환은 온도 진동을 유발하는 동시에 O/F=1.0·2.0 g/min에서 최대 56.4 kPa의 강한 입구 압력 펄스를 생성한다."}, {"type": "bullet", "text": "가혹 조건에서 두 재료는 다르게 파손한다: SiC는 기계적으로 열피로 파괴(낮은 10.6 MPa 굽힘강도), C/SiC는 189 MPa 강도에도 화학적으로 수화-산화 부식된다."}, {"type": "bullet", "text": "소결 SiC는 높은 열전도도와 냉각 균일성을 제공하지만, 직조 C/SiC의 기계적 강건성이 가혹한 열-기계 충격 하 구조 건전성의 유력 후보로 만든다."}, {"type": "bullet", "text": "결과는 열 균일성과 기계적/화학적 내구성을 균형 잡는 증산냉각 열보호 시스템 재료 선정의 명확한 지침을 제공한다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "낮은 냉각제와 높은 열유속 하에서 C/SiC 중심 온도가 열전대 측정 한계(&lt;1050 degC)를 초과하여 해당 실험이 조기 종료되었고 최고 열응답이 미규명으로 남았다.", "source_quote": "heat cannot be effectively dissipated inside the porous C/SiC, which leads to the local overheating and the termination of the experiment as the temperature exceeds the thermocouple's measurement limit (&lt;1050 °C)", "source_section": "results"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["비균일 열하중과 냉각제 공급의 넓은 범위에 걸친 다공 세라믹의 열·기계 성능 차이에 대한 체계적 연구가 없다.", "다공 C/SiC 대 SiC의 상변화 증산냉각 비교 성능이 알려져 있지 않다.", "다상 불안정성(dry-out, 진동)·과도 열응력·궁극적 열화/파손 메커니즘 간의 관계가 불명확하다.", "재료 미세구조(직조 대 입자 소결)가 거시적 열화 경로(부식 대 피로 파괴)를 어떻게 결정하는지 알려져 있지 않다."], "addressed_by_this_work": ["제어된 산소-아세틸렌 실험이 O/F비(1.0-1.4)와 냉각제율(1.5-4.0 g/min) 전반에서 C/SiC와 SiC를 비교하여 표면/배면 온도, 냉각효율, 입구 압력, IR 표면장을 측정한다.", "SiC는 충분한 냉각제에서 더 낮고 균일하게 냉각(높은 등방 전도도)되는 반면, 낮은 냉각제에서 C/SiC는 비가역 과열을, SiC는 증기 폐색/배출/재습윤으로 진동(209-320 s)하며 최대 56.4 kPa 압력 펄스를 생성한다.", "파손 경로를 규명한다: SiC는 기계적으로 유도된 열피로 파괴(굽힘 10.6 MPa, 열응력 ~37 MPa가 강도 초과), C/SiC는 기계적으로 견디나(189 MPa) 화학적으로 유도된 수화-산화 부식(질량 7.1% 손실)으로 열화하여 미세구조를 열화 모드에 사상한다."], "remaining_unresolved": ["C/SiC의 가혹 조건 최고 온도가 열전대 한계로 제한되어 완전한 과열 응답이 측정되지 않는다.", "두 재료 모두에 대한 완화책(예: 부식 방지 코팅, 피로 저항 설계)이 제시되지 않는다.", "순수 실험·정상 화염 연구로, 예측용 LTNE-TPMM/수치 결합과 장기 순환 내구성은 다뤄지지 않으며 구배 공극률도 설계되지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
