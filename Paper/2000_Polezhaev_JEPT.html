@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Will There or Will There Not Be a Hypersonic Airplane?</title>
+    <meta name="keywords" content="Hypersonic, TPS, Transpiration cooling, Non-uniform heat flux, Nose cone, Aerodynamic heating, Shock interference, Stagnation point heating, Ramjet propulsion, Analytical">
+    <meta name="paper-authors" content="Yu. V. Polezhaev">
+    <meta name="paper-journal" content="Journal of Engineering Physics and Thermophysics, Vol. 73, No. 1, 2000, pp. 5-10 (translated from Inzhenerno-Fizicheskii Zhurnal) · DOI: 10.1007/BF02681670">
+    <meta name="paper-tier" content="2">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="05_Others">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Noto Sans KR', 'Arial', sans-serif;
+            margin: 0; padding: 0 0 24px;
+            background: #f5f5f5;
+            color: #333;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+        }
+        .slide {
+            width: min(1280px, 98vw);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .header {
+            background: #005b96;
+            color: white;
+            padding: 26px 38px;
+        }
+        .title { font-size: 32px; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
+        .authors { font-size: 17px; margin-bottom: 5px; }
+        .journal { font-size: 15px; opacity: 0.9; }
+
+        .summary-container {
+            background: #f0f5fa;
+            padding: 18px 38px;
+            border-bottom: 1px solid #e1e5e8;
+        }
+        .summary-title {
+            font-size: 19px; font-weight: bold; margin-bottom: 8px; color: #005b96;
+        }
+        .summary { font-size: 17px; line-height: 1.65; }
+        .keywords {
+            margin-top: 10px;
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .keyword-chip {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: white;
+            color: #005b96;
+            border: 1px solid #c6dbed;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            padding: 14px 18px;
+            overflow: hidden;
+            height: 62vh;        /* fixed → cards never resize when references toggles */
+            flex-shrink: 0;
+        }
+        .section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,91,150,0.18);
+            border-color: #005b96;
+        }
+        .section-title {
+            color: #005b96;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 9px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #005b96;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .click-hint {
+            font-size: 12px;
+            color: #888;
+            font-weight: normal;
+        }
+        .section-summary {
+            font-size: 15px;
+            line-height: 1.6;
+            flex: 1;
+            overflow: hidden;
+        }
+        .term { font-weight: bold; color: #005b96; }
+        .eng { color: #666; font-style: italic; }
+
+        /* Tier badge */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 18px;
+            margin-bottom: 10px;
+        }
+        .tier-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        }
+        .tier-1 { background: #d32f2f; color: white; }
+        .tier-2 { background: #f57c00; color: white; }
+        .tier-3 { background: #757575; color: white; }
+
+        /* Conclusion-modal Insights block (한계 / 향후 연구 / 동기 vs 해결도) */
+        .conclusion-insights {
+            margin-top: 28px;
+            padding-top: 18px;
+            border-top: 2px dashed #c5cdd6;
+        }
+
+        .modal-body .lim-list,
+        .modal-body .future-list {
+            padding-left: 20px;
+            margin: 0 0 16px;
+        }
+        .modal-body .lim-list li,
+        .modal-body .future-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .evidence-source {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+            line-height: 1.5;
+        }
+        .evidence-source em { font-style: normal; color: #888; }
+        .motivation-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 8px;
+        }
+        @media (min-width: 900px) {
+            .motivation-block { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mot-problems h5,
+        .mot-addressed h5,
+        .mot-remaining h5 {
+            margin: 0 0 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .mot-problems h5  { color: #c62828; }
+        .mot-addressed h5 { color: #2e7d32; }
+        .mot-remaining h5 { color: #ef6c00; }
+        .mot-problems ul,
+        .mot-addressed ul,
+        .mot-remaining ul {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .mot-problems li,
+        .mot-addressed li,
+        .mot-remaining li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+            font-size: 14.5px;
+        }
+        .insights-section-title {
+            color: #005b96;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+            font-size: 17px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* Figure-ref chip */
+        .fig-ref {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            font-size: 11px;
+            color: #555;
+            background: #eef2f7;
+            border: 1px solid #d0d8e0;
+            border-radius: 999px;
+            vertical-align: middle;
+            text-indent: 0;       /* reset inherited .bullet text-indent:-18px (chip text spilled out of the pill) */
+            text-align: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.18s ease-out;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: white;
+            width: min(1100px, 90vw);
+            height: min(800px, 88vh);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .modal-header {
+            background: #005b96;
+            color: white;
+            padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; }
+        .modal-close {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.2); }
+        .modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            font-size: 15.5px;
+            line-height: 1.75;
+        }
+        .modal-body .bullet {
+            margin-bottom: 10px;
+            padding-left: 18px;
+            text-indent: -18px;
+        }
+        .modal-body .bullet:before {
+            content: "▸ ";
+            color: #005b96;
+            font-weight: bold;
+        }
+        .modal-body .formula-block {
+            background: #f8f9fb;
+            border-left: 4px solid #005b96;
+            padding: 14px 18px;
+            margin: 14px 0;
+            border-radius: 4px;
+        }
+        .modal-body .paper-fig {
+            margin: 16px 0;
+            text-align: center;
+        }
+        .modal-body .paper-fig img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .modal-body .paper-fig figcaption {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+        .modal-body .formula-label {
+            font-size: 12px;
+            color: #005b96;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .modal-body .formula-desc {
+            font-size: 13px;
+            color: #555;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+        .modal-body h4 {
+            color: #005b96;
+            margin-top: 22px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 4px;
+        }
+        details.references {
+            margin: 4px 18px 18px;
+            box-sizing: border-box;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px 16px;
+            background: #fafbfc;
+        }
+        details.references > summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #005b96;
+            font-size: 14px;
+            user-select: none;
+        }
+        details.references .ref-count {
+            color: #888;
+            font-weight: 400;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+        details.references .ref-list {
+            margin: 12px 0 4px;
+            padding-left: 22px;
+            font-size: 12.5px;
+            color: #333;
+            line-height: 1.6;
+        }
+        details.references .ref-list li { margin-bottom: 5px; }
+    </style>
+    <!-- theme:start — light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root[data-theme="dark"] { color-scheme: dark; }
+        [data-theme="dark"] body { background: #0d1117; color: #e6edf3; }
+        [data-theme="dark"] .slide { background: #161b22; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .modal-header { background: #0a4a78; }
+        [data-theme="dark"] .summary-container { background: #132b44; border-bottom-color: #30363d; }
+        [data-theme="dark"] .summary-title,
+        [data-theme="dark"] .section-title,
+        [data-theme="dark"] .term,
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4,
+        [data-theme="dark"] .modal-body .formula-label,
+        [data-theme="dark"] .modal-body .bullet:before,
+        [data-theme="dark"] details.references > summary { color: #58a6ff; }
+        [data-theme="dark"] .section-title { border-bottom-color: #58a6ff; }
+        [data-theme="dark"] .keyword-chip { background: #0d1117; color: #79c0ff; border-color: #1f4a73; }
+        [data-theme="dark"] .section { background: #1c2128; border-color: #30363d; box-shadow: none; }
+        [data-theme="dark"] .section:hover { border-color: #58a6ff; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        [data-theme="dark"] .click-hint,
+        [data-theme="dark"] .evidence-source em,
+        [data-theme="dark"] details.references .ref-count { color: #7d8590; }
+        [data-theme="dark"] .eng,
+        [data-theme="dark"] .evidence-source,
+        [data-theme="dark"] .modal-body .formula-desc,
+        [data-theme="dark"] .modal-body .paper-fig figcaption { color: #9da7b3; }
+        [data-theme="dark"] .evidence-source { border-left-color: #30363d; }
+        [data-theme="dark"] .conclusion-insights { border-top-color: #30363d; }
+        [data-theme="dark"] .insights-section-title,
+        [data-theme="dark"] .modal-body h4 { border-bottom-color: #30363d; }
+        [data-theme="dark"] .mot-problems h5  { color: #ff7b72; }
+        [data-theme="dark"] .mot-addressed h5 { color: #56d364; }
+        [data-theme="dark"] .mot-remaining h5 { color: #ffa657; }
+        [data-theme="dark"] .fig-ref { color: #c9d1d9; background: #21262d; border-color: #30363d; }
+        [data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+        [data-theme="dark"] .modal { background: #161b22; }
+        [data-theme="dark"] .modal-body .formula-block { background: #0d1117; border-left-color: #58a6ff; }
+        [data-theme="dark"] .modal-body .paper-fig img { border-color: #30363d; }
+        [data-theme="dark"] details.references { background: #0d1117; border-color: #30363d; }
+        [data-theme="dark"] details.references .ref-list { color: #c9d1d9; }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Will There or Will There Not Be a Hypersonic Airplane?</div>
+                <span class="tier-badge tier-2">Tier 2 — 일반</span>
+            </div>
+            <div class="authors">Yu. V. Polezhaev</div>
+            <div class="journal">Journal of Engineering Physics and Thermophysics, Vol. 73, No. 1, 2000, pp. 5-10 (translated from Inzhenerno-Fizicheskii Zhurnal) · DOI: 10.1007/BF02681670</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 짧은 해석적 개관은 재사용 왕복선(Space Shuttle, Buran)의 입증된 성공에도 불구하고, 수평 순항하는 <span class="term">극초음속 비행기(hypersonic airplane)</span>는 여전히 미해결 과학·기술 과제이며 그 병목은 열방어(thermal protection)라고 주장한다. 저자는 브레게식 항속거리·고도 관계식을 이용해, 마하 8-10에서의 10,000 km 순항이 초음속에 가까운 세장형 형상과 매우 날카로운 앞전(곡률 반경 약 10 mm, Buran의 약 1000 mm 대비)을 강제함을 보인다. 이러한 날카롭고 세장한 형상은 현대 초음속기 대비 정체점 열부하를 약 50배, 평형 벽온도를 약 3배 높이며, 엔진 흡입구 근처의 충격파-충격파 간섭은 국부적으로 압력과 열유속을 한 자릿수(약 10배) 증폭시킬 수 있다. 논문은 이러한 간섭 영역에서는 <span class="term">침투(증산) 냉각</span>조차 약하다고 보고한다. 최대 30%의 냉각제 분사에도 첨두 열유속 저감은 약 10%를 넘지 못하는데, 높은 배압이 냉각제 여과를 불균일하게 만들기 때문이다. 결론은 왕복선 시대 해법의 외삽이 아니라, 공력-열을 통합한 근본적으로 새로운 열방어 개념을 요구한다.</div>
+            <div class="keywords"><span class="keyword-chip">Hypersonic</span><span class="keyword-chip">TPS</span><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Non-uniform heat flux</span><span class="keyword-chip">Nose cone</span><span class="keyword-chip">Aerodynamic heating</span><span class="keyword-chip">Shock interference</span><span class="keyword-chip">Stagnation point heating</span><span class="keyword-chip">Ramjet propulsion</span><span class="keyword-chip">Analytical</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 비행(마하 6 이상)은 단순 형상 물체에 대해서는 해석이 용이하지만, 산소·질소의 해리와 충격파 뒤 원자·이온·전자의 출현이라는 새로운 고온 공기 물리를 도입하여 표면 가열을 급격히 심화시킨다. 이 효과는 날개·흡입구 앞전의 충격파-충격파 간섭과 함께 역사적으로 왕복선 설계자들에게 전용 열방어 개발을 강제했으며, 극초음속 비행기의 핵심 장애물로 남아 있다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 극초음속 비행기를 Buran과 Space Shuttle의 재사용 캡슐 계보와 대비시키며, 그들의 뭉툭하고 고항력인 재진입 형상과 비행기가 요구하는 세장·고양력 형상을 비교한다. 또한 기존 소련 열방어·충격파 간섭 문헌과 초기 증산 냉각 간섭 영역 실험을 활용한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">분석은 순항 실현 가능성을 추진·열 한계에 결부시키는 1차 공학 관계식들의 집합이다. 지수 대기 모델, 브레게 항속거리식, 날개하중-고도 관계식이 비행 영역을 설정하고, 제곱근 단열두께 추정과 정체점 열유속 곡선이 열 제약을 설정한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">영역 분석은 마하 8-10의 실현 가능한 순항을 고정하되 세장·날카로운 형상에서만 가능하게 하며, 열 결과는 그 결과적 대가를 정량화한다. 정체점 열부하는 초음속기 대비 약 50배, 평형 온도는 약 3배 상승하고, 충격파 간섭과 날카로운 앞전은 한 자릿수의 국부 고온점을 만든다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논의는 날카로운 앞전, 장시간 순항, 충격파 간섭의 조합이 질적으로 더 가혹하기 때문에 왕복선 시대 열방어가 극초음속 비행기에 이전되지 않는다고 주장한다. 코팅과 증산 냉각의 구체적 실패 양상을 식별하고 수동/능동 하이브리드 개념을 지향한다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">논문은 왕복선 성공에서 오는 겉보기 고무가 오도적이라고 결론짓는다. 극초음속 비행기의 공력 배치, 궤적, 열 영역이 재사용 왕복선과 근본적으로 다르므로 그 열방어는 단순 외삽일 수 없다. 극초음속 비행기가 실현되려면 공력-열을 통합한 새로운 개념이 필요하다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 3 / total 4</span></summary>
+            <ol class="ref-list"><li>Yu. V. Polezhaev and F. B. Yurevich, Thermal Protection [in Russian], Moscow, 1976.</li><li>V. Ya. Borovoi, Gas Flow and Heat Transfer in the Zones of Interaction of Shock Waves with a Boundary Layer [in Russian], Moscow, 1983.</li><li>R. J. Nowak, M. S. Holden, A. R. Wieting, Shock/Shock Interference on a Transpiration Cooled Hemispherical Model, AIAA-90-1643.</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "<span class=\"term\">극초음속(hypersonic)</span>은 마하수 6 이상의 전 비행 속도군을 가리킨다. 단순 형상(원뿔, 쐐기)에서는 <span class=\"eng\">M &gt; 6</span> 영역이 오히려 아음속/초음속보다 해석이 쉬운데, 활 충격파 형상이 안정화되어 물체 모선을 따라 자기상사적 압력·열유속 분포를 주기 때문이다."}, {"type": "bullet", "text": "고마하 유동은 새로운 물리를 가져온다. 주요 공기 성분(산소, 질소)의 해리와 충격파 뒤 원자·이온·전자의 출현이 표면에 대한 유입류의 열작용을 크게 증대시켜 특수한 열방어 방법을 요구한다."}, {"type": "bullet", "text": "활 충격파와 날개 또는 조종면 요소의 상호작용도 똑같이 어려운 문제다. 국부 충격 구조가 표면 압력을 한 자릿수(약 10배) 높이고 열유속도 그만큼 격렬하게 상승시킬 수 있다."}, {"type": "bullet", "text": "저자는 이를 왕복선 설계자(Space Shuttle, Buran)가 직면하고 해결한 문제로 규정하며, 첫 대기권 극초음속 비행을 1981년 4월 12일로 본다. 앞선 실험기(X-15, Bor-4)는 비행했으나 극초음속 비행기는 아니었다."}, {"type": "bullet", "text": "진정한 비행기는 재사용 캡슐과 달리 높은 공력품질과 연속 작동 추진계로 수평 비행한다. 전자는 중력을 상쇄할 양력을, 후자는 접선(마찰)·법선(압력) 저항의 극복을 제공한다."}, {"type": "bullet", "text": "항공공학은 1960년대 말까지 극초음속 장벽을 돌파할 것으로 기대했으나(소련 전투기/폭격기 속도 증가 외삽, Fig. 1) 실현되지 않았다. 새 천년에도 1-1.5시간의 대양 횡단 여객 비행은 전망되지 않는다.", "figure_refs": [1]}]}, "related_works": {"content": [{"type": "bullet", "text": "Buran형 왕복선 재사용 모듈이 주요 비교 기준이다. 캡슐의 탄도 재진입과 달리 핵심 성능 지표는 항속거리 L과 페이로드 대 출발질량 비이다."}, {"type": "bullet", "text": "Buran은 약 1000 mm의 뭉툭한 앞전 반경과 20도 이상의 받음각을 허용했으나, 극초음속 비행기는 약 10 mm 앞전 반경과 5도 미만 받음각의 초음속형 형상에 접근해야 한다."}, {"type": "bullet", "text": "열방어 논의는 저자 자신의 Yurevich와의 단행본(Thermal Protection, 1976)과 Borovoi의 충격파/경계층 상호작용 열전달 연구(1983)에 기초한다."}, {"type": "bullet", "text": "엔진 유형(터보제트, 램제트, 터보램제트, 액체추진)별 탄화수소(T-1)·수소(H2) 연료의 비추력 데이터를 중앙 공기-유체역학 연구소 자료에서 가져와 달성 가능한 항속거리를 한정한다.", "figure_refs": [2]}, {"type": "bullet", "text": "간섭 영역 냉각 평가는 증산 냉각된 반구 모형의 충격파/충격파 간섭에 대한 Nowak, Holden, Wieting의 실험 데이터(AIAA-90-1643)를 사용한다."}, {"type": "bullet", "text": "왕복선 경험은 실용 해법이 치밀한 탄소-탄소 복합재부터 초경량 석영 유리섬유 매트까지의 등급화된 코팅 조합이었음을 보여주나, 저자는 이것이 비행기에는 불충분하다고 주장한다."}]}, "method": {"content": [{"type": "bullet", "text": "대기는 고도에 대해 지수적으로 모델링되어, 순항 고도에 따라 밀도(따라서 양력과 항력)가 어떻게 감소하는지를 고정한다."}, {"type": "formula", "label": "Eq. (1) - 지수 대기 밀도", "latex": "\\rho_\\infty = \\rho_0 \\, \\exp(-\\beta H)", "description": "고도 H에서의 공기 밀도는 해수면 값 rho_0에서 계수 beta = 1/7100 per meter(하부 대기)로 감쇠한다."}, {"type": "bullet", "text": "수평 순항은 두 균형을 동시에 요구한다. 엔진 추력이 공력 항력(Cx S rho_inf V_inf^2 / 2에 비례)과 같아야 하고, 날개+동체 양력(Cy S rho_inf V_inf^2 / 2에 비례)이 중량 mg와 같아야 한다. 그 비가 공력품질 K = Cy/Cx를 정의한다."}, {"type": "bullet", "text": "두 균형을 엔진 비추력 I와 결합하면 브레게형 항속거리 법칙이 나오고, 이를 통해 10,000 km 순항에는 수소 램제트와 K &gt;= 3으로 마하 8-10이 필요함을 보인다."}, {"type": "formula", "label": "Eq. (2) - 브레게 항속거리 관계", "latex": "L = K\\, I\\, V_\\infty \\, \\ln\\!\\left(\\frac{m_0}{m_0 - m_f}\\right)", "description": "순항 거리 L은 공력품질 K, 비추력 I, 비행 속도 V_inf, 그리고 출발질량 대 연소종료질량 비의 로그와 함께 커진다. m_0는 출발질량, m_f는 연료질량이다."}, {"type": "formula", "label": "Eq. (3) - 날개하중으로부터의 수평비행 고도", "latex": "H = \\frac{1}{\\beta} \\, \\ln\\!\\left(\\frac{\\rho_0\\, C_y\\, S\\, V_\\infty^2}{2\\,m g}\\right)", "description": "순항 고도 H는 양력 균형과 지수 대기로부터 허용 날개하중 mg/(Cy S)의 함수로 도출된다(Fig. 3)."}, {"type": "bullet", "text": "열 측면에서 단열 코팅의 요구 두께는 비행 시간의 제곱근에 비례하는 것으로 추정되어, 순항을 5000 s로 늘리면 단열이 상당히 두꺼워진다.", "figure_refs": [4]}, {"type": "formula", "label": "단열 두께 추정", "latex": "\\delta_h \\approx 3\\,\\sqrt{a\\,\\tau}", "description": "단열 두께 delta_h는 열확산율 a와 비행 시간 tau의 곱의 제곱근으로 커지며, 원문에서 선행 계수는 약 3으로 주어진다."}, {"type": "bullet", "text": "정체점 열유속과 평형 벽온도는 방사율 0.8에서의 열유속-속도 곡선(Fig. 4)으로 읽고, 대표적인 마하 8, H = 27 km 경우에 대해 표면 등온선을 작성한다(Fig. 5).", "figure_refs": [4, 5]}]}, "results": {"content": [{"type": "bullet", "text": "수소(H2) 램제트는 기준 10,000 km 순항을 K &gt;= 3으로 마하 8-10에서 지탱할 수 있다. 이는 Buran의 두 배이지만 현대 초음속기보다는 여전히 1.5-2배 열등하다."}, {"type": "bullet", "text": "K를 만족하려면 Buran 형상을 버리고 초음속형 세장 형상을 택해야 한다. 약 10 mm 앞전 반경, 5도 미만 받음각, 작은 상대 날개/동체 두께, 그리고 동체 하면이 노즐 역할을 하고 활 충격파를 흡입구 앞전에 묶는 통합 배치이다."}, {"type": "bullet", "text": "현대 초음속기 대비 노즈 돔 열부하는 비행 속도 증가에 따라 거의 50배, 평형 온도 T_w는 약 3배 커진다(Fig. 4).", "figure_refs": [4]}, {"type": "bullet", "text": "마하 8, H = 27 km 표면 등온선(Fig. 5)은 가장 심한 열응력이 동체·날개·램제트 흡입구의 날카로운 앞전 근처에 집중되며 강한 공간 온도 불균일성을 보인다.", "figure_refs": [5]}, {"type": "bullet", "text": "흡입구 앞전에서는 동체 활 충격파와 흡입구 자체 충격파의 교차가 표면을 향하는 고두압 제트를 형성하여, 매우 작은 단면 치수에서 압력과 열유속이 한 자릿수(약 10배) 상승할 수 있다(Fig. 6).", "figure_refs": [6]}, {"type": "bullet", "text": "간섭 영역 실험(Fig. 7)은 증산 냉각이 30% 무차원 분사에서도 첨두 열유속을 최대 약 10%만 줄임을 보인다. 다만 충격 충돌점에서 떨어진 곳에서는 냉각 효율이 높다.", "figure_refs": [7]}]}, "discussion": {"content": [{"type": "bullet", "text": "탄소-탄소부터 석영 유리섬유 매트까지의 등급화 코팅은 왕복선에서는 작동하지만, 더 긴 순항(최대 5000 s)은 시간의 제곱근으로 커지는 두께 특성까지 더해져 훨씬 두꺼운 단열을 강제한다."}, {"type": "bullet", "text": "강한 표면 온도 불균일성은 분사 코팅을 무력화하므로, 단일 균일 보호 방식은 기체 전반에 걸쳐 부적절하다."}, {"type": "bullet", "text": "추가적인 비행기 고유 부담에는 (특히 풍하면에서) 더 높은 접선 응력, 다공성 단열이 대기 수분을 흡수하는 문제, 큰 선형 치수가 포함된다."}, {"type": "bullet", "text": "일반 유동에서 효과적인 증산 냉각은 충격파 간섭 제트에서 대부분의 이점을 잃는데, 높은 배압이 불균일 냉각제 여과와 국부 저유량 영역을 유발하기 때문이다. 이는 불균일 열유속/불균일 공급의 직접적 결합이다.", "figure_refs": [7]}, {"type": "bullet", "text": "날카로운 앞전과 간섭 제트는 알려진 어떤 해법과도 다른 열방어를 요구하는 것으로 지목되어, 액체금속 히트파이프를 포함한 수동·능동 열제거의 고려를 촉구한다."}, {"type": "bullet", "text": "저자는 공력과 열전달이 공동으로 최적화되어야 함을 강조한다. 순항을 가능케 하는 형상 선택(세장화, 날카로운 앞전)이 바로 열 문제를 만들어내기 때문이다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "Space Shuttle과 Buran의 성과에도 불구하고, 더 상세한 분석은 극초음속 비행기가 공력 배치, 궤적 조건, 열 영역에서 근본적으로 다름을 보인다."}, {"type": "bullet", "text": "지배적 미해결 문제는 열방어이며, 특히 기존 수동 코팅과 단순 증산 냉각이 부적절한 날카로운 앞전과 충격파 간섭 영역에서 그렇다."}, {"type": "bullet", "text": "열방어의 근본적으로 새로운 기술적 아이디어 탐색이, 후보 형상의 공력 최적화와 공동으로 추진되어야 한다."}, {"type": "bullet", "text": "정량적으로 핵심 구간은 K &gt;= 3으로 10,000 km를 마하 8-10에서 순항하는 것이며, 그 대가는 초음속 비행 대비 약 50배의 정체점 열부하와 약 3배의 평형 온도이다."}, {"type": "bullet", "text": "제목의 질문은 의도적으로 열려 있다. 실현 가능성이 배제되지는 않지만, 구조물을 공력 가열로부터 보호하는 돌파구에 달려 있다."}, {"type": "bullet", "text": "냉각 연구를 위한 전체 메시지는, 평균 열부하가 아니라 불균일하고 국부적으로 증폭된 가열(간섭 고온점, 날카로운 앞전)이 가장 어려운 열방어 요구를 설정한다는 것이다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "흡입구 앞전 근처의 충격파 간섭 영역에서 증산(침투) 냉각은 효과가 약하다. 무차원 분사량이 약 30%에 달해도 첨두 열유속 저감은 대략 10%를 넘지 못한다.", "source_quote": "Even with a nondimensional injection intensity Gw/(p=V=) that attains 30%, the effect of the reduction in the heat flux did not exceed 10%.", "source_section": "discussion"}, {"claim": "간섭 제트의 높은 배압이 냉각제 여과를 불균일하게 만들어 국부적으로 유량이 낮아지는 영역을 형성하고, 거기서 방어가 실패한다.", "source_quote": "But the presence of a high counterpressure, probably, produces the nonunilbrmity of coolant filtration and, as a consequence, a local zone with a decreased flow rate.", "source_section": "discussion"}, {"claim": "강한 표면 온도 불균일성 때문에 극초음속 비행기에는 분사식 소모성/단열 코팅의 적용이 곤란하다.", "source_quote": "A strong temperature nonuniformity makes it problematic to employ sprayed coatings.", "source_section": "discussion"}, {"claim": "날카로운 앞전의 보호에는 알려진 모든 기술적 해법과 전혀 다른 방법이 필요하며, 이는 기존 접근법 중 적절한 것이 없음을 뜻한다.", "source_quote": "As far as the sharp edges are concerned the methods of their thermal protection must be totally different from all the known technical solutions.", "source_section": "discussion"}], "future_works": [{"claim": "날카로운 앞전에는 액체금속 히트파이프를 포함한 수동·능동 열제거 방법을 모두 고려해야 한다.", "source_quote": "Consideration should, probably, be given to both passive and active methods of heat removal, including liquid-metal heat pipes, too.", "source_section": "discussion"}, {"claim": "열방어를 위한 새로운 기술적 아이디어를 모색하고, 후보 형상 전반에 걸쳐 공력과 열전달을 통합적으로 최적화해야 한다.", "source_quote": "This necessitates a search for new technological ideas primarily among the methods of thermal protection and a joint consideration of the aerodynamics and heat transfer of different variants of arrangement with the aim of optimizing them.", "source_section": "conclusion"}], "motivation_resolution": {"motivating_problems": ["수십 년의 왕복선 시스템 경험을 고려할 때, 수평 순항하는 극초음속 비행기가 실현 가능한가.", "극초음속 비행은 새로운 물리(공기 해리, 충격파 뒤의 이온/전자)를 유발하여 표면 가열을 심화시키고 특수한 열방어를 요구한다.", "날개/흡입구 앞전에서의 충격파-충격파 간섭은 국부 압력과 열유속을 한 자릿수(약 10배) 증폭시킬 수 있으며 보호가 어렵다.", "재사용 캡슐과 달리 순항기는 대기 중 장시간 수평 비행을 견뎌야 하므로, 가열을 악화시키는 세장형·극소 곡률(날카로운) 앞전 형상이 강제된다."], "addressed_by_this_work": ["브레게식 항속거리·고도 해석으로, 10,000 km 순항은 공력품질 K가 3 이상이면서 마하 8-10에서만 도달 가능하며 약 10 mm 앞전 반경의 초음속형 세장 형상을 강제함을 보인다.", "그 대가를 정량화한다. 정체점 열부하는 초음속기 대비 약 50배, 평형 벽온도는 약 3배 증가하고 단열 두께는 비행 시간의 제곱근으로 커져야 한다.", "간섭 영역 실험 데이터로 증산 냉각이 30% 분사에서도 첨두 열유속을 최대 약 10%만 줄임을 보여, 구체적인 열방어 공백을 드러낸다."], "remaining_unresolved": ["날카로운 앞전과 충격파 간섭 제트에 대한 적절한 열방어 방법이 없다. 근본적으로 새로운 개념이 여전히 필요하다.", "높은 배압 하의 불균일 냉각제 여과를 어떻게 극복하여 간섭 영역에서도 증산 냉각을 효과적으로 유지할 것인가.", "수동/능동 하이브리드(예: 액체금속 히트파이프)가 그 공백을 메울 수 있는지. 방향으로만 제시되고 입증되지는 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
