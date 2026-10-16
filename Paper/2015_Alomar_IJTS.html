@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulation of complete liquid-vapour phase change process inside porous evaporator using local thermal non-equilibrium model</title>
+    <meta name="keywords" content="Complete phase change, Porous evaporator, Porous media, LTNE, TPMM, LTNE-TPMM, Local thermal equilibrium (LTE), Effective diffusion coefficient, Smoothing of diffusion coefficient, Numerical">
+    <meta name="paper-authors" content="Omar Rafae Alomar, Miguel A.A. Mendes, Dimosthenis Trimis, Subhashis Ray">
+    <meta name="paper-journal" content="International Journal of Thermal Sciences, Vol. 94, 2015, pp. 228-241 · DOI: 10.1016/j.ijthermalsci.2015.03.007">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="02_Numerical">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <!-- theme:start — WOONG-style theme (paper / forest green, serif titles); light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #f4f1ea; --surface: #fbfaf6; --surface-2: #efebe2;
+            --line: #e2ddd1; --line-strong: #cfc8b8;
+            --ink: #23262a; --ink-2: #4c5157; --muted: #858a8f;
+            --accent: #2f4a3a; --accent-ink: #f3efe6; --accent-soft: #e3eadf;
+            --t2: #8a6420; --warn: #b5523b; --ok: #2f6b4a; --amber: #b07a2a;
+            --shadow: 0 1px 2px rgba(40,35,25,.05), 0 6px 22px rgba(40,35,25,.06);
+            --sans: "Pretendard", "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, sans-serif;
+            --serif: "Iowan Old Style", "Charter", "Georgia", "Noto Serif KR", "Batang", serif;
+            color-scheme: light;
+        }
+        :root[data-theme="dark"] {
+            --bg: #1b1c1a; --surface: #222420; --surface-2: #2a2c27;
+            --line: #33362f; --line-strong: #45493f;
+            --ink: #e8e5dc; --ink-2: #bdb9ae; --muted: #8b8a82;
+            --accent: #9cc3a6; --accent-ink: #14201a; --accent-soft: #2b3a2f;
+            --t2: #d8b26a; --warn: #e08a72; --ok: #9cc3a6; --amber: #e0b064;
+            --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.28);
+            color-scheme: dark;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--sans);
+            margin: 0; padding: 28px 0 40px;
+            background: var(--bg); color: var(--ink);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .slide {
+            width: min(1240px, 96vw);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column; flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        /* header: quiet surface, serif title, outlined tier badge */
+        .header { background: var(--surface); color: var(--ink); padding: 34px 40px 22px; border-bottom: 1px solid var(--line); }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 22px; margin-bottom: 12px; }
+        .title { font-family: var(--serif); font-size: 30px; font-weight: 600; line-height: 1.28; letter-spacing: -.005em; }
+        .authors { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
+        .journal { font-size: 13px; color: var(--muted); }
+        .tier-badge {
+            display: inline-block; padding: 3px 10px; margin-top: 6px;
+            border: 1.5px solid currentColor; border-radius: 6px; background: transparent;
+            font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+        }
+        .tier-1 { color: var(--accent); }
+        .tier-2 { color: var(--t2); }
+        .tier-3 { color: var(--muted); }
+
+        /* summary band */
+        .summary-container { background: var(--bg); padding: 22px 40px 20px; border-bottom: 1px solid var(--line); }
+        .summary-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .summary { font-size: 16px; line-height: 1.78; }
+        .keywords { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .keyword-chip {
+            font-size: 12px; padding: 2px 10px; line-height: 1.6;
+            background: var(--surface); color: var(--ink-2);
+            border: 1px solid var(--line-strong); border-radius: 999px; font-weight: 500;
+        }
+
+        /* section cards (structure unchanged: 3 × 2 grid, click → modal) */
+        .content {
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
+            gap: 12px; padding: 18px 22px; overflow: hidden; height: 62vh; flex-shrink: 0;
+        }
+        .section {
+            background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; cursor: pointer;
+            transition: transform .15s, box-shadow .15s, border-color .15s;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .section:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+        .section-title {
+            font-family: var(--serif); color: var(--ink); font-size: 17px; font-weight: 600;
+            margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: baseline;
+        }
+        .click-hint { font-family: var(--sans); font-size: 11.5px; color: var(--muted); font-weight: 400; }
+        .section:hover .click-hint { color: var(--accent); }
+        .section-summary {
+            font-size: 14.5px; line-height: 1.68; color: var(--ink-2); flex: 1; overflow: hidden;
+            /* cards clip long text: fade the cut instead of slicing a line in half */
+            -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+                    mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+        }
+        .term { font-weight: 600; color: var(--ok); }   /* a step brighter than --accent so terms stand out from ink */
+        .eng { color: var(--muted); font-style: italic; }
+
+        /* conclusion-modal insights */
+        .conclusion-insights { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--line-strong); }
+        .modal-body .lim-list, .modal-body .future-list { padding-left: 20px; margin: 0 0 18px; }
+        .modal-body .lim-list li, .modal-body .future-list li { margin-bottom: 12px; line-height: 1.65; }
+        .evidence-source {
+            font-family: var(--serif); font-style: italic; font-size: 13.5px; color: var(--ink-2);
+            margin-top: 5px; padding: 2px 0 2px 12px; border-left: 3px solid var(--line-strong); line-height: 1.55;
+        }
+        .evidence-source em { font-family: var(--sans); font-style: normal; font-size: 12px; color: var(--muted); }
+        .motivation-block { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px; }
+        @media (min-width: 900px) { .motivation-block { grid-template-columns: repeat(3, 1fr); } }
+        .mot-problems, .mot-addressed, .mot-remaining {
+            background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+        }
+        .mot-problems h5, .mot-addressed h5, .mot-remaining h5 {
+            margin: 0 0 8px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase;
+        }
+        .mot-problems h5 { color: var(--warn); }
+        .mot-addressed h5 { color: var(--ok); }
+        .mot-remaining h5 { color: var(--amber); }
+        .mot-problems ul, .mot-addressed ul, .mot-remaining ul { padding-left: 18px; margin: 0; }
+        .mot-problems li, .mot-addressed li, .mot-remaining li { margin-bottom: 6px; line-height: 1.58; font-size: 14px; }
+        .insights-section-title {
+            font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+            margin: 24px 0 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* figure-ref chip */
+        .fig-ref {
+            display: inline-block; margin-left: 6px; padding: 0 8px; font-size: 11px; line-height: 1.7;
+            color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px;
+            vertical-align: middle; text-indent: 0; text-align: center;
+        }
+
+        /* modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(28, 26, 20, .42);
+            -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            animation: fadeIn .18s ease-out;
+        }
+        :root[data-theme="dark"] .modal-overlay { background: rgba(0, 0, 0, .6); }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: var(--surface); width: min(1040px, 92vw); height: min(820px, 88vh);
+            border: 1px solid var(--line); border-radius: 14px;
+            display: grid; grid-template-rows: auto 1fr; box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden;
+        }
+        .modal-header {
+            background: var(--surface); color: var(--ink); padding: 18px 28px 14px;
+            border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+        .modal-close {
+            background: transparent; border: 1px solid var(--line-strong); color: var(--ink-2);
+            width: 32px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: var(--surface-2); color: var(--ink); }
+        .modal-body { padding: 24px 34px 36px; overflow-y: auto; font-size: 15.5px; line-height: 1.78; }
+        .modal-body .bullet { margin-bottom: 11px; padding-left: 18px; text-indent: -18px; }
+        .modal-body .bullet:before { content: "• "; color: var(--accent); font-weight: 700; }
+        .modal-body .formula-block {
+            background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+            padding: 14px 18px; margin: 16px 0; border-radius: 8px;
+        }
+        .modal-body .formula-label { font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+        .modal-body .formula-desc { font-size: 13px; color: var(--ink-2); margin-top: 8px; line-height: 1.62; }
+        .modal-body .paper-fig { margin: 18px 0; text-align: center; }
+        .modal-body .paper-fig img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+        .modal-body .paper-fig figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+        .modal-body h4 { color: var(--ink); margin: 22px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+
+        /* references */
+        details.references {
+            margin: 4px 22px 22px; box-sizing: border-box;
+            border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; background: var(--bg);
+        }
+        details.references > summary { cursor: pointer; font-weight: 600; color: var(--ink); font-size: 14px; user-select: none; }
+        details.references > summary:hover { color: var(--accent); }
+        details.references .ref-count { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+        details.references .ref-list { margin: 12px 0 4px; padding-left: 22px; font-size: 12.5px; color: var(--ink-2); line-height: 1.62; }
+        details.references .ref-list li { margin-bottom: 5px; }
+        details.references .ref-list li::marker { color: var(--muted); }
+
+        ::selection { background: var(--accent-soft); }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Simulation of complete liquid-vapour phase change process inside porous evaporator using local thermal non-equilibrium model</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Omar Rafae Alomar, Miguel A.A. Mendes, Dimosthenis Trimis, Subhashis Ray</div>
+            <div class="journal">International Journal of Thermal Sciences, Vol. 94, 2015, pp. 228-241 · DOI: 10.1016/j.ijthermalsci.2015.03.007</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">이 자매 논문은 저자들의 확산계수 <span class="term">평활화 알고리즘</span>을 이상혼합 모델(TPMM)의 <span class="term">국소 열적 비평형(LTNE)</span> 형태로 확장하여, 상수 벽면 열유속 하 1차원 다공 증발기 내 물의 완전 액-기 상변화(과냉 액체 → 이상 혼합물 → 과열 증기)를 시뮬레이션한다. 결합된 두 에너지 방정식(수정 체적 엔탈피 $H$에 대한 유체식, 온도에 대한 고체식)을 유한체적법으로 풀며, 이들은 Wakao형 공극 규모 대류계수를 갖는 체적 고체-유체 열교환 항으로 연결되고, 비물리적 온도 "점프"를 억제하기 위해 동일한 완화+Churchill-Usagi 평활화를 유효 확산계수에 적용한다(평활화를 생략하면 LTNE 모델에서도 점프가 발생함을 보인다). LTE와 LTNE 예측을 비교하여, 공극 규모 대류계수가 매우 커서 고체·유체 온도가 약 1 degC 이내로 유지됨에도 불구하고, 적용 가능한 곳(특히 낮은 입구 레이놀즈 수와 높은 열입력)에서는 LTNE를 써야 한다고 결론짓는다. 이는 LTE가 과도한 상류(입구) 전도 손실로 증발기 출구 온도를 과소예측하기 때문이다. 매개변수 연구는 고체상이 지배하는 상류 방향 확산 에너지 수송이 상변화 개시·종료를 결정하는 핵심 제어임을 보이는 한편, 상·고체 간 벽면 열유속 분배(다섯 모델)의 영향은 무시 가능함을 보인다. 본 논문은 저자들의 2014년 LTE 논문의 LTNE 자매편이며, 두 편 모두 상변화 증산냉각 계보(TPMM + LTNE)에서 확산계수 평활화 참고문헌으로 인용된다.</div>
+            <div class="keywords"><span class="keyword-chip">Complete phase change</span><span class="keyword-chip">Porous evaporator</span><span class="keyword-chip">Porous media</span><span class="keyword-chip">LTNE</span><span class="keyword-chip">TPMM</span><span class="keyword-chip">LTNE-TPMM</span><span class="keyword-chip">Local thermal equilibrium (LTE)</span><span class="keyword-chip">Effective diffusion coefficient</span><span class="keyword-chip">Smoothing of diffusion coefficient</span><span class="keyword-chip">Numerical</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">다공 매질 내 액-기 이상 유동은 많은 공학 응용에서 중요하며 이상혼합 모델(TPMM)이 편리한 틀이다. 에너지 방정식에는 국소 열평형(LTE)과 국소 열적 비평형(LTNE)의 두 균질화 선택이 있으며, 후자는 체적 열교환 항으로 결합된 고체·유체 두 에너지 방정식을 푼다. 서론은 저질량유량 완전 상변화에서 고체 전도율이 코어로의 열수송을 지배하고 이상 유효 확산계수가 매우 높은 저항으로 작용하므로 LTNE가 더 적절함을 논하고, 이어 완전 과정을 시도한 것은 Wang과 Shi &amp; Wang뿐이며 둘 다 저자들의 2014년 논문이 확산계수 불연속으로 규명한 비물리적 점프를 보임을 상기하여 이 LTNE 처방을 설정한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">본 논문은 혼합 모델 및 LTNE 문헌 위에 직접 쌓인다. TPMM 계보(Wang-Beckermann, Wang 등, Wang)와 확산계수 평활화 연구(Li 등; Alomar 등 2014 및 발산 증발기 연구)가 정식화와 처방을 제공하고, LTNE 폐합식(Jiang &amp; Ren, Wakao 공극 규모 대류, Wang &amp; Shi 경계 조건)과 증산냉각 상변화 참고문헌(Shi &amp; Wang, Wei &amp; Wang, He &amp; Wang, Xin 등)이 2온도 기구와 응용 맥락을 제공한다. 유효 전도율 입력은 다시 저자들의 개방셀 폼 연구에서 온다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">비가열 시작/출구 길이와 가열 구간 상수 벽면 열유속을 갖는 등단면 다공 증발기에서 물의 정상 1차원 완전 상변화를 모델링한다. LTNE 하에서 수정 체적 엔탈피 $H=\rho(h-2h_{v,sat})$의 유체 에너지 방정식과 온도의 고체 에너지 방정식을, 포화도 가중 공극 규모 대류계수(Wakao 상관식)로 구성한 체적 열교환 항 $\dot q_{sf}'''$으로 결합하며, 질량·Darcy 운동량은 LTE 모델과 동일하다. 적용 벽면 열유속은 다섯 모델 중 하나로 유체·고체에 분배된다. 유체 방정식의 유효 확산계수는 2014년 완화+Churchill-Usagi 방법으로 평활화한다(결합 매질 전도율을 유체상 유효 전도율로 대체). 유한체적 이산화(상류 이류, 중앙차분 확산, 조화평균 면 확산율)를 500 검사체적에서 무거운 완화(인자 ~0.1)와 $10^{-6}$ 수렴 기준으로 Thomas 알고리즘으로 푼다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">평활화를 적용한 LTNE 모델은 점프 없는 완전 상변화 온도장을 주는 반면, 평활화를 생략하면 LTNE에서도 이상-증기 전이에서 비물리적 점프가 남아 처방의 필요성을 확인한다. 매우 높은 공극 규모 대류계수 때문에 고체·유체 온도는 거의 구분되지 않지만(약 1 degC 차), LTNE는 특히 저레이놀즈 수·고열유속에서 과열 영역의 온도를 LTE보다 뚜렷이 높게 예측한다. LTE는 상변화 개시를 더 이르게, 출구 온도를 더 낮게 예측하는데 이는 더 큰 상류 전도 손실에 기인한다. 고체-유체 차는 (각 상전이에서 하나씩) 특징적 2봉 구조를 보이며, 운전 조건의 작은 변화가 출구 온도를 크게 흔들 수 있다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">매개변수 연구는 상류(축방향) 확산 에너지 수송을 상변화 개시·종료의 지배 기구로 분리해낸다. 고체 유효 전도율이 유체보다 수 자릿수 높고 고체·유체 온도가 거의 같으므로, 단상 영역에서 전체 상류 확산 플럭스는 고체상이 지배하는 반면 이상 영역에서는 고체 구배가 거의 0이라 유체가 (작은) 상류 플럭스를 운반한다. 높은 공극률·투과율은 상류 확산을 늘려 상변화 개시를 앞당기고, 높은 고체 전도율은 입구 열손실을 늘려 개시를 늦춘다. 다섯 벽면 열유속 분배 모델은 공극 규모 결합이 상 온도를 같게 만들어 거의 차이를 주지 않는다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">Wang의 TPMM에 LTNE 가정과 저자들의 유효 확산계수 평활화를 결합하여, 상수 벽면 열유속 하 1차원 등단면 다공 증발기 내 물의 완전 액-기 상변화를 점프 없이 시뮬레이션한다. 평활화가 LTNE에도 필요함을, LTE보다 적용 가능한 곳에서 LTNE가 선호됨을(참 물리를 더 잘 포착하고 출구 온도 과소예측을 피함), 상이 거의 등온이라 벽면 열유속 분배 선택이 여기서 무시 가능함을, 그리고 고체상이 지배하는 상류 축방향 확산이 상변화 개시·종료를 제어함을 확인한다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 40</span></summary>
+            <ol class="ref-list"><li>C.Y. Wang, C. Beckermann, A two-phase mixture model of liquid-gas flow and heat transfer in capillary porous media, I. Formulation, Int. J. Heat Mass Transf. 36(11), 2747-2758, 1993</li><li>C.Y. Wang, A fixed-grid numerical algorithm for two-phase flow and heat transfer in porous media, Numer. Heat Transf. Part B 32, 85-105, 1997</li><li>O.R. Alomar, M.A.A. Mendes, D. Trimis, S. Ray, Numerical simulation of complete liquid-vapour phase change process inside porous media using smoothing of diffusion coefficient, Int. J. Therm. Sci. 86, 408-420, 2014</li><li>O.R. Alomar, M.A.A. Mendes, D. Trimis, S. Ray, Simulation of complete liquid-vapour phase change inside divergent porous evaporator, Int. J. Mater. Mech. Manuf. 2(3), 223-229, 2014</li><li>J.X. Shi, J.H. Wang, Numerical investigation of transpiration cooling with liquid coolant phase change, Transp. Porous Media 87, 703-716, 2011</li><li>J.H. Wang, J.X. Shi, Discussion of boundary conditions of transpiration cooling problems using analytical solution of LTNE model, ASME J. Heat Transfer 130, 014504, 2008</li><li>P.-X. Jiang, Z.-P. Ren, Numerical investigation of forced convection heat transfer in porous media using a thermal non-equilibrium model, Int. J. Heat Fluid Flow 22, 102-110, 2001</li><li>H.Y. Li, K.C. Leong, L.W. Jin, J.C. Chai, Transient two-phase flow and heat transfer with localized heating in graphite foams, Int. J. Therm. Sci. 49, 1115-1127, 2010</li><li>N. Wakao, Effect of fluid dispersion coefficient on particle-to-fluid heat transfer coefficient in packed beds, Chem. Eng. Sci. 34, 325-336, 1979</li><li>K. Wei, J. Wang, M. Mao, Model discussion of transpiration cooling with boiling, Transp. Porous Media 94, 303-318, 2012</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "다공 매질 내 액-기 이상 유동은 분리유동·분리상·이상혼합 모델로 모델링되어 왔으며, <span class=\"term\">TPMM</span>에서 두 상은 이성분 혼합물로서 이상 영역이 단상 영역과 공존하고, (수정 체적 엔탈피로 쓴) Wang의 고정격자 TPMM이 다공 매질 상변화에 널리 쓰인다."}, {"type": "bullet", "text": "에너지 방정식에는 두 균질화 모델이 있다: 유체-고체 열교환을 무시하는 <span class=\"term\">LTE</span>와, 체적(대류) 열교환 항으로 결합된 두 에너지 방정식을 푸는 <span class=\"term\">LTNE</span>. 고전적 LTNE 모델은 약 80년 전 처음 제시되었으나 최근에야 본격적 주목을 받았다."}, {"type": "bullet", "text": "LTNE는 다공 매질 연소처럼 (화염면 근방 등) 고체-유체 온도차가 클 수 있는 다른 다공 매질 응용에서 흔하며, Wang &amp; Wang은 단상 문제에 대해 LTE 가정의 오차를 정량화했으나 이상 유동에 대한 적용성은 언급하지 않았다."}, {"type": "bullet", "text": "기존 다공 매질 증발 연구는 거의 모두 불완전 상변화(과냉 액체 → 이상 혼합물)만 다루었고, 상수 포화 온도에서 완전 과정을 수치 연구한 것은 Wang(2D LTE, 국소 열원)과 Shi &amp; Wang(1D LTNE)뿐이며 둘 다 과열 증기 영역에서 연속 등온선 간 극히 짧은 거리에 100-500 degC 차이를 보고했다."}, {"type": "bullet", "text": "Wang은 이를 비물리적 점프로 인식하지 못했으나, Alomar 등(2014)은 이것이 단상/이상 계면 근방 유효 확산계수의 급격한 변화(불연속)에서 비롯됨을 보이고 LTE 모델 하에서 평활화 알고리즘을 제안했다(발산형 다공 증발기에도 적용)."}, {"type": "bullet", "text": "실제로 고체 전도율이 유체보다 훨씬 높아 열이 주로 고체 스트럿으로 코어에 도달하며, 상변화 영역에서는 유체가 포화 온도 근처에 머물고 고체가 전도로 열을 나르므로 (매우 높은 공극 규모 열교환 계수 때문에 아주 작긴 하지만) 온도가 달라진다. 다차원 문제에서는 이상 유효 확산계수가 극히 작아(높은 저항) LTE로 완전 과정을 현실적으로 시뮬레이션할 수 없어 LTNE가 더(혹은 유일하게) 적절하다."}, {"type": "bullet", "text": "따라서 주 목적은 LTNE 모델과 TPMM을 사용해 다공 증발기 내 완전 상변화를 시뮬레이션하는 것이며, Alomar 등(2014/2015)의 유효 확산계수 평활화를 이상→과열 증기 전이로 확장하여 LTE와 비교하고 다공 매질 물성·운전·경계 조건의 영향을 연구한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "1차원 정식화, 무차원 정의, 이산화는 Alomar 등(2014)에서 그대로 가져와 반복하지 않으며, 같은 그룹의 발산형 다공 증발기 연구가 평활화 전략을 비등단면에 적용했다."}, {"type": "bullet", "text": "TPMM 기반은 Wang-Beckermann(정식화), Wang 등(순수 증기에서 실패하는 1차 수정), Wang(여기서 쓰는 고정격자 2차 수정)이며, Li 등은 확산계수 불연속의 특수 처리를 최초 제안했으나 LTE 하 과냉→이상 변화에 한정했다."}, {"type": "bullet", "text": "LTNE 맥락: Jiang &amp; Ren은 다공 매질 강제대류에 열적 비평형 모델을 사용했고(이들에 따르면 고전 LTNE는 약 80년 전으로 거슬러 감), LTNE는 큰 고체-유체 온도차가 나타나는 다공 매질 연소(Mendes, Pereira &amp; Pereira; Voss 등)에서 널리 쓰인다."}, {"type": "bullet", "text": "공극 규모 고체-유체 대류계수는 Wakao형 충전층 상관식을 따르고, 벽면 열유속 분배는 증산냉각에 대한 Wang &amp; Shi의 해석적 LTNE 경계 조건 논의를 활용한다."}, {"type": "bullet", "text": "증산냉각 상변화 참고문헌이 응용을 고정한다: Shi &amp; Wang(액체 냉각제 상변화 증산냉각, LTNE-TPMM 선행), Wei 등(비등을 동반한 증산냉각), He &amp; Wang(상변화 증산냉각의 모델링/시뮬레이션과 임계 열유속), Xin 등(다공 매질 내 증기-액체 열·물질 전달)."}, {"type": "bullet", "text": "구성 폐합식(Carman-Kozeny 투과율, 평행배열 유효 전도율, 3차 상대투과율, Leverett J 함수)과 물 물성(Incropera 등, Borgnakke &amp; Sonntag; $T_{sat}=100$ degC)은 2014년 논문에서 상속되며, 유효 전도율 평가는 저자들의 개방셀 폼 전도율 연구를 참조한다."}]}, "method": {"content": [{"type": "bullet", "text": "물리 모델: 등단면 다공 증발기(반경 $R=25$ mm, 길이 $L=400$ mm, 무차원 $R^*=1$, $L^*=16$)로, 비가열 시작 길이 $l_i$(0-0.2L 변화)와 고정 비가열 출구 길이 $l_e=0.1L$를 가지며, 과냉수가 $T_{in}=20$ degC로 유입되어 가열 구간에 적용된 상수 벽면 열유속 $\\dot q_w''$로 과열 증기까지 가열된다.", "figure_refs": [1]}, {"type": "bullet", "text": "질량·Darcy 운동량 보존은 LTE 모델과 동일하며, 1차원 정상 문제에서는 압력이 속도에 영향을 주지 않아 운동량/압력 해를 생략할 수 있고 셀 면 속도는 질량 보존에서 $u_{cf}^*=1/\\rho_{cf}^*$로 얻는다."}, {"type": "formula", "label": "식 (3) — LTE 에너지 방정식(결합 매질, 수정 체적 엔탈피)", "latex": "\\frac{d}{dx}\\!\\left(\\gamma_h u_x H\\right) = \\frac{d}{dx}\\!\\left(\\Gamma_h \\frac{dH}{dx}\\right) + \\frac{d}{dx}\\!\\left(f\\,\\frac{K\\,\\Delta\\rho}{\\nu_v}\\,h_{fg}\\,b_x\\right) + \\frac{P}{A_c}\\,\\dot q_w''", "description": "비교에 쓰는 LTE(단일 결합 매질) 에너지 방정식; $\\gamma_h$는 이류 보정계수, $\\Gamma_h$는 $H$의 유효 확산계수, $f$는 장애함수, 상수 벽면 열유속 $\\dot q_w''$는 둘레-면적비 $P/A_c$를 통해 생성항으로 들어간다(비가열 구간에서 0). $\\Gamma_h$는 논문에서 $G_h$로 표기된다."}, {"type": "bullet", "text": "LTNE에서는 단일 에너지 방정식이 결합된 두 방정식으로 대체된다: 유체상 유효 전도율 $k_{eff,f}$를 쓰는 $H$의 유체 방정식과, 고체상 유효 전도율 $k_{eff,s}$를 쓰는 $T_s$의 고체 방정식으로, 각각 벽면 열유속의 분배 몫을 받고 내부 열교환 항 $\\dot q_{sf}'''$로 결합된다."}, {"type": "formula", "label": "식 (6)-(7) — LTNE 유체·고체 에너지 방정식", "latex": "\\frac{d}{dx}\\!\\left(\\gamma_h u_x H\\right) = \\frac{d}{dx}\\!\\left(\\Gamma_h \\frac{dH}{dx}\\right) + \\frac{d}{dx}\\!\\left(f\\,\\frac{K\\,\\Delta\\rho}{\\nu_v}\\,h_{fg}\\,b_x\\right) + \\frac{P}{A_c}\\left(\\dot q_f'' + \\dot q_{sf}'''\\right), \\qquad \\frac{d}{dx}\\!\\left(k_{eff,s}\\frac{dT_s}{dx}\\right) + \\frac{P}{A_c}\\left(\\dot q_s'' - \\dot q_{sf}'''\\right) = 0", "description": "2온도 쌍: 유체 방정식은 이류·유효 확산·중력/모세관 항에 더해 분배 벽면 열유속 $\\dot q_f''$과 교환 생성항 $\\dot q_{sf}'''$을 갖고, 고체 방정식은 전도와 분배 벽면 열유속 $\\dot q_s''$에서 교환 항을 뺀 것을 균형시키며 $\\dot q_w''=\\dot q_f''+\\dot q_s''$이다."}, {"type": "formula", "label": "식 (9)-(10) — 고체-유체 열교환 및 Wakao형 공극 대류계수", "latex": "\\dot q_{sf}''' = \\left[s\\,h_{sl} + (1-s)\\,h_{sv}\\right] a_s\\,(T_s - T_f), \\qquad h_{sa} = \\frac{k_a}{d_p}\\left(2.0 + 1.1\\,Pr_a^{1/3} Re_{pa}^{0.6}\\right)", "description": "체적 열교환 항은 비표면적 $a_s=6(1-\\varepsilon)/d_p$와 포화도 가중 공극 규모 대류계수로 고체와 유체를 결합한다. $h_{sa}$는 상별(액체 $a=l$, 증기 $a=v$) 공극 직경 레이놀즈 수 $Re_{pa}$로 평가한 Wakao형 충전층 Nusselt 상관식을 따른다. 매우 작은 공극 직경이 이 계수를 매우 크게 만들어 $T_s$와 $T_f$를 약 1 degC 이내로 유지한다."}, {"type": "formula", "label": "식 (13a)-(13b) — LTNE 유효 열전도율(평행배열)", "latex": "k_{eff,f} = \\varepsilon\\left[s\\,k_l + (1-s)\\,k_v\\right], \\qquad k_{eff,s} = (1-\\varepsilon)\\,k_s", "description": "평행배열 모델의 유체·고체 유효 전도율; 이상 영역에서 $k_{eff,f}$는 평활화한 확산계수에 들어가고, (수 자릿수 더 큰) $k_{eff,s}$는 지배적인 상류 고체상 확산을 좌우한다. LTE 모델에서는 결합 전도율 $k_{eff}=(1-\\varepsilon)k_s+\\varepsilon[s\\,k_l+(1-s)k_v]$를 대신 쓴다."}, {"type": "bullet", "text": "벽면 열유속 분배: 다섯 모델이 유체/고체 분할 $\\dot q_f''/\\dot q_s''$을 설정한다 — 모델 1: 모든 열을 고체로; 모델 2: 유효 전도율로; 모델 3: 열전도율 비로; 모델 4: 체적분율 비 $\\varepsilon/(1-\\varepsilon)$로; 모델 5: 공극률 $\\varepsilon$로. 모델 2를 기준으로 쓴다."}, {"type": "bullet", "text": "유효 확산계수 평활화: 2014년 완화+Churchill-Usagi 알고리즘을 $k_{eff}$를 $k_{eff,f}$로 대체하여 유체 방정식에 적용하며, 동일한 조정 매개변수($m_{sl}=m_{sv}=0.25$, $\\psi_l=\\psi_v=2.5\\times10^{-2}$, $\\Delta T_l=\\Delta T_v=0.5$ degC, $s_l=0.999$, $s_v=0.001$, $m_{fl},m_{fv}\\to\\infty$)를 쓴다. 상세 평활화 점근선 식(식 15-19)과 표 2 물성 정의는 추출에서 심하게 깨져 사용자 검토 대상으로 플래그함.", "figure_refs": [2]}, {"type": "bullet", "text": "수치: 500 균일 검사체적(격자 독립) 상의 유한체적, 이류 1차 상류·확산 2차 중앙차분, 조화평균 셀 면 유효 확산율(확산 플럭스 균형), 삼중대각 체계에 Thomas 알고리즘, 완화계수 ~0.1과 $10^{-6}$ 수렴 기준을 사용하며, 출구는 $H$와 $T_s$의 2차 도함수 0(완전발달보다 완화된 조건)을 쓴다."}]}, "results": {"content": [{"type": "bullet", "text": "평활화 없이는 상변화가 과열 증기 상태에 도달하는 곳마다 LTNE 모델도 축방향 온도에 비물리적 점프를 주지만, 평활화와 함께는 저·고 열유속 사례 모두 점프 없이 시뮬레이션된다 — LTNE에 대한 평활화 알고리즘의 필요성을 보인다.", "figure_refs": [3]}, {"type": "bullet", "text": "유효 확산계수는 두 모델 모두 포화액·포화증기 조건에서 불연속이며, LTE 단상 유효 전도율이 (고체+유체 결합이라) LTNE 유체만의 값보다 커서 불연속이 LTE에서 더 심하다.", "figure_refs": [2]}, {"type": "bullet", "text": "매우 높은 공극 규모 대류계수(작은 공극 직경) 때문에 운전 조건과 무관하게 고체·유체 온도가 거의 구분되지 않으며, 절댓값 차 $|\\Delta T_{sf}|=|T_s-T_f|$는 증발기 대부분에서 최대 약 1 degC 수준이다.", "figure_refs": [4, 5]}, {"type": "bullet", "text": "LTNE는 LTE보다 특히 과열 증기 영역에서 뚜렷이 높은 온도를 예측하며, 열유속이 감소하고 레이놀즈 수가 증가하면 그 차이가 줄어든다. 더 낮은 LTE 출구 온도는 강화된 입구 온도 구배가 유발하는 더 큰 상류(입구) 전도 손실에 기인한다.", "figure_refs": [4]}, {"type": "bullet", "text": "LTE는 상변화가 더 일찍 개시된다(이상 영역에서 $\\Gamma_h$가 어느 상의 전도율 기여도 받지 않으므로 전체 열이 유체에 직접 더해짐). LTNE에서는 일부 열이 먼저 고체로 가고 포화액 근방에서는 유체에서 고체로 역류할 수도 있다. 2봉 $|\\Delta T_{sf}|$ 구조는 두 상전이를 표시한다(과냉→이상에서 $T_s&lt;T_f$의 첫 봉, 이상→증기에서 $T_s&gt;T_f$의 둘째 봉).", "figure_refs": [4, 5]}, {"type": "bullet", "text": "운전 조건 민감도가 크다: $Re_l=1.25$에서 높은 열유속 $Q_w^*=12.5\\times10^{-2}$($Re_l=5$에서는 완전 상변화에도 부족)는 출구 온도를 665 degC까지 몰 수 있어 운전 조건을 신중히 설계해야 하며, 전반적으로 출구 온도 과소예측을 피하려면 저레이놀즈 수·고열입력에서 LTE 대신 LTNE를 써야 한다.", "figure_refs": [4]}, {"type": "bullet", "text": "명시적 전체 에너지 균형은 출구 온도를 입구 전도 손실 $\\dot q_{cond}$로 표현한다. LTE와 LTNE 식을 비교하면 예측 차이가 고체-유체 온도차 구배 항에서 오며, LTE의 더 이른 상변화 개시(더 작은 $l_{sat}^*$)가 그 더 낮은 예측 출구 온도를 직접 만든다.", "figure_refs": [6]}]}, "discussion": {"content": [{"type": "bullet", "text": "단상 영역에서 고체 유효 전도율 $k_{eff,s}$가 유체의 $k_{eff,f}$보다 수 자릿수 높고 $T_s\\approx T_f$이므로, 전체 상류 확산 에너지 플럭스 $q_{x,diff}^*$는 고체상 플럭스 $q_{x,s}^*$가 지배한다. 과열 증기에서는 $k_v$가 $k_l$보다 약 27.4배 낮아 그 격차가 더 크다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "이상 영역에서는 고체 온도 구배가 거의 0($dT_s^*/dx^*\\approx0$)이라 고체상 상류 플럭스가 거의 사라지고 전체 상류 확산을 유체상이 대신 운반한다 — 단상 영역 대비 역할 역전이다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "출구를 통한 열손실이 없으므로 전체 에너지 균형이 외부 열 추가·질량유량을 입구 열손실에 연결한다: 입구를 통한 더 큰 외부 열/손실은 더 낮은 출구 온도에 대응하며, 공극률·투과율·고체 전도율 스윕 전반에서 확인된다.", "figure_refs": [8]}, {"type": "bullet", "text": "상변화는 높은 공극률 $\\varepsilon$과 높은 투과율 $K^*$에서 더 일찍 개시된다(둘 다 이상 영역 상류 확산 에너지 플럭스를 증가, 이상 영역에서 $(\\varepsilon K^*)^{1/2}$에 비례). 반면 높은 고체 전도율 $k_s$는 입구 전도 손실을 키워 개시를 늦춘다.", "figure_refs": [7]}, {"type": "bullet", "text": "상변화는 낮은 공극률·높은 고체 전도율에서 더 일찍 종료된다(짧은 이상 영역). 과열 증기에서 이상 영역으로의 강화된 확산 전달(더 큰 $k_{eff,s}$)이 전환을 추동하기 때문이며, 낮은 투과율(증기→액체로의 상류 확산 감소)에서도 그러하다."}, {"type": "bullet", "text": "다섯 벽면 열유속 분배 모델은 매우 높은 공극 규모 대류계수(작은 공극 직경)가 고체·유체 온도를 거의 같게 하므로 축방향 온도에 거의 차이를 주지 않으며, 더 큰 공극·높은 공극률 매질에서는 중요할 수 있으나 탐구되지 않는다.", "figure_refs": [9]}]}, "conclusion": {"content": [{"type": "bullet", "text": "평활화 알고리즘 없이는 LTNE 모델도 예측 온도장에 점프를 만들어, 완전 상변화 과정에 대한 유효 확산계수 평활화의 필요성과 유용성을 보인다."}, {"type": "bullet", "text": "LTNE가 LTE보다 참 물리 조건을 더 잘 포착하므로 예측 유체 출구 온도의 차이는 적용 가능한 곳에서 LTNE를 써야 함을 시사하며, LTNE를 쓸 때 고체·유체 상은 거의 같은 온도에 도달한다."}, {"type": "bullet", "text": "다섯 벽면 열유속 분배 모델은 작은 특성 공극 직경에서 비롯되는 매우 높은 고체-유체 대류 열전달 계수 때문에 예측 온도 분포에 무시 가능한 영향을 준다."}, {"type": "bullet", "text": "다공 증발기를 통한 상류 방향 확산 에너지 수송은 상변화 개시·종료의 핵심 요인 중 하나이며, 동일 질량유량(레이놀즈 수)과 벽면 열유속에서 작동유체 출구 온도는 축방향 확산에 의한 입구 열손실로 결정된다."}, {"type": "bullet", "text": "특히 낮은 레이놀즈 수·높은 열입력에서는 LTE 대신 LTNE를 써야 하며, 그렇지 않으면 LTE가 작동유체 출구 온도를 상당히 낮게(부정확하게) 예측한다."}, {"type": "bullet", "text": "TPMM/LTNE 다공 증발기 계보(Wang-Beckermann 1993, Wang 1997, Shi &amp; Wang 2011)에 위치한 본 논문은 저자들의 2014년 LTE 평활화 논문의 LTNE 자매편이며, 둘은 함께 상변화 증산냉각 문헌이 (예: 후속 리뷰·모델에서 참고문헌 [35],[36]으로) 인용하는 확산계수 평활화 참고문헌이다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "시연을 위해 1차원·정상 문제만 풀지만, 저자들은 LTNE 수정이 다차원 문제로 확장 가능하다고 밝힌다.", "source_quote": "For the purpose of demonstration, only the one-dimensional formulation has been considered in the present study, the proposed modification for LTNE model is easily extendable also for multi-dimensional problems.", "source_section": "introduction"}, {"claim": "상수 포화 온도 가정은 증발기의 압력 강하가 정압에 비해 무시 가능할 때, 즉 저질량유량 응용에서만 유효하다.", "source_quote": "This assumption applies when the pressure drop through the evaporator is negligible as compared to the static pressure for a given saturation temperature, which is valid for low mass flow rate applications.", "source_section": "method"}, {"claim": "액체·증기상 열물성을 상수로(온도에만 의존) 가정하며, 1차원 정식화에서 압력이 속도에 영향을 주지 않으므로 운동량 방정식/압력 해를 생략한다.", "source_quote": "the thermo-physical properties of liquid and vapour phases have been assumed to be constant and the enthalpies of these phases are assumed to vary only with the temperature.", "source_section": "method"}, {"claim": "시험한 다섯 벽면 열유속 분배 모델은 여기서 차이가 미미하지만, 저자들은 더 큰 공극 직경과 더 높은 공극률의 다공 매질에서는 중요할 수 있다고 지적한다.", "source_quote": "These models, however, could be important for other porous media with larger characteristic pore diameter and higher porosity.", "source_section": "discussion"}], "future_works": [], "motivation_resolution": {"motivating_problems": ["다공 매질 증발에 관한 기존 연구는 거의 모두 불완전 상변화(과냉 액체 → 이상 혼합물)만 다루었고, 완전 과정을 상수 포화 온도에서 시도한 것은 Wang(2D LTE)과 Shi &amp; Wang(1D LTNE)뿐이며 둘 다 과열 증기 영역에서 극히 짧은 거리에 매우 큰 온도 변화를 만들었다.", "Wang은 이를 비물리적 점프로 인식하지 못했고, Alomar 등(2014)이 이를 단상/이상 계면 근방 유효 확산계수의 급격한 변화(불연속) 때문임을 규명하여, LTNE 모델을 사용한 전용 처방이 필요하다.", "실제 다공 매질에서 고체 전도율이 유체보다 훨씬 높아 열이 주로 고체 스트럿을 통해 코어에 도달하고 고체·유체 온도가 달라진다. 다차원 문제에서는 이상 유효 확산계수가 열전달의 매우 높은 저항으로 작용하여 기존 LTE 모델로 완전 상변화를 현실적으로 시뮬레이션할 수 없으므로 LTNE가 더(혹은 유일하게) 적절한 모델이다.", "LTE의 벽/근벽 처리는 상수 벽면 온도 응용에서 완전 상변화를 실현하려면 비현실적으로 높은 지정 벽면 온도가 필요해, 상수 열유속 LTNE 정식화를 동기화한다."], "addressed_by_this_work": ["2014년 유효 확산계수 평활화 알고리즘을 LTNE-TPMM으로 확장하고(결합 매질 전도율을 유체상 유효 전도율로 대체), 평활화 없이는 LTNE 모델도 점프를 만들므로 이 처방이 LTNE에도 필요하고 효과적임을 보인다.", "결합된 두 에너지 방정식(수정 체적 엔탈피 유체식, 온도 고체식)을 체적 고체-유체 열교환 항과 Wakao형 공극 규모 대류계수로 상수 벽면 열유속 하에서 풀어, 저질량유량에서 과냉→과열의 완전 과정을 가능케 한다.", "LTE와 LTNE를 비교한다: LTE는 더 큰 상류 전도 손실로 출구 온도를 과소예측하므로 적용 가능한 곳(낮은 레이놀즈 수, 높은 열입력)에서는 LTNE를 써야 하며, 다섯 벽면 열유속 분배 모델 간 차이는 매우 높은 공극 규모 대류계수 때문에 무시 가능함을 보인다.", "매개변수 연구는 상류(축방향) 확산 에너지 수송 — 고체 유효 전도율이 유체보다 수 자릿수 높아 고체상이 지배 — 이 상변화 개시·종료를 결정하는 핵심 요인임을 규명한다."], "remaining_unresolved": ["1차원·정상 사례만 시연되며, 다차원·과도 LTNE 시뮬레이션은 과제로 남는다.", "상수 포화 온도 및 상수 물성(온도만의 엔탈피) 가정은 저질량유량·무시 가능한 압력 강하 조건으로 유효성을 제한한다.", "벽면 열유속 분배 모델은 더 큰 공극 직경·높은 공극률 매질에서 중요할 수 있으나 여기서 탐구되지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
