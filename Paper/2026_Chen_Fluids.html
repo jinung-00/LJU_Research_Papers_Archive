@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Phase-Change Transpiration Cooling for Hypersonic Vehicles: A Comprehensive Review of Mechanisms, Modeling, Experiments, and Future Direction</title>
+    <meta name="keywords" content="Transpiration cooling, Phase change, Hypersonic, Porous media, LTNE-TPMM, TPMM, Vapor blockage, Graded porosity, Flight validation, Multiscale modeling, Review">
+    <meta name="paper-authors" content="Xingyu Chen, Mingyun Lv">
+    <meta name="paper-journal" content="Fluids (MDPI), Vol. 11, 2026, Art. 253 · DOI: 10.3390/fluids11100253">
+    <meta name="paper-tier" content="3">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="00_Review">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <!-- theme:start — WOONG-style theme (paper / forest green, serif titles); light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #f4f1ea; --surface: #fbfaf6; --surface-2: #efebe2;
+            --line: #e2ddd1; --line-strong: #cfc8b8;
+            --ink: #23262a; --ink-2: #4c5157; --muted: #858a8f;
+            --accent: #2f4a3a; --accent-ink: #f3efe6; --accent-soft: #e3eadf;
+            --t2: #8a6420; --warn: #b5523b; --ok: #2f6b4a; --amber: #b07a2a;
+            --shadow: 0 1px 2px rgba(40,35,25,.05), 0 6px 22px rgba(40,35,25,.06);
+            --sans: "Pretendard", "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, sans-serif;
+            --serif: "Iowan Old Style", "Charter", "Georgia", "Noto Serif KR", "Batang", serif;
+            color-scheme: light;
+        }
+        :root[data-theme="dark"] {
+            --bg: #1b1c1a; --surface: #222420; --surface-2: #2a2c27;
+            --line: #33362f; --line-strong: #45493f;
+            --ink: #e8e5dc; --ink-2: #bdb9ae; --muted: #8b8a82;
+            --accent: #9cc3a6; --accent-ink: #14201a; --accent-soft: #2b3a2f;
+            --t2: #d8b26a; --warn: #e08a72; --ok: #9cc3a6; --amber: #e0b064;
+            --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.28);
+            color-scheme: dark;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--sans);
+            margin: 0; padding: 28px 0 40px;
+            background: var(--bg); color: var(--ink);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .slide {
+            width: min(1240px, 96vw);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column; flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        /* header: quiet surface, serif title, outlined tier badge */
+        .header { background: var(--surface); color: var(--ink); padding: 34px 40px 22px; border-bottom: 1px solid var(--line); }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 22px; margin-bottom: 12px; }
+        .title { font-family: var(--serif); font-size: 30px; font-weight: 600; line-height: 1.28; letter-spacing: -.005em; }
+        .authors { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
+        .journal { font-size: 13px; color: var(--muted); }
+        .tier-badge {
+            display: inline-block; padding: 3px 10px; margin-top: 6px;
+            border: 1.5px solid currentColor; border-radius: 6px; background: transparent;
+            font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+        }
+        .tier-1 { color: var(--accent); }
+        .tier-2 { color: var(--t2); }
+        .tier-3 { color: var(--muted); }
+
+        /* summary band */
+        .summary-container { background: var(--bg); padding: 22px 40px 20px; border-bottom: 1px solid var(--line); }
+        .summary-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .summary { font-size: 16px; line-height: 1.78; }
+        .keywords { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .keyword-chip {
+            font-size: 12px; padding: 2px 10px; line-height: 1.6;
+            background: var(--surface); color: var(--ink-2);
+            border: 1px solid var(--line-strong); border-radius: 999px; font-weight: 500;
+        }
+
+        /* section cards (structure unchanged: 3 × 2 grid, click → modal) */
+        .content {
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
+            gap: 12px; padding: 18px 22px; overflow: hidden; height: 62vh; flex-shrink: 0;
+        }
+        .section {
+            background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; cursor: pointer;
+            transition: transform .15s, box-shadow .15s, border-color .15s;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .section:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+        .section-title {
+            font-family: var(--serif); color: var(--ink); font-size: 17px; font-weight: 600;
+            margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: baseline;
+        }
+        .click-hint { font-family: var(--sans); font-size: 11.5px; color: var(--muted); font-weight: 400; }
+        .section:hover .click-hint { color: var(--accent); }
+        .section-summary {
+            font-size: 14.5px; line-height: 1.68; color: var(--ink-2); flex: 1; overflow: hidden;
+            /* cards clip long text: fade the cut instead of slicing a line in half */
+            -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+                    mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+        }
+        .term { font-weight: 600; color: var(--ok); }   /* a step brighter than --accent so terms stand out from ink */
+        .eng { color: var(--muted); font-style: italic; }
+
+        /* conclusion-modal insights */
+        .conclusion-insights { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--line-strong); }
+        .modal-body .lim-list, .modal-body .future-list { padding-left: 20px; margin: 0 0 18px; }
+        .modal-body .lim-list li, .modal-body .future-list li { margin-bottom: 12px; line-height: 1.65; }
+        .evidence-source {
+            font-family: var(--serif); font-style: italic; font-size: 13.5px; color: var(--ink-2);
+            margin-top: 5px; padding: 2px 0 2px 12px; border-left: 3px solid var(--line-strong); line-height: 1.55;
+        }
+        .evidence-source em { font-family: var(--sans); font-style: normal; font-size: 12px; color: var(--muted); }
+        .motivation-block { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px; }
+        @media (min-width: 900px) { .motivation-block { grid-template-columns: repeat(3, 1fr); } }
+        .mot-problems, .mot-addressed, .mot-remaining {
+            background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+        }
+        .mot-problems h5, .mot-addressed h5, .mot-remaining h5 {
+            margin: 0 0 8px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase;
+        }
+        .mot-problems h5 { color: var(--warn); }
+        .mot-addressed h5 { color: var(--ok); }
+        .mot-remaining h5 { color: var(--amber); }
+        .mot-problems ul, .mot-addressed ul, .mot-remaining ul { padding-left: 18px; margin: 0; }
+        .mot-problems li, .mot-addressed li, .mot-remaining li { margin-bottom: 6px; line-height: 1.58; font-size: 14px; }
+        .insights-section-title {
+            font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+            margin: 24px 0 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* figure-ref chip */
+        .fig-ref {
+            display: inline-block; margin-left: 6px; padding: 0 8px; font-size: 11px; line-height: 1.7;
+            color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px;
+            vertical-align: middle; text-indent: 0; text-align: center;
+        }
+
+        /* modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(28, 26, 20, .42);
+            -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            animation: fadeIn .18s ease-out;
+        }
+        :root[data-theme="dark"] .modal-overlay { background: rgba(0, 0, 0, .6); }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: var(--surface); width: min(1040px, 92vw); height: min(820px, 88vh);
+            border: 1px solid var(--line); border-radius: 14px;
+            display: grid; grid-template-rows: auto 1fr; box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden;
+        }
+        .modal-header {
+            background: var(--surface); color: var(--ink); padding: 18px 28px 14px;
+            border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+        .modal-close {
+            background: transparent; border: 1px solid var(--line-strong); color: var(--ink-2);
+            width: 32px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: var(--surface-2); color: var(--ink); }
+        .modal-body { padding: 24px 34px 36px; overflow-y: auto; font-size: 15.5px; line-height: 1.78; }
+        .modal-body .bullet { margin-bottom: 11px; padding-left: 18px; text-indent: -18px; }
+        .modal-body .bullet:before { content: "• "; color: var(--accent); font-weight: 700; }
+        .modal-body .formula-block {
+            background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+            padding: 14px 18px; margin: 16px 0; border-radius: 8px;
+        }
+        .modal-body .formula-label { font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+        .modal-body .formula-desc { font-size: 13px; color: var(--ink-2); margin-top: 8px; line-height: 1.62; }
+        .modal-body .paper-fig { margin: 18px 0; text-align: center; }
+        .modal-body .paper-fig img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+        .modal-body .paper-fig figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+        .modal-body h4 { color: var(--ink); margin: 22px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+
+        /* references */
+        details.references {
+            margin: 4px 22px 22px; box-sizing: border-box;
+            border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; background: var(--bg);
+        }
+        details.references > summary { cursor: pointer; font-weight: 600; color: var(--ink); font-size: 14px; user-select: none; }
+        details.references > summary:hover { color: var(--accent); }
+        details.references .ref-count { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+        details.references .ref-list { margin: 12px 0 4px; padding-left: 22px; font-size: 12.5px; color: var(--ink-2); line-height: 1.62; }
+        details.references .ref-list li { margin-bottom: 5px; }
+        details.references .ref-list li::marker { color: var(--muted); }
+
+        ::selection { background: var(--accent-soft); }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Phase-Change Transpiration Cooling for Hypersonic Vehicles: A Comprehensive Review of Mechanisms, Modeling, Experiments, and Future Direction</div>
+                <span class="tier-badge tier-3">Tier 3 — 미등록</span>
+            </div>
+            <div class="authors">Xingyu Chen, Mingyun Lv</div>
+            <div class="journal">Fluids (MDPI), Vol. 11, 2026, Art. 253 · DOI: 10.3390/fluids11100253</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 <span class="term">리뷰</span>는 액체 냉각제(일반적으로 물)가 <span class="term">다공성 매질</span>을 통과하며 열을 흡수하고 증발하면서 보호성 기체막을 형성하는 <span class="term">상변화 증산냉각(phase-change transpiration cooling)</span>을 차세대 <span class="term">극초음속 비행체</span>의 능동 열방호 개념으로서 포괄적이고 비판적으로 조망한다. 1940년대 타당성 연구부터 공개적으로 보고된 단 두 건의 비행 실증(SHEFEX-II와 HIFLIER)까지의 흐름을 추적하고, 수치 모델링을 거시적 2상 혼합 모델(<span class="term">TPMM</span>/<span class="term">LTNE-TPMM</span>), 공극 규모 계면 추적 기법(VOF), 메조스케일 DNS/격자 볼츠만 기법의 세 부류로 정리한다. 저자들은 이 세 부류가 상호 고립된 채 발전해 왔으며 검증된 스케일 간 결합 프레임워크의 부재가 핵심 방법론적 공백이라고 주장하고, 소규모·단시간·단일물리 연구의 지배가 실제 비행 조건으로의 일반화를 제한한다고 지적한다. <span class="term">증기 폐색(vapor blockage)</span>, 온도 진동, 냉각 이력현상, 저압 동결 등 주요 물리 현상을 비판적으로 논하며, 비균일 열유속 하에서 균일 냉각을 달성하는 선도적 경로로 <span class="term">공극률 구배(graded porosity)</span> 및 비균일 투과율 설계를 부각한다. 통합·다중물리·시스템 수준 실증으로의 전환을 강조하는 여섯 가지 미래 방향을 제안한다.</div>
+            <div class="keywords"><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Phase change</span><span class="keyword-chip">Hypersonic</span><span class="keyword-chip">Porous media</span><span class="keyword-chip">LTNE-TPMM</span><span class="keyword-chip">TPMM</span><span class="keyword-chip">Vapor blockage</span><span class="keyword-chip">Graded porosity</span><span class="keyword-chip">Flight validation</span><span class="keyword-chip">Multiscale modeling</span><span class="keyword-chip">Review</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">미래 극초음속 비행체는 극심한 공력 가열 하에서 장시간·장거리·재사용 운용을 지향하며, 전통적 수동 또는 어블레이션 열방호는 더 이상 이러한 요구를 충족할 수 없다. 본 리뷰는 압력으로 구동되는 액체 물이 다공성 벽을 스며 나와 열을 흡수하고 증발하여 보호성 기체막을 형성하는 상변화 증산냉각을 가장 효율적인 능동 열방호 개념의 하나로 자리매김하고, 메커니즘·모델링·실험·잔존 과제를 비판적으로 조망하는 것을 목표로 밝힌다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">2절은 기술을 1940년대 기원부터 세 가지 주제 흐름, 즉 액체 냉각제의 우위 검증, 복잡 현상의 메커니즘 이해, 시스템 아키텍처 혁신을 통해 추적한다. 대표적 아크 가열 풍동 실험이 액체 물의 우수성을 확립하고 저압 동결(아이스-비어드) 문제를 드러냈으며 구배 공극 구조 설계를 촉발하였고, 이후 연구는 증기 폐색·이력현상·진동을 노출시키며 생체모사 자가펌핑 시스템으로 대응하였다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">3절은 계산 도구 모음을 조사하여 수치 모델을 세 부류(거시적 2상 연속체 모델, 공극 규모 계면 추적 VOF 기법, 메조스케일 DNS/격자 볼츠만 기법)로 분류한 뒤, 결합 내부-외부 유동, 유체-고체 열전달 폐쇄식, 수치 구조 최적화를 검토한다. 2유체·분리상 모델에서 TPMM과 그 LTNE 및 수정 변수 확장으로 이어지는 계보를 정리하고, 정확한 대류 열전달 폐쇄식과 스케일 간 정보 전달이 여전히 한계 요인임을 강조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('comparison')">
+                <div class="section-title">Comparison — 비교 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">표 1과 표 2를 바탕으로 리뷰는 세 모델 부류를 가정·강점·한계·계산 비용·포착 현상에 걸쳐 대비하고 대표적 정량 연구를 종합한다. 핵심 비교 결론은 세 부류가 상호 보완적이지만 고립되어 발전했다는 점, 공극률 구배 및 비균일 전략이 균일 설계를 능가한다는 점, 그리고 표준화된 검증과 보고의 부재가 교차 연구 메타분석을 저해한다는 점이다.</div>
+            </div>
+            <div class="section" onclick="openModal('applications')">
+                <div class="section-title">Applications — 응용 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">4절은 메커니즘 규명, 모델 검증, 공학적 응용 진전의 초석으로서 실험 진전을 검토하며, 연구를 메커니즘 실험과 검증 시험으로 나누고 공개적으로 보고된 단 두 건의 비행 실증으로 마무리한다. 공극률 구배 및 비균일 투과율 노즈콘, 스크램제트 환경의 스트럿 냉각, DLR 검증 작업, SHEFEX-II 및 HIFLIER 비행 시험을 기록하면서, 전규모·장시간·다중물리 데이터의 심각한 부족을 강조한다.</div>
+            </div>
+            <div class="section" onclick="openModal('challenges')">
+                <div class="section-title">Challenges — 과제 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">5절은 공학적 응용의 장벽을 서로 연결된 여섯 범주로 묶고, 6절은 이에 상응하는 여섯 미래 방향을 제안한다. 총괄적 주장은 다중 스케일 모델링의 진전이 소재 선택을 이끌고 실험을 해석해야 하며, 제조 기술 발전이 축소 통합 실증을 가능케 해야 하고, 이러한 구성 요소 수준 진전이 궁극적으로 냉각제 저장·유동 안정성·고장 모드·하위 시스템 통합이 기술 성숙도를 좌우하는 비행 준비 시스템으로 통합되어야 한다는 것이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 20 / total 94</span></summary>
+            <ol class="ref-list"><li>A. van Foreest, M. Sippel, A. Gulhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration Cooling Using Liquid Water, J. Thermophys. Heat Transf., 2009</li><li>C.Y. Wang, C. Beckermann, A Two-Phase Mixture Model of Liquid-Gas Flow and Heat Transfer in Capillary Porous Media, Int. J. Heat Mass Transf., 1993</li><li>C.Y. Wang, A Fixed-Grid Numerical Algorithm for Two-Phase Flow and Heat Transfer in Porous Media, Numer. Heat Transf. B, 1997</li><li>F. He, J. Wang, L. Xu, X. Wang, Modeling and Simulation of Transpiration Cooling with Phase Change, Appl. Therm. Eng., 2013</li><li>J.X. Shi, J.H. Wang, A Numerical Investigation of Transpiration Cooling with Liquid Coolant Phase Change, Transp. Porous Media, 2011</li><li>H. Su, J. Wang, F. He, L. Chen, B. Ai, Numerical Investigation on Transpiration Cooling with Coolant Phase Change under Hypersonic Conditions, Int. J. Heat Mass Transf., 2019</li><li>W. Dong, J. Wang, A New Model and Its Application to Investigate Transpiration Cooling with Liquid Coolant Phase Change, Transp. Porous Media, 2018</li><li>H. Hu, P. Jiang, X. Ouyang, C. Zhao, R. Xu, A Modified Energy Equation Model for Flow Boiling in Porous Media and Its Application, Int. J. Heat Mass Transf., 2020</li><li>G. Huang, Y. Zhu, Z. Liao, X.-L. Ouyang, P.-X. Jiang, Experimental Investigation of Transpiration Cooling with Phase Change, Appl. Therm. Eng., 2019</li><li>P.-X. Jiang, G. Huang, Y. Zhu, R. Xu, Z. Liao, T. Lu, Experimental Investigation of Biomimetic Self-Pumping and Self-Adaptive Transpiration Cooling, Appl. Therm. Eng., 2017</li><li>T. Langener, J. von Wolfersdorf, J. Steelant, Experimental Investigations on Transpiration Cooling for Scramjet Applications, 2011</li><li>C.W. Hirt, B.D. Nichols, Volume of Fluid (VOF) Method for the Dynamics of Free Boundaries, J. Comput. Phys., 1981</li><li>A. Cerminara, R. Deiterding, N. Sandham, A Mesoscopic Modelling Approach for DNS of Transition to Turbulence in Hypersonic Flow with Transpiration Cooling, Int. J. Heat Fluid Flow, 2020</li><li>K. Jin, J. Zhao, G. Yao, D. Xu, D. Wen, A Fully Coupled Multiscale Phase-Change Model at the Porous Interface for Transpiration Cooling, Int. J. Heat Mass Transf., 2025</li><li>W.J. Minkowycz, A. Haji-Sheikh, K. Vafai, On Departure from Local Thermal Equilibrium in Porous Media: The Sparrow Number, Int. J. Heat Mass Transf., 1999</li><li>N. Wakao, S. Kaguei, T. Funazkri, Effect of Fluid Dispersion Coefficients on Particle-to-Fluid Heat Transfer Coefficients in Packed Beds, Chem. Eng. Sci., 1979</li><li>W. Chen, K. Wang, Y. Wang, S. Tu, Z. Liu, H. Su, Numerical Investigation and Optimal Design of Transpiration Cooling Plate Structure for Gradient Porosity, Int. J. Therm. Sci., 2024</li><li>N. Wu, J. Wang, F. He, L. Chen, B. Ai, Optimization Transpiration Cooling of Nose Cone with Non-Uniform Permeability, Int. J. Heat Mass Transf., 2018</li><li>H. Bohrk, Transpiration-Cooled Hypersonic Flight Experiment (SHEFEX-II/AKTIV): Setup, Flight Measurement, and Reconstruction, J. Spacecr. Rockets, 2015</li><li>G.D. Di Martino et al., Main Flight Data on Transpiration Cooled Sharp Edge Fins in Hypersonic Conditions on the Sounding Rocket HIFLIER, Aerosp. Sci. Technol., 2025</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "comparison": "Comparison — 비교", "applications": "Applications — 응용", "challenges": "Challenges — 과제"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "장기 내구·재사용 극초음속 비행체는 극심한 공력 가열에 직면하여 열방호 시스템에 엄격한 요구를 부과하며, 전통적 수동·반수동 방식은 더 이상 이를 충족할 수 없다."}, {"type": "bullet", "text": "어블레이션 방호는 재료 소모로 공력 형상을 변형시키고 재사용을 저해하며, 탄소/탄소 복합재는 뛰어난 고온 특성을 가지나 제조 비용이 지나치게 높다. 큰 선단부 반경은 열유속을 낮추지만 심각한 항력 패널티를 초래하고 양항비를 저하시킨다."}, {"type": "bullet", "text": "능동 냉각의 상대적 장점은 열유속 분포, 기하 제약, 허용 냉각제 소비량에 따라 달라진다. 재생 냉각은 채널을 매설할 수 있는 집중 부하에, 막냉각은 이산 분사점을 통한 국소 보호에 적합하며, <span class=\"term\">증산냉각</span>은 샤프 선단부와 대면적 고온 표면에 유리하다."}, {"type": "bullet", "text": "상변화 증산냉각에서는 냉각제(일반적으로 액체 물)가 압력 구배로 다공성 매질을 통과하며 고체 매트릭스로부터 대류로 열을 흡수하고, 이후 스며 나와 연속적 보호 기체막을 형성하며 상변화의 큰 잠열을 활용해 냉각을 더욱 강화한다."}, {"type": "bullet", "text": "정체점 열유속과 압력이 가장 높은 샤프 선단부에서는 균일한 냉각제 분배가 핵심 설계 과제이며, 이는 사용자의 연구와 가장 밀접한 문제 유형인 <span class=\"term\">공극률 구배</span> 및 비균일 투과율 설계를 촉발하였다."}, {"type": "bullet", "text": "벽 온도를 능동적으로 낮춤으로써 더 날카로운 선단부를 가능케 하여, 블런트 바디의 열부하 완화와 샤프 바디의 항력 저감 사이의 고전적 상충을 해소하고 공력 성능과 열방호를 통합한다."}, {"type": "bullet", "text": "성공적 구현은 금속 구조를 사용 한계 이하로 유지하고, 비내화 금속의 열환경 적용성을 넓히며, 고가의 탄소/탄소 복합재에 대한 의존을 줄일 것으로 기대된다."}, {"type": "bullet", "text": "리뷰는 2절(기술 진화), 3절·4절(수치 및 실험 진전), 5절(핵심 과제), 6절(미래 전망)로 구성된다."}]}, "related_works": {"content": [{"type": "bullet", "text": "상변화 증산냉각은 1940년대 이래 이론적 탐구에서 실험적 검증을 거쳐 공학적 응용을 향해 발전해 왔으며, 연구는 메커니즘 이해, 성능 최적화, 시스템 아키텍처 단순화에 집중되어 왔다."}, {"type": "bullet", "text": "Van Foreest 등(DLR)은 Al2O3 다공성 노즈콘에 대해 마하 5.45, 전온도 3028 K의 아크 가열 풍동에서 획기적 시험을 수행하여, 불과 0.2 g/s의 물 분사로 모델 온도를 2000 K 이상에서 300 K 이하로 낮춰 다섯 배 질량유량의 질소를 훨씬 능가함을 보였고, 저압 냉각제 동결(아이스-비어드 현상)을 처음으로 드러냈다."}, {"type": "bullet", "text": "Reimer 등은 세라믹 기지 복합재로 동결 문제의 보편성을 확인하였고, Shen 등은 소결 웨지형 노즈콘(마하 4.2, 전온도 2310 K)을 검증하여 1.55-2.33% 분사율에서 평균 냉각 효율 0.77을 달성하고 정체 온도를 2300 K에서 700 K로 낮췄다."}, {"type": "bullet", "text": "Langener 등은 기체 냉각제 기준선(탄소/탄소 상의 공기·아르곤·헬륨)을 제시하여 냉각 효율이 냉각제 비열에 지배됨을 보였고, 잠열을 추가로 활용하는 액체 냉각제가 제공하는 이득을 정량화하였다."}, {"type": "bullet", "text": "Wang 등은 구배 공극 구조 설계와 냉각제 최적화를 결합하여, 공극률의 공간 분포가 냉각 효율과 냉각제 활용도를 결정적으로 좌우하며 잘 설계된 구조적 구배가 국소 과열을 억제하고 표면 온도 균일성을 개선함을 보였다."}, {"type": "bullet", "text": "Huang 등은 소결 청동 평판(전온도 800 K, Re 45,000)에서 상변화 냉각을 체계적으로 연구하여 분사율과 입자 직경을 결정적 인자로 규명하였다. F=0.15%에서는 계면이 판 아래(증기 충만)에, F=0.20%에서는 상류 고온/하류 저온의 급격한 경계가 증기 폐색의 개시를 나타내며, F=0.30%에서는 매질이 액체로 포화되어 폐색이 사라진다.", "figure_refs": [1, 2]}, {"type": "bullet", "text": "증기 폐색은 수증기와 액체 물의 큰 점성 차이에서 비롯되며, 상류에서 생성된 증기가 액체 유입을 막고 하류로 밀어낸다. Hu 등은 운동 엔탈피를 도입해 다상 혼합 에너지 방정식을 재구성하였고, 저압에서 2상 영역의 온도 구배가 단상 영역과 반대 방향이며 비균일 경계 열유속이 냉각제 분배 불균일을 일으켜 폐색을 악화시키고 열방호 실패를 유발할 수 있음을 발견하였다."}, {"type": "bullet", "text": "폐색 외에도 연구는 냉각 이력현상(분사 시작부터 완전 냉각까지 수 분의 지연으로 국소 소손 위험)과 온도 진동(고온-저온 경계가 특정 주파수로 진동하며 열응력 발생)을 밝혀냈다."}, {"type": "bullet", "text": "나무의 증산에서 착안하여 Jiang 등은 모세관력만으로 구동되어 비등점 부근에서 냉각제 유량을 자율 조절하는 생체모사 자가펌핑·자가적응 시스템을 개발하였고, Huang 등은 핀 부착 구리판 또는 고공극 폼 아머층을 추가해 2차 증기 열교환을 가능케 하고 냉각제 소비를 줄이는 이중층을 구성하였으며, 3D 프린팅한 나무형 분기 채널은 0에서 180도 경사에서도 안정적으로 작동하였다.", "figure_refs": [3]}]}, "method": {"content": [{"type": "bullet", "text": "수치 모델은 단순에서 복잡으로, 단상에서 2상으로, 평형에서 비평형으로, 1차원에서 다차원으로, 단일 영역에서 다중물리 결합으로 발전해 왔으며, 거시적 연속체 2상 모델(TPMM과 변형들), 고정 격자 계면 추적 VOF 기법, 메조스케일 DNS 및 격자 볼츠만 기법으로 크게 분류된다."}, {"type": "bullet", "text": "초기 거시적 연구는 국소 열평형 가정과 2유체 모델(기상·액상 별도 보존식)을 사용하였으나, 다수의 강한 비선형 방정식, 어려운 계면 추적, 불량한 수렴성을 안고 있었다. Bau 등은 3영역(기체·2상·액체) 분리상 모델을 제안했으나 여전히 수치적으로 난해하였다."}, {"type": "bullet", "text": "Wang 등은 1993년 2상 혼합 모델(<span class=\"term\">TPMM</span>)을 개척하여 혼합 밀도·속도·엔탈피를 도입해 2상 지배 방정식을 단상 유사 형태로 재구성하였고, 이는 방정식 수를 줄이고 효율을 높이며 상변화 계면을 자연스럽게 추적하여 이 분야의 지배적 기법이 되었다."}, {"type": "bullet", "text": "He 등은 증기 압축성, 상변화 운동량 수송, 압력/온도 의존 물성을 추가해 TPMM을 1차원 정상 해석으로 확장하였고, Shi 등은 국소 열비평형을 도입해 <span class=\"term\">LTNE-TPMM</span>을 구성하여 상변화 영역에서 유체 온도가 고체 매트릭스 온도를 초과할 수 있음을 보였으며, 이는 온도장의 정확한 예측에 필수적이다.", "figure_refs": [4]}, {"type": "bullet", "text": "Alomar 등은 평활화 알고리즘을 추가하여 종(species)의 상류 확산과 에너지 수송이 상변화 개시와 종료를 강하게 조절함을 밝혔고, Minkowycz 등은 급격한 과도 가열 하에서 국소 열평형 가정의 유효성 판정 기준으로 Sparrow 수를 제안하였다."}, {"type": "bullet", "text": "원래의 LTNE-TPMM은 극초음속 조건에서 여전히 수렴성·정확도 문제를 겪었기에, Su 등은 수정 온도와 수정 질량유량을 도입해 수렴성과 효율을 크게 향상시켰으며, 이를 통해 마하 7.0, 고도 26.5 km에서 웨지형 노즈콘의 결합 공력열 해석을 수행하였다.", "figure_refs": [5]}, {"type": "bullet", "text": "공극 규모 VOF 기법(Hirt와 Nichols, 1981)은 체적 분율 함수로 고정 오일러 격자에서 기-액 계면을 추적한다. Ghedira 등은 Lee 상변화 모델을 적용한 OpenFOAM 솔버를 구축하였고, Liu 등은 Weierstrass-Mandelbrot 함수를 이용한 프랙탈 재구성 VOF를 도입해 프랙탈 차원과 증발 계수가 모두 열전달률을 낮춤을 보였으며, 비용 절감을 위한 머신러닝 계면 재구성이 부상하고 있다."}, {"type": "bullet", "text": "메조스케일 기법은 실제 미세구조를 해석한다. Cerminara 등은 특성 레이놀즈 수로 스케일한 엇갈린 원기둥/구 배열에 DNS를 수행하여 균일 다공 분사가 더 이른 천이를 유발하나 천이 후 난류 냉각 효율이 더 높음을 발견하였고, Zhang 등은 격자 볼츠만 기법으로 비균일 분사 하 기체막 발달이 국소 속도 구배에 강하게 의존함을 보였다."}, {"type": "bullet", "text": "결합 내부-외부 유동은 본질적으로 양방향이다. 분사는 경계층을 두껍게 하고 벽 근처 구배를 줄이지만(Rannie; Eckert와 Livingood; Moffat와 Kays), 온도 구배 감소와 난류 수송 억제가 모두 높은 블로잉 비에서 포화되어 일관되게 관찰되는 수확 체감을 설명하며, 충격파 상호작용은 회복 온도와 냉각제 효출을 막는 국소 압력을 높인다."}, {"type": "bullet", "text": "미터-밀리미터 규모의 외부 유동과 마이크론 규모의 내부 공극 사이의 스케일 격차는 직접 결합을 불가능하게 만든다. He는 다공·연속체·중첩 영역에 서로 다른 솔버를 쓰는 영역 분할을 제안하였고, Jin 등은 현재 2D 저레이놀즈 다르시 유동에 국한된 완전 결합 CFD-공극망 다중 스케일 상변화 모델을 개발하였다.", "figure_refs": [6]}, {"type": "bullet", "text": "LTNE 틀 안에서 정확한 대류 열전달 계수가 핵심이다. 가장 널리 쓰이는 충전층 상관식은 Wakao의 것이며, Pallares 등은 명시적 공극률 인자를 추가하였고, Xu 등은 입자 직경 감소와 크누센 수 증가(희박 효과)에 따라 누셀트 수가 감소함을, Jiang 등은 LTNE 효과가 가열벽 근처에서 가장 강함을 보였다."}, {"type": "formula", "label": "Wakao 입자-유체 누셀트 상관식", "latex": "\\mathrm{Nu} = 2 + 1.1\\,\\mathrm{Pr}^{1/3}\\,\\mathrm{Re}^{0.6}", "description": "충전층에서 입자-유체 대류 열전달 계수에 가장 널리 쓰이는 상관식으로, $\\mathrm{Nu}$, $\\mathrm{Pr}$, $\\mathrm{Re}$은 각각 누셀트·프란틀·레이놀즈 수이다. 이는 LTNE 틀에서 고체와 유체 에너지 방정식을 결합하는 폐쇄식을 제공한다."}, {"type": "bullet", "text": "수치 구조 최적화는 일관되게 비균일 설계를 선호한다. Bian 등은 공극률 분포를 최적화해 벽 온도 3.55%, 압력 강하 27.99% 저감을 달성하였고, Chen 등은 CFD와 반응표면법을 결합한 공극률 구배 판에서 벽 온도 9.42%, 압력 강하 77.39% 저감과 온도 균일성 66.14% 개선을 달성하였으며, Xu 등·Wang 등·Zhou 등(TPMS)·Zheng 등(위상 최적화)이 이를 홀 패턴과 적층 제조 기하로 확장하였다.", "figure_refs": [7, 8, 9]}]}, "comparison": {"content": [{"type": "bullet", "text": "표 1은 세 부류를 대비한다. 거시적 TPMM/LTNE-TPMM은 공학 규모 예측에 높은 효율과 자연스러운 계면 처리를 제공하나 급격한 계면·공극 규모 세부·국소 건조·막 파열을 해석하지 못하고, VOF는 공극 규모에서 계면 동역학·막 형성·국소 건조를 포착하나 3D 공학 영역에 비용이 크며, 메조스케일 DNS/LBM은 공극 규모 장과 경계층 천이를 해석하나 극히 비싸고 소규모 영역에 한정된다.", "figure_refs": []}, {"type": "bullet", "text": "거시적 부류는 증기 폐색·온도 진동·결합 내부-외부 유동·전체 냉각제 분배 불균일을, VOF 부류는 계면 동역학·액막 형성/증발·국소 건조·프랙탈 계면 형태를, 메조스케일 부류는 공극 내부 상세 속도·온도장·난류 천이·냉각제 막 발달을 포착한다."}, {"type": "bullet", "text": "핵심 방법론적 결론은 세 부류가 대체로 고립되어 발전했다는 점이다. 거시적 모델은 모세관 압력·상대 투과율·계면 항력에 대한 공극 규모 폐쇄식이 없어(현재 경험적 상관식으로 공급) 보완이 필요하고, 공극 규모 VOF는 원리상 이를 제공할 수 있으나 비용에 제약되며, 메조스케일 DNS는 부격자 모델을 보정할 수 있으나 전체 시스템 해석은 불가능하다."}, {"type": "bullet", "text": "표 2는 대표적 수치 연구를 종합하여 방법·기하·냉각제·소재·조건의 큰 다양성을 드러내며, 비일관적 보고와 함께 직접 교차 비교를 어렵게 한다. 예컨대 He 등(1D 평판, 0.5-2 MW/m2), Su 등(마하 7.0 웨지 노즈콘 LTNE-TPMM), Dai 등(마하 4.5, 받음각 20도 결합 노즈콘으로 30초 후 증기 면적분율 76% 초과) 등이 있다."}, {"type": "bullet", "text": "공극률 구배 최적화 항목 중 Bian 등은 벽 온도 3.55%, 압력 강하 27.99% 저감을, Chen 등은 벽 온도 9.42%, 압력 강하 77.39% 저감과 균일성 66.14% 개선을 보고하여, 공극률 구배 및 비균일 분배 전략이 효율과 압력 패널티 양면에서 균일 구성을 능가함을 정량적으로 확인한다."}, {"type": "bullet", "text": "검증 성숙도는 뚜렷이 다르다. Su 등은 자신의 LTNE-TPMM을 Shen 등의 웨지 노즈콘 실험에 대해 보정 후 약 5% 이내로 검증하고 증기 폐색을 재현하였으며, Dong 등은 정량 오차 지표 없이 자체 데이터에 준혼합 모델을 검증한 반면, 대부분의 VOF·DNS·LBM 연구는 이상화된 벤치마크나 단순화된 공극 규모 실험에 대해서만 검증되었다."}, {"type": "bullet", "text": "예측-측정 온도 간 평균제곱근 등 정량 오차 지표가 거의 보고되지 않아, 엄격하고 표준화된 검증의 부재가 실제 극초음속 조건에서의 예측 정확도 평가를 어렵게 하며, 저자들은 이를 중요한 문헌 공백으로 지적한다."}, {"type": "bullet", "text": "리뷰는 현재 실무로서 공학 규모 설계에는 LTNE-TPMM과 그 물리 확장 변형(수정 온도·질량유량, 복사 결합, 화학 반응)을, 공극 규모 계면·건조 연구에는 상변화 모델을 결합한 VOF를, 메커니즘 발견에는 메조스케일 DNS/LBM을, 가장 진보했으나 아직 연구 단계인 스케일 간 접근으로는 완전 결합 CFD-PNM 기법을 권고한다."}]}, "applications": {"content": [{"type": "bullet", "text": "실험은 메커니즘 연구(1 MW/m2 이하 중간 열유속, 아음속-저초음속, 단일 변수 효과를 분리하는 단순 평판과 소형 노즈콘)와 검증 시험(2000 K 전온도와 수 MW/m2 이상 비행 영역 조건에서 C/C-SiC, TiAl 등 후보 소재의 준실물 부품)으로 나뉜다."}, {"type": "bullet", "text": "메커니즘 연구에는 Liu 등(블런트 노즈콘 기체 냉각, 질소가 공기·아르곤 능가), Jin 등(작은 분사도 블런트 노즈 열유속을 낮추며 주류 레이놀즈 수 증가에 따라 효율 감소), 그리고 액체 물 점성의 약 50배인 증기 운동 점성에 기인한 증기 폐색 효과를 처음 포착한 Huang 등의 소결 청동 평판이 포함된다."}, {"type": "bullet", "text": "사용자의 연구와 직접 관련하여, Liu 등은 적층 제조한 IN718 웨지 노즈콘을 제안하였는데, 다공성 구간을 네 개 층으로 나눠 공극률을 선단부를 향해 0.5에서 0.2로 감소시켜 정체 구역에 냉각제를 집중시키고 표면 온도를 균일화하며 열구배와 응력 집중을 완화하였다. Wu 등은 비균일 투과율이 균일 설계 대비 정체점 효율과 균일성을 높임을 확인하였다."}, {"type": "bullet", "text": "Zhu 등은 아세틸렌-산소 예혼합 화염 시험 시스템을 구축하고 열저항 네트워크를 적용해 상변화 증산냉각에서 관찰되는 주기적 온도·압력 진동을 설명하였다."}, {"type": "bullet", "text": "복잡 구조의 경우 Jiang 등은 표준 증산냉각이 소결 금속 스트럿의 선단부를 제대로 냉각하지 못함(0.55 MPa에서도 효율 19.1%)을 보인 반면, 전방 캐비티 압력을 높인 증산+막 결합 방식은 동일 총 냉각제 소비에서 선단부 효율을 31.4%, 전방부 평균 효율을 37.9%로 끌어올렸다. Huang 등과 Xiong 등은 마하 2.5, 약 1700-1774 K에서 경사형 및 상이 구성 스트럿을 시험하였다."}, {"type": "bullet", "text": "DLR은 가장 두드러진 지상 검증 작업을 수행했고, Van Foreest 등은 물의 질소 대비 우위를 확인했으며, Wang 등은 고공극 지르코니아/알루미나 세라믹 내 암모늄 카보네이트를 고체 냉각제로 도입해 공급 없이 수동 방식을 크게 능가하는 보호를 달성하였다."}, {"type": "bullet", "text": "SHEFEX-II는 2012년 DLR의 AKTIV 증산냉각 실험을 마하 10.2에서 9.3, 고도 100-30 km에서 비행시켜, 약 0.4 g/s 질소로 C/C 패널에서 벽 온도를 87 K 낮춰 58% 냉각 효율(하류 막냉각 42%)을 달성하였고 열전대 정확도는 ±1.2 K였다. 이는 고유한 비행 중 경계조건을 제공하며 HEATS 준해석 도구가 비행 데이터와 14% 이내로 일치하였다.", "figure_refs": []}, {"type": "bullet", "text": "Di Martino 등은 HIFLIER 사운딩 로켓 실험을 샤프 엣지 C/C 핀에 비행시켜 상승·하강 양 구간에서 40%를 넘는 피크 냉각 효율을 실증하였고, 표 3은 이 두 시험을 공개적으로 보고된 유일한 비행 시험으로 비교한다. 이들의 데이터는 지상 설비가 완전히 재현할 수 없는 저압 동결, 과도 궤적 변동, 비행체 동역학 등 결합 공력열 효과를 고유하게 포착한다."}, {"type": "bullet", "text": "저자들은 대부분의 실험이 단일물리 가정(균일 열유속, 정상 분사, 이상화 미세구조) 하 소규모·단시간 모델을 사용하여, 전규모·장기 내구·재사용 검증과 열-기계 복합 데이터셋이 대부분 부재하며, 메타분석을 가능케 할 냉각 효율의 합의된 정의(온도 기반 대 열유속 기반)가 없음을 강조한다."}]}, "challenges": {"content": [{"type": "bullet", "text": "장벽 1, 소재 및 냉각제 상용성: 세라믹 복합재는 고온에 강하나 비싸고 성형이 어렵고, 금속은 저렴하고 용접성이 좋으나 장기 산화·크리프·냉각제 상용성이 제대로 특성화되지 않았으며, 탄화수소 또는 개질 수용액 냉각제는 코킹·부식·물성 저하 우려를 낳아 수백 사이클에 걸친 재사용 소재-냉각제 내구성이 입증되지 않았다."}, {"type": "bullet", "text": "장벽 2, 다중 스케일 모델링과 스케일 간 결합: 세 모델 부류가 고립되어 발전하여 공극 규모 폐쇄식(모세관 압력, 상대 투과율, 계면 항력)을 연속체 규모로 전달하는 검증되고 다룰 수 있는 프레임워크가 없으며, 대부분의 연구가 단일 변수 분석에 의존하기에 주어진 요구에 대한 소재·공극률·분사 압력의 결합된 다목적 선택이 미해결로 남아 있다."}, {"type": "bullet", "text": "장벽 3, 실험 검증과 표준화: 대부분의 실험이 소규모·단시간·단일물리로서 다공성-치밀 계면의 열피로, 점진적 공극 막힘, 냉각제-기재 비상용성을 간과하며, 표준 시험 프로토콜과 보편적 효율 정의의 부재가 교차 비교와 성숙도 평가를 저해한다."}, {"type": "bullet", "text": "장벽 4, 다공성 매질 제조와 구조 통합: 다공성 소재가 용접이 어렵고 균열·기공·콜드셧에 취약하여 다공성 선단부를 치밀한 하중 지지 본체에 신뢰성 있게 접합하기가 어렵고, 적층 제조가 공극률 구배 구조를 가능케 하나 적절한 표면 마감·피로 수명·산화 저항·검사성을 갖춘 반복 가능한 공극 규모 형상 달성이 입증되지 않았다."}, {"type": "bullet", "text": "장벽 5, 비행 규모 실증과 시스템 통합: SHEFEX-II와 HIFLIER만 공개 보고되었고 둘 다 제한된 계측의 단시간 시험이어서, 부품 설계에서 비행 검증까지의 완전한 성숙도 체인이 없고 참조할 공학적 선례나 설계 표준이 없다."}, {"type": "bullet", "text": "장벽 6, 시스템 수준 통합과 기술 성숙도: 냉각제 저장·펌핑이 질량·부피 패널티를 부과하고, 비균일 가열 하 2상 불안정성과 증기 폐색 피드백이 정상 모델에서 누락되며, 누적 고장 모드와 폐루프 하위 시스템 통합이 비행 구성에서 실증되지 않았다."}, {"type": "bullet", "text": "여섯 장벽은 깊이 연결되어 있어, 저자들은 모델링 진전(장벽 2)이 소재(장벽 1)를 이끌고 실험(장벽 3)을 해석해야 하며, 제조 발전(장벽 4)이 비행 시험(장벽 5)의 전제인 축소 실증을 가능케 하고, 이 모두가 비행 준비 시스템(장벽 6)으로 통합되어야 한다고 논한다."}, {"type": "bullet", "text": "6절은 여섯 조율된 미래 방향을 제안한다. 다중 스케일 결합·데이터 기반 모델링(고충실도 데이터로 학습한 대리 모델), 모세관·압력 구동 공급과 스마트 소재를 결합한 경량 자가적응 시스템, 다공성-치밀 하이브리드 구조의 통합 제조, 비행 데이터가 모델을 고정하는 비행·지상 실험의 시너지 반복, 단일물리 특성화에서 통합 시스템 수준 실증으로의 전환, 그리고 표준화된 기술 성숙도 프레임워크를 갖춘 통합 시스템 실증이다."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "본 리뷰는 범위를 주로 극초음속 또는 고초음속 조건에서 수행된 연구로 한정하며, 기초 메커니즘을 규명하는 데 핵심적이었던 일부 아음속 및 중간 초음속 연구만 선별적으로 포함한다.", "source_quote": "The emphasis is on work conducted under hypersonic or high-supersonic conditions. Selected subsonic and moderate-supersonic studies are also included where they have been instrumental in revealing fundamental mechanisms.", "source_section": "introduction"}, {"claim": "연구마다 표준화된 경계조건·성능 지표·보고된 오차 척도가 부재하여 정량적 교차 연구 메타분석이 어렵기 때문에, 종합 자체가 기저 문헌의 한계에 의해 제약된다.", "source_quote": "the absence of standardized boundary conditions and performance metrics makes meta-analysis across studies difficult.", "source_section": "comparison"}], "future_works": [{"claim": "공극 규모 계면 진화 정보를 거시적 2상 모델에 내장하거나 고충실도 데이터로부터 대리(surrogate) 모델을 학습시키는 다중 스케일 결합 시뮬레이션 및 데이터 기반 모델링을 개발한다.", "source_quote": "Developing cross-scale coupling strategies, for instance by embedding pore-scale interface evolution information into macroscopic two-phase models or by using high-fidelity simulation data to train surrogate models, holds promise for achieving more accurate engineering predictions without sacrificing computational efficiency.", "source_section": "challenges"}, {"claim": "모세관 구동과 압력 구동 공급을 결합하고 스마트 소재를 도입하여 완전 수동 자기조절을 실현하는 경량·자가적응형 시스템 설계를 추구한다.", "source_quote": "Future efforts could explore hybrid supply strategies that combine capillary and pressure-driven flow, and incorporate smart materials (such as temperature-sensitive hydrogel valves) to realize fully passive self-regulation, thereby substantially reducing system weight and complexity.", "source_section": "challenges"}, {"claim": "특히 다공성 선단부를 치밀한 하중 지지 본체에 신뢰성 있게 접합하는 다공성-치밀 하이브리드 구조의 통합 제조 기술을 발전시킨다.", "source_quote": "Overcoming the challenge of reliably joining a porous leading edge to a dense load-bearing body will be a critical engineering milestone determining whether this technology can move beyond the laboratory.", "source_section": "challenges"}, {"claim": "희소하지만 가치 높은 비행 데이터가 수치 모델을 고정(anchor)하는, 지상 검증·비행 검증·모델 보정의 폐루프 연구 패러다임을 확립한다.", "source_quote": "A closed-loop research paradigm of ground qualification, flight validation, and model calibration needs to be established.", "source_section": "challenges"}, {"claim": "아음속 쿠폰에서 벗어나 공력·열·기계·유동 하중을 결합한 축소 통합 시험체를 대상으로 하는 단일물리 특성화에서 통합 시스템 수준 실증으로 전환한다.", "source_quote": "Bridging this paradigm gap will require a concerted shift from single-parameter sensitivity studies toward integrated, system-level investigations that couple aerodynamics, heat transfer, structural mechanics, and coolant chemistry.", "source_section": "challenges"}, {"claim": "냉각제 저장·펌핑 패널티, 비균일 가열 하 2상 불안정성, 공극 막힘·계면 피로 등 누적 고장 모드, 하위 시스템 통합을 전체 임무 프로파일에 걸쳐 다루는 통합 시스템 실증 및 기술 성숙도 평가를 수행한다.", "source_quote": "A standardized framework for assessing technology readiness across the full mission profile is needed.", "source_section": "challenges"}], "motivation_resolution": {"motivating_problems": ["전통적 수동·반수동 열방호(어블레이션, 탄소/탄소)는 차세대 극초음속 비행체의 장기 내구·재사용·경제성 요구를 충족할 수 없다.", "블런트 바디의 열부하 완화와 샤프 바디의 항력 저감 사이에 고전적 상충이 존재하여 고온 선단부의 공력 성능을 제한한다.", "상변화 증산냉각의 수치 모델이 서로 다른 스케일에 걸쳐 있어 공극 규모 물리와 연속체 규모 공학적 예측을 어떻게 연결할지 불분명하다.", "증기 폐색, 온도 진동, 냉각 이력현상, 저압 동결과 같은 복잡한 물리 현상이 아직 충분히 이해되거나 예측되지 못한다.", "모델링·실험·공학적 응용을 통합하여 기술의 실제 성숙도를 평가하는 체계적·비판적 종합이 부재하다."], "addressed_by_this_work": ["능동 열관리를 통해 샤프 선단부가 극한 열환경에서 안정적으로 작동할 수 있게 함으로써 상변화 증산냉각이 블런트 대 샤프 상충을 해소하고 공력 성능과 열방호를 통합한다고 논증한다.", "기존 수치 모델을 세 부류(거시적 TPMM/LTNE-TPMM, 공극 규모 VOF, 메조스케일 DNS/LBM)로 분류하고 가정·강점·비용·포착 현상을 비교하는 표 1과 표 2를 제공한다.", "증기 폐색, 이력현상, 온도 진동, 저압 동결의 메커니즘을 비판적으로 종합하고 실험 관찰(예: Huang 등)을 모델링 요구와 연결한다.", "메커니즘 실험, 지상 검증 시험, 그리고 공개적으로 보고된 단 두 건의 비행 검증(SHEFEX-II, HIFLIER)을 조사하여 실험실에서 비행까지의 통합적 그림을 제시한다.", "스케일 간 결합 프레임워크와 표준화된 검증의 부재를 핵심 방법론적·실험적 공백으로 규명하고, 여섯 가지 조율된 미래 방향을 제안한다."], "remaining_unresolved": ["거시·공극 규모·메조스케일 스케일 사이에서 정보를 전달하는, 검증되고 계산적으로 다룰 수 있는 프레임워크가 아직 없다.", "전규모·장시간·재사용·다중물리 검증 데이터와 통합 다공성-치밀 구조의 열-기계 복합 데이터셋이 여전히 대부분 부재하다.", "주어진 목표 온도 저감과 허용 압력 손실에 대해 공극률, 공극률 구배, 소재 체계를 선택하는 다목적 최적화 문제가 아직 미해결이다.", "수백 사이클에 걸친 장기 소재-냉각제 상용성(산화, 크리프, 코킹, 투과율 유지, 열-기계 피로)이 제대로 특성화되지 않았다.", "대표적 극초음속 궤적에서 냉각제 저장·가압·분배·열방호를 동시에 실증한 통합 시스템이 없으며, 합의된 효율 지표도 존재하지 않는다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
