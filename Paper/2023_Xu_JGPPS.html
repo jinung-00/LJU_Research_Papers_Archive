@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Fundamentals and recent progress of additive manufacturing-assisted porous materials on transpiration cooling</title>
+    <meta name="keywords" content="Transpiration cooling, Additive manufacturing, TPMS, Lattice structure, Graded porosity, Topology optimization, Mechanical strength, Self-pumping transpiration cooling, Phase change, Turbine blade, SLM, Review">
+    <meta name="paper-authors" content="Ruina Xu, Zhilong Cheng, Peixue Jiang">
+    <meta name="paper-journal" content="Journal of the Global Power and Propulsion Society, Special Issue: Some Advances in Additive Manufacturing for Aerothermal Technologies, 2023, pp 19-48 · DOI: 10.33737/jgpps/166418">
+    <meta name="paper-tier" content="3">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="00_Review">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <!-- theme:start — WOONG-style theme (paper / forest green, serif titles); light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #f4f1ea; --surface: #fbfaf6; --surface-2: #efebe2;
+            --line: #e2ddd1; --line-strong: #cfc8b8;
+            --ink: #23262a; --ink-2: #4c5157; --muted: #858a8f;
+            --accent: #2f4a3a; --accent-ink: #f3efe6; --accent-soft: #e3eadf;
+            --t2: #8a6420; --warn: #b5523b; --ok: #2f6b4a; --amber: #b07a2a;
+            --shadow: 0 1px 2px rgba(40,35,25,.05), 0 6px 22px rgba(40,35,25,.06);
+            --sans: "Pretendard", "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, sans-serif;
+            --serif: "Iowan Old Style", "Charter", "Georgia", "Noto Serif KR", "Batang", serif;
+            color-scheme: light;
+        }
+        :root[data-theme="dark"] {
+            --bg: #1b1c1a; --surface: #222420; --surface-2: #2a2c27;
+            --line: #33362f; --line-strong: #45493f;
+            --ink: #e8e5dc; --ink-2: #bdb9ae; --muted: #8b8a82;
+            --accent: #9cc3a6; --accent-ink: #14201a; --accent-soft: #2b3a2f;
+            --t2: #d8b26a; --warn: #e08a72; --ok: #9cc3a6; --amber: #e0b064;
+            --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.28);
+            color-scheme: dark;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--sans);
+            margin: 0; padding: 28px 0 40px;
+            background: var(--bg); color: var(--ink);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .slide {
+            width: min(1240px, 96vw);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column; flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        /* header: quiet surface, serif title, outlined tier badge */
+        .header { background: var(--surface); color: var(--ink); padding: 34px 40px 22px; border-bottom: 1px solid var(--line); }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 22px; margin-bottom: 12px; }
+        .title { font-family: var(--serif); font-size: 30px; font-weight: 600; line-height: 1.28; letter-spacing: -.005em; }
+        .authors { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
+        .journal { font-size: 13px; color: var(--muted); }
+        .tier-badge {
+            display: inline-block; padding: 3px 10px; margin-top: 6px;
+            border: 1.5px solid currentColor; border-radius: 6px; background: transparent;
+            font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+        }
+        .tier-1 { color: var(--accent); }
+        .tier-2 { color: var(--t2); }
+        .tier-3 { color: var(--muted); }
+
+        /* summary band */
+        .summary-container { background: var(--bg); padding: 22px 40px 20px; border-bottom: 1px solid var(--line); }
+        .summary-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .summary { font-size: 16px; line-height: 1.78; }
+        .keywords { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .keyword-chip {
+            font-size: 12px; padding: 2px 10px; line-height: 1.6;
+            background: var(--surface); color: var(--ink-2);
+            border: 1px solid var(--line-strong); border-radius: 999px; font-weight: 500;
+        }
+
+        /* section cards (structure unchanged: 3 × 2 grid, click → modal) */
+        .content {
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
+            gap: 12px; padding: 18px 22px; overflow: hidden; height: 62vh; flex-shrink: 0;
+        }
+        .section {
+            background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; cursor: pointer;
+            transition: transform .15s, box-shadow .15s, border-color .15s;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .section:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+        .section-title {
+            font-family: var(--serif); color: var(--ink); font-size: 17px; font-weight: 600;
+            margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: baseline;
+        }
+        .click-hint { font-family: var(--sans); font-size: 11.5px; color: var(--muted); font-weight: 400; }
+        .section:hover .click-hint { color: var(--accent); }
+        .section-summary {
+            font-size: 14.5px; line-height: 1.68; color: var(--ink-2); flex: 1; overflow: hidden;
+            /* cards clip long text: fade the cut instead of slicing a line in half */
+            -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+                    mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+        }
+        .term { font-weight: 600; color: var(--ok); }   /* a step brighter than --accent so terms stand out from ink */
+        .eng { color: var(--muted); font-style: italic; }
+
+        /* conclusion-modal insights */
+        .conclusion-insights { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--line-strong); }
+        .modal-body .lim-list, .modal-body .future-list { padding-left: 20px; margin: 0 0 18px; }
+        .modal-body .lim-list li, .modal-body .future-list li { margin-bottom: 12px; line-height: 1.65; }
+        .evidence-source {
+            font-family: var(--serif); font-style: italic; font-size: 13.5px; color: var(--ink-2);
+            margin-top: 5px; padding: 2px 0 2px 12px; border-left: 3px solid var(--line-strong); line-height: 1.55;
+        }
+        .evidence-source em { font-family: var(--sans); font-style: normal; font-size: 12px; color: var(--muted); }
+        .motivation-block { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px; }
+        @media (min-width: 900px) { .motivation-block { grid-template-columns: repeat(3, 1fr); } }
+        .mot-problems, .mot-addressed, .mot-remaining {
+            background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+        }
+        .mot-problems h5, .mot-addressed h5, .mot-remaining h5 {
+            margin: 0 0 8px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase;
+        }
+        .mot-problems h5 { color: var(--warn); }
+        .mot-addressed h5 { color: var(--ok); }
+        .mot-remaining h5 { color: var(--amber); }
+        .mot-problems ul, .mot-addressed ul, .mot-remaining ul { padding-left: 18px; margin: 0; }
+        .mot-problems li, .mot-addressed li, .mot-remaining li { margin-bottom: 6px; line-height: 1.58; font-size: 14px; }
+        .insights-section-title {
+            font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+            margin: 24px 0 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* figure-ref chip */
+        .fig-ref {
+            display: inline-block; margin-left: 6px; padding: 0 8px; font-size: 11px; line-height: 1.7;
+            color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px;
+            vertical-align: middle; text-indent: 0; text-align: center;
+        }
+
+        /* modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(28, 26, 20, .42);
+            -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            animation: fadeIn .18s ease-out;
+        }
+        :root[data-theme="dark"] .modal-overlay { background: rgba(0, 0, 0, .6); }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: var(--surface); width: min(1040px, 92vw); height: min(820px, 88vh);
+            border: 1px solid var(--line); border-radius: 14px;
+            display: grid; grid-template-rows: auto 1fr; box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden;
+        }
+        .modal-header {
+            background: var(--surface); color: var(--ink); padding: 18px 28px 14px;
+            border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+        .modal-close {
+            background: transparent; border: 1px solid var(--line-strong); color: var(--ink-2);
+            width: 32px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: var(--surface-2); color: var(--ink); }
+        .modal-body { padding: 24px 34px 36px; overflow-y: auto; font-size: 15.5px; line-height: 1.78; }
+        .modal-body .bullet { margin-bottom: 11px; padding-left: 18px; text-indent: -18px; }
+        .modal-body .bullet:before { content: "• "; color: var(--accent); font-weight: 700; }
+        .modal-body .formula-block {
+            background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+            padding: 14px 18px; margin: 16px 0; border-radius: 8px;
+        }
+        .modal-body .formula-label { font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+        .modal-body .formula-desc { font-size: 13px; color: var(--ink-2); margin-top: 8px; line-height: 1.62; }
+        .modal-body .paper-fig { margin: 18px 0; text-align: center; }
+        .modal-body .paper-fig img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+        .modal-body .paper-fig figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+        .modal-body h4 { color: var(--ink); margin: 22px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+
+        /* references */
+        details.references {
+            margin: 4px 22px 22px; box-sizing: border-box;
+            border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; background: var(--bg);
+        }
+        details.references > summary { cursor: pointer; font-weight: 600; color: var(--ink); font-size: 14px; user-select: none; }
+        details.references > summary:hover { color: var(--accent); }
+        details.references .ref-count { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+        details.references .ref-list { margin: 12px 0 4px; padding-left: 22px; font-size: 12.5px; color: var(--ink-2); line-height: 1.62; }
+        details.references .ref-list li { margin-bottom: 5px; }
+        details.references .ref-list li::marker { color: var(--muted); }
+
+        ::selection { background: var(--accent-soft); }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Fundamentals and recent progress of additive manufacturing-assisted porous materials on transpiration cooling</div>
+                <span class="tier-badge tier-3">Tier 3 — 미등록</span>
+            </div>
+            <div class="authors">Ruina Xu, Zhilong Cheng, Peixue Jiang</div>
+            <div class="journal">Journal of the Global Power and Propulsion Society, Special Issue: Some Advances in Additive Manufacturing for Aerothermal Technologies, 2023, pp 19-48 · DOI: 10.33737/jgpps/166418</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">칭화대 Jiang 연구실의 이 리뷰는 <span class="term">적층제조(additive manufacturing, AM)</span>가 <span class="term">증산냉각(transpiration cooling)</span>용 다공질 구조의 능동 설계를 어떻게 가능하게 하는지를 조망하며, 비균일 열부하와 기존 소결 매질의 거의 고정된 기공률(약 0.36-0.40) 사이의 불일치를 동기로 삼는다. 다공질 위상 설계를 CAD 기반 설계(조밀 미세기공 배열, Kelvin 및 Weaire-Phelan 셀, 격자), 기공률에 맞춰 피팅된 매개변수로 연속 구배 기공률을 구현하는 방정식 기반 <span class="term">삼중 주기 최소곡면(TPMS)</span>, 그리고 단일·다중 스케일 위상최적화로 정리한다. 이어서 미세기공 배열, 격자, Kelvin 셀, 네 가지 TPMS 유형의 유동 저항 및 Nusselt 상관식과, 3D 프린팅 다공질 부품이 소결품보다 수 배 강할 수 있음을 보여주는 인장·굽힘·강성 결과를 정리한다. 응용으로는 3D 프린팅 평판과 터빈 블레이드의 단상 기체 증산냉각, 그리고 3D 프린팅 수지상(tree-like) 모듈에서 모세관력으로 구동되는 상변화 동반 <span class="term">자가 펌핑 증산냉각(self-pumping transpiration cooling)</span>을 다룬다. 리뷰는 네 가지 미해결 과제로 마무리한다. 고온 금속·세라믹의 50 마이크로미터 미만 프린팅, 실제 형상·실제 조건 시험, 냉각제 공급을 공간 열부하에 맞추는 기공 위상, 비정상 열전달을 억제하는 다중 스케일 메타물질이다.</div>
+            <div class="keywords"><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">Additive manufacturing</span><span class="keyword-chip">TPMS</span><span class="keyword-chip">Lattice structure</span><span class="keyword-chip">Graded porosity</span><span class="keyword-chip">Topology optimization</span><span class="keyword-chip">Mechanical strength</span><span class="keyword-chip">Self-pumping transpiration cooling</span><span class="keyword-chip">Phase change</span><span class="keyword-chip">Turbine blade</span><span class="keyword-chip">SLM</span><span class="keyword-chip">Review</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서론은 증산냉각을 고성능·저냉각제 소비의 능동 열방어 방식으로 제시하고, 비균일 열유속과 냉각 능력의 불일치를 강조한다. Jiang과 Chyu의 '다공질 구조 능동 설계 + 적층제조' 개념을 소개하며, 증산냉각용 AM 정보가 파편화되어 있다는 점을 들어 설계·성능, 응용, 전망으로 구성된 종합 리뷰의 필요성을 제시한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 소결 스트럿, 자가 펌핑 냉각, TPMS 다공질 매질에 관한 칭화대(Jiang 연구실)의 증산 연구, Chyu의 적층제조 증산·막냉각 구조, 그리고 생체의료·메타물질 분야의 AM 다공질 재료 및 셀룰러 역학 문헌에 크게 의존한다. 기존 증산 리뷰와 해외 연구 그룹(미국, 중국, 독일)이 맥락을 제공한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">서술형 리뷰로서, 다공질 구조 설계를 세 계열로 정리한다. CAD 기반 설계(조밀 미세기공 배열, Kelvin 및 Weaire-Phelan 셀, 격자), 매개변수를 기공률과 기공 밀도에 피팅한 음함수 삼각함수 곡면을 쓰는 수학적 TPMS 설계, 그리고 단일·다중 스케일 위상최적화이다. TPMS 경로가 가장 자세히 제시되며, 일반식과 연속 구배 기공률을 가능하게 하는 기공률 피팅 매개변수 상관식을 포함한다.</div>
+            </div>
+            <div class="section" onclick="openModal('comparison')">
+                <div class="section-title">Comparison — 비교 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 AM 다공질 구조를 유동 저항, 열전달, 강도로 비교한다. 표 2는 미세기공 배열, BCC, TKD, cube, FD-cube, 옥텟 격자, Kelvin 셀, 네 가지 TPMS 유형의 마찰계수 또는 Ergun형 압력강하 상관식과 Nusselt 상관식을 정리한다. 강도 데이터는 3D 프린팅 다공질 금속이 소결 매질을 크게 능가하고, 셸형 TPMS가 스트럿·골격형보다 우수하며, TPMS 중 W형이 열전달이 가장 좋고 G형과 D형이 가장 강함을 보여준다.</div>
+            </div>
+            <div class="section" onclick="openModal('applications')">
+                <div class="section-title">Applications — 응용 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">응용은 단상(기체) 증산냉각과 상변화를 동반하는 자가 펌핑 증산냉각으로 나뉜다. 단상 사례로 유출 각도와 보강재를 제어한 SLM Inconel 718 평판, AM 증산 대 막냉각 시편과 C3X 터빈 블레이드, 유출 냉각 연소기가 있으며, AM에 의한 기공률 불균일성 연구도 요약된다. 자가 펌핑 사례는 모세관력으로 물을 끌어올리고 열유속에 따라 유량을 스스로 조절하는 3D 프린팅 수지상 프랙탈 채널을 사용한다.</div>
+            </div>
+            <div class="section" onclick="openModal('challenges')">
+                <div class="section-title">Challenges — 과제 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">리뷰는 AM 다공질 재료가 항공 엔진, 액체 로켓, 극초음속 비행체에서 증산냉각의 최대 열유속과 신뢰성을 높일 것이라고 결론짓고, 네 가지 미해결 과제를 제시한다. 고온 재료의 미세 기공 프린팅, 실제 조건에서의 실제 형상 시험, 냉각제 공급을 열부하에 맞추는 위상, 비정상 열전달을 억제하는 다중 스케일 메타물질이다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 20 / total 102</span></summary>
+            <ol class="ref-list"><li>G. Huang, Z. Min, L. Yang, P. Jiang, M. Chyu, Transpiration cooling for additive manufactured porous plates with partition walls, Int. J. Heat Mass Transf., 2018</li><li>G. Huang, Y. Zhu, Z. Liao, R. Xu, P. Jiang, Biomimetic self-pumping transpiration cooling for additive manufactured porous module with tree-like micro-channel, Int. J. Heat Mass Transf., 2019</li><li>P. Jiang, G. Huang, Y. Zhu, R. Xu, Z. Liao et al., Experimental investigation of biomimetic self-pumping and self-adaptive transpiration cooling, Bioinspir. Biomim., 2017</li><li>Z. Cheng, R. Xu, P. Jiang, Morphology, flow and heat transfer in triply periodic minimal surface based porous structures, Int. J. Heat Mass Transf., 2021</li><li>Z. Cheng, X. Li, R. Xu, P. Jiang, Investigations on porous media customized by triply periodic minimal surface: heat transfer correlations and strength performance, Int. Commun. Heat Mass Transf., 2021</li><li>Z. Cheng, R. Xu, P. Jiang, Transpiration cooling with phase change by functionally graded porous media, Int. J. Heat Mass Transf., 2023</li><li>Z. Min, G. Huang, S.N. Parbat, L. Yang, M.K. Chyu, Experimental investigation on additively manufactured transpiration and film cooling structures, J. Turbomach., 2019</li><li>M. Kim, D.H. Shin, J.S. Kim, B.J. Lee, J.H. Lee, Experimental investigation of effusion and transpiration air cooling for single turbine blade, Appl. Therm. Eng., 2021</li><li>G. Huang, L. He, Influence of inhomogeneous porosity on effusion cooling, Int. J. Heat Mass Transf., 2019</li><li>I. Kaur, P. Singh, Flow and thermal transport through unit cell topologies of cubic and octahedron families, Int. J. Heat Mass Transf., 2020</li><li>O. Al-Ketan, R. Rowshan, R.K.A. Al-Rub, Topology-mechanical property relationship of 3D printed strut, skeletal, and sheet based periodic metallic cellular materials, Addit. Manuf., 2018</li><li>N.A. Dudukovic et al., Cellular fluidics, Nature, 2021</li><li>X.Y. Zheng et al., Ultralight, ultrastiff mechanical metamaterials, Science, 2014</li><li>I. Maskery et al., Insights into the mechanical properties of several triply periodic minimal surface lattice structures made by polymer additive manufacturing, Polymer, 2018</li><li>H. Zhang, Y. Wang, Z. Kang, Topology optimization for concurrent design of layer-wise graded lattice materials and structures, Int. J. Eng. Sci., 2019</li><li>M. Greifenstein, J. Hermann, B. Boehm, A. Dreizler, Flame-cooling air interaction in an effusion-cooled model gas turbine combustor at elevated pressure, Exp. Fluids, 2019</li><li>D.E. Glass, A.D. Dilley, H.N. Kelly, Numerical analysis of convection/transpiration cooling, J. Spacecr. Rockets, 2001</li><li>Y. Zhu, W. Peng, R. Xu, P. Jiang, Review on active thermal protection and its heat transfer for airbreathing hypersonic vehicles, Chin. J. Aeronaut., 2018</li><li>N. Wu, J. Wang, F. He, G. Dong, L. Tang, An experimental investigation on transpiration cooling of a nose cone model with a gradient porosity layout, Exp. Therm. Fluid Sci., 2019</li><li>S. Weinbaum, H.L. Wheeler Jr, Heat transfer in sweat-cooled porous metal, J. Appl. Phys., 1949</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "comparison": "Comparison — 비교", "applications": "Applications — 응용", "challenges": "Challenges — 과제"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "비행 마하수와 추력이 증가하면서 <span class=\"term\">열장벽(thermal barrier)</span>이 극한 환경에서 항공우주 동력계의 신뢰성과 재사용성을 제한하는 핵심 병목이 된다."}, {"type": "bullet", "text": "증산냉각(여기서는 유출 냉각이라고도 부름)은 높은 냉각 능력(Glass 등 2001에 따르면 최대 1.4 x 10^9 W/m2), 적은 냉각제 소비, 소형 구조, 유연한 제어로 주목된다.", "figure_refs": [1]}, {"type": "bullet", "text": "메커니즘: 다공질 벽 내부의 냉각제와 고체 매트릭스 간 강한 대류, 그리고 고온 벽 위의 연속 막이 고온 유동으로부터의 열전달을 차단한다.", "figure_refs": [1]}, {"type": "bullet", "text": "역사와 범위: 1940년대 로켓 목 냉각에서 시작되었고(Weinbaum과 Wheeler 1949), 액체 로켓, 근우주 초음속 비행체, 항공 터빈 엔진에 응용된다. Jiang 연구실은 20년 이상 연구해 왔으며 앞서 두 편의 리뷰를 발표했다."}, {"type": "bullet", "text": "문제: 극도로 높고 <span class=\"term\">비균일한 열유속</span>은 국소 열부하와 냉각 능력의 불일치를 일으키므로, 합리적인 냉각제 분배를 위해 기공 위상과 유동 변수를 최적화해야 한다."}, {"type": "bullet", "text": "Jiang과 Chyu는 '다공질 구조의 능동 설계 + 적층제조 기술' 개념을 제안했으며, 여기서 다공질 위상을 맞춤 설계하고 위상최적화와 AM으로 구조·기계적 특성을 강화한다."}, {"type": "bullet", "text": "AM은 복잡한 미세기공 구조의 확장 가능한 서브마이크로미터 프린팅(Saha 등 2019)을 포함해 빠르게 성숙하고 있어, 증산용 다공질 매질 제작의 중요한 경로가 된다."}, {"type": "bullet", "text": "리뷰 구성: 2절은 위상 설계와 AM 다공질 부품의 열전달·강도, 3절은 다양한 증산 방식의 응용, 4절은 과제와 전망을 다룬다."}]}, "related_works": {"content": [{"type": "bullet", "text": "같은 연구실의 기존 리뷰: 공기흡입 극초음속 비행체 능동 열방어에 관한 Zhu 등(2018, Chin. J. Aeronaut.)과 상변화 증산냉각에 관한 Xu 등(2021, 중국어)."}, {"type": "bullet", "text": "Jiang 연구실의 증산 연구는 초음속 유동 속 소결 평판·스트럿의 수치·실험 연구, 증산-막냉각 및 역분사 제트 결합 냉각, 충격파 영향, 저압 비등 모델(Hu 등 2020)을 포괄한다."}, {"type": "bullet", "text": "인용된 다른 그룹: 독일의 Foreest 등(2009) 액체 물 증산과 Herbertz 등(2012) 세라믹 연소실, 중국의 Wu 등(2018, 2019) 승화 및 구배 기공률 노즈콘과 Rong 등(2016) 역분사 제트, Liu 등(2022) 과도 액체 상변화."}, {"type": "bullet", "text": "증산용 AM 계보: Huang 등(2018e) 격벽이 있는 프린팅 다공질 평판, Huang 등(2019b) 수지상 채널 자가 펌핑 모듈, Min 등(2019a,b) AM 증산 대 막냉각 및 기계 시험, Kim 등(2021, 2022) AM 증산냉각 C3X 터빈 블레이드."}, {"type": "bullet", "text": "같은 연구실의 TPMS 다공질 매질: Cheng 등(2021a) 형상·유동·열전달, Cheng 등(2021b) 열전달 상관식과 강도, Cheng 등(2023) 기능성 구배 다공질 매질의 상변화 증산."}, {"type": "bullet", "text": "셀룰러 재료·격자 문헌: Kelvin 및 Weaire-Phelan 폼 모델(Buffel 2014, Mao 2020, Lucci 2017), 격자 열전달(Kaur와 Singh 2020, Krishnan 2006, Ekade와 Krishnan 2019), 기계적 메타물질(Zheng 2014, Al-Ketan 2018, Maskery 2018), AM 다공질 금속 리뷰(Wang 2016, Guddati 2019)."}, {"type": "bullet", "text": "위상최적화 문헌: 최대 강성 미세구조 설계(Huang 2011), 열탄성 동시 설계(Deng 2013), 다중 스케일 방법(Zhang과 Sun 2006, Zhang 2019, Gao 2019, Sivapuram 2016, Nakshatrala 2013)."}, {"type": "bullet", "text": "모세관 '셀룰러 유체역학'(Dudukovic 등 2021, Nature)과 불균일 기공률 유출 냉각(Huang과 He 2019)이 AM 격자 설계를 자가 펌핑 및 제조 공차 문제와 연결한다."}]}, "method": {"content": [{"type": "bullet", "text": "리뷰 방식: 저자 연구실과 Chyu의 연구를 중심으로 한 서술형·비체계적 조사로, 설계, 열전달·강도 성능, 응용 순으로 구성되며 검색 프로토콜이나 포함 기준은 보고되지 않는다."}, {"type": "bullet", "text": "기존 매질의 기본 한계: 소결 금속 입자가 가장 널리 쓰이지만 입자 크기에 따라 기공률이 거의 변하지 않는다. 규칙 충전은 기공률이 거의 일정하고 무작위 충전은 약 0.36-0.40에 그치며, 와이어 메시·용접 판·폼은 목표 기공 변수로 조정하기 어렵다."}, {"type": "bullet", "text": "표 1에 세 가지 설계 접근이 정리된다. CAD 기반(Kelvin 셀, Weaire-Phelan 셀, 격자, 미세기공 배열), TPMS(I-WP, Primitive, Diamond, Gyroid), 위상최적화(최대 강성, 최적 열탄성)이다."}, {"type": "bullet", "text": "<span class=\"term\">조밀 미세기공 배열</span>: 독립 채널로서 기공 분포, 보강재, 유출 각도를 유연하게 설계할 수 있다. 예로 피치 500 마이크로미터의 엇갈림 300 마이크로미터 기공, 5 mm 줄기에서 200 마이크로미터 모세관까지 이어지는 6층 수지상 채널, 45·90·135도 유출 각도가 있으며, 기공 분포 최적화에 기계학습이 사용되었다."}, {"type": "bullet", "text": "<span class=\"term\">Kelvin 및 Weaire-Phelan 셀</span>은 Kelvin 최소 분할 문제의 해답으로, 다면체 모서리의 스트럿이 규칙(또는 무작위화된) 폼을 이루며 기공 크기와 기공률은 스트럿 길이와 두께로 정해진다. Kelvin 셀은 비틀기·기울이기·늘이기가 적용되었고 DLP와 SLM으로 프린팅되었다.", "figure_refs": [2]}, {"type": "bullet", "text": "<span class=\"term\">격자 구조</span>는 마이크론에서 밀리미터 스케일의 단위 셀을 주기적으로 쌓은 것으로, 모세관 '프로그래밍' 막대 격자, 초경량·초강성 미세격자, 옥텟 트러스 및 입방팔면체 격자 등이 예이다.", "figure_refs": [3]}, {"type": "bullet", "text": "<span class=\"term\">TPMS</span>: 평균 곡률이 0인 음함수 곡면 F(x,y,z)=0이 고체(F&lt;0)와 공극(F&gt;0)을 나눈다. 단위 셀을 만들어 x, y, z 방향으로 배열하며, 기공률·기공 크기·기공 밀도는 특성 매개변수로 정해진다. 식 (1)-(4)는 W, P, D, G 곡면, 식 (5)는 일반형이다.", "figure_refs": [4, 5]}, {"type": "formula", "label": "식 (1)-(2) — TPMS 곡면, W형과 P형 (인쇄된 그대로)", "latex": "a_1(\\cos x\\cos y+\\cos y\\cos z+\\cos z\\cos x)+a_2(\\cos 2x+\\cos 2y+\\cos 2z)+1=0 \\\\ a_3(\\cos x+\\cos y+\\cos z)+a_4(\\cos x\\cos y+\\cos y\\cos z+\\cos z\\cos x)+1=0", "description": "계수 $a_1$-$a_4$를 갖는 Schoen I-WP(W)형과 Schwarz primitive(P)형의 음함수 레벨셋 곡면으로, 0 레벨셋이 기공/골격 경계면이다."}, {"type": "formula", "label": "식 (3)-(4) — TPMS 곡면, D형과 G형 (인쇄된 그대로, 비고 참조)", "latex": "a_5[\\sin(x-\\pi/4)\\sin(y-\\pi/4)\\sin(z-\\pi/4)+\\sin(x-\\pi/4)\\cos(y-\\pi/4)\\cos(x-\\pi/4)+\\cos(x-\\pi/4)\\sin(y-\\pi/4)\\cos(x-\\pi/4)+\\cos(x-\\pi/4)\\cos(y-\\pi/4)\\sin(x-\\pi/4)]+a_6(\\cos 4x+\\cos 4y+\\cos 4z)+1=0 \\\\ a_7(\\cos x\\sin y+\\cos y\\sin z+\\cos z\\sin y)+a_8(\\cos 2x\\cos 2y+\\cos 2y\\cos 2z+\\cos 2z\\cos 2x)+1=0", "description": "Schwarz diamond(D)형과 Schoen gyroid(G)형 곡면을 인쇄된 그대로 전사했다. 식 (3)의 마지막 세 곱에서 표준 D 곡면은 $z$를 쓰는 자리에 $(x-\\pi/4)$가 반복되고, 식 (4)의 셋째 항은 표준 gyroid의 $\\cos z\\sin x$ 대신 $\\cos z\\sin y$로 인쇄되어 있다. 둘 다 수정하지 않고 사용자 검토용으로 표시한다."}, {"type": "formula", "label": "식 (5) — 일반 TPMS 방정식", "latex": "F(x,y,z)=\\sum_{c=1}^{d}a_c\\sin^i px\\cdot\\sin^j py\\cdot\\sin^k pz\\cdot\\cos^l px\\cdot\\cos^m py\\cdot\\cos^n pz+q=0", "description": "셀 크기(즉 기공 밀도)를 정하는 스케일 매개변수 $p$와 레벨(즉 기공률)을 정하는 오프셋 $q$를 갖는 일반화된 삼각함수 곡면이다."}, {"type": "bullet", "text": "p와 q를 직접 구하는 것은 번거로우므로, 유형별로 q를 기공률에 피팅하고(식 6) p를 PPI 또는 입자 등가 기공 직경과 연결한다(식 7-8)."}, {"type": "formula", "label": "식 (6)-(8) — 기공률 피팅 TPMS 매개변수 (식 8은 인쇄된 그대로, 비고 참조)", "latex": "q=\\begin{cases}-16.24+24.08\\varepsilon+12.13\\varepsilon^2 & \\text{W type},\\ 0.1\\le\\varepsilon\\le0.9\\\\ -15.51+15.35\\varepsilon+18.53\\varepsilon^2 & \\text{P type},\\ 0.1\\le\\varepsilon\\le0.7\\\\ -10.87+18.27\\varepsilon+5.83\\varepsilon^2 & \\text{D type},\\ 0.1\\le\\varepsilon\\le0.9\\\\ -15.59+32.67\\varepsilon-2.28\\varepsilon^2 & \\text{G type},\\ 0.1\\le\\varepsilon\\le0.9\\end{cases} \\\\ p=PPI\\cdot\\pi/12.7, \\qquad p=2\\sqrt[3]{6\\varepsilon\\pi^2}/d_p\\ (d_p:\\text{mm})", "description": "유형별 TPMS 오프셋 $q$의 기공률 2차 피팅과, 인치당 기공 수 또는 mm 단위 등가 기공 직경 $d_p$로부터 스케일 $p$를 정하는 두 방법이다. 식 (8)의 세제곱근 범위는 렌더링된 페이지에서 판독한 것으로 사용자 확인이 필요하다."}, {"type": "bullet", "text": "<span class=\"term\">구배 기공률</span>: 복합 셀은 기공 유형이나 스케일을 혼합하고, q를 공간 좌표의 선형 함수로 두면(좁은 기공률 범위에서 유효) 연속 구배 구조를 얻는다. 0.3 &lt; 기공률 &lt; 0.7, PPI = 52인 G형 예에서 셀 평균 기공률이 설계값과 일치한다.", "figure_refs": [5, 6, 7]}, {"type": "bullet", "text": "<span class=\"term\">위상최적화</span>: 거시 수준 최적화는 주어진 재료를 배치하고 미시 수준 최적화는 극한 물성 셀을 설계하며, 둘이 결합되어 있으므로 AM으로 제작이 가능해진 설계 경로로서 <span class=\"term\">다중 스케일 위상최적화</span>(층상 미세구조, 구배 층화 병렬 최적화, 거시 분할 다종 미세구조, 비선형 미세구조)가 강조된다."}]}, "comparison": {"content": [{"type": "bullet", "text": "미세기공 배열은 설계·프린팅이 간단하지만 채널 간 혼합이 없는 독립 관처럼 거동한다. 프린팅된 채널 벽에 부착된 분말 입자가 핀 효과로 열전달을 높이며, 채널이 매우 작을 때 특히 두드러진다."}, {"type": "formula", "label": "표 2 (발췌) — 격자 및 TPMS 구조에 쓰인 Ergun형 압력강하 형태", "latex": "-\\frac{dp}{dx}=A\\frac{\\mu u_D}{d_h^2}\\cdot\\frac{(1-\\varepsilon)^2}{\\varepsilon^3}+B\\frac{\\rho u_D^2}{d_h}\\cdot\\frac{1-\\varepsilon}{\\varepsilon^3}", "description": "Darcy 속도 $u_D$와 수력 직경 $d_h$를 쓰는 표의 공통 형태로, (A, B) = TKD (431.82, 1.51), cube (1188.90, 1.73), FD-cube (948.24, 1.44) (Kaur와 Singh 2020), TPMS W (85.32, 2.09), P (111.23, 0.80), D (203.07, 3.27), G (130.72, 1.97) (Cheng 등 2021b)이다. 값은 렌더링된 표에서 판독했다."}, {"type": "formula", "label": "표 2 (발췌) — TPMS 구조의 공극 내 Nusselt 상관식", "latex": "Nu_{sf}=(7.66-18.84\\varepsilon+19.75\\varepsilon^2)Re_h^{0.29}Pr^{1/3}\\ (\\text{W}),\\quad (2.30-8.30\\varepsilon+16.07\\varepsilon^2)Re_h^{0.17}Pr^{1/3}\\ (\\text{P}) \\\\ (0.84-2.30\\varepsilon+3.36\\varepsilon^2)Re_h^{0.72}Pr^{1/3}\\ (\\text{D}),\\quad (3.35-7.83\\varepsilon+7.67\\varepsilon^2)Re_h^{0.44}Pr^{1/3}\\ (\\text{G})", "description": "Cheng 등(2021b)의 네 가지 TPMS 유형에 대한 기공률 의존 공극 내 Nusselt 상관식으로, 수력 직경 기준 레이놀즈수를 쓴다. 렌더링된 표에서 판독했다(표 2의 텍스트 층은 완전히 뒤섞여 있다)."}, {"type": "bullet", "text": "표에 정리된 다른 열전달 상관식으로 기공 배열의 $Nu_{sf}=0.023Re^{0.8}Pr^{0.4}$, BCC의 $Nu=1.7169Re_d^{0.5579}Pr^{0.4}$, 일정 q 및 일정 T 조건의 TKD·cube·FD-cube 체적 $Nu_v$ 상관식, 옥텟의 $Nu_{sf}=0.52Re^{0.5}Pr^{0.37}$, Kelvin 셀의 $Nu_T=1.594Re_c^{0.454}\\varepsilon^{0.1644}$가 있다."}, {"type": "bullet", "text": "격자 비교: 옥텟은 TKD, cube, FD-cube보다 Nusselt 수가 크게 높고 압력강하는 약간 높다(Kaur와 Singh 2020). 단층 Kagome는 와이어 직조 벌크 Kagome보다 리가먼트 Nusselt 수가 약 42 % 낮지만 동일 펌핑 동력에서 방열 성능이 30 % 우수하다(Shen 등 2018). 스트럿 형상은 Kelvin 폼의 유동 저항에 영향을 준다(Kumar와 Topin 2014)."}, {"type": "bullet", "text": "TPMS 열전달 순위: $h_W&gt;h_D&gt;h_G&gt;h_P$로, W형은 가지가 셀 중심에서 퍼져 나가 교란과 비표면적을 키우고, W/G형 유로는 큰 압력강하 손해 없이 방향을 계속 바꾼다. 종합 성능 j/f는 W &gt; P 약 G &gt; D 순이다(Cheng 등 2021b)."}, {"type": "bullet", "text": "프린팅 대 소결 매질의 강도: 최대 인장강도가 0.175 GPa(소결)에서 0.685 GPa(3D 프린팅, 보강 없음), 60 % 보강 시 0.95 GPa로 높아져 소결의 4.4배이며 고체 재료에 근접한다(Huang 등 2018e).", "figure_refs": [8]}, {"type": "bullet", "text": "미세기공 배열의 강도는 기공이 클수록(응력 집중 감소), 정렬보다 엇갈림 배치일수록, 기공 간격이 클수록 높다(Min 등 2019b). 셸(시트)형 TPMS는 인장 지배 거동으로 골격형 TPMS와 스트럿 격자보다 우수하며, D형 셸이 가장 좋다(Al-Ketan 등 2018a).", "figure_refs": [9, 10]}, {"type": "bullet", "text": "프린팅된 수지 시편 시험에 따른 TPMS 강도 순위: 굽힘 $\\sigma_{b,G}&gt;\\sigma_{b,D}&gt;\\sigma_{b,W}&gt;\\sigma_{b,P}$, 인장강도 4.81 MPa(W)와 5.83 MPa(D). P형은 하중 방향이 정해진 경우 가장 강성이 높고, D형과 G형은 파괴 전 큰 변형이 필요한 경우에 적합하다(Maskery 등 2018)."}, {"type": "bullet", "text": "파괴 메커니즘: 셀을 따라 고체 면적비 $S_s/S_c$가 P형 0.19-0.82, W형 0.28-0.69로 크게 변하지만 D·G형은 0.52-0.57에 그친다. 최소 유효 지지 면적(W 0.28 대 D 0.52)이 D형의 더 균일한 von Mises 응력과 높은 강도를 설명한다.", "figure_refs": [11, 12, 13]}]}, "applications": {"content": [{"type": "bullet", "text": "냉각제 상(분류 기준점): 리뷰는 두 방식을 모두 다룬다. 프린팅 평판·시편·블레이드의 단상 기체(공기) 증산냉각과, 상변화(증발)를 동반하는 액체 물 자가 펌핑 증산냉각이다. 따라서 단상 전용이나 상변화 전용이 아닌 혼합으로 분류한다."}, {"type": "bullet", "text": "아음속 풍동에서 시험한 SLM Inconel 718 평판은 구멍 벽에 부착된 10-20 마이크로미터 입자가 미세 리브처럼 작용했다. 분사율 F = 1-3 %에서 45·90·135도 유출 각도를 비교한 결과 수직 분사(90도)가 가장 좋고 역방향 분사(135도)가 가장 나빴으며, F = 1 %와 2 %에서 차이가 뚜렷했다(Huang 등 2018e).", "figure_refs": [14]}, {"type": "formula", "label": "식 (9)-(11) — 냉각 효율, 분사비, 차단비", "latex": "\\eta=\\frac{T_\\infty-T_w}{T_\\infty-T_c}, \\qquad F=\\frac{\\rho_c u_c}{\\rho_\\infty u_\\infty}, \\qquad BR=\\frac{\\delta_1}{\\delta_1+\\delta_2}", "description": "벽, 주류, 냉각제 입구 온도로 정의한 증산냉각 효율, 질량유속비로 정의한 냉각제 분사비, 격벽 폭 $\\delta_1$과 격벽 간격 $\\delta_2$로 정의한 격벽 차단비이다."}, {"type": "bullet", "text": "보강재가 있는 프린팅 평판(BR = 30, 40, 60 %)은 보강재 없는 평판 및 소결 평판과 거의 같은 냉각 성능을 보였다. F = 1 %에서는 BR 영향이 작았고, F = 3 %에서는 BR에 따라 온도가 약간만 올랐으며, 상류 막 덮임과 금속 전도 덕분에 보강재 위에 줄무늬 고온부가 나타나지 않았다.", "figure_refs": [15]}, {"type": "bullet", "text": "<span class=\"term\">터빈 응용</span>: AM Inconel 718 증산 시편(원형 구멍, 구 충전, 와이어 메시, 혈관형 채널; 30 x 12 x 3.2 mm; 11 m/s, Re = 98,000; F = 1.2-3.6 %)이 팬형 막냉각 구멍보다 우수했으며, 내부 고체-유체 계면 면적비가 지배 인자였다(Min 등 2019a)."}, {"type": "bullet", "text": "AM 증산냉각 C3X 블레이드(등가 기공 40 마이크로미터, 대비 0.5 mm EDM 유출 구멍)는 자유류 100 degC에서 유출 냉각과 내부 냉각보다 냉각 효율이 각각 34 %와 25 % 높았고, 저운동량 유출이 표면을 고르게 덮어 400 LPM 유출 구멍에서 보이는 흡입면 재순환을 피했다(Kim 등 2021).", "figure_refs": [16, 17, 18, 19]}, {"type": "bullet", "text": "0.25 MPa의 유출 냉각 모델 가스터빈 연소기에서 OH-PLIF로 선회수 0.7-1.3, 스테이징 비 0-10 % 범위의 화염-냉각 공기 상호작용을 연구했으며, 보고된 두 벽 온도 경우에 대해 총 막냉각 효율 0.45-0.57과 0.45-0.62를 얻었다(Greifenstein 등 2019).", "figure_refs": [20]}, {"type": "bullet", "text": "AM 공차: 불균일 기공률은 국소 막냉각과 내부 구멍 냉각을 크게 바꾸지만, 비균일도 20 %에서도 전체 및 국소 유출 냉각 효율 변화는 1 % 미만이다. 저전도도 열차폐 코팅이 덮이면 영향이 커진다(Huang과 He 2019)."}, {"type": "bullet", "text": "<span class=\"term\">자가 펌핑 증산냉각</span>: 수지상 프랙탈 채널(5 mm 줄기, 600 마이크로미터 간격의 200 마이크로미터 말단 구멍, 인접 단계 직경비 0.7-0.8)을 갖는 3D 프린팅 니켈-크롬 생체모방 모듈이 모세관력으로 물을 미세기공층까지 끌어올려, 펌프와 기존 핀 판 설계의 접촉 열저항을 없앤다(Huang 등 2019b).", "figure_refs": [21]}, {"type": "bullet", "text": "0.2 MW/m2에서 미세기공층은 물 0.026 g/s로 약 373 K를 유지했고 표면은 약 544 K(재료 한계 근처)였다. 0.1에서 0.2 MW/m2로의 계단 시험에서 물 유량이 0.012에서 0.026 g/s로 자동 조절되고 다시 돌아와, 제어 장치 없는 자가 적응 냉각을 보였다. 이전 연구는 최대 1.1 MW/m2까지 자가 적응 냉각을 보고했다.", "figure_refs": [22, 23]}, {"type": "bullet", "text": "자가 펌핑 전연 개념은 정체점 부근 초합금 덮개 뒤에 다공질 층을 두어 정체 압력 상승이 펌핑을 방해하지 않게 하고, 생성된 증기가 핀의 2차 냉각과 하류 보호막을 제공한다. 셀룰러 유체역학 격자(L* = 0.55, D* = 0.33, 예상 상승 높이 H* 약 5)는 증발이 보충을 넘어서면 모세관 기둥이 위에서부터 건조됨을 보여준다(Dudukovic 등 2021)."}]}, "challenges": {"content": [{"type": "bullet", "text": "전망: 증산냉각은 항공 엔진, 액체 로켓 엔진, 극초음속 비행체에 큰 잠재력이 있으며, AM 기반 다공질 재료가 최대 열유속과 신뢰성을 더욱 높일 것으로 기대된다."}, {"type": "bullet", "text": "과제 1: 고온 내열 금속과 세라믹으로 기공 직경 50 마이크로미터 미만의 다공질 부품을 프린팅하는 것."}, {"type": "bullet", "text": "과제 2: 저온 풍동의 평판 시편을 넘어, 실제 형상의 3D 프린팅 다공질 부품으로 실제 운전 조건에서 증산 실험을 수행하는 것."}, {"type": "bullet", "text": "과제 3: 냉각제 공급과 공간 열부하의 불일치를 해소하는 기공 위상을 설계·제작하여 증산 최대 열유속을 높이는 것으로, 비균일 열유속에 대한 구배 기공률 설계와 직접 연결된다."}, {"type": "bullet", "text": "과제 4: 온도 진동과 온도 지연 같은 비정상 열전달을 극복하는 다중 스케일 기공 메타물질로, 상변화 증산과 관련이 깊다."}, {"type": "bullet", "text": "본문에서 드러나는 추가 공백: 기공률·기공 크기의 제조 불균일성, CAD/TPMS 방법만으로는 구조 성능을 제어할 수 없다는 점, 거시-미시 결합(다중 스케일) 최적화의 필요성."}, {"type": "bullet", "text": "정리된 성능 데이터 대부분은 저온 아음속 공기 시험, 수지 또는 금속 시편, 중간 수준 열유속(자가 펌핑은 최대 약 1.1 MW/m2)에 대한 것이므로, AM 증산 구조의 고엔탈피 검증은 미해결이다. 연구비: 중국 국가자연과학기금 우수청년학자 과제 52225603."}]}};
+        const INSIGHTS_DATA = {"limitations": [{"claim": "금속 적층제조의 정밀도 한계로 인해 프린팅된 증산 구조의 기공률과 기공 크기 불균일성을 무시할 수 없다.", "source_quote": "However, the inhomogeneity of porosity and pore size are non-negligible owing to the limited accuracies of metal additive manufacturing technology.", "source_section": "applications"}, {"claim": "CAD 기반 및 TPMS 기반 설계는 복잡한 형상을 만들 수 있으나, 결과 구조의 성능을 종합적으로 제어하지는 못한다.", "source_quote": "CAD software and the TPMS method can be used to construct complex geometries, but these two methods have the same problem because they cannot comprehensively control the performance of the structure.", "source_section": "method"}, {"claim": "극한 물성을 갖는 재료 셀을 거시 구조로 조립하면, 거시 구조의 위상과 경계조건이 최적 미세구조에 영향을 주므로 재료의 잠재력이 충분히 활용되지 않을 수 있다.", "source_quote": "However, the potential of materials may not be fully utilized when applying material cells with extreme properties to form macrostructures because the topological form and boundary conditions of macrostructures have important effects on the optimal configuration of microstructures.", "source_section": "method"}], "future_works": [{"claim": "고온 내열 금속과 세라믹으로 기공 직경 50 마이크로미터 미만의 다공질 부품을 3D 프린팅하는 방법을 개발한다.", "source_quote": "a 3D printing method is required for porous parts with a pore diameter less than 50μm using high temperature-resistant metal and ceramic materials;", "source_section": "challenges"}, {"claim": "실제 형상의 3D 프린팅 다공질 부품으로 실제 조건에서 증산냉각 실험을 수행한다.", "source_quote": "transpiration cooling experiments should be conducted using realistic shaped porous parts fabricated by 3D printing under real-world conditions;", "source_section": "challenges"}, {"claim": "냉각제 공급과 공간 열부하의 불일치를 해소하는 기공 위상을 설계·제작하여 증산냉각의 최대 열유속을 높인다.", "source_quote": "the design and preparation of pore topologies that can alleviate the unreasonable match between the coolant supply and spatial thermal load to further improve the maximum heat flux for transpiration cooling;", "source_section": "challenges"}, {"claim": "온도 진동과 온도 지연 같은 비정상 열전달을 극복하도록 다중 스케일 기공 메타물질의 설계와 제작을 최적화한다.", "source_quote": "optimizing the design and preparation of metamaterials with multiscale pores to overcome the problem of unsteady heat transfer (i.e., temperature oscillation and temperature delay).", "source_section": "challenges"}], "motivation_resolution": {"motivating_problems": ["비행 마하수와 추력이 높아지면서 열장벽이 항공우주 동력계의 신뢰성과 재사용성을 제한하는 핵심 병목이 되어, 증산냉각 같은 고성능 능동 냉각이 필요하다.", "극도로 높고 비균일한 열유속은 국소 열부하와 냉각 능력의 불일치를 일으키므로, 합리적인 냉각제 분배를 위해 기공 위상과 유동 변수를 최적화해야 한다.", "기존 다공질 매질(소결 입자, 와이어 메시, 용접 판, 폼)은 기공률과 기공 변수를 거의 조절할 수 없으며, 예컨대 무작위 충전은 기공률이 약 0.36-0.40 범위에 그친다.", "증산냉각용 적층제조 기술에 관한 정보가 파편화되어 있어, 설계 방법·성능·응용에 대한 종합적 개관이 없다."], "addressed_by_this_work": ["다공질 위상 설계 접근(CAD 기반 셀과 격자, 기공률 피팅 매개변수를 쓰는 TPMS 방정식, 단일·다중 스케일 위상최적화)을 AM 기반 다공질 매질의 일반 틀로 통합한다.", "기공률에 피팅된 TPMS 매개변수에서 q를 공간 좌표의 선형 함수로 두어 연속 구배 다공질 구조를 만드는 방법을 보여주며, 이는 비균일 하중에 기공률을 맞추는 경로이다.", "대표적인 AM 다공질 구조의 유동 저항·열전달 상관식과 강도 데이터를 정리하고, 3D 프린팅 부품의 단상 및 자가 펌핑 상변화 증산냉각 응용을 요약한다."], "remaining_unresolved": ["냉각제 공급을 공간 열부하에 실제로 맞추고 최대 열유속을 높이는 기공 위상은 아직 설계·제작되지 않았다.", "고온 금속·세라믹 다공질 부품의 50 마이크로미터 미만 프린팅과 실제 형상 부품의 실제 조건 시험이 미해결로 남아 있다.", "AM에 의한 기공률·기공 크기 불균일성과 비정상 열전달(온도 진동·지연)은 아직 극복되지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
