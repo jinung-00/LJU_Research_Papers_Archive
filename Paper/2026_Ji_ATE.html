@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Gradient porous plate improves pumped transpiration cooling</title>
+    <meta name="keywords" content="Transpiration cooling, TPS, Phase change, Graded porosity, Non-uniform heat flux, Additive manufacturing, Liquid coolant, Vapor blockage, Boiling heat transfer, Cooling efficiency, Cooling regime map, Inconel 718, Experimental">
+    <meta name="paper-authors" content="Shantao Ji, Suchen Wu, Chengbin Zhang">
+    <meta name="paper-journal" content="Applied Thermal Engineering, Vol. 290, 2026, Art. 130029 · DOI: 10.1016/j.applthermaleng.2026.130029">
+    <meta name="paper-tier" content="1">
+    <meta name="paper-topic" content="Transpiration_Cooling">
+    <meta name="paper-category" content="03_Experimental">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$',  right: '$',  display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });"></script>
+    <!-- theme:start — WOONG-style theme (paper / forest green, serif titles); light/dark follows the site toggle (localStorage "theme"), default light; SSOT = this block, re-apply with apply_theme.py -->
+    <script>
+        (function () {
+            var root = document.documentElement;
+            function saved() { try { var t = localStorage.getItem('theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (e) { return null; } }
+            function apply() { root.setAttribute('data-theme', saved() || 'light'); }
+            apply();
+            window.addEventListener('storage', function (e) { if (e.key === 'theme') apply(); });
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #f4f1ea; --surface: #fbfaf6; --surface-2: #efebe2;
+            --line: #e2ddd1; --line-strong: #cfc8b8;
+            --ink: #23262a; --ink-2: #4c5157; --muted: #858a8f;
+            --accent: #2f4a3a; --accent-ink: #f3efe6; --accent-soft: #e3eadf;
+            --t2: #8a6420; --warn: #b5523b; --ok: #2f6b4a; --amber: #b07a2a;
+            --shadow: 0 1px 2px rgba(40,35,25,.05), 0 6px 22px rgba(40,35,25,.06);
+            --sans: "Pretendard", "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", system-ui, sans-serif;
+            --serif: "Iowan Old Style", "Charter", "Georgia", "Noto Serif KR", "Batang", serif;
+            color-scheme: light;
+        }
+        :root[data-theme="dark"] {
+            --bg: #1b1c1a; --surface: #222420; --surface-2: #2a2c27;
+            --line: #33362f; --line-strong: #45493f;
+            --ink: #e8e5dc; --ink-2: #bdb9ae; --muted: #8b8a82;
+            --accent: #9cc3a6; --accent-ink: #14201a; --accent-soft: #2b3a2f;
+            --t2: #d8b26a; --warn: #e08a72; --ok: #9cc3a6; --amber: #e0b064;
+            --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.28);
+            color-scheme: dark;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--sans);
+            margin: 0; padding: 28px 0 40px;
+            background: var(--bg); color: var(--ink);
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+        .slide {
+            width: min(1240px, 96vw);
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column; flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        /* header: quiet surface, serif title, outlined tier badge */
+        .header { background: var(--surface); color: var(--ink); padding: 34px 40px 22px; border-bottom: 1px solid var(--line); }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 22px; margin-bottom: 12px; }
+        .title { font-family: var(--serif); font-size: 30px; font-weight: 600; line-height: 1.28; letter-spacing: -.005em; }
+        .authors { font-size: 15px; color: var(--ink-2); margin-bottom: 4px; }
+        .journal { font-size: 13px; color: var(--muted); }
+        .tier-badge {
+            display: inline-block; padding: 3px 10px; margin-top: 6px;
+            border: 1.5px solid currentColor; border-radius: 6px; background: transparent;
+            font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+        }
+        .tier-1 { color: var(--accent); }
+        .tier-2 { color: var(--t2); }
+        .tier-3 { color: var(--muted); }
+
+        /* summary band */
+        .summary-container { background: var(--bg); padding: 22px 40px 20px; border-bottom: 1px solid var(--line); }
+        .summary-title { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .summary { font-size: 16px; line-height: 1.78; }
+        .keywords { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+        .keyword-chip {
+            font-size: 12px; padding: 2px 10px; line-height: 1.6;
+            background: var(--surface); color: var(--ink-2);
+            border: 1px solid var(--line-strong); border-radius: 999px; font-weight: 500;
+        }
+
+        /* section cards (structure unchanged: 3 × 2 grid, click → modal) */
+        .content {
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
+            gap: 12px; padding: 18px 22px; overflow: hidden; height: 62vh; flex-shrink: 0;
+        }
+        .section {
+            background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+            padding: 14px 18px; cursor: pointer;
+            transition: transform .15s, box-shadow .15s, border-color .15s;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .section:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--accent); }
+        .section-title {
+            font-family: var(--serif); color: var(--ink); font-size: 17px; font-weight: 600;
+            margin-bottom: 9px; padding-bottom: 7px; border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: baseline;
+        }
+        .click-hint { font-family: var(--sans); font-size: 11.5px; color: var(--muted); font-weight: 400; }
+        .section:hover .click-hint { color: var(--accent); }
+        .section-summary {
+            font-size: 14.5px; line-height: 1.68; color: var(--ink-2); flex: 1; overflow: hidden;
+            /* cards clip long text: fade the cut instead of slicing a line in half */
+            -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+                    mask-image: linear-gradient(to bottom, #000 calc(100% - 34px), transparent);
+        }
+        .term { font-weight: 600; color: var(--ok); }   /* a step brighter than --accent so terms stand out from ink */
+        .eng { color: var(--muted); font-style: italic; }
+
+        /* conclusion-modal insights */
+        .conclusion-insights { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--line-strong); }
+        .modal-body .lim-list, .modal-body .future-list { padding-left: 20px; margin: 0 0 18px; }
+        .modal-body .lim-list li, .modal-body .future-list li { margin-bottom: 12px; line-height: 1.65; }
+        .evidence-source {
+            font-family: var(--serif); font-style: italic; font-size: 13.5px; color: var(--ink-2);
+            margin-top: 5px; padding: 2px 0 2px 12px; border-left: 3px solid var(--line-strong); line-height: 1.55;
+        }
+        .evidence-source em { font-family: var(--sans); font-style: normal; font-size: 12px; color: var(--muted); }
+        .motivation-block { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px; }
+        @media (min-width: 900px) { .motivation-block { grid-template-columns: repeat(3, 1fr); } }
+        .mot-problems, .mot-addressed, .mot-remaining {
+            background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+        }
+        .mot-problems h5, .mot-addressed h5, .mot-remaining h5 {
+            margin: 0 0 8px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase;
+        }
+        .mot-problems h5 { color: var(--warn); }
+        .mot-addressed h5 { color: var(--ok); }
+        .mot-remaining h5 { color: var(--amber); }
+        .mot-problems ul, .mot-addressed ul, .mot-remaining ul { padding-left: 18px; margin: 0; }
+        .mot-problems li, .mot-addressed li, .mot-remaining li { margin-bottom: 6px; line-height: 1.58; font-size: 14px; }
+        .insights-section-title {
+            font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+            margin: 24px 0 10px; border-bottom: 1px solid var(--line); padding-bottom: 6px;
+        }
+        .insights-section-title:first-child { margin-top: 0; }
+
+        /* figure-ref chip */
+        .fig-ref {
+            display: inline-block; margin-left: 6px; padding: 0 8px; font-size: 11px; line-height: 1.7;
+            color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px;
+            vertical-align: middle; text-indent: 0; text-align: center;
+        }
+
+        /* modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(28, 26, 20, .42);
+            -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+            animation: fadeIn .18s ease-out;
+        }
+        :root[data-theme="dark"] .modal-overlay { background: rgba(0, 0, 0, .6); }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal {
+            background: var(--surface); width: min(1040px, 92vw); height: min(820px, 88vh);
+            border: 1px solid var(--line); border-radius: 14px;
+            display: grid; grid-template-rows: auto 1fr; box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden;
+        }
+        .modal-header {
+            background: var(--surface); color: var(--ink); padding: 18px 28px 14px;
+            border-bottom: 1px solid var(--line);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-title { font-family: var(--serif); font-size: 22px; font-weight: 600; }
+        .modal-close {
+            background: transparent; border: 1px solid var(--line-strong); color: var(--ink-2);
+            width: 32px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 18px; line-height: 1;
+        }
+        .modal-close:hover { background: var(--surface-2); color: var(--ink); }
+        .modal-body { padding: 24px 34px 36px; overflow-y: auto; font-size: 15.5px; line-height: 1.78; }
+        .modal-body .bullet { margin-bottom: 11px; padding-left: 18px; text-indent: -18px; }
+        .modal-body .bullet:before { content: "• "; color: var(--accent); font-weight: 700; }
+        .modal-body .formula-block {
+            background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+            padding: 14px 18px; margin: 16px 0; border-radius: 8px;
+        }
+        .modal-body .formula-label { font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+        .modal-body .formula-desc { font-size: 13px; color: var(--ink-2); margin-top: 8px; line-height: 1.62; }
+        .modal-body .paper-fig { margin: 18px 0; text-align: center; }
+        .modal-body .paper-fig img { max-width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+        .modal-body .paper-fig figcaption { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+        .modal-body h4 { color: var(--ink); margin: 22px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+
+        /* references */
+        details.references {
+            margin: 4px 22px 22px; box-sizing: border-box;
+            border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; background: var(--bg);
+        }
+        details.references > summary { cursor: pointer; font-weight: 600; color: var(--ink); font-size: 14px; user-select: none; }
+        details.references > summary:hover { color: var(--accent); }
+        details.references .ref-count { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+        details.references .ref-list { margin: 12px 0 4px; padding-left: 22px; font-size: 12.5px; color: var(--ink-2); line-height: 1.62; }
+        details.references .ref-list li { margin-bottom: 5px; }
+        details.references .ref-list li::marker { color: var(--muted); }
+
+        ::selection { background: var(--accent-soft); }
+    </style>
+    <!-- theme:end -->
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <div class="header-row">
+                <div class="title">Gradient porous plate improves pumped transpiration cooling</div>
+                <span class="tier-badge tier-1">Tier 1 — 최상위</span>
+            </div>
+            <div class="authors">Shantao Ji, Suchen Wu, Chengbin Zhang</div>
+            <div class="journal">Applied Thermal Engineering, Vol. 290, 2026, Art. 130029 · DOI: 10.1016/j.applthermaleng.2026.130029</div>
+        </div>
+
+        <div class="summary-container">
+            <div class="summary-title">논문 요약</div>
+            <div class="summary">본 실험 연구는 적층 제조한 Inconel 718 <span class="term">구배 다공판(gradient porous plate)</span>을 전체 기공률이 거의 같은(28.3% 대 28.5%) 균일 다공판과, 펌프 구동·물 공급 <span class="term">상변화 증산냉각</span> 장치에서 비교한다. 가열은 토치로 하며 중앙이 높고 측면이 낮은 <span class="term">비균일 열유속(non-uniform heat flux)</span>을 부과한다. 구배 다공판은 기공률-열유속 정합 원리를 따라 중앙 고열유속 영역의 기공률이 34.7%(열 간격 0.7 mm), 측면 영역이 26.7%(1.4 mm)이다. 냉각제 유량이 줄거나 열유속이 커지면 세 가지 냉각 영역(전면 강화, 국부 약화, 악화)이 순서대로 나타나며, 이를 0.3-2.1 MW/m2 범위의 영역 선도로 정리한다. 구배 다공판은 더 적은 물로 전면 강화 상태에 도달하고(370 kW/m2에서 2.7 대 3.3 mL/min), 더 높은 열유속에서야 악화되며(2 mL/min에서 500 대 400 kW/m2), 저자들은 이를 빠른 증기 배출로 <span class="term">증기 차단(vapor blockage)</span>이 완화되기 때문으로 설명한다. 300 kW/m2, 2.5 mL/min에서 균일 다공판 대비 평균 표면 온도를 최대 165 °C, 온도 표준편차를 최대 54 °C 낮추고 증산냉각 효율을 최대 20% 높인다.</div>
+            <div class="keywords"><span class="keyword-chip">Transpiration cooling</span><span class="keyword-chip">TPS</span><span class="keyword-chip">Phase change</span><span class="keyword-chip">Graded porosity</span><span class="keyword-chip">Non-uniform heat flux</span><span class="keyword-chip">Additive manufacturing</span><span class="keyword-chip">Liquid coolant</span><span class="keyword-chip">Vapor blockage</span><span class="keyword-chip">Boiling heat transfer</span><span class="keyword-chip">Cooling efficiency</span><span class="keyword-chip">Cooling regime map</span><span class="keyword-chip">Inconel 718</span><span class="keyword-chip">Experimental</span></div>
+        </div>
+
+        <div class="content">
+            <div class="section" onclick="openModal('introduction')">
+                <div class="section-title">Introduction — 연구 동기 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">극초음속 노즈콘은 기존 재료의 한계를 넘는 수 MW/m2의 국부 열유속을 받으며, 액체 물을 이용한 상변화 증산냉각은 유망한 능동 냉각 방식이다. 그러나 정체점 열유속 피크는 급격한 열 구배를 만들고, 고열유속에서 다공 구조의 냉각 영역은 충분히 탐구되지 않았다. 이에 본 논문은 기공률을 열유속에 맞춘 적층 제조 구배 다공판을 만들어 균일 다공판과 실험적으로 비교한다.</div>
+            </div>
+            <div class="section" onclick="openModal('related_works')">
+                <div class="section-title">Related Works — 관련 연구 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">비균일 가열 하 기공률 조정에 관한 선행 연구는 주로 소결 또는 TPMS 매질을 사용했으며, 구배 기공률이나 투과율이 냉각제 분배를 균형 있게 하고 핫스팟 온도를 낮춤을 보였다. 다른 접근으로 냉각 챔버 분할이나 증산냉각과 막냉각의 결합이 있다. 저자들은 적층 제조 구배 다공판을 이 흐름에 위치시키고, 고열유속에서의 영역 기반 분석을 추가한다.</div>
+            </div>
+            <div class="section" onclick="openModal('method')">
+                <div class="section-title">Method — 방법론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">펌프 구동 상변화 증산냉각 장치는 중앙에 피크가 있는 열유속을 만드는 부탄(또는 산소-아세틸렌) 토치로 적층 제조 Inconel 718 다공판을 가열하고, 보정된 연동 펌프로 물을 공급하며, 열전대와 적외선 카메라로 온도를 측정한다. 전체 기공률이 거의 같은 두 판은 열 간격 배치만 다르다. 성능은 적외선 기반 평균 표면 온도, 그 표준편차, 증산냉각 효율로 정량화한다.</div>
+            </div>
+            <div class="section" onclick="openModal('results')">
+                <div class="section-title">Results — 결과 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">고정 열유속에서 냉각제 유량을 줄이면 두 판 모두 전면 강화, 국부 약화, 악화 냉각 상태를 차례로 거치며, 이는 2.1 MW/m2까지의 영역 선도로 정리된다. 구배 판은 영역 경계를 유리하게 이동시켜, 완전 냉각에 필요한 물이 더 적고 악화 전까지 더 높은 열유속을 견딘다. 평균 온도, 균일성, 효율 모두 천이 유량 범위에서 구배 판이 가장 크게 우세하다.</div>
+            </div>
+            <div class="section" onclick="openModal('discussion')">
+                <div class="section-title">Discussion — 논의 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">저자들은 구배 판의 우위를 냉각제 보충과 증기 배출로 설명한다. 고열유속 중앙의 높은 국부 기공률과 투과율이 액체를 더 빨리 공급하고, Darcy 법칙에 따라 증기를 더 빨리 배출하여 증기 차단을 완화한다. 우위는 중간 유량에서 가장 크며, 매우 높은 유량에서는 두 판 모두 충분히 공급되고 매우 낮은 유량에서는 두 판 모두 증기에 막힌다.</div>
+            </div>
+            <div class="section" onclick="openModal('conclusion')">
+                <div class="section-title">Conclusion — 결론 <span class="click-hint">(클릭하여 자세히)</span></div>
+                <div class="section-summary">적층 제조 균일·구배 다공판 실험으로 세 가지 증산냉각 영역을 식별하고 이를 열유속과 냉각제 유량에 대해 선도로 나타냈다. 구배 판은 완전 냉각에 필요한 물이 적고, 악화 전까지 더 높은 열유속을 견디며, 평균 온도·균일성·효율을 개선한다. 예측 가능한 영역 기준은 후속 연구로 남겨진다.</div>
+            </div>
+        </div>
+
+        <details class="references">
+            <summary>References — 참고문헌 <span class="ref-count">key 10 / total 38</span></summary>
+            <ol class="ref-list"><li>Z. Cheng, R. Xu, P. Jiang, Transpiration cooling with phase change by functionally graded porous media, Int. J. Heat Mass Transf., 2023</li><li>N. Wu, J. Wang, F. He, G. Dong, L. Tang, An experimental investigation on transpiration cooling of a nose cone model with a gradient porosity layout, Exp. Therm. Fluid Sci., 2019</li><li>Y. Liu, T. Liu, R. Ding, F. He, J. Wang, Experimental and numerical investigation of transpiration cooling with gradient porosity layout for the thermal protection of nose cone, Aerosp. Sci. Technol., 2024</li><li>Y. Yang, J. Mao, P. Chen, H. Zhang, H. Tang, Numerical investigation on transpiration cooling performance with different porosities and mainstream pressure gradients, Int. J. Therm. Sci., 2023</li><li>W. Dong, J. Wang, S. Chen, B. Ai, X. Luo, Modelling and investigation on heat transfer deterioration during transpiration cooling with liquid coolant phase-change, Appl. Therm. Eng., 2018</li><li>G. Huang, Z. Min, L. Yang, P.X. Jiang, M. Chyu, Transpiration cooling for additive manufactured porous plates with partition walls, Int. J. Heat Mass Transf., 2018</li><li>G. Huang, Y. Zhu, Z. Liao, X.-L. Ouyang, P.-X. Jiang, Experimental investigation of transpiration cooling with phase change for sintered porous plates, Int. J. Heat Mass Transf., 2017</li><li>A. van Foreest, M. Sippel, A. Gülhan, B. Esser, B.A.C. Ambrosius, K. Sudmeijer, Transpiration cooling using liquid water, J. Thermophys. Heat Transf., 2009</li><li>J. Wang, L. Zhao, X. Wang, J. Ma, J. Lin, An experimental investigation on transpiration cooling of wedge shaped nose cone with liquid coolant, Int. J. Heat Mass Transf., 2014</li><li>P.F. Zhu, X.K. Song, Q.L. Song, Y.H. Cao, W.Q. Li, An experimental investigation on phase-change transpiration cooling with SiC porous ceramic, Appl. Therm. Eng., 2025</li></ol>
+        </details>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const SECTION_TITLES = {"introduction": "Introduction — 연구 동기", "related_works": "Related Works — 관련 연구", "method": "Method — 방법론", "results": "Results — 결과", "discussion": "Discussion — 논의", "conclusion": "Conclusion — 결론"};
+
+        const FIG_PREFIX = "Fig.";
+
+        const SECTION_DETAIL = {"introduction": {"content": [{"type": "bullet", "text": "장시간 비행 극초음속 비행체는 심한 공력 가열을 받으며, 곡률 반경이 작고 정체 효과가 강한 노즈콘은 수 MW/m2를 넘는 국부 열유속을 받아 기존 재료의 허용 한계를 넘는다. 고마하수에서는 수동·반능동 TPS로 이를 감당할 수 없어 능동 냉각이 필요하다."}, {"type": "bullet", "text": "<span class=\"term\">증산냉각</span>은 두 기구로 작동한다. 다공 매질의 큰 비표면적이 냉각제와 매트릭스 사이의 내부 대류를 강화하고, 분출된 냉각제가 보호막을 형성해 열 경계층을 두껍게 한다. 두 효과가 합쳐져 노즈콘에 대해 MW/m2 수준의 방열이 가능하다.", "figure_refs": [1]}, {"type": "bullet", "text": "초기 연구는 단상 기체 냉각제에 집중했다. 비열이 핵심 인자이며(동일 질량유량에서 헬륨이 가장 우수), 효율은 분사비 증가와 입자 직경 감소로 향상되지만 수익이 체감하여 훨씬 많은 기체가 필요하다. 따라서 단상 기체 냉각은 차세대 극한 열유속에 부적합하다고 판단된다."}, {"type": "bullet", "text": "액체 물을 사용하는 상변화 증산냉각은 잠열을 활용한다. 인용된 근거로는 마하 5.45 아크 가열 풍동 시험에서 소결 세라믹 노즈콘에 대해 동일 질량유량의 물이 질소보다 우수했던 결과, 소량의 물로 노즈콘 냉각이 충분하며 최적 분사비가 존재한다는 결과, 에탄올이 기체 냉각제 분사율의 2%만으로 동등한 성능을 낸다는 결과가 있다."}, {"type": "bullet", "text": "실제 노즈콘에서 정체점 효과는 국부 열부하 피크와 급격한 열 구배를 만들어 큰 열응력을 유발하므로, 연구자들은 국부 기공률과 냉각 챔버 구조를 조정해 온도 균일성을 높이려 해왔다."}, {"type": "bullet", "text": "제시된 공백: 고열유속 하에서 다공 구조의 온도 응답과 그에 대응하는 증산냉각 영역이 충분히 탐구되지 않았고, 최적화 연구는 기공 구조 제어가 제한적인 소결재를 주로 사용한다."}, {"type": "bullet", "text": "<span class=\"term\">적층 제조</span>는 복잡하고 특수한 형상의 채널을 가진 다공 부품을 만들 수 있다. 소결판(불규칙한 기공, 비균일 크기, 무작위 연결성)과 달리 적층 제조 판은 설계되고 재현 가능한 기공을 가지며, 고기공률에서도 극한 인장강도가 훨씬 높고 냉각 효율 분포도 더 균일하다."}, {"type": "bullet", "text": "본 연구는 금속 적층 제조로 기공률-열유속 정합을 위한 구배 기공률 판과 비교용 균일 판을 제작하고, 온도 특성으로 세 가지 냉각 영역을 정리하여 0.3-2.1 MW/m2의 영역 선도로 나타내며, 평균 표면 온도·온도 균일성·증산냉각 효율을 비교한다."}]}, "related_works": {"content": [{"type": "bullet", "text": "Wu 등은 정체점에서 투과율이 최대이고 하류로 갈수록 감소하는 구배 기공률 노즈콘을 설계했으며, 액체 물을 사용한 실험에서 균일 다공 구성보다 온도 균일성이 향상됨을 확인했다."}, {"type": "bullet", "text": "Liu 등은 쐐기형 노즈콘을 제작해 액체 상변화 증산냉각을 실험·수치적으로 연구했으며, 구배 기공률 배치가 정체점 냉각 효율을 크게 높이고 기공률이 냉각 성능에 큰 영향을 미침을 보였다."}, {"type": "bullet", "text": "Cheng 등은 TPMS 기반 균일·구배 기공률 다공판을 제작해 비균일 열유속 하에서 시험했으며, 구배 기공률이 냉각제 분배를 균형 있게 하고 핫스팟 온도를 낮추며 더 균일한 온도 분포를 주었다."}, {"type": "bullet", "text": "Yang 등은 여러 기공률 구성을 수치적으로 비교하여, 유동 방향으로 기공률이 감소하는 배치(TC-8)가 가장 높은 냉각 효율, 최고의 온도 균일성, 가장 좋은 강건성을 보임을 확인했다."}, {"type": "bullet", "text": "Dong 등은 고열유속 구역의 기공률 증가와 유동 분리벽 추가가 최고 온도를 각각 약 40%, 55% 낮춤을 보였다."}, {"type": "bullet", "text": "Xiong 등은 냉각 챔버를 개별 단위로 나누어 고열유속 구역에는 높은 분사 압력을, 중간 구역에는 낮은 압력을 가해 최소 냉각제 소비로 최적화된 온도 분포를 얻었다."}, {"type": "bullet", "text": "Jiang 등은 증산냉각과 막냉각을 결합하여 앞전 냉각 효율을 25.7%에서 37.6%로 높였다."}, {"type": "bullet", "text": "Huang 등은 증산냉각 다공판에 적층 제조를 적용하고 기존 소결판과 비교했으며, 이는 본 연구가 기공 설계 제어를 위해 적층 제조를 택한 동기가 된다."}]}, "method": {"content": [{"type": "bullet", "text": "장치는 네 단위로 구성된다. 고온 열원(순도 ≥99.5% 부탄 실린더, 0-1500 cm3/min 유량 제어기, 필터, 토치), 실험 시험부, 냉각제 공급부(고정밀 연동 펌프, 배관, 저장조), 데이터 수집부(열전대와 적외선 카메라)이다.", "figure_refs": [2]}, {"type": "bullet", "text": "토치는 판 바로 위에 놓여 중앙 고열유속 구역과 측면 저열유속 구역을 갖는 <span class=\"term\">비균일 열유속</span>을 만들며, 노즈콘의 정체점 피크를 모사한다. MW/m2 수준의 열유속에는 동일한 토치-판 거리로 산소-아세틸렌 토치를 사용하며, 산소/아세틸렌 유량 설정으로 1.1-2.1 MW/m2를 얻는다(표 2).", "figure_refs": [3]}, {"type": "bullet", "text": "시험부는 다공판을 덮개판과 함께 냉각 챔버에 볼트로 체결하며, 폭 2 mm x 깊이 1.2 mm의 환형 홈에 O-링을 넣는다. 물은 챔버 하부 입구로 들어와 매트릭스를 투과하고, 상변화로 열을 흡수한 뒤 증기로 빠져나간다. 판은 동일한 경계조건에서 교체 가능하다.", "figure_refs": [4]}, {"type": "bullet", "text": "두 판 모두 적층 제조 Inconel 718이다. 균일 판은 110 mm x 50 mm x 2 mm 베이스와 5 mm x 3 mm 단차 위에 100 mm x 40 mm x 5 mm 다공층을 가지며, 서로 연결된 수평·수직 원형 채널(d = 0.4 mm)의 채널 간격은 sz = sy = 0.7 mm, 열 간격은 sx1 = 1.2 mm이다.", "figure_refs": [5]}, {"type": "bullet", "text": "<span class=\"term\">구배 다공판</span>은 외형 치수를 유지하되 중앙 고열유속 영역의 열 간격을 sx3 = 0.7 mm로 줄이고 측면 저열유속 영역은 sx2 = 1.4 mm로 넓혀, 열부하가 가장 큰 곳의 냉각제 수송을 강화하도록 한다.", "figure_refs": [5]}, {"type": "bullet", "text": "기공률은 자연 상태 전체 부피와 고체 부피로부터 정의된다(식 1)."}, {"type": "formula", "label": "식 (1) — 금속 다공판의 기공률", "latex": "\\phi = \\frac{V_0 - V}{V_0}", "description": "$V_0$는 외형 치수로 정한 자연 상태의 전체 부피이고 $V$는 고체 재료의 부피이다."}, {"type": "bullet", "text": "균일 판의 기공률은 28.5%, 구배 판은 전체 28.3%로, 저자들은 이로써 기공률 크기의 영향이 배제된다고 본다. 구배 판 내부에서 중앙 영역은 34.7%, 측면 영역은 26.7%이며, 투과율과 구조 건전성의 균형 및 기공률-열유속 정합 원리에 따라 선택되었다."}, {"type": "bullet", "text": "표면 온도장은 적외선 카메라로 측정한다. K형 열전대 세 개(T1-T3, 25 mm 간격)를 상면 중앙에, 세 개(T1'-T3')를 하면에 수직으로 맞춰 설치하고, 하면 아래 5 mm에 놓인 외장 열전대로 냉각제 온도 Tf를 측정한다. 토치는 판 위 55 mm에 있다.", "figure_refs": [6]}, {"type": "bullet", "text": "열유속은 열유속계(GD-B3-5M, 전 범위의 ±2%, 응답 약 100 ms)를 판 위치에 두고 부탄 유량과 상관시켜 보정하므로, 가스 유량으로 열유속을 추정할 수 있다. 토치 위 55 mm의 열전대로 화염 온도를 측정하여 효율 정의의 주류 온도로 사용한다.", "figure_refs": [7, 8]}, {"type": "bullet", "text": "냉각제 공급은 펌프 맥동을 줄이는 내경 3.2 mm 배관과 전자저울(±0.01 g, 0.1 s마다 기록)로 보정했다. 설정 1-4 mL/min에 대해 실제 0.9936-3.991 mL/min(최대 오차 0.64%)이었다. 적외선 온도는 열전대와 비교 보정했으며(편차 3.8% 이내), 열전대 불확도는 ±0.4%이다.", "figure_refs": [9]}, {"type": "bullet", "text": "시험 절차: 가열 전 판을 냉각제에 완전히 잠기게 하고, 냉각 효과를 보이기 위해 표면이 과열된 뒤 의도적으로 냉각제를 주입했다. 적외선 영상은 Python 알고리즘으로 처리하며, 다공 영역을 100 x 480 격자로 나누고 영상 색으로 온도를 읽은 뒤 열전대 위치에서 보정한다."}, {"type": "formula", "label": "식 (2) — 평균 표면 온도", "latex": "T_{\\mathrm{ave}} = \\frac{1}{n}\\sum_{i=1}^{n} T_i", "description": "$T_i$는 상면 격자점 $i$의 온도이고 $n$은 적외선에서 추출한 온도점의 총수이다."}, {"type": "formula", "label": "식 (4) — 온도 표준편차", "latex": "S = \\sqrt{\\frac{\\sum_{i=1}^{n}\\left(T_i - T_{\\mathrm{ave}}\\right)^2}{n-1}}", "description": "상면 온도장의 표본 표준편차로, 온도 균일성 지표로 쓰인다(작을수록 균일)."}, {"type": "formula", "label": "식 (3) — 증산냉각 효율", "latex": "\\eta = \\frac{T_{\\mathrm{iw}} - T_{\\mathrm{cw}}}{T_{\\infty} - T_{\\mathrm{c}}}", "description": "$T_{\\mathrm{iw}}$와 $T_{\\mathrm{cw}}$는 냉각제 주입 전후의 평균 표면 온도, $T_\\infty$는 판 중앙에서 측정한 화염 온도(Zhu 등에 따라 주류 온도로 사용), $T_{\\mathrm{c}}$는 냉각제 온도이다."}]}, "results": {"content": [{"type": "bullet", "text": "세 영역은 정상상태 온도 응답으로 정의된다. <span class=\"term\">전면 강화</span> 상태에서는 매트릭스가 잠긴 채 핵비등 또는 풀 표면 증발로 냉각된다(표면 약 100 °C). <span class=\"term\">국부 약화</span> 상태에서는 중앙 고열유속 구역을 증기막이 덮어(막비등, 100 °C를 크게 초과) 측면만 핵비등으로 약 100 °C를 유지한다. <span class=\"term\">악화</span> 상태에서는 증기가 기공을 채워 증기와 골격 사이 자연대류에 의존한다.", "figure_refs": [10]}, {"type": "bullet", "text": "전면 강화 사례(4 mL/min, 420 kW/m2): 균일 판은 T1과 T2가 100 °C를 넘고 T1이 심하게 요동하는(핵비등) 반면, 구배 판은 100 °C 아래에서 안정적이며(풀 표면 증발) 전체 온도도 더 낮다.", "figure_refs": [11]}, {"type": "bullet", "text": "국부 약화 사례(3 mL/min, 420 kW/m2): 두 판 모두 정상상태에서 100 °C를 넘으며, T1-T3가 220 °C 이상에서 안정적이어서 중앙의 막비등을 나타내고, 측면은 약 100 °C를 유지한다. 구배 판이 더 차갑고 고온 영역도 더 작다.", "figure_refs": [12]}, {"type": "bullet", "text": "악화 사례(0.5 mL/min, 420 kW/m2): 두 판 모두 300 °C를 넘고, 냉각 챔버 온도도 100 °C를 넘어 액면이 챔버 열전대 아래로 내려가고 골격 내 물이 완전히 증발했음을 보여준다. 구배 판의 중앙 측정점(T2, T2')은 균일 판보다 낮게 유지된다.", "figure_refs": [13]}, {"type": "bullet", "text": "<span class=\"term\">영역 선도</span>는 0.3-2.1 MW/m2를 포괄한다. 냉각제 유량이 늘면 판은 악화에서 국부 약화, 전면 강화로 이동하며, 영역 경계는 열유속과 함께 위로 이동하므로 높은 열유속에서는 전면 강화 유지에 더 많은 냉각제가 필요하다.", "figure_refs": [14]}, {"type": "bullet", "text": "q = 370 kW/m2에서 구배 판은 2.7 mL/min에서 전면 강화 상태에 진입하는 반면 균일 판은 3.3 mL/min이 필요하다. 2 mL/min에서 구배 판은 500 kW/m2에서야 악화 상태에 이르는 반면 균일 판은 400 kW/m2에서 악화된다.", "figure_refs": [14]}, {"type": "bullet", "text": "평균 표면 온도는 냉각제 유량과 함께 감소하고 열유속과 함께 증가한다(300, 420, 500 kW/m2에서 시험). 구배 판의 최대 감소는 300 kW/m2, 2.5 mL/min에서 165 °C로, 이때 구배 판은 전면 강화 상태이고 균일 판은 국부 약화 상태에 머문다. 그림에는 156 °C(420 kW/m2)와 127 °C(500 kW/m2)의 차이도 표시되어 있다.", "figure_refs": [15]}, {"type": "bullet", "text": "온도 표준편차 S는 두 판 모두 유량과 함께 감소하며, 같은 유량에서 구배 판의 S가 더 낮고 최대 감소는 54 °C이다. 고유량(300 kW/m2에서 3 mL/min, 420 kW/m2에서 3.7 mL/min, 500 kW/m2에서 5 mL/min)과 저유량(예: 300 kW/m2에서 1 mL/min)에서는 두 판의 S가 거의 같다.", "figure_refs": [16]}, {"type": "bullet", "text": "증산냉각 효율은 모든 열유속에서 유량과 함께 증가하고 구배 판이 일관되게 높다. 향상은 300 kW/m2, 2.5 mL/min에서 20%로 최대이며(그림에는 420 kW/m2에서 16%, 500 kW/m2에서 15%도 표시), 충분히 높은 유량에서는 두 판이 수렴한다.", "figure_refs": [17]}]}, "discussion": {"content": [{"type": "bullet", "text": "전면 강화 상태에서 구배 판의 높은 중앙 기공률은 빠르고 연속적인 냉각제 보충을 보장해 가열면의 액막을 포화 상태로 유지하고 건조를 막는다. 반면 균일 판의 일정한 기공 배치는 고열유속 중앙을 공급 부족으로 만들어 기포 생성과 이탈을 일으킨다.", "figure_refs": [11]}, {"type": "bullet", "text": "국부 약화 상태에서 균일 판은 중앙의 미세 기공이 적어 증기 배출이 느려지고 <span class=\"term\">증기 차단</span>이 생긴다. 구배 판의 고기공률 영역은 투과율이 높아 Darcy 법칙에 따라 같은 압력 구배에서 증기가 더 빨리 빠져나가며, 이는 국부적으로 강화된 투과율이 증기 축적을 억제한다는 Liu 등의 수치 결과와 일치한다.", "figure_refs": [12]}, {"type": "bullet", "text": "악화 상태에서 저자들은 구배 판의 낮은 중앙 온도를 고열유속 영역의 더 조밀한 미세 채널망 덕분으로 보며, 이것이 증기 보충을 가속하고 열전달을 강화한다고 서술한다.", "figure_refs": [13]}, {"type": "bullet", "text": "영역 경계의 이동은 고열유속 영역의 조밀한 미세 기공과 측면의 성긴 채널이 냉각 능력을 국부 열유속에 맞추고 국부 과열을 완화한 결과로 설명되며, 이것이 냉각제 소비 감소와 허용 열유속 증가 주장의 근거이다.", "figure_refs": [14]}, {"type": "bullet", "text": "고유량에서는 대류 열전달계수 증가와 표면 전체 피복으로 균일 판도 균일해져 S와 효율이 수렴한다. 저유량에서는 고온 중앙에서의 빠른 상변화가 증기 장벽을 만들어 두 판 모두 냉각제 침투가 제한되고 중앙이 과열된다. 따라서 구배 설계는 충분한 냉각제가 구조를 투과할 때 주로 효과를 낸다.", "figure_refs": [16, 17]}, {"type": "bullet", "text": "저자들은 영역 선도의 예측력과 보편성을 높이기 위해 새로운 무차원 스케일링 법칙이나 이론적 천이 기준이 필요하다고 언급하며, 이를 후속 연구로 설정한다.", "figure_refs": [14]}, {"type": "bullet", "text": "효율 정의는 판 중앙에서 측정한 화염 온도를 $T_\\infty$로 사용하며, 중앙 화염 온도가 평균 주류 화염 온도에 근사한다는 Zhu 등의 관찰로 정당화한다. 따라서 효율 값은 이 토치 고유의 기준에 묶여 있다.", "figure_refs": [8]}, {"type": "bullet", "text": "구배 설계는 형식적 최적화가 아니라 직관적인 기공률-열유속 정합 원리(열부하가 가장 큰 곳에 더 큰 투과율, 측면의 과공급 회피)를 따르며, 논문은 하나의 구배 배치만 보고한다."}]}, "conclusion": {"content": [{"type": "bullet", "text": "본 연구는 구배·균일 기공률 금속 다공판의 증산냉각을 실험적으로 조사하고, 냉각제 유량을 바꿔 세 냉각 상태를 정량화하여 열유속 대 유량 영역 선도로 평가하며, 평균 온도·온도 표준편차·냉각 효율을 성능 지표로 사용한다."}, {"type": "bullet", "text": "결론 (1): 일정 열유속에서 냉각제 유량이 줄면 판은 전면 강화, 국부 약화, 악화 냉각 상태를 차례로 거친다."}, {"type": "bullet", "text": "결론 (2): 같은 외부 열유속에서 구배 판은 더 낮은 물 유량으로 전면 강화 상태에 도달하여 냉각제 소비 감소의 이점을 보인다."}, {"type": "bullet", "text": "결론 (3): 같은 냉각제 유량에서 구배 판은 더 높은 외부 열유속에서 악화 상태에 진입하므로, 이 설계는 비행체가 더 높은 열부하를 견디게 한다."}, {"type": "bullet", "text": "결론 (4): 2.5 mL/min, 300 kW/m2에서 구배 판은 균일 판 대비 평균 표면 온도를 최대 165 °C 낮추고, 온도 표준편차를 최대 54 °C 줄이며, 증산냉각 효율을 최대 20% 높인다."}, {"type": "bullet", "text": "핵심 설계 메시지는 전체 기공률을 거의 바꾸지 않고 국부 기공률을 국부 열유속에 맞추면 냉각제가 고온 구역으로 재분배되고 그곳의 증기 차단이 완화된다는 것이다."}, {"type": "bullet", "text": "영역 선도를 위한 무차원 스케일링 법칙이나 이론적 천이 기준의 개발이 저자들의 중요한 후속 연구 주제로 명시된다."}, {"type": "bullet", "text": "연구는 NSFC(No. 52306076, U2441280)와 중국 박사후 프로그램의 지원을 받았으며, 데이터는 요청 시 제공된다."}]}};
+        const INSIGHTS_DATA = {"limitations": [], "future_works": [{"claim": "저자들은 증산냉각 영역 선도가 장치 의존적인 결과를 넘어 예측력과 보편성을 갖도록 새로운 무차원 스케일링 법칙 또는 이론적 천이 기준을 개발할 계획이다.", "source_quote": "Finally, the development of new dimensionless scaling laws or theoretical transition criteria is highly necessary to improve the predictive capability and universality of transpiration cooling regime maps, and this will be an important focus of our future work.", "source_section": "discussion"}], "motivation_resolution": {"motivating_problems": ["노즈콘 적용에서 정체점 효과는 국부 열부하 피크와 급격한 열 구배를 만들어 큰 열응력을 유발하므로, 비균일 가열 하의 온도 균일성을 개선해야 한다.", "고열유속 조건에서 다공 구조의 온도 응답과 그에 대응하는 증산냉각 영역은 충분히 탐구되지 않았다.", "기존 기공률 최적화 전략은 주로 소결 다공재에 의존하며, 소결재는 기공 구조를 제어할 수 있는 여지가 제한적이다."], "addressed_by_this_work": ["온도 특성으로부터 세 가지 증산냉각 영역(전면 강화, 국부 약화, 악화)을 식별하고, 두 다공판 모두에 대해 0.3-2.1 MW/m2 열유속 범위의 영역 선도로 정량화했다.", "금속 적층 제조(Inconel 718)로 설계된 구배 기공 배치(중앙 열 간격 0.7 mm, 측면 1.4 mm)를 구현하여, 전체 기공률을 거의 바꾸지 않고 기공률-열유속 정합을 실현했다.", "구배 다공판은 온도 표준편차를 최대 54 °C, 평균 표면 온도를 최대 165 °C 낮추고 냉각 효율을 최대 20% 높였으며, 전면 강화 상태 도달에 필요한 물이 더 적고 악화 전까지 더 높은 열유속을 견뎠다."], "remaining_unresolved": ["영역 경계는 경험적이며, 영역 선도에 예측력과 보편성을 주는 무차원 스케일링 법칙이나 이론적 천이 기준은 후속 연구로 남겨졌다.", "균일성의 동기로 제시된 열응력은 측정되지 않았고, 표면 온도 균일성(표준편차)만 보고되었다.", "시험은 토치 가열 평판과 단일 구배 설계로 한정되며, 실제 노즈콘 형상, 극초음속 외부 유동, 기공률 분포 최적화는 다루지 않았다."]}};
+        const INSIGHTS_LABELS = {
+            panel_title:    "Critical Insights",
+            limitations:    "한계",
+            future_works:   "향후 연구",
+            motivation:     "동기 vs 해결도",
+            mot_problems:   "동기 (해결 대상)",
+            mot_addressed:  "본 연구가 해결",
+            mot_remaining:  "미해결"
+        };
+
+        function escapeHtml(s) { return s; } // bullet text already pre-sanitised by analyser
+
+        function renderBullet(item) {
+            let chipHtml = "";
+            if (item.figure_refs && item.figure_refs.length > 0) {
+                chipHtml = `<span class="fig-ref">[${FIG_PREFIX}${item.figure_refs.join(",")}]</span>`;
+            }
+            return `<div class="bullet">${item.text}${chipHtml}</div>`;
+        }
+
+        function renderInsightsBlock() {
+            const d = INSIGHTS_DATA || {};
+            const L = INSIGHTS_LABELS;
+            const limItems = (d.limitations || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const futItems = (d.future_works || []).map(item => {
+                if (typeof item === 'string') return `<li>${item}</li>`;
+                return `<li>${item.claim}<div class="evidence-source">"${item.source_quote}" — <em>${item.source_section}</em></div></li>`;
+            }).join('');
+            const mr = d.motivation_resolution || {};
+            const motProb = (mr.motivating_problems    || []).map(s => `<li>${s}</li>`).join('');
+            const motAddr = (mr.addressed_by_this_work || []).map(s => `<li>${s}</li>`).join('');
+            const motRem  = (mr.remaining_unresolved   || []).map(s => `<li>${s}</li>`).join('');
+
+            return `
+                <div class="conclusion-insights">
+                    <h4 class="insights-section-title">${L.limitations}</h4>
+                    <ul class="lim-list">${limItems}</ul>
+
+                    <h4 class="insights-section-title">${L.future_works}</h4>
+                    <ul class="future-list">${futItems}</ul>
+
+                    <h4 class="insights-section-title">${L.motivation}</h4>
+                    <div class="motivation-block">
+                        <div class="mot-problems">
+                            <h5>${L.mot_problems}</h5>
+                            <ul>${motProb}</ul>
+                        </div>
+                        <div class="mot-addressed">
+                            <h5>${L.mot_addressed}</h5>
+                            <ul>${motAddr}</ul>
+                        </div>
+                        <div class="mot-remaining">
+                            <h5>${L.mot_remaining}</h5>
+                            <ul>${motRem}</ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(key) {
+            const detail = SECTION_DETAIL[key];
+            if (!detail) return;
+            document.getElementById('modal-title').innerText = SECTION_TITLES[key] || key;
+
+            let html = (detail.content || []).map(item => {
+                if (item.type === 'bullet') {
+                    return renderBullet(item);
+                } else if (item.type === 'formula') {
+                    return `<div class="formula-block">
+                        <div class="formula-label">${item.label}</div>
+                        <div class="formula-latex">$$${item.latex}$$</div>
+                        <div class="formula-desc">${item.description}</div>
+                    </div>`;
+                } else if (item.type === 'figure') {
+                    return `<figure class="paper-fig">
+                        <img src="${item.src}" alt="Fig.${item.figure_no}" loading="lazy">
+                        <figcaption>[Fig.${item.figure_no}]${item.caption ? ' ' + item.caption : ''}</figcaption>
+                    </figure>`;
+                }
+                return '';
+            }).join('');
+
+            // Conclusion 모달에만 limitations / future_works / motivation_resolution 블록을 끝에 추가
+            if (key === 'conclusion') {
+                html += renderInsightsBlock();
+            }
+
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            body.scrollTop = 0;
+            document.getElementById('modal-overlay').classList.add('active');
+
+            if (window.renderMathInElement) {
+                renderMathInElement(body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$',  right: '$',  display: false},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
